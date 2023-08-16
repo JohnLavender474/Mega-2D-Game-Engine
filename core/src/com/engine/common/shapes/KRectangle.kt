@@ -56,6 +56,11 @@ class KRectangle : Rectangle, KShape2D {
 
     override fun getCenter(): Vector2 = getCenter(Vector2())
 
+    override fun translate(translateX: Float, translateY: Float) {
+        x += translateX
+        y += translateY
+    }
+
     override fun overlaps(other: KShape2D) =
             when (other) {
                 is KRectangle -> Intersector.overlaps(other, this)

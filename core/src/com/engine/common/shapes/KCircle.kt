@@ -8,17 +8,15 @@ import com.engine.common.enums.Position
 import com.engine.common.shapes.extensions.PolylineExtensions.getAsLines
 import kotlin.math.pow
 
-class KCircle : Circle, KShape2D {
+data class KCircle(val x: Float, val y: Float, val radius: Float) : Circle(x, y, radius), KShape2D {
 
-    constructor() : super()
+    constructor() : this(0f, 0f, 0f)
 
-    constructor(x: Float, y: Float, radius: Float) : super(x, y, radius)
+    constructor(position: Vector2, radius: Float) : this(position.x, position.y, radius)
 
-    constructor(position: Vector2?, radius: Float) : super(position, radius)
+    constructor(circle: Circle) : this(circle.x, circle.y, circle.radius)
 
-    constructor(circle: Circle?) : super(circle)
-
-    constructor(center: Vector2?, edge: Vector2?) : super(center, edge)
+    constructor(center: Vector2, edge: Vector2) : this(center.x, center.y, Vector2.len(center.x - edge.x, center.y - edge.y))
 
     override fun getCenter(): Vector2 = Vector2(x, y)
 
@@ -40,6 +38,11 @@ class KCircle : Circle, KShape2D {
 
     override fun setMaxY(maxY: Float) {
         y = maxY - radius
+    }
+
+    override fun translate(translateX: Float, translateY: Float) {
+        x += translateX
+        y += translateY
     }
 
     override fun overlaps(other: KShape2D) = when (other) {
@@ -95,7 +98,7 @@ class KCircle : Circle, KShape2D {
         }
     }
 
-    override fun getPositionPoint(position: Position) = when(position) {
+    override fun getPositionPoint(position: Position) = when (position) {
         Position.TOP_LEFT -> Vector2(x - radius, y + radius)
         Position.TOP_CENTER -> Vector2(x, y + radius)
         Position.TOP_RIGHT -> Vector2(x + radius, y + radius)

@@ -3,37 +3,47 @@ package com.engine.common.shapes
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Position
+import kotlin.math.max
 
 data class KLine(val point1: Vector2, val point2: Vector2): KShape2D {
 
     constructor(v: Array<Float>) : this(Vector2(v[0], v[1]), Vector2(v[2], v[3]))
 
-    override fun getCenter(): Vector2 {
-        TODO("Not yet implemented")
-    }
+    override fun getCenter() = Vector2((point1.x + point2.x) / 2f, (point1.y + point2.y) / 2f)
 
     override fun setCenterX(centerX: Float) {
-        TODO("Not yet implemented")
+        val currCenterX = getCenter().x
+        val translateX = centerX - currCenterX
+        translate(translateX, 0f)
     }
 
     override fun setCenterY(centerY: Float) {
-        TODO("Not yet implemented")
+        val currCenterY = getCenter().y
+        val translateY = centerY - currCenterY
+        translate(0f, translateY)
     }
 
-    override fun getMaxX(): Float {
-        TODO("Not yet implemented")
-    }
+    override fun getMaxX() = max(point1.x, point2.x)
 
-    override fun getMaxY(): Float {
-        TODO("Not yet implemented")
-    }
+    override fun getMaxY() = max(point1.y, point2.y)
 
     override fun setMaxX(maxX: Float) {
-        TODO("Not yet implemented")
+        val currMaxX = getMaxX()
+        val translateX = maxX - currMaxX
+        translate(translateX, 0f)
     }
 
     override fun setMaxY(maxY: Float) {
-        TODO("Not yet implemented")
+        val currMaxY = getMaxY()
+        val translateY = maxY - currMaxY
+        translate(0f, translateY)
+    }
+
+    override fun translate(translateX: Float, translateY: Float) {
+        point1.x += translateX
+        point2.x += translateX
+        point1.y += translateY
+        point2.y += translateY
     }
 
     override fun overlaps(other: KShape2D): Boolean {

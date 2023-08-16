@@ -21,6 +21,10 @@ interface KShape2D : Shape2D {
 
     fun setMaxY(maxY: Float)
 
+    fun translate(translateX: Float, translateY: Float)
+
+    fun translate(translate: Vector2) = translate(translate.x, translate.y)
+
     fun overlaps(other: KShape2D): Boolean
 
     fun getBoundingRectangle(): Rectangle

@@ -73,9 +73,7 @@ class KRectangle : Rectangle, KShape2D {
                 else -> false
             }
 
-    override fun getBoundingRectangle(): Rectangle {
-        TODO("Not yet implemented")
-    }
+    override fun getBoundingRectangle() = Rectangle(this)
 
     override fun positionOnPoint(point: Vector2, position: Position) {
         when (position) {

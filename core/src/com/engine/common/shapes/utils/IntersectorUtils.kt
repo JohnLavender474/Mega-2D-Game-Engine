@@ -1,7 +1,7 @@
 package com.engine.common.shapes.utils
 
 import com.badlogic.gdx.math.*
-import com.engine.common.shapes.Line
+import com.engine.common.shapes.KLine
 import com.engine.common.shapes.extensions.CircleExtensions.overlaps
 import com.engine.common.shapes.extensions.PolylineExtensions.overlaps
 import com.engine.common.shapes.extensions.RectangleExtensions.getAsLines
@@ -47,9 +47,9 @@ object IntersectorUtils {
             intersectLineRectangle(p.transformedVertices.toTypedArray(), r, intersections)
 
     fun intersectLineRectangle(v: Array<Float>, r: Rectangle, intersections: ArrayList<Vector2>) =
-            intersectLineRectangle(Line(v), r, intersections)
+            intersectLineRectangle(KLine(v), r, intersections)
 
-    fun intersectLineRectangle(line: Line, r: Rectangle, intersections: ArrayList<Vector2>): Boolean {
+    fun intersectLineRectangle(line: KLine, r: Rectangle, intersections: ArrayList<Vector2>): Boolean {
         var isIntersection = false
         r.getAsLines().forEach {
             val intersection = Vector2()
@@ -61,6 +61,6 @@ object IntersectorUtils {
         return isIntersection
     }
 
-    fun intersectLines(l1: Line, l2: Line, intersection: Vector2? = null) =
+    fun intersectLines(l1: KLine, l2: KLine, intersection: Vector2? = null) =
             Intersector.intersectSegments(l1.point1, l1.point2, l2.point1, l2.point2, intersection)
 }

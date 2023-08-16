@@ -12,6 +12,8 @@ object CircleExtensions {
 
     fun Circle.overlaps(p: Polyline) = p.overlaps(this)
 
+    fun Circle.getBoundingRectangle(): Rectangle = Rectangle().setSize(radius * 2f).setCenter(x, y)
+
     // TODO: get points
 
 }

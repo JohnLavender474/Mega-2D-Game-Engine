@@ -9,6 +9,7 @@ import kotlin.reflect.cast
 
 data class Fixture(
         var shape: Shape2D,
+        var fixtureType: String,
         var attachedToBody: Boolean = true,
         var offsetFromBodyCenter: Vector2 = Vector2(),
         var userData: HashMap<String, Any?> = HashMap()

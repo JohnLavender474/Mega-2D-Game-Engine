@@ -22,7 +22,7 @@ object PolylineExtensions {
     fun Polyline.getAsLines(): List<KLine> {
         val v = transformedVertices
         val lines = ArrayList<KLine>()
-        for (i in 0..v.size step 4) {
+        for (i in 0..(v.size - 3) step 2) {
             val p1 = Vector2(v[i], v[i + 1])
             val p2 = Vector2(v[i + 2], v[i + 3])
             lines.add(KLine(p1, p2))

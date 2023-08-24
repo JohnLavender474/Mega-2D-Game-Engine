@@ -5,73 +5,93 @@ import com.engine.common.interfaces.Updatable
 import java.util.*
 import kotlin.math.min
 
-class Timer : Updatable, Resettable {
+class Timer(val duration: Float = 0f) : Updatable, Resettable {
 
-    private val runnables: ArrayList<TimeMarkedRunnable> = ArrayList()
-    private val runnableQueue: Queue<TimeMarkedRunnable> = PriorityQueue()
+  internal var runnables: ArrayList<TimeMarkedRunnable> = ArrayList()
+  internal var runnableQueue: Queue<TimeMarkedRunnable> = PriorityQueue()
 
-    private var time = 0f
-    private var duration = 0f
-    private var justFinished = false
+  var time = 0f
+    private set
+  var justFinished = false
+    private set
 
-    private var runOnFinished: Runnable? = null
+  var runOnFinished: Runnable? = null
 
-    override fun update(delta: Float) {
-        val finishedBefore = isFinished()
-        time = min(duration, time + delta)
-        while (runnableQueue.isNotEmpty() && runnableQueue.peek().time <= time) {
-            val runnable = runnableQueue.poll()
-            if (runnable.time <= time) {
-                break
-            }
-            runnable.runnable.run()
+  constructor(timer: Timer) : this(timer.duration) {
+    runnables.clear()
+    runnables.addAll(timer.runnables)
+    runnableQueue.clear()
+    runnableQueue.addAll(timer.runnableQueue)
+    time = timer.time
+    justFinished = timer.justFinished
+    runOnFinished = timer.runOnFinished
+  }
+
+  constructor(duration: Float, _runOnFinished: Runnable) : this(duration) {
+    runOnFinished = _runOnFinished
+  }
+
+  constructor(
+      duration: Float,
+      _runnables: Collection<TimeMarkedRunnable>
+  ) : this(duration, false, _runnables)
+
+  constructor(
+      duration: Float,
+      setToEnd: Boolean,
+      _runnables: Collection<TimeMarkedRunnable>
+  ) : this(duration) {
+    setRunnables(_runnables)
+    time =
+        if (setToEnd) {
+          duration
+        } else {
+          0f
         }
-        justFinished = !finishedBefore && isFinished()
-        if (justFinished) {
-            runOnFinished?.run()
-        }
+  }
+
+  override fun update(delta: Float) {
+    val finishedBefore = isFinished()
+    time = min(duration, time + delta)
+    while (runnableQueue.isNotEmpty() && runnableQueue.peek().time <= time) {
+      val runnable = runnableQueue.poll()
+      if (runnable.time <= time) {
+        break
+      }
+      runnable.run()
     }
-
-    override fun reset() {
-        time = 0f
-        runnableQueue.clear()
-        runnableQueue.addAll(runnables)
+    justFinished = !finishedBefore && isFinished()
+    if (justFinished) {
+      runOnFinished?.run()
     }
+  }
 
-    fun getRatio() = if (duration > 0f) min(time / duration, 1f) else 0f
+  override fun reset() {
+    time = 0f
+    justFinished = false
+    runnableQueue.clear()
+    runnableQueue.addAll(runnables)
+  }
 
-    fun isAtBeginning() = time == 0f
+  fun getRatio() = if (duration > 0f) min(time / duration, 1f) else 0f
 
-    fun isFinished() = time >= duration
+  fun isAtBeginning() = time == 0f
 
-    fun isJustFinished() = justFinished
+  fun isFinished() = time >= duration
 
-    fun setToTimer(timer: Timer): Timer {
-        runnables.clear()
-        runnableQueue.clear()
-        runnables.addAll(timer.runnables)
-        runnableQueue.addAll(timer.runnableQueue)
-        time = timer.time
-        duration = timer.duration
-        justFinished = timer.justFinished
-        runOnFinished = timer.runOnFinished
-        return this
-    }
+  fun isJustFinished() = justFinished
 
-    fun setDuration(_duration: Float): Timer {
-        duration = _duration
-        return this
-    }
+  fun setRunnables(_runnables: Collection<TimeMarkedRunnable>): Timer {
+    runnables.clear()
+    runnables.addAll(_runnables)
+    runnableQueue.clear()
+    runnableQueue.addAll(runnables)
+    return this
+  }
 
-    fun setRunnables(_runnables: Collection<TimeMarkedRunnable>): Timer {
-        runnables.clear()
-        runnables.addAll(_runnables)
-        runnableQueue.clear()
-        return this
-    }
+  fun clearRunnables() {
+    runnables.clear()
+    runnableQueue.clear()
+  }
 
-    fun setToEnd(): Timer {
-        time = duration
-        return this
-    }
 }

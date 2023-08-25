@@ -17,6 +17,43 @@ class GameLineTest :
           gameLine = GameLine(point1, point2)
         }
 
+        it("should get position values") {
+          gameLine.getX() shouldBe 1f
+          gameLine.getY() shouldBe 2f
+          gameLine.getMaxX() shouldBe 4f
+          gameLine.getMaxY() shouldBe 5f
+        }
+
+        it("should set position values - test 1") {
+          gameLine.setX(0f)
+          gameLine.setY(1f)
+          gameLine.getX() shouldBe 0f
+          gameLine.getY() shouldBe 1f
+
+          gameLine.setMaxX(10f)
+          gameLine.setMaxY(11f)
+          gameLine.getMaxX() shouldBe 10f
+          gameLine.getMaxY() shouldBe 11f
+        }
+
+        it("should set position values - test 2") {
+          gameLine.setX(0f)
+          gameLine.getX() shouldBe 0f
+          gameLine.getMaxX() shouldBe 3f
+
+          gameLine.setY(10f)
+          gameLine.getY() shouldBe 10f
+          gameLine.getMaxY() shouldBe 13f
+
+          gameLine.setMaxX(20f)
+          gameLine.getMaxX() shouldBe 20f
+          gameLine.getX() shouldBe 17f
+
+          gameLine.setMaxY(30f)
+          gameLine.getMaxY() shouldBe 30f
+          gameLine.getY() shouldBe 27f
+        }
+
         it("should contain a point") {
           val pointInside = Vector2(2f, 3f)
           val pointOutside = Vector2(0f, 0f)

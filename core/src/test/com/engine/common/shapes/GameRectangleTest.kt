@@ -12,6 +12,13 @@ class GameRectangleTest :
 
         beforeEach { gameRectangle = GameRectangle(1f, 2f, 3f, 4f) }
 
+        it("should get the position values") {
+          gameRectangle.getX() shouldBe 1f
+          gameRectangle.getY() shouldBe 2f
+          gameRectangle.getMaxX() shouldBe 4f
+          gameRectangle.getMaxY() shouldBe 6f
+        }
+
         it("should get the center") { gameRectangle.getCenter() shouldBe Vector2(2.5f, 4f) }
 
         it("should set the center") {

@@ -3,7 +3,7 @@ package com.engine.common.time
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
-class TimerSpec :
+class TimerTest :
     DescribeSpec({
       describe("Timer") {
         val timer = Timer(5f)

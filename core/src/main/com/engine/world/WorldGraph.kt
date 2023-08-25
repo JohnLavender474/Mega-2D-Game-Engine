@@ -9,11 +9,24 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * A graph of the world that can be used to find bodies and fixtures in the world.
+ *
+ * @param width the tile width of the world
+ * @param height the tile height of the world
+ * @param ppm the pixels per meter (tile) of the world
+ */
 class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
 
   private val bodies: HashMap<Pair<Int, Int>, ArrayList<Body>> = HashMap()
   private val fixtures: HashMap<Pair<Int, Int>, ArrayList<Fixture>> = HashMap()
 
+  /**
+   * Adds the given body to this world graph.
+   *
+   * @param body the body to add
+   * @see Body
+   */
   fun addBody(body: Body) {
     val m = getMinsAndMaxes(body)
     for (x in m[0] until m[2]) {
@@ -23,6 +36,12 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
     }
   }
 
+  /**
+   * Adds the given fixture to this world graph.
+   *
+   * @param fixture the fixture to add
+   * @see Fixture
+   */
   fun addFixture(fixture: Fixture) {
     val bounds =
         fixture.shape.let {
@@ -42,10 +61,31 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
     }
   }
 
+  /**
+   * Returns the [ArrayList] of [Fixture]s at the given position.
+   *
+   * @param x the x position of the tile to fetch from
+   * @param y the y position of the tile to fetch from
+   */
   fun getFixtures(x: Int, y: Int) = fixtures.getOrDefault(Pair(x, y), ArrayList())
 
+  /**
+   * Returns the [ArrayList] of [Body]s at the given position.
+   *
+   * @param x the x position of the tile to fetch from
+   * @param y the y position of the tile to fetch from
+   */
   fun getBodies(x: Int, y: Int) = bodies.getOrDefault(Pair(x, y), ArrayList())
 
+  /**
+   * Returns the [ArrayList] of [Body]s overlapping the given body.
+   *
+   * @param body the body to check for overlapping bodies
+   * @param filter the filter to apply to the overlapping bodies
+   * @return the [ArrayList] of [Body]s overlapping the given body
+   * @see Body
+   * @see Fixture
+   */
   fun getBodiesOverlapping(body: Body, filter: ((Body) -> Boolean)? = null): ArrayList<Body> {
     val m = getMinsAndMaxes(body)
     val xMin = m[0]
@@ -58,7 +98,7 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
       for (y in yMin until yMax) {
         val c = Pair(x, y)
         bodies[c]?.forEach {
-          if (!checked.contains(it)) {
+          if (body != it && !checked.contains(it)) {
             checked.add(it)
             if (body.overlaps(it as Rectangle) && filter?.invoke(it) != false) {
               overlapping.add(it)
@@ -70,6 +110,14 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
     return overlapping
   }
 
+  /**
+   * Returns the [ArrayList] of [Fixture]s overlapping the given fixture.
+   *
+   * @param fixture the fixture to check for overlapping fixtures
+   * @param filter the filter to apply to the overlapping fixtures
+   * @return the [ArrayList] of [Fixture]s overlapping the given fixture
+   * @see Fixture
+   */
   fun getFixturesOverlapping(
       fixture: Fixture,
       filter: ((Fixture) -> Boolean)? = null
@@ -85,7 +133,7 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
       for (y in yMin until yMax) {
         val c = Pair(x, y)
         fixtures[c]?.forEach {
-          if (!checked.contains(it)) {
+          if (fixture != it && !checked.contains(it)) {
             checked.add(it)
             if (fixture.overlaps(it) && filter?.invoke(it) != false) {
               overlapping.add(it)
@@ -105,6 +153,7 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
     return intArrayOf(max(0, minX), max(0, minY), min(width, maxX), min(height, maxY))
   }
 
+  /** Clears the bodies and fixtures from this world graph. Called from within the [WorldSystem]. */
   override fun reset() {
     bodies.clear()
     fixtures.clear()

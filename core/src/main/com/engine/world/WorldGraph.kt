@@ -25,24 +25,33 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
    * Adds the given body to this world graph.
    *
    * @param body the body to add
-   * @see Body
+   * @return this world graph
    */
-  fun addBody(body: Body) {
+  fun addBody(body: Body): WorldGraph {
     val m = getMinsAndMaxes(body)
     for (x in m[0] until m[2]) {
       for (y in m[1] until m[3]) {
         bodies.computeIfAbsent(Pair(x, y)) { ArrayList() }.add(body)
       }
     }
+    return this
   }
+
+  /**
+   * Adds the given bodies to this world graph.
+   *
+   * @param bodies the bodies to add
+   * @return this world graph
+   */
+  fun addBodies(bodies: Collection<Body>) = bodies.forEach { addBody(it) }
 
   /**
    * Adds the given fixture to this world graph.
    *
    * @param fixture the fixture to add
-   * @see Fixture
+   * @return this world graph
    */
-  fun addFixture(fixture: Fixture) {
+  fun addFixture(fixture: Fixture): WorldGraph {
     val bounds =
         fixture.shape.let {
           when (it) {
@@ -59,6 +68,18 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
         }
       }
     }
+    return this
+  }
+
+  /**
+   * Adds the given fixtures to this world graph.
+   *
+   * @param fixtures the fixtures to add
+   * @return this world graph
+   */
+  fun addFixtures(fixtures: Collection<Fixture>): WorldGraph {
+    fixtures.forEach { addFixture(it) }
+    return this
   }
 
   /**

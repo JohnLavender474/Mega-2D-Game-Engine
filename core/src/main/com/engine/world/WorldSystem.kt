@@ -3,7 +3,8 @@ package com.engine.world
 import com.badlogic.gdx.utils.OrderedSet
 import com.engine.Entity
 import com.engine.GameSystem
-import com.engine.common.objects.DataWrapper
+import com.engine.common.interfaces.Updatable
+import com.engine.common.objects.ImmutableCollection
 import kotlin.math.abs
 
 /**
@@ -38,72 +39,111 @@ import kotlin.math.abs
  */
 class WorldSystem(
     private val contactListener: ContactListener,
-    private val worldGraph: DataWrapper<WorldGraph>,
+    private val worldGraph: WorldGraph,
     private val fixedStep: Float,
     private val collisionHandler: CollisionHandler = StandardCollisionHandler,
     private val contactFilterMap: Map<String, Set<String>>? = null,
 ) : GameSystem(listOf(BodyComponent::class)) {
-
-  companion object {
-    private const val PROCESS_CYCLES = 2
-  }
 
   private var priorContactSet = OrderedSet<Contact>()
   private var currentContactSet = OrderedSet<Contact>()
 
   private var accumulator = 0f
 
-  /**
-   * Processes the entities. This method is called by the [GameSystem] when it is time for
-   * processing. This method is responsible for updating the positions of all bodies, resolving
-   * collisions, and notifying the [ContactListener] of any contacts that occur.
-   *
-   * @param on whether this [GameSystem] is on
-   * @param entities the [ArrayList] of [Entity]s to process
-   * @param delta the time in seconds since the last frame
-   * @see GameSystem.process
-   */
-  override fun process(on: Boolean, entities: ArrayList<Entity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<Entity>, delta: Float) {
     if (!on) {
       return
     }
     accumulator += delta
     while (accumulator >= fixedStep) {
       accumulator -= fixedStep
-      var currentCycle = 0
-      preProcess(entities, delta)
-      while (currentCycle < PROCESS_CYCLES) {
-        entities.forEach { processEntity(it, currentCycle, delta) }
-        currentCycle++
-      }
-      postProcess(entities, delta)
+      cycle(entities, fixedStep)
     }
   }
 
-  private fun preProcess(entities: ArrayList<Entity>, delta: Float) {
-    worldGraph.data.reset()
-    entities.forEach {
-      val body = it.getComponent(BodyComponent::class).body
-      body.previousBounds.set(body)
-      body.preProcess?.update(delta)
-    }
+  override fun reset() {
+    super.reset()
+    accumulator = 0f
+    priorContactSet.clear()
+    currentContactSet.clear()
+    worldGraph.reset()
   }
 
-  private fun processEntity(entity: Entity, currentCycle: Int, delta: Float) {
-    val body: Body = entity.getComponent(BodyComponent::class).body
-    when (currentCycle) {
-      0 -> updatePhysics(body, delta)
-      1 -> resolveContacts(body)
-    }
+  /**
+   * Cycles through the entities. This method is called by the [process] method. This method is
+   * responsible for updating the positions of all bodies, resolving collisions, and notifying the
+   * [ContactListener] of any contacts that occur.
+   *
+   * @param entities the [Collection] of [Entity]s to process
+   * @param delta the time in seconds since the last frame
+   */
+  internal fun cycle(entities: ImmutableCollection<Entity>, delta: Float) {
+    preProcess(entities, delta)
+    worldGraph.reset()
+    entities.forEach { processPhysicsAndGraph(it, delta) }
+    entities.forEach { processContactsAndCollisions(it) }
+    processContacts()
+    postProcess(entities, delta)
   }
 
-  private fun postProcess(entities: ArrayList<Entity>, delta: Float) {
+  /**
+   * Pre-processes the entities. This method is called by the [cycle] method. This method is
+   * responsible for resetting the [WorldGraph] and the [PhysicsData] of all bodies, and updating
+   * the [Updatable]s of all bodies.
+   *
+   * @param entities the [Collection] of [Entity]s to process
+   * @param delta the time in seconds since the last frame
+   */
+  internal fun preProcess(entities: ImmutableCollection<Entity>, delta: Float) {
     entities.forEach { e ->
-      val body = e.getComponent(BodyComponent::class).body
-      worldGraph.data.addBody(body)
-      body.fixtures.forEach { f -> worldGraph.data.addFixture(f) }
-      body.postProcess?.update(delta)
+      e.getComponent(BodyComponent::class)?.body?.let { b ->
+        b.previousBounds.set(b)
+        b.preProcess?.update(delta)
+      }
     }
+  }
+
+  /**
+   * Processes the physics and graph for the given entity.
+   *
+   * @param entity the entity to process
+   * @param delta the time in seconds since the last frame
+   */
+  internal fun processPhysicsAndGraph(entity: Entity, delta: Float) {
+    entity.getComponent(BodyComponent::class)?.body?.let { b ->
+      updatePhysics(b, delta)
+      updateFixturePositions(b)
+      worldGraph.addBody(b).addFixtures(b.fixtures)
+    }
+  }
+
+  /**
+   * Processes the contacts and collisions for the given entity.
+   *
+   * @param entity the entity to process
+   */
+  internal fun processContactsAndCollisions(entity: Entity) {
+    entity.getComponent(BodyComponent::class)?.body?.let { b ->
+      checkForContacts(b)
+      resolveCollisions(b)
+    }
+  }
+
+  /**
+   * Post-processes the entities. This method is called by the [cycle] method. This method is
+   * responsible for notifying the [ContactListener] of any contacts that occur.
+   *
+   * @param entities the [Collection] of [Entity]s to process
+   * @param delta the time in seconds since the last frame
+   */
+  internal fun postProcess(entities: ImmutableCollection<Entity>, delta: Float) {
+    entities.forEach { e ->
+      e.getComponent(BodyComponent::class)?.body?.let { b -> b.postProcess?.update(delta) }
+    }
+  }
+
+  /** Processes and updates the [Contact] sets. */
+  internal fun processContacts() {
     currentContactSet.forEach {
       if (priorContactSet.contains(it)) {
         contactListener.continueContact(it.fixture1, it.fixture2, fixedStep)
@@ -120,7 +160,13 @@ class WorldSystem(
     currentContactSet = OrderedSet()
   }
 
-  private fun updatePhysics(body: Body, delta: Float) {
+  /**
+   * Updates the physics of the given body. This method is called by the [processEntity] method.
+   *
+   * @param body the [Body] to update the physics of
+   * @param delta the time in seconds since the last frame
+   */
+  internal fun updatePhysics(body: Body, delta: Float) {
     body.physicsData.let {
       if (it.takeFrictionFromOthers) {
         if (it.frictionOnSelf.x > 0f) {
@@ -144,6 +190,14 @@ class WorldSystem(
       body.x += it.velocity.x * delta
       body.y += it.velocity.y * delta
     }
+  }
+
+  /**
+   * Updates the positions of the given body's fixtures.
+   *
+   * @param body the [Body] to update the positions of the fixtures of
+   */
+  internal fun updateFixturePositions(body: Body) {
     body.fixtures.forEach { f ->
       if (!f.attachedToBody) {
         return
@@ -152,21 +206,44 @@ class WorldSystem(
     }
   }
 
-  private fun filterContact(fixture1: Fixture, fixture2: Fixture) =
+  /**
+   * Filters the given fixtures. This method is called by the [resolveCollisions] method. This
+   * method is responsible for filtering the given fixtures based on the [contactFilterMap]. If the
+   * [contactFilterMap] is null, then this method will return true. Otherwise, this method will
+   * return true if the [contactFilterMap] contains the given fixtures.
+   *
+   * @param fixture1 the first [Fixture] to filter
+   * @param fixture2 the second [Fixture] to filter
+   * @return whether the given fixtures should be filtered
+   */
+  internal fun filterContact(fixture1: Fixture, fixture2: Fixture) =
       (fixture1 != fixture2) &&
-          (contactFilterMap?.get(fixture1.fixtureType)?.contains(fixture2.fixtureType) == true ||
-              contactFilterMap?.get(fixture2.fixtureType)?.contains(fixture1.fixtureType) == true)
+          (contactFilterMap?.get(fixture1.fixtureType)?.contains(fixture2.fixtureType) != false ||
+              contactFilterMap[fixture2.fixtureType]?.contains(fixture1.fixtureType) != false)
 
-  private fun resolveContacts(body: Body) {
-    body.fixtures.forEach {
-      if (it.active && contactFilterMap?.containsKey(it.fixtureType) == true) {
+  /**
+   * Checks for contacts with the given body.
+   *
+   * @param body the [Body] to check for contacts
+   */
+  internal fun checkForContacts(body: Body) {
+    body.fixtures.forEach { f ->
+      if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
         val overlapping =
-            worldGraph.data.getFixturesOverlapping(it) { o -> o.active && filterContact(it, o) }
-        overlapping.forEach { o -> currentContactSet.add(Contact(it, o)) }
+            worldGraph.getFixturesOverlapping(f) { o -> o.active && filterContact(f, o) }
+        overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
       }
     }
+  }
 
-    val overlapping = worldGraph.data.getBodiesOverlapping(body)
+  /**
+   * Resolves the collisions of the given body. This method is responsible for resolving the
+   * collisions of the given body and notifying the [CollisionHandler] of any collisions that occur.
+   *
+   * @param body the [Body] to resolve the collisions of
+   */
+  internal fun resolveCollisions(body: Body) {
+    val overlapping = worldGraph.getBodiesOverlapping(body)
     overlapping.forEach { collisionHandler.handleCollision(body, it) }
   }
 }

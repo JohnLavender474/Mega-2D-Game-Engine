@@ -119,6 +119,7 @@ class Body(
    * @see Resettable.reset
    */
   override fun reset() {
+    previousBounds.set(this)
     physicsData.reset()
     fixtures.forEach { f ->
       val p = getCenterPoint().add(f.offsetFromBodyCenter)

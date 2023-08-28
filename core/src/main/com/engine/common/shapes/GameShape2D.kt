@@ -26,6 +26,27 @@ interface GameShape2D : Shape2D {
   fun getBoundingRectangle(): GameRectangle
 
   /**
+   * Sets the position of this shape to the given position.
+   *
+   * @param position The position to set this shape's position to.
+   * @return This shape.
+   */
+  fun setPosition(position: Vector2) = setPosition(position.x, position.y)
+
+  /*
+   * Sets the position of this shape to the given position.
+   *
+   * @param y The x position to set this shape's x to.
+   * @param y The y position to set this shape's y to.
+   * @return This shape.
+   */
+  fun setPosition(x: Float, y: Float): GameShape2D {
+    setX(x)
+    setY(y)
+    return this
+  }
+
+  /**
    * Sets the x position of this shape to the given x position.
    *
    * @param x The x position to set this shape's x position to.
@@ -54,6 +75,13 @@ interface GameShape2D : Shape2D {
    * @return The y position of this shape.
    */
   fun getY(): Float
+
+  /**
+   * Returns the position of this shape.
+   *
+   * @return The position of this shape.
+   */
+  fun getPosition() = Vector2(getX(), getY())
 
   /**
    * Sets the max x coordinate of this shape to the given value.

@@ -1,7 +1,7 @@
 package com.engine.common.interfaces
 
 interface ComparableDrawableSprite : DrawableSprite, Comparable<ComparableDrawableSprite> {
-    fun getPriority(): Int
+    val priority: Int
 
-    override fun compareTo(other: ComparableDrawableSprite) = getPriority() - other.getPriority()
+    override fun compareTo(other: ComparableDrawableSprite) = priority - other.priority
 }

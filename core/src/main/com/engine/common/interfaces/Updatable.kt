@@ -1,5 +1,8 @@
 package com.engine.common.interfaces
 
-interface Updatable {
-    fun update(delta: Float)
+/** An interface for objects that can be updated. */
+fun interface Updatable {
+
+  /** Updates this object. */
+  fun update(delta: Float)
 }

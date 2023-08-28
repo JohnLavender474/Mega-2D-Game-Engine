@@ -30,6 +30,18 @@ open class PhysicsData(
     var takeFrictionFromOthers: Boolean = true
 ) : Resettable {
 
+  fun resetToDefault() {
+    gravity.setZero()
+    velocity.setZero()
+    velocityClamp.setZero()
+    frictionToApply.setZero()
+    defaultFrictionOnSelf.set(1f, 1f)
+    frictionOnSelf.set(defaultFrictionOnSelf)
+    gravityOn = true
+    collisionOn = true
+    takeFrictionFromOthers = true
+  }
+
   override fun reset() {
     velocity.setZero()
     frictionOnSelf.set(defaultFrictionOnSelf)

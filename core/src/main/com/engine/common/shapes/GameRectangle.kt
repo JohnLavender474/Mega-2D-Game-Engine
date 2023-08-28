@@ -69,154 +69,39 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
           GameLine(getBottomLeftPoint(), getTopLeftPoint()),
           GameLine(getBottomRightPoint(), getTopRightPoint()))
 
-  /**
-   * Sets the size of this [GameRectangle] to the given size. Returns this [GameRectangle].
-   *
-   * @param sizeXY The size to set this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.setSize
-   */
   override fun setSize(sizeXY: Float) = super.setSize(sizeXY) as GameRectangle
 
-  /**
-   * Sets the position of this [GameRectangle] to the given x, y, width and height. Returns this
-   *
-   * @param x The x coordinate to set this [GameRectangle] to.
-   * @param y The y coordinate to set this [GameRectangle] to.
-   * @param width The width to set this [GameRectangle] to.
-   * @param height The height to set this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.set
-   */
   override fun set(x: Float, y: Float, width: Float, height: Float) =
       super.set(x, y, width, height) as GameRectangle
 
-  /**
-   * Sets this [GameRectangle] to the given [Rectangle]. Returns this [GameRectangle].
-   *
-   * @param rect The [Rectangle] to set this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.set
-   */
   override fun set(rect: Rectangle) = super.set(rect) as GameRectangle
 
-  /**
-   * Sets the x coordinate of the bottom left corner of this [GameRectangle] to the given value.
-   * Returns this [GameRectangle].
-   *
-   * @param x The x coordinate to set the bottom left corner of this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.setX
-   */
   override fun setX(x: Float) = super<Rectangle>.setX(x) as GameRectangle
 
-  /**
-   * Sets the y coordinate of the bottom left corner of this [GameRectangle] to the given value.
-   * Returns this [GameRectangle].
-   *
-   * @param y The y coordinate to set the bottom left corner of this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.setY
-   */
   override fun setY(y: Float) = super<Rectangle>.setY(y) as GameRectangle
 
-  /**
-   * Sets the width of this [GameRectangle] to the given value. Returns this [GameRectangle].
-   *
-   * @param width The width to set this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.setWidth
-   */
   override fun setWidth(width: Float) = super.setWidth(width) as GameRectangle
 
-  /**
-   * Sets the height of this [GameRectangle] to the given value. Returns this [GameRectangle].
-   *
-   * @param height The height to set this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.setHeight
-   */
   override fun setHeight(height: Float) = super.setHeight(height) as GameRectangle
 
-  /**
-   * Sets the position of this [GameRectangle] to the given position. Returns this [GameRectangle].
-   *
-   * @param position The position to set this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.setPosition
-   */
-  override fun setPosition(position: Vector2) = super.setPosition(position) as GameRectangle
+  override fun getPosition(): Vector2 = super<Rectangle>.getPosition(Vector2())
 
-  /**
-   * Sets the position of this [GameRectangle] to the given x and y. Returns this [GameRectangle].
-   *
-   * @param x The x coordinate to set this [GameRectangle] to.
-   * @param y The y coordinate to set this [GameRectangle] to.
-   * @return This [GameRectangle].
-   * @see Rectangle.setPosition
-   */
-  override fun setPosition(x: Float, y: Float) = super.setPosition(x, y) as GameRectangle
+  override fun setPosition(position: Vector2) = super<Rectangle>.setPosition(position) as GameRectangle
 
-  /**
-   * Merge this [GameRectangle] with the given [Rectangle]. Returns this [GameRectangle].
-   *
-   * @param rect The [Rectangle] to merge this [GameRectangle] with.
-   * @return This [GameRectangle].
-   * @see Rectangle.merge
-   */
+  override fun setPosition(x: Float, y: Float) = super<Rectangle>.setPosition(x, y) as GameRectangle
+
   override fun merge(rect: Rectangle) = super.merge(rect) as GameRectangle
 
-  /**
-   * Merge this [GameRectangle] with the given x and y. Returns this [GameRectangle].
-   *
-   * @param x The x coordinate to merge this [GameRectangle] with.
-   * @return This [GameRectangle].
-   * @see Rectangle.merge
-   */
   override fun merge(x: Float, y: Float) = super.merge(x, y) as GameRectangle
 
-  /**
-   * Merge this [GameRectangle] with the given [Vector2]. Returns this [GameRectangle].
-   *
-   * @param vec The [Vector2] to merge this [GameRectangle] with.
-   * @return This [GameRectangle].
-   * @see Rectangle.merge
-   */
   override fun merge(vec: Vector2) = super.merge(vec) as GameRectangle
 
-  /**
-   * Merge this [GameRectangle] with the given [Vector2]s. Returns this [GameRectangle].
-   *
-   * @param vecs The [Vector2]s to merge this [GameRectangle] with.
-   * @return This [GameRectangle].
-   * @see Rectangle.merge
-   */
   override fun merge(vecs: Array<out Vector2>) = super.merge(vecs) as GameRectangle
 
-  /**
-   * Fit this [GameRectangle] inside the given [Rectangle]. Returns this [GameRectangle].
-   *
-   * @param rect The [Rectangle] to fit this [GameRectangle] inside.
-   * @return This [GameRectangle].
-   * @see Rectangle.fitInside
-   */
   override fun fitOutside(rect: Rectangle) = super.fitOutside(rect) as GameRectangle
 
-  /**
-   * Fit this [GameRectangle] inside the given [Rectangle]. Returns this [GameRectangle].
-   *
-   * @param rect The [Rectangle] to fit this [GameRectangle] inside.
-   * @return This [GameRectangle].
-   * @see Rectangle.fitInside
-   */
   override fun fitInside(rect: Rectangle) = super.fitInside(rect) as GameRectangle
 
-  /**
-   * Set from string. Returns this [GameRectangle].
-   *
-   * @return This [GameRectangle].
-   * @see Rectangle.fromString
-   */
   override fun fromString(v: String) = super.fromString(v) as GameRectangle
 
   override fun setMaxX(maxX: Float) = setX(maxX - width)

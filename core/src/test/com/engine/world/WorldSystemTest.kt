@@ -314,6 +314,8 @@ class WorldSystemTest :
           every { worldSystem.resolveCollisions(any()) } just Runs
           every { mockWorldGraph.addBody(any()) } returns mockWorldGraph
           every { mockWorldGraph.addFixtures(any()) } returns mockWorldGraph
+          every { mockWorldGraph.getBodiesOverlapping(any(), any()) } returns ArrayList()
+          every { mockWorldGraph.getFixturesOverlapping(any(), any()) } returns ArrayList()
           every { mockWorldGraph.reset() } just Runs
 
           val fixture = Fixture(GameRectangle(), "Type")

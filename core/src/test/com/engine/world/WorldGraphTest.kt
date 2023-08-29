@@ -17,28 +17,32 @@ class WorldGraphTest :
           val body = Body(BodyType.ABSTRACT, 0f, 0f, 5f, 5f)
           worldGraph.addBody(body)
 
-          var bodiesAtPosition = worldGraph.getBodies(0, 0)
-          bodiesAtPosition shouldContain body
-
-          bodiesAtPosition = worldGraph.getBodies(0, 1)
-          bodiesAtPosition shouldNotContain body
-
-          bodiesAtPosition = worldGraph.getBodies(1, 0)
-          bodiesAtPosition shouldNotContain body
+          for (i in 0 until 5) {
+            for (j in 0 until 5) {
+              val bodiesAtPosition = worldGraph.getBodies(i, j)
+              if (i <= 1 && j <= 1) {
+                bodiesAtPosition shouldContain body
+              } else {
+                bodiesAtPosition shouldNotContain body
+              }
+            }
+          }
         }
 
         it("should add fixtures correctly") {
           val fixture = Fixture(GameRectangle(0f, 0f, 5f, 5f), "test")
           worldGraph.addFixture(fixture)
 
-          var fixturesAtPosition = worldGraph.getFixtures(0, 0)
-          fixturesAtPosition shouldContain fixture
-
-          fixturesAtPosition = worldGraph.getFixtures(0, 1)
-          fixturesAtPosition shouldNotContain fixture
-
-          fixturesAtPosition = worldGraph.getFixtures(1, 0)
-          fixturesAtPosition shouldNotContain fixture
+          for (i in 0 until 5) {
+            for (j in 0 until 5) {
+              val fixturesAtPosition = worldGraph.getFixtures(i, j)
+              if (i <= 1 && j <= 1) {
+                fixturesAtPosition shouldContain fixture
+              } else {
+                fixturesAtPosition shouldNotContain fixture
+              }
+            }
+          }
         }
 
         it("should retrieve fixtures overlapping correctly") {

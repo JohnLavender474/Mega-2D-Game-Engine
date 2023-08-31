@@ -1,5 +1,7 @@
 package com.engine.common.objects
 
+import java.util.stream.Stream
+
 class ImmutableCollection<E>(private val collection: Collection<E>) : Collection<E> {
 
   override val size: Int

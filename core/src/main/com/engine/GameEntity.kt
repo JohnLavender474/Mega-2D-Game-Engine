@@ -4,8 +4,8 @@ import com.engine.common.interfaces.Resettable
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
-abstract class Entity : Resettable {
-  internal val components: HashMap<KClass<out Component>, Component> = HashMap()
+abstract class GameEntity : Resettable {
+  internal val components: HashMap<KClass<out GameComponent>, GameComponent> = HashMap()
   internal val properties: HashMap<String, Any?> = HashMap()
 
   var dead = true
@@ -26,16 +26,16 @@ abstract class Entity : Resettable {
 
   fun clearProperties() = properties.clear()
 
-  fun putComponent(c: Component) = components.put(c::class, c)
+  fun putComponent(c: GameComponent) = components.put(c::class, c)
 
-  fun putAllComponents(p: Map<KClass<out Component>, Component>) = components.putAll(p)
+  fun putAllComponents(p: Map<KClass<out GameComponent>, GameComponent>) = components.putAll(p)
 
-  fun <C : Component> getComponent(c: KClass<C>) =
+  fun <C : GameComponent> getComponent(c: KClass<C>) =
       if (hasComponent(c)) c.cast(components[c]) else null
 
-  fun hasComponent(c: KClass<out Component>) = components.containsKey(c)
+  fun hasComponent(c: KClass<out GameComponent>) = components.containsKey(c)
 
-  fun removeComponent(c: KClass<out Component>) = components.remove(c)
+  fun removeComponent(c: KClass<out GameComponent>) = components.remove(c)
 
   fun clearComponents() = components.clear()
 

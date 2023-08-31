@@ -1,7 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
-import com.engine.Entity
+import com.engine.GameEntity
 import com.engine.common.extensions.round
 import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
@@ -18,7 +18,7 @@ class WorldSystemTest :
 
         val entity =
             spyk(
-                object : Entity() {
+                object : GameEntity() {
 
                   override fun init(data: HashMap<String, Any?>) {
                     putAllProperties(data)
@@ -177,7 +177,7 @@ class WorldSystemTest :
           val fixture1 = Fixture(GameRectangle(), "Type1")
           val body1 = Body(BodyType.DYNAMIC, fixtures = arrayListOf(fixture1))
           val entity1 =
-            object : Entity() {
+            object : GameEntity() {
               override fun init(data: HashMap<String, Any?>) {}
 
               override fun runOnDeath() {}
@@ -189,7 +189,7 @@ class WorldSystemTest :
           val fixture2 = Fixture(GameRectangle(), "Type2")
           val body2 = Body(BodyType.DYNAMIC, fixtures = arrayListOf(fixture2))
           val entity2 =
-            object : Entity() {
+            object : GameEntity() {
               override fun init(data: HashMap<String, Any?>) {}
 
               override fun runOnDeath() {}

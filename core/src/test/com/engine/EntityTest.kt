@@ -8,7 +8,7 @@ class EntityTest :
     DescribeSpec({
       describe("Entity class") {
         val entity =
-            object : Entity() {
+            object : GameEntity() {
 
               override fun init(data: HashMap<String, Any?>) {}
 
@@ -17,7 +17,7 @@ class EntityTest :
               override fun reset() {}
             }
 
-        class MockComponent : Component
+        class MockComponent : GameComponent
 
         val mockComponent = MockComponent()
 

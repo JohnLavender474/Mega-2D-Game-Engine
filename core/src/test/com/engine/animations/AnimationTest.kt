@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.extensions.round
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -43,108 +42,108 @@ class AnimationTest :
         }
 
         it("should have the correct initial properties") {
-          animation.duration shouldBe durations.sum()
-          animation.finished shouldBe false
+          animation.getDuration() shouldBe durations.sum()
+          animation.isFinished() shouldBe false
           animation.elapsedTime shouldBe 0f
         }
 
         describe("update") {
           it("should update correctly - looping") {
-            animation.loop = true
+            animation.setLooping(true)
 
             // elapsed time = 0.2f
             animation.update(0.2f)
             animation.currentIndex shouldBe 0
             animation.elapsedTime.round(2) shouldBe 0.2f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 0.45f
             animation.update(0.25f)
             animation.currentIndex shouldBe 1
             animation.elapsedTime.round(2) shouldBe 0.45f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 0.7f
             animation.update(0.25f)
             animation.currentIndex shouldBe 1
             animation.elapsedTime.round(2) shouldBe 0.70f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 0.95f
             animation.update(0.25f)
             animation.currentIndex shouldBe 2
             animation.elapsedTime.round(2) shouldBe 0.95f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 1.01f
             animation.update(0.051f)
             animation.currentIndex shouldBe 3
             animation.elapsedTime.round(3) shouldBe 1.001f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 1.249f
             animation.update(0.248f)
             animation.currentIndex shouldBe 3
             animation.elapsedTime.round(3) shouldBe 1.249f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 1.5f
             animation.update(0.251f)
             animation.currentIndex shouldBe 0
             animation.elapsedTime.round(2) shouldBe 0.00f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
           }
 
           it("should update correctly - not looping") {
-            animation.loop = false
+            animation.setLooping(false)
 
             // elapsed time = 0.2f
             animation.update(0.2f)
             animation.currentIndex shouldBe 0
             animation.elapsedTime.round(2) shouldBe 0.2f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 0.45f
             animation.update(0.25f)
             animation.currentIndex shouldBe 1
             animation.elapsedTime.round(2) shouldBe 0.45f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 0.7f
             animation.update(0.25f)
             animation.currentIndex shouldBe 1
             animation.elapsedTime.round(2) shouldBe 0.70f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 0.95f
             animation.update(0.25f)
             animation.currentIndex shouldBe 2
             animation.elapsedTime.round(2) shouldBe 0.95f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 1.01f
             animation.update(0.051f)
             animation.currentIndex shouldBe 3
             animation.elapsedTime.round(3) shouldBe 1.001f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 1.249f
             animation.update(0.248f)
             animation.currentIndex shouldBe 3
             animation.elapsedTime.round(3) shouldBe 1.249f
-            animation.finished shouldBe false
+            animation.isFinished() shouldBe false
 
             // elapsed time = 1.5f
             animation.update(0.251f)
             animation.currentIndex shouldBe 3
             animation.elapsedTime.round(2) shouldBe 1.5f
-            animation.finished shouldBe true
+            animation.isFinished() shouldBe true
 
             // elapsed time should remain the same
             animation.update(1f)
             animation.currentIndex shouldBe 3
             animation.elapsedTime.round(2) shouldBe 1.5f
-            animation.finished shouldBe true
+            animation.isFinished() shouldBe true
           }
         }
 
@@ -153,7 +152,7 @@ class AnimationTest :
           animation.reset()
 
           animation.elapsedTime shouldBe 0f
-          animation.finished shouldBe false
+          animation.isFinished() shouldBe false
         }
       }
     })

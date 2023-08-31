@@ -2,35 +2,25 @@ package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.extensions.splitAndFlatten
-import com.engine.common.interfaces.Resettable
-import com.engine.common.interfaces.Updatable
 
 /**
  * An animation that can be used to animate a texture region. The animation is created by splitting
  * the specified texture region into rows and columns and then storing the split regions in an
  * array. The animation is then played by iterating through the array of split regions and
  * displaying each region for the specified duration.
+ *
+ * @see IAnimation
  */
-class Animation : Updatable, Resettable {
+class Animation : IAnimation {
 
   private val animation: Array<TextureRegion>
   private val durations: FloatArray
 
-  val duration: Float
-    get() = durations.sum()
+  private var loop = true
 
-  val currentRegion: TextureRegion
-    get() = animation[currentIndex]
-
-  val finished: Boolean
-    get() = !loop && elapsedTime >= duration
-
-  var loop: Boolean = true
-
-  var currentIndex: Int = 0
+  internal var currentIndex: Int = 0
     private set
-
-  var elapsedTime = 0f
+  internal var elapsedTime = 0f
     private set
 
   /**
@@ -81,6 +71,18 @@ class Animation : Updatable, Resettable {
     this.loop = loop
   }
 
+  override fun getCurrentRegion() = animation[currentIndex]
+
+  override fun isFinished() = !loop && elapsedTime >= getDuration()
+
+  override fun getDuration() = durations.sum()
+
+  override fun isLooping() = loop
+
+  override fun setLooping(loop: Boolean) {
+    this.loop = loop
+  }
+
   /**
    * Updates the animation by iterating through the array of split regions and displaying each
    * region for the specified duration. If the animation is not looping, then the animation will
@@ -93,6 +95,7 @@ class Animation : Updatable, Resettable {
 
     // If the animation is finished and not looping, then keep the elapsed time
     // at the duration, and set the current region to the last one (instead of the first)
+    val duration = getDuration()
     if (elapsedTime >= duration) {
       if (loop) {
         elapsedTime -= duration

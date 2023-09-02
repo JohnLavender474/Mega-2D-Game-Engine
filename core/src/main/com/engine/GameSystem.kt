@@ -6,8 +6,8 @@ import com.engine.common.objects.ImmutableCollection
 import kotlin.reflect.KClass
 
 /**
- * A [GameSystem] is an [Updatable] that processes [GameEntity]s. It contains a [componentMask] which
- * determines which [GameEntity]s it processes.
+ * A [GameSystem] is an [Updatable] that processes [GameEntity]s. It contains a [componentMask]
+ * which determines which [GameEntity]s it processes.
  *
  * @see GameEntity
  * @see Updatable
@@ -28,18 +28,22 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
   private var purgeEntities = false
 
   /**
-   * Processes the given [GameEntity]s. This method is called by the [update] method. Implementations of
-   * this method should process the given [GameEntity]s. The given [GameEntity]s are guaranteed to have all
-   * of the [GameComponent]s in this [GameSystem]'s [componentMask]. The collection is immutable. To
-   * make changes to the underlying collection of entities, use the [add] and [remove] methods. This
-   * is to prevent [ConcurrentModificationException]s and to ensure that the [GameEntity]s are processed
-   * correctly.
+   * Processes the given [GameEntity]s. This method is called by the [update] method.
+   * Implementations of this method should process the given [GameEntity]s. The given [GameEntity]s
+   * are guaranteed to have all of the [GameComponent]s in this [GameSystem]'s [componentMask]. The
+   * collection is immutable. To make changes to the underlying collection of entities, use the
+   * [add] and [remove] methods. This is to prevent [ConcurrentModificationException]s and to ensure
+   * that the [GameEntity]s are processed correctly.
    *
    * @param on whether this [GameSystem] is on
    * @param entities the [Collection] of [GameEntity]s to process
    * @param delta the time in seconds since the last frame
    */
-  internal abstract fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float)
+  internal abstract fun process(
+      on: Boolean,
+      entities: ImmutableCollection<GameEntity>,
+      delta: Float
+  )
 
   /** Purges all [GameEntity]s from this [GameSystem]. */
   fun purge() = if (updating) purgeEntities = true else entities.clear()
@@ -54,25 +58,28 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
   fun contains(e: GameEntity) = entities.contains(e)
 
   /**
-   * Removes the given [GameEntity] from this [GameSystem]. This method is called by the [GameEngine]
-   * when an [GameEntity] is removed from the game.
+   * Removes the given [GameEntity] from this [GameSystem]. This method is called by the
+   * [GameEngine] when an [GameEntity] is removed from the game.
    *
    * @param e the [GameEntity] to remove
    */
   fun remove(e: GameEntity) = if (updating) entities.remove(e) else entitiesToAdd.remove(e)
 
   /**
-   * Adds the given [GameEntity] to this [GameSystem] if it qualifies. An [GameEntity] qualifies if it has
-   * all of the [GameComponent]s in this [GameSystem]'s [componentMask].
+   * Adds the given [GameEntity] to this [GameSystem] if it qualifies. An [GameEntity] qualifies if
+   * it has all of the [GameComponent]s in this [GameSystem]'s [componentMask].
    *
    * @param e the [GameEntity] to add
    * @return whether the [GameEntity] was added
    */
   fun add(e: GameEntity) = if (qualifies(e)) entitiesToAdd.add(e) else false
 
+  /** @see addAll */
+  fun addAll(vararg entities: GameEntity) = addAll(entities.toList())
+
   /**
-   * Adds all the given [GameEntity]s to this [GameSystem] if they qualify. An [GameEntity] qualifies if
-   * it has all of the [GameComponent]s in this [GameSystem]'s [componentMask].
+   * Adds all the given [GameEntity]s to this [GameSystem] if they qualify. An [GameEntity]
+   * qualifies if it has all of the [GameComponent]s in this [GameSystem]'s [componentMask].
    *
    * @param entities the [Collection] of [GameEntity]s to add
    * @return the [GameEntity]s that could not be added
@@ -80,8 +87,8 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
   fun addAll(entities: Collection<GameEntity>) = entities.filter { !add(it) }
 
   /**
-   * Returns whether the given [GameEntity] qualifies. An [GameEntity] qualifies if it has all of the
-   * [GameComponent]s in this [GameSystem]'s [componentMask].
+   * Returns whether the given [GameEntity] qualifies. An [GameEntity] qualifies if it has all of
+   * the [GameComponent]s in this [GameSystem]'s [componentMask].
    *
    * @param e the [GameEntity] to check
    * @return whether the [GameEntity] qualifies
@@ -106,8 +113,8 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
   }
 
   /**
-   * Clears all [GameEntity]s from this [GameSystem] and resets it to its default state. This method is
-   * called by the [GameEngine] when the game is reset.
+   * Clears all [GameEntity]s from this [GameSystem] and resets it to its default state. This method
+   * is called by the [GameEngine] when the game is reset.
    *
    * @see GameEngine
    * @see Resettable

@@ -4,9 +4,17 @@ import com.engine.common.interfaces.Resettable
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
-abstract class GameEntity : Resettable {
+abstract class GameEntity() : Resettable {
   internal val components: HashMap<KClass<out GameComponent>, GameComponent> = HashMap()
   internal val properties: HashMap<String, Any?> = HashMap()
+
+  constructor(vararg components: GameComponent) : this() {
+    components.forEach { putComponent(it) }
+  }
+
+  constructor(components: Collection<GameComponent>) : this() {
+    components.forEach { putComponent(it) }
+  }
 
   var dead = true
 

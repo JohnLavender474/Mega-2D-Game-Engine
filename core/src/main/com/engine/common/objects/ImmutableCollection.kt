@@ -1,7 +1,5 @@
 package com.engine.common.objects
 
-import java.util.stream.Stream
-
 class ImmutableCollection<E>(private val collection: Collection<E>) : Collection<E> {
 
   override val size: Int
@@ -23,7 +21,7 @@ class ImmutableCollection<E>(private val collection: Collection<E>) : Collection
 
   fun forEach(action: (E) -> Unit) = collection.forEach(action)
 
-  fun map(transform: (E) -> E) = collection.map(transform)
+  fun <R> map(transform: (E) -> R) = collection.map(transform)
 
   fun filter(predicate: (E) -> Boolean) = collection.filter(predicate)
 }

@@ -38,11 +38,11 @@ import kotlin.math.abs
  * [ContactListener] will be notified of ALL contacts.
  */
 class WorldSystem(
-    private val contactListener: ContactListener,
-    private val worldGraph: WorldGraph,
-    private val fixedStep: Float,
-    private val collisionHandler: CollisionHandler = StandardCollisionHandler,
-    private val contactFilterMap: Map<String, Set<String>>? = null,
+  private val contactListener: ContactListener,
+  private val worldGraphSupplier: () -> WorldGraph,
+  private val fixedStep: Float,
+  private val collisionHandler: CollisionHandler = StandardCollisionHandler,
+  private val contactFilterMap: Map<String, Set<String>>? = null,
 ) : GameSystem(listOf(BodyComponent::class)) {
 
   private var priorContactSet = OrderedSet<Contact>()
@@ -66,7 +66,7 @@ class WorldSystem(
     accumulator = 0f
     priorContactSet.clear()
     currentContactSet.clear()
-    worldGraph.reset()
+    worldGraphSupplier().reset()
   }
 
   /**
@@ -79,7 +79,7 @@ class WorldSystem(
    */
   internal fun cycle(entities: ImmutableCollection<GameEntity>, delta: Float) {
     preProcess(entities, delta)
-    worldGraph.reset()
+    worldGraphSupplier().reset()
     entities.forEach { processPhysicsAndGraph(it, delta) }
     entities.forEach { processContactsAndCollisions(it) }
     processContacts()
@@ -113,7 +113,7 @@ class WorldSystem(
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       updatePhysics(b, delta)
       updateFixturePositions(b)
-      worldGraph.addBody(b).addFixtures(b.fixtures)
+      worldGraphSupplier().addBody(b).addFixtures(b.fixtures)
     }
   }
 
@@ -161,7 +161,7 @@ class WorldSystem(
   }
 
   /**
-   * Updates the physics of the given body. This method is called by the [processEntity] method.
+   * Updates the physics of the given body.
    *
    * @param body the [Body] to update the physics of
    * @param delta the time in seconds since the last frame
@@ -230,7 +230,7 @@ class WorldSystem(
     body.fixtures.forEach { f ->
       if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
         val overlapping =
-            worldGraph.getFixturesOverlapping(f) { o -> o.active && filterContact(f, o) }
+            worldGraphSupplier().getFixturesOverlapping(f) { o -> o.active && filterContact(f, o) }
         overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
       }
     }
@@ -243,7 +243,7 @@ class WorldSystem(
    * @param body the [Body] to resolve the collisions of
    */
   internal fun resolveCollisions(body: Body) {
-    val overlapping = worldGraph.getBodiesOverlapping(body)
+    val overlapping = worldGraphSupplier().getBodiesOverlapping(body)
     overlapping.forEach { collisionHandler.handleCollision(body, it) }
   }
 }

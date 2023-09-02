@@ -1,4 +1,4 @@
-package com.engine.common.extensions
+package com.engine.sprites
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 

@@ -38,7 +38,7 @@ class WorldSystemTest :
 
         val fixedStep = 0.02f
         val worldSystem =
-            spyk(WorldSystem(mockContactListener, mockWorldGraph, fixedStep, mockCollisionHandler))
+            spyk(WorldSystem(mockContactListener, { mockWorldGraph }, fixedStep, mockCollisionHandler))
 
         beforeEach {
           clearAllMocks()
@@ -166,7 +166,7 @@ class WorldSystemTest :
 
           val filteredSystem =
               WorldSystem(
-                  mockContactListener, mockWorldGraph, fixedStep, mockCollisionHandler, filterMap)
+                  mockContactListener, { mockWorldGraph }, fixedStep, mockCollisionHandler, filterMap)
 
           filteredSystem.filterContact(fixture1, fixture2) shouldBe true
           filteredSystem.filterContact(fixture1, fixture1) shouldBe false

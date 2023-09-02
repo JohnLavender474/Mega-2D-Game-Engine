@@ -5,7 +5,7 @@ import com.engine.GameSystem
 import com.engine.common.objects.ImmutableCollection
 
 /** A system that can be used to animate sprites. */
-class AnimationSystem : GameSystem(listOf(AnimationComponent::class)) {
+class AnimationSystem : GameSystem(AnimationComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
     if (!on) {

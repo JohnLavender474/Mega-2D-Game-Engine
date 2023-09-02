@@ -38,12 +38,12 @@ import kotlin.math.abs
  * [ContactListener] will be notified of ALL contacts.
  */
 class WorldSystem(
-  private val contactListener: ContactListener,
-  private val worldGraphSupplier: () -> WorldGraph,
-  private val fixedStep: Float,
-  private val collisionHandler: CollisionHandler = StandardCollisionHandler,
-  private val contactFilterMap: Map<String, Set<String>>? = null,
-) : GameSystem(listOf(BodyComponent::class)) {
+    private val contactListener: ContactListener,
+    private val worldGraphSupplier: () -> WorldGraph,
+    private val fixedStep: Float,
+    private val collisionHandler: CollisionHandler = StandardCollisionHandler,
+    private val contactFilterMap: Map<String, Set<String>>? = null,
+) : GameSystem(BodyComponent::class) {
 
   private var priorContactSet = OrderedSet<Contact>()
   private var currentContactSet = OrderedSet<Contact>()

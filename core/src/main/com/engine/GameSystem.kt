@@ -27,6 +27,9 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
 
   private var purgeEntities = false
 
+  /** @see GameSystem(componentMask: Collection<KClass<out GameComponent>>) */
+  constructor(vararg componentMask: KClass<out GameComponent>) : this(componentMask.toList())
+
   /**
    * Processes the given [GameEntity]s. This method is called by the [update] method.
    * Implementations of this method should process the given [GameEntity]s. The given [GameEntity]s

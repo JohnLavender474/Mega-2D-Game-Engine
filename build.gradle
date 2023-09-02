@@ -47,6 +47,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        implementation("org:jaudiotagger:2.0.3")
         testImplementation 'io.kotest:kotest-runner-junit5-jvm:4.6.0'
         testImplementation 'io.kotest:kotest-runner-junit5:4.0.2'
         testImplementation 'io.kotest:kotest-assertions-core:4.0.2'

@@ -17,9 +17,9 @@ import kotlin.reflect.KClass
 abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) :
     Updatable, Resettable {
 
-  private val entities: LinkedHashSet<GameEntity> = LinkedHashSet()
-  private val entitiesToAdd: ArrayList<GameEntity> = ArrayList()
-  private val componentMask: HashSet<KClass<out GameComponent>> = HashSet(componentMask)
+  private val entities = LinkedHashSet<GameEntity>()
+  private val entitiesToAdd = ArrayList<GameEntity>()
+  private val componentMask = HashSet<KClass<out GameComponent>>(componentMask)
 
   var on = true
   var updating = true
@@ -53,7 +53,7 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
 
   /**
    * Returns whether this [GameSystem] contains the given [GameEntity]. This method is called by the
-   * [GameEngine] when an [GameEntity] is added to the game.
+   * [IGameEngine] when an [GameEntity] is added to the game.
    *
    * @param e the [GameEntity] to check
    * @return whether this [GameSystem] contains the given [GameEntity]
@@ -62,7 +62,7 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
 
   /**
    * Removes the given [GameEntity] from this [GameSystem]. This method is called by the
-   * [GameEngine] when an [GameEntity] is removed from the game.
+   * [IGameEngine] when an [GameEntity] is removed from the game.
    *
    * @param e the [GameEntity] to remove
    */
@@ -99,12 +99,12 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
   fun qualifies(e: GameEntity) = componentMask.all { e.hasComponent(it) }
 
   /**
-   * Updates this [GameSystem]. This method is called by the [GameEngine] every frame. Entities that
-   * are dead or that do not qualify are removed from this [GameSystem] before the [process] method
-   * is called.
+   * Updates this [GameSystem]. This method is called by the [IGameEngine] every frame. Entities
+   * that are dead or that do not qualify are removed from this [GameSystem] before the [process]
+   * method is called.
    *
    * @param delta the time in seconds since the last frame
-   * @see GameEngine
+   * @see IGameEngine
    */
   final override fun update(delta: Float) {
     updating = true
@@ -117,9 +117,9 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
 
   /**
    * Clears all [GameEntity]s from this [GameSystem] and resets it to its default state. This method
-   * is called by the [GameEngine] when the game is reset.
+   * is called by the [IGameEngine] when the game is reset.
    *
-   * @see GameEngine
+   * @see IGameEngine
    * @see Resettable
    */
   override fun reset() {

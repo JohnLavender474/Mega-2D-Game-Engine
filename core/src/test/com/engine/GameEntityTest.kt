@@ -1,5 +1,6 @@
 package com.engine
 
+import com.engine.common.objects.Properties
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -10,7 +11,7 @@ class GameEntityTest :
         val entity =
             object : GameEntity() {
 
-              override fun init(data: HashMap<String, Any?>) {}
+              override fun spawn(spawnProps: Properties) {}
 
               override fun runOnDeath() {}
 

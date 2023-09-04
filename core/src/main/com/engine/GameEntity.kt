@@ -39,9 +39,9 @@ abstract class GameEntity() : Resettable, Propertizable {
   /**
    * Initializes this [GameEntity] with the given [HashMap] of data.
    *
-   * @param data The [HashMap] of data to initialize this [GameEntity] with.
+   * @param spawnProps The [HashMap] of data to initialize this [GameEntity] with.
    */
-  abstract fun init(data: HashMap<String, Any?>)
+  abstract fun spawn(spawnProps: Properties)
 
   /** Logic to run when this entity dies. */
   abstract fun runOnDeath()

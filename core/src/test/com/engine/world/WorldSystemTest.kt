@@ -3,6 +3,7 @@ package com.engine.world
 import com.badlogic.gdx.math.Vector2
 import com.engine.GameEntity
 import com.engine.common.extensions.round
+import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContain
@@ -20,8 +21,8 @@ class WorldSystemTest :
             spyk(
                 object : GameEntity() {
 
-                  override fun init(data: HashMap<String, Any?>) {
-                    putAllProperties(data)
+                  override fun spawn(spawnProps: Properties) {
+                    putAllProperties(spawnProps)
                   }
 
                   override fun runOnDeath() {}
@@ -38,7 +39,9 @@ class WorldSystemTest :
 
         val fixedStep = 0.02f
         val worldSystem =
-            spyk(WorldSystem(mockContactListener, { mockWorldGraph }, fixedStep, mockCollisionHandler))
+            spyk(
+                WorldSystem(
+                    mockContactListener, { mockWorldGraph }, fixedStep, mockCollisionHandler))
 
         beforeEach {
           clearAllMocks()
@@ -166,7 +169,11 @@ class WorldSystemTest :
 
           val filteredSystem =
               WorldSystem(
-                  mockContactListener, { mockWorldGraph }, fixedStep, mockCollisionHandler, filterMap)
+                  mockContactListener,
+                  { mockWorldGraph },
+                  fixedStep,
+                  mockCollisionHandler,
+                  filterMap)
 
           filteredSystem.filterContact(fixture1, fixture2) shouldBe true
           filteredSystem.filterContact(fixture1, fixture1) shouldBe false
@@ -177,25 +184,25 @@ class WorldSystemTest :
           val fixture1 = Fixture(GameRectangle(), "Type1")
           val body1 = Body(BodyType.DYNAMIC, fixtures = arrayListOf(fixture1))
           val entity1 =
-            object : GameEntity() {
-              override fun init(data: HashMap<String, Any?>) {}
+              object : GameEntity() {
+                override fun spawn(spawnProps: Properties) {}
 
-              override fun runOnDeath() {}
+                override fun runOnDeath() {}
 
-              override fun reset() {}
-            }
+                override fun reset() {}
+              }
           entity1.putComponent(BodyComponent(body1))
 
           val fixture2 = Fixture(GameRectangle(), "Type2")
           val body2 = Body(BodyType.DYNAMIC, fixtures = arrayListOf(fixture2))
           val entity2 =
-            object : GameEntity() {
-              override fun init(data: HashMap<String, Any?>) {}
+              object : GameEntity() {
+                override fun spawn(spawnProps: Properties) {}
 
-              override fun runOnDeath() {}
+                override fun runOnDeath() {}
 
-              override fun reset() {}
-            }
+                override fun reset() {}
+              }
           entity2.putComponent(BodyComponent(body2))
 
           it("should process contacts correctly - test 1") {
@@ -247,14 +254,14 @@ class WorldSystemTest :
             worldSystem.add(entity2)
 
             every { mockWorldGraph.getFixturesOverlapping(any(), any()) } answers
-                    {
-                      val fixture = firstArg<Fixture>()
-                      if (fixture == fixture1) {
-                        arrayListOf(fixture2)
-                      } else {
-                        arrayListOf(fixture1)
-                      }
-                    }
+                {
+                  val fixture = firstArg<Fixture>()
+                  if (fixture == fixture1) {
+                    arrayListOf(fixture2)
+                  } else {
+                    arrayListOf(fixture1)
+                  }
+                }
 
             worldSystem.update(fixedStep * 2)
             verify(exactly = 1) { mockContactListener.beginContact(any(), any(), any()) }

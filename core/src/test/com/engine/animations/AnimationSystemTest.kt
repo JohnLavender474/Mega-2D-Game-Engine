@@ -3,6 +3,7 @@ package com.engine.animations
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.GameEntity
+import com.engine.common.objects.Properties
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -20,7 +21,7 @@ class AnimationSystemTest :
           entity =
               object : GameEntity() {
 
-                override fun init(data: HashMap<String, Any?>) {}
+                override fun spawn(spawnProps: Properties) {}
 
                 override fun runOnDeath() {}
 

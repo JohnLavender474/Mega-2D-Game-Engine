@@ -2,6 +2,7 @@ package com.engine.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.GameEntity
+import com.engine.common.objects.Properties
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -36,7 +37,7 @@ class SpriteSystemTest :
 
           entity =
               object : GameEntity(mockSpriteComponent) {
-                override fun init(data: HashMap<String, Any?>) {}
+                override fun spawn(spawnProps: Properties) {}
 
                 override fun runOnDeath() {}
 

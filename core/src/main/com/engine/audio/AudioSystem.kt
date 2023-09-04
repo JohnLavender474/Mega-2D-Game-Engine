@@ -1,9 +1,8 @@
-package com.engine.sounds
+package com.engine.audio
 
 import com.engine.GameEntity
 import com.engine.GameSystem
 import com.engine.common.objects.ImmutableCollection
-import com.engine.managers.AudioManager
 
 /**
  * A [GameSystem] that processes [SoundComponent]s. It plays and stops sounds and music.

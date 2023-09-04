@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 
-class EntityTest :
+class GameEntityTest :
     DescribeSpec({
       describe("Entity class") {
         val entity =

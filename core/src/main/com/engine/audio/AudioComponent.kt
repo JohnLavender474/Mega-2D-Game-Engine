@@ -1,4 +1,4 @@
-package com.engine.sounds
+package com.engine.audio
 
 import com.badlogic.gdx.audio.Music
 import com.engine.GameComponent

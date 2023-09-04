@@ -1,4 +1,4 @@
-package com.engine.managers
+package com.engine.audio
 
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound

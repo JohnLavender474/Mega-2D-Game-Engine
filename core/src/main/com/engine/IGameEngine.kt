@@ -22,13 +22,6 @@ interface IGameEngine : Updatable, Resettable {
    */
   fun spawn(entity: GameEntity, spawnProps: Properties): Boolean
 
-  /**
-   * Sets the state of all [GameSystem]s in this [IGameEngine].
-   *
-   * @param on whether the [GameSystem]s should be on
-   */
-  fun setAllSystemsOn(on: Boolean) = systems.forEach { it.on = on }
-
   /** Resets all [GameSystem]s in this [IGameEngine]. */
   override fun reset() = systems.forEach { it.reset() }
 }

@@ -1,5 +1,6 @@
 package com.engine
 
+import com.engine.common.interfaces.Activatable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
@@ -15,13 +16,14 @@ import kotlin.reflect.KClass
  * @see GameComponent
  */
 abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) :
-    Updatable, Resettable {
+    Activatable, Updatable, Resettable {
 
   private val entities = LinkedHashSet<GameEntity>()
   private val entitiesToAdd = ArrayList<GameEntity>()
   private val componentMask = HashSet<KClass<out GameComponent>>(componentMask)
 
-  var on = true
+  override var on = true
+
   var updating = true
     private set
 

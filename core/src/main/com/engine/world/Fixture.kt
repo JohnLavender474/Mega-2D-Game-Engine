@@ -1,9 +1,9 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.interfaces.Propertizable
+import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameShape2D
-import kotlin.reflect.KClass
-import kotlin.reflect.cast
 
 /**
  * A fixture for a [Body]. A fixture is a shape that is attached to a body. It can be used to detect
@@ -18,8 +18,7 @@ import kotlin.reflect.cast
  *   fixture will not move with the body it is attached to.
  * @param offsetFromBodyCenter The offset of this fixture from the center of the body it is attached
  *   to. Used to position this fixture relative to the body it is attached to.
- * @param userData The user data of this fixture. Can be used to store any data associated with this
- *   fixture.
+ * @param properties The properties of this fixture.
  */
 class Fixture(
     var shape: GameShape2D,
@@ -27,34 +26,8 @@ class Fixture(
     var active: Boolean = true,
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),
-    var userData: HashMap<String, Any?> = HashMap()
-) {
-
-  /**
-   * Returns the user data associated with the given key.
-   *
-   * @param key the key of the user data
-   * @return the user data associated with the given key
-   */
-  fun getUserData(key: String) = userData[key]
-
-  /**
-   * Returns the user data associated with the given key.
-   *
-   * @param key the key of the user data
-   * @param c the class of the user data
-   * @return the user data associated with the given key
-   */
-  fun <T : Any> getUserData(key: String, c: KClass<T>) = c.cast(userData[key])
-
-  /**
-   * Sets the user data associated with the given key to the given data.
-   *
-   * @param key the key of the user data
-   * @param data the data to set the user data to
-   * @return the value associated with the given key
-   */
-  fun setUserData(key: String, data: Any?) = userData.put(key, data)
+    override var properties: Properties = Properties(),
+) : Propertizable {
 
   /**
    * Returns if this fixture's shape overlaps the given shape.

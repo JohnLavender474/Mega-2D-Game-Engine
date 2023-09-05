@@ -14,10 +14,9 @@ class FixtureTest :
         val mockShape = mockk<GameShape2D>()
         val fixtureType = "type"
         val offset = Vector2(5f, 5f)
-        val userData = hashMapOf<String, Any?>("key" to "value")
 
         val fixture =
-            Fixture(mockShape, fixtureType, offsetFromBodyCenter = offset, userData = userData)
+            Fixture(mockShape, fixtureType, offsetFromBodyCenter = offset)
 
         it("should have the correct initial properties") {
           fixture.shape shouldBe mockShape
@@ -25,12 +24,6 @@ class FixtureTest :
           fixture.active shouldBe true
           fixture.attachedToBody shouldBe true
           fixture.offsetFromBodyCenter shouldBe offset
-          fixture.userData shouldBe userData
-          fixture.getUserData("key", String::class) shouldBe "value"
-          fixture.setUserData("hello", 1)
-          fixture.getUserData("hello", Int::class) shouldBe 1
-          fixture.setUserData("world", null)
-          fixture.getUserData("world") shouldBe null
         }
 
         it("should overlap with another fixture") {

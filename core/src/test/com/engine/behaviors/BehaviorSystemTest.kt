@@ -41,13 +41,13 @@ class BehaviorSystemTest :
         it("should not add entity") { behaviorSystem.add(entity) shouldBe false }
 
         it("should add entity") {
-          entity.putComponent(behaviorComponent)
+          entity.addComponent(behaviorComponent)
           behaviorSystem.add(entity) shouldBe true
         }
 
         it("should process behaviors when turned on") {
           // if
-          entity.putComponent(behaviorComponent)
+          entity.addComponent(behaviorComponent)
           behaviorSystem.add(entity) shouldBe true
 
           // when
@@ -62,7 +62,7 @@ class BehaviorSystemTest :
 
         it("should not process behaviors when turned off") {
           // if
-          entity.putComponent(behaviorComponent)
+          entity.addComponent(behaviorComponent)
           behaviorSystem.add(entity) shouldBe true
           behaviorSystem.on = false
 

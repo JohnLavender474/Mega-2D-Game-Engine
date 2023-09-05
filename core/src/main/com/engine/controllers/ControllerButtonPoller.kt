@@ -13,21 +13,21 @@ import com.badlogic.gdx.Gdx
 class ControllerButtonPoller(
     var keyboardCodeSupplier: () -> Int,
     var controllerCodeSupplier: () -> Int
-) {
+) : IControllerButtonPoller {
 
   /**
    * Sets the keyboard code for the button.
    *
    * @return This instance for chaining.
    */
-  fun isKeyboardButtonPressed() = Gdx.input.isKeyPressed(keyboardCodeSupplier())
+  override fun isKeyboardButtonPressed() = Gdx.input.isKeyPressed(keyboardCodeSupplier())
 
   /**
    * Returns if the button is pressed on the controller with the specified index.
    *
    * @param controllerIndex The index of the controller.
    */
-  fun isControllerButtonPressed(controllerIndex: Int = 0) =
+  override fun isControllerButtonPressed(controllerIndex: Int) =
       ControllerUtils.isControllerConnected(controllerIndex) &&
-          ControllerUtils.getController(controllerIndex)!!.isButtonPressed(controllerCodeSupplier())
+          ControllerUtils.getController(controllerIndex)?.isButtonPressed(controllerCodeSupplier()) == true
 }

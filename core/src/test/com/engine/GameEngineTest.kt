@@ -55,8 +55,8 @@ class GameEngineTest :
           mockComponent1 = MockComponent1()
           mockComponent2 = MockComponent2()
 
-          mockEntity1.putComponent(mockComponent1)
-          mockEntity2.putComponent(mockComponent2)
+          mockEntity1.addComponent(mockComponent1)
+          mockEntity2.addComponent(mockComponent2)
 
           mockSystem1 =
               object : GameSystem(MockComponent1::class) {

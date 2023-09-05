@@ -41,7 +41,7 @@ class AnimationSystemTest :
           animationComponent = spyk(AnimationComponent(hashMapOf(mockSprite to mockAnimator)))
           animationSystem = spyk(AnimationSystem())
 
-          entity.putComponent(animationComponent)
+          entity.addComponent(animationComponent)
           animationSystem.add(entity)
         }
 

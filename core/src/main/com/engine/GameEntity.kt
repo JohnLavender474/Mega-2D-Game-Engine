@@ -14,7 +14,7 @@ import kotlin.reflect.cast
  */
 abstract class GameEntity() : Resettable, Propertizable {
 
-  val components: HashMap<KClass<out GameComponent>, GameComponent> = HashMap()
+  val components = HashMap<KClass<out GameComponent>, GameComponent>()
   override val properties = Properties()
   var dead = true
 
@@ -24,7 +24,7 @@ abstract class GameEntity() : Resettable, Propertizable {
    * @param components The [GameComponent]s to add to this [GameEntity].
    */
   constructor(vararg components: GameComponent) : this() {
-    components.forEach { putComponent(it) }
+    components.forEach { addComponent(it) }
   }
 
   /**
@@ -33,7 +33,7 @@ abstract class GameEntity() : Resettable, Propertizable {
    * @param components The [Collection] of [GameComponent]s to add to this [GameEntity].
    */
   constructor(components: Collection<GameComponent>) : this() {
-    components.forEach { putComponent(it) }
+    components.forEach { addComponent(it) }
   }
 
   /**
@@ -52,7 +52,7 @@ abstract class GameEntity() : Resettable, Propertizable {
    * @param c The [GameComponent] to add.
    * @return The [GameComponent] that was added.
    */
-  fun putComponent(c: GameComponent) = components.put(c::class, c)
+  fun addComponent(c: GameComponent) = components.put(c::class, c)
 
   /**
    * Gets a [GameComponent] from this [GameEntity].

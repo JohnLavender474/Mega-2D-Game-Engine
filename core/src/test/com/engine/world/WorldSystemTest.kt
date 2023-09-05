@@ -52,7 +52,7 @@ class WorldSystemTest :
           physicsData.resetToDefault()
 
           entity.reset()
-          entity.putComponent(bodyComponent)
+          entity.addComponent(bodyComponent)
 
           every { mockWorldGraph.reset() } just Runs
 
@@ -191,7 +191,7 @@ class WorldSystemTest :
 
                 override fun reset() {}
               }
-          entity1.putComponent(BodyComponent(body1))
+          entity1.addComponent(BodyComponent(body1))
 
           val fixture2 = Fixture(GameRectangle(), "Type2")
           val body2 = Body(BodyType.DYNAMIC, fixtures = arrayListOf(fixture2))
@@ -203,7 +203,7 @@ class WorldSystemTest :
 
                 override fun reset() {}
               }
-          entity2.putComponent(BodyComponent(body2))
+          entity2.addComponent(BodyComponent(body2))
 
           it("should process contacts correctly - test 1") {
             every { mockWorldGraph.reset() } just Runs

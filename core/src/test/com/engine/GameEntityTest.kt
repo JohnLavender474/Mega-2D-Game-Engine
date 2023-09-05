@@ -47,7 +47,7 @@ class GameEntityTest :
         }
 
         it("should put and get components correctly") {
-          entity.putComponent(mockComponent)
+          entity.addComponent(mockComponent)
           entity.getComponent(MockComponent::class) shouldBe mockComponent
           entity.hasComponent(MockComponent::class) shouldBe true
 
@@ -57,7 +57,7 @@ class GameEntityTest :
         }
 
         it("should clear components correctly") {
-          entity.putComponent(mockComponent)
+          entity.addComponent(mockComponent)
           entity.clearComponents()
 
           entity.getComponent(MockComponent::class) shouldBe null
@@ -66,7 +66,7 @@ class GameEntityTest :
 
         it("should generate a valid string representation") {
           val componentName = "MockComponent"
-          entity.putComponent(mockComponent)
+          entity.addComponent(mockComponent)
 
           entity.toString() shouldBe "${entity::class.simpleName}: $componentName"
         }

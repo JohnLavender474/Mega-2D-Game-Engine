@@ -32,7 +32,7 @@ class ControllerPollerTest :
           val buttonPoller =
               spyk(ControllerButtonPoller({ 1 }, { 2 })) {
                 every { isKeyboardButtonPressed() } answers { pressed }
-                every { isControllerButtonPressed() } answers { pressed }
+                every { isControllerButtonPressed(any()) } answers { pressed }
               }
           val buttons = listOf("ButtonA" to buttonPoller)
           val controllerPoller = ControllerPoller(buttons)

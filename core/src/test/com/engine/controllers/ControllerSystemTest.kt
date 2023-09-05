@@ -14,7 +14,7 @@ class ControllerSystemTest :
           val entity = SimpleMockEntity()
 
           val actuator =
-              mockk<ControllerButtonActuator>() {
+              mockk<ControllerButtonActuator> {
                 every { onJustPressed() } just Runs
                 every { onPressContinued(any()) } just Runs
                 every { onJustReleased() } just Runs
@@ -22,7 +22,7 @@ class ControllerSystemTest :
               }
 
           val controllerComponent = ControllerComponent(mapOf("ButtonA" to actuator))
-          entity.putComponent(controllerComponent)
+          entity.addComponent(controllerComponent)
 
           controllerSystem.add(entity)
 

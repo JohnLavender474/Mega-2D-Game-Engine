@@ -20,7 +20,7 @@ enum class ControllerPollingOption {
  * @param buttons The collection of buttons to manage.
  */
 class ControllerPoller(
-    buttons: Collection<Pair<String, ControllerButtonPoller>>,
+    buttons: Collection<Pair<String, IControllerButtonPoller>>,
     var pollingOption: ControllerPollingOption = ControllerPollingOption.BOTH
 ) : IControllerPoller {
 
@@ -30,7 +30,7 @@ class ControllerPoller(
    * @param status The status of the button.
    */
   internal data class ControllerButtonHandle(
-      internal val poller: ControllerButtonPoller,
+      internal val poller: IControllerButtonPoller,
       internal var status: ControllerButtonStatus = ControllerButtonStatus.RELEASED
   )
 

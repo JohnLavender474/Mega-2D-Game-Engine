@@ -6,6 +6,14 @@ import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2DSupplier
 
+/**
+ * A [GraphMap] that uses a quad tree to store and retrieve objects.
+ *
+ * @param width The width of the graph.
+ * @param height The height of the graph.
+ * @param ppm The number of pixels per meter.
+ * @param depth The depth of the quad tree.
+ */
 open class QuadTreeGraphMap(
     override val width: Int,
     override val height: Int,
@@ -13,8 +21,21 @@ open class QuadTreeGraphMap(
     val depth: Int
 ) : GraphMap {
 
+  // A map of the objects in each cell.
   protected val objects = HashMap<IntPair, ArrayList<GameShape2DSupplier>>()
 
+  /**
+   * Adds the given object to this graph. This method is recursive. It will add the object to the
+   * correct cell. If the recursive call is not at the maximum depth, it will split the cell into
+   * four sub-cells and add the object to the correct sub-cell.
+   *
+   * @param obj The object to add.
+   * @param current The current depth of the recursive call.
+   * @param minX The minimum x coordinate of the cell.
+   * @param minY The minimum y coordinate of the cell.
+   * @param maxX The maximum x coordinate of the cell.
+   * @param maxY The maximum y coordinate of the cell.
+   */
   protected fun add(
       obj: GameShape2DSupplier,
       current: Int,

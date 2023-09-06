@@ -9,3 +9,8 @@ import com.engine.common.extensions.isInCamera
 fun Rectangle.toBoundingBox() = BoundingBox(Vector3(x, y, 0f), Vector3(x + width, y + height, 0f))
 
 fun Rectangle.isInCamera(camera: Camera) = toBoundingBox().isInCamera(camera)
+
+fun Rectangle.toIntArray() =
+    intArrayOf(x.toInt(), y.toInt(), (width + 1).toInt(), (height + 1).toInt())
+
+fun Rectangle.toGameRectangle() = GameRectangle(this)

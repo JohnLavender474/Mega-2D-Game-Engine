@@ -3,6 +3,7 @@ package com.engine.world
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.shapes.GameRectangle
+import com.engine.common.shapes.GameShape2DSupplier
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -44,7 +45,7 @@ class Body(
     var userData: HashMap<String, Any?> = HashMap(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
-) : GameRectangle(x, y, width, height), Resettable {
+) : GameRectangle(x, y, width, height), GameShape2DSupplier, Resettable {
 
   /**
    * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and
@@ -126,6 +127,8 @@ class Body(
       f.shape.setCenter(p)
     }
   }
+
+  override fun getGameShape2D() = this
 
   override fun equals(other: Any?) = this === other
 

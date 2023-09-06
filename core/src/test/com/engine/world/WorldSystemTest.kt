@@ -5,6 +5,10 @@ import com.engine.GameEntity
 import com.engine.common.extensions.round
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
+import com.engine.common.shapes.GameShape2D
+import com.engine.common.shapes.GameShape2DSupplier
+import com.engine.graph.GraphMap
+import com.engine.graph.MinsAndMaxes
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
@@ -14,7 +18,7 @@ class WorldSystemTest :
     DescribeSpec({
       describe("WorldSystem class") {
         val mockContactListener = mockk<ContactListener>()
-        val mockWorldGraph = mockk<WorldGraph>()
+        val mockWorldGraph = mockk<GraphMap>()
         val mockCollisionHandler = mockk<CollisionHandler>()
 
         val entity =
@@ -72,14 +76,14 @@ class WorldSystemTest :
 
         it("should pre-process entities correctly") {
           every { mockWorldGraph.reset() } just Runs
-          every { mockWorldGraph.getBodiesOverlapping(any(), any()) } returns ArrayList()
-          every { mockWorldGraph.getFixturesOverlapping(any(), any()) } returns ArrayList()
+          every { mockWorldGraph.get(any<GameShape2D>()) } returns ArrayList()
+
           every { worldSystem.processPhysicsAndGraph(any(), any()) } just Runs
           every { worldSystem.updateFixturePositions(any()) } just Runs
           every { worldSystem.processContacts() } just Runs
           every { worldSystem.postProcess(any(), any()) } just Runs
-          body.set(5f, 5f, 10f, 10f)
 
+          body.set(5f, 5f, 10f, 10f)
           worldSystem.update(fixedStep)
 
           body.previousBounds shouldBe GameRectangle(5f, 5f, 10f, 10f)
@@ -87,8 +91,8 @@ class WorldSystemTest :
 
         it("should add bodies and fixtures to graph correctly") {
           every { mockWorldGraph.reset() } just Runs
-          every { mockWorldGraph.getBodiesOverlapping(any(), any()) } returns ArrayList()
-          every { mockWorldGraph.getFixturesOverlapping(any(), any()) } returns ArrayList()
+          every { mockWorldGraph.get(any<Body>()) } returns ArrayList()
+
           every { worldSystem.updatePhysics(any(), any()) } just Runs
           every { worldSystem.updateFixturePositions(any()) } just Runs
           every { worldSystem.processContacts() } just Runs
@@ -97,34 +101,30 @@ class WorldSystemTest :
           val fixture = Fixture(mockk(), "Type")
           body.fixtures.add(fixture)
 
-          val bodies = ArrayList<Body>()
-          val fixtures = ArrayList<Fixture>()
-          every { mockWorldGraph.addBody(any()) } answers
-              {
-                bodies.add(firstArg())
-                mockWorldGraph
-              }
-          every { mockWorldGraph.addFixtures(any()) } answers
-              {
-                fixtures.addAll(firstArg())
-                mockWorldGraph
-              }
+          val objs = ArrayList<GameShape2DSupplier>()
+
+          every { mockWorldGraph.add(any()) } answers { objs.add(firstArg()) }
 
           worldSystem.update(fixedStep)
 
-          bodies shouldContain body
-          fixtures shouldContain fixture
+          objs shouldContain body
+          objs shouldContain fixture
         }
 
         describe("cycle") {
           it("should cycle correctly - test 1") {
+            body.fixtures.add(Fixture(GameRectangle(), "Test"))
+
+            val objs = ArrayList<GameShape2DSupplier>()
+
             every { worldSystem.preProcess(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.updatePhysics(any(), any()) } just Runs
             every { worldSystem.updateFixturePositions(any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
-            every { mockWorldGraph.addBody(any()) } returns mockWorldGraph
-            every { mockWorldGraph.addFixtures(any()) } returns mockWorldGraph
+
+            every { mockWorldGraph.add(any()) } answers { objs.add(firstArg()) }
+            every { mockWorldGraph.get(any<GameShape2D>()) } returns ArrayList()
             every { mockWorldGraph.reset() } just Runs
 
             worldSystem.update(fixedStep)
@@ -134,19 +134,28 @@ class WorldSystemTest :
             verify(exactly = 1) { worldSystem.updatePhysics(any(), any()) }
             verify(exactly = 1) { worldSystem.updateFixturePositions(any()) }
             verify(exactly = 1) { worldSystem.resolveCollisions(any()) }
-            verify(exactly = 1) { mockWorldGraph.addFixtures(any()) }
-            verify(exactly = 1) { mockWorldGraph.addBody(any()) }
+
             verify(exactly = 1) { mockWorldGraph.reset() }
+            verify(exactly = 2) { mockWorldGraph.add(any()) }
+
+            objs.size shouldBe 2
+            objs shouldContain body
+            objs shouldContain body.fixtures[0]
           }
 
           it("should cycle correctly - test 2") {
+            body.fixtures.add(Fixture(GameRectangle(), "Test"))
+
+            val objs = ArrayList<GameShape2DSupplier>()
+
             every { worldSystem.preProcess(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.updatePhysics(any(), any()) } just Runs
             every { worldSystem.updateFixturePositions(any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
-            every { mockWorldGraph.addBody(any()) } returns mockWorldGraph
-            every { mockWorldGraph.addFixtures(any()) } returns mockWorldGraph
+
+            every { mockWorldGraph.get(any<GameShape2D>()) } returns ArrayList()
+            every { mockWorldGraph.add(any()) } answers { objs.add(firstArg()) }
             every { mockWorldGraph.reset() } just Runs
 
             worldSystem.update(fixedStep * 2)
@@ -156,9 +165,13 @@ class WorldSystemTest :
             verify(exactly = 2) { worldSystem.updatePhysics(any(), any()) }
             verify(exactly = 2) { worldSystem.updateFixturePositions(any()) }
             verify(exactly = 2) { worldSystem.resolveCollisions(any()) }
-            verify(exactly = 2) { mockWorldGraph.addFixtures(any()) }
-            verify(exactly = 2) { mockWorldGraph.addBody(any()) }
+
             verify(exactly = 2) { mockWorldGraph.reset() }
+            verify(exactly = 4) { mockWorldGraph.add(any()) }
+
+            objs.size shouldBe 4
+            objs.filter { it == body }.size shouldBe 2
+            objs.filter { it == body.fixtures[0] }.size shouldBe 2
           }
         }
 
@@ -181,7 +194,7 @@ class WorldSystemTest :
         }
 
         describe("process contacts") {
-          val fixture1 = Fixture(GameRectangle(), "Type1")
+          val fixture1 = Fixture(GameRectangle(0f, 0f, 10f, 10f), "Type1")
           val body1 = Body(BodyType.DYNAMIC, fixtures = arrayListOf(fixture1))
           val entity1 =
               object : GameEntity() {
@@ -193,7 +206,7 @@ class WorldSystemTest :
               }
           entity1.addComponent(BodyComponent(body1))
 
-          val fixture2 = Fixture(GameRectangle(), "Type2")
+          val fixture2 = Fixture(GameRectangle(5f, 5f, 15f, 15f), "Type2")
           val body2 = Body(BodyType.DYNAMIC, fixtures = arrayListOf(fixture2))
           val entity2 =
               object : GameEntity() {
@@ -207,9 +220,11 @@ class WorldSystemTest :
 
           it("should process contacts correctly - test 1") {
             every { mockWorldGraph.reset() } just Runs
+
             every { worldSystem.processPhysicsAndGraph(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
+
             every { mockContactListener.beginContact(any(), any(), any()) } just Runs
             every { mockContactListener.continueContact(any(), any(), any()) } just Runs
             every { mockContactListener.endContact(any(), any(), any()) } just Runs
@@ -218,10 +233,10 @@ class WorldSystemTest :
             worldSystem.add(entity1)
             worldSystem.add(entity2)
 
-            every { mockWorldGraph.getFixturesOverlapping(any(), any()) } answers
+            every { mockWorldGraph.get(any<GameShape2D>()) } answers
                 {
-                  val fixture = firstArg<Fixture>()
-                  if (fixture == fixture1) {
+                  val fixtureShape = firstArg<GameShape2D>()
+                  if (fixtureShape == fixture1.shape) {
                     arrayListOf(fixture2)
                   } else {
                     arrayListOf(fixture1)
@@ -234,7 +249,7 @@ class WorldSystemTest :
             worldSystem.update(fixedStep)
             verify(exactly = 1) { mockContactListener.continueContact(any(), any(), any()) }
 
-            every { mockWorldGraph.getFixturesOverlapping(any(), any()) } returns arrayListOf()
+            every { mockWorldGraph.get(any<GameShape2D>()) } returns arrayListOf()
 
             worldSystem.update(fixedStep)
             verify(exactly = 1) { mockContactListener.endContact(any(), any(), any()) }
@@ -242,9 +257,11 @@ class WorldSystemTest :
 
           it("should process contacts correctly - test 2") {
             every { mockWorldGraph.reset() } just Runs
+
             every { worldSystem.processPhysicsAndGraph(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
+
             every { mockContactListener.beginContact(any(), any(), any()) } just Runs
             every { mockContactListener.continueContact(any(), any(), any()) } just Runs
             every { mockContactListener.endContact(any(), any(), any()) } just Runs
@@ -253,10 +270,10 @@ class WorldSystemTest :
             worldSystem.add(entity1)
             worldSystem.add(entity2)
 
-            every { mockWorldGraph.getFixturesOverlapping(any(), any()) } answers
+            every { mockWorldGraph.get(any<GameShape2D>()) } answers
                 {
-                  val fixture = firstArg<Fixture>()
-                  if (fixture == fixture1) {
+                  val fixtureShape = firstArg<GameShape2D>()
+                  if (fixtureShape == fixture1.shape) {
                     arrayListOf(fixture2)
                   } else {
                     arrayListOf(fixture1)
@@ -267,7 +284,7 @@ class WorldSystemTest :
             verify(exactly = 1) { mockContactListener.beginContact(any(), any(), any()) }
             verify(exactly = 1) { mockContactListener.continueContact(any(), any(), any()) }
 
-            every { mockWorldGraph.getFixturesOverlapping(any(), any()) } returns arrayListOf()
+            every { mockWorldGraph.get(any<GameShape2D>()) } returns arrayListOf()
 
             worldSystem.update(fixedStep)
             verify(exactly = 1) { mockContactListener.endContact(any(), any(), any()) }
@@ -295,9 +312,10 @@ class WorldSystemTest :
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.updateFixturePositions(any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
+
             every { mockWorldGraph.reset() } just Runs
-            every { mockWorldGraph.addBody(any()) } returns mockWorldGraph
-            every { mockWorldGraph.addFixtures(any()) } returns mockWorldGraph
+
+            every { mockWorldGraph.add(any()) } just Runs
 
             physicsData.gravity.x = -0.5f
             physicsData.gravity.y = -1f
@@ -319,10 +337,14 @@ class WorldSystemTest :
           every { worldSystem.postProcess(any(), any()) } just Runs
           every { worldSystem.updatePhysics(any(), any()) } just Runs
           every { worldSystem.resolveCollisions(any()) } just Runs
-          every { mockWorldGraph.addBody(any()) } returns mockWorldGraph
-          every { mockWorldGraph.addFixtures(any()) } returns mockWorldGraph
-          every { mockWorldGraph.getBodiesOverlapping(any(), any()) } returns ArrayList()
-          every { mockWorldGraph.getFixturesOverlapping(any(), any()) } returns ArrayList()
+
+          every { mockWorldGraph.add(any()) } just Runs
+
+          every { mockWorldGraph.get(any<MinsAndMaxes>()) } returns ArrayList()
+          every { mockWorldGraph.get(any<GameShape2D>()) } returns ArrayList()
+          every { mockWorldGraph.get(any(), any(), any(), any()) } returns ArrayList()
+          every { mockWorldGraph.get(any(), any()) } returns ArrayList()
+
           every { mockWorldGraph.reset() } just Runs
 
           val fixture = Fixture(GameRectangle(), "Type")

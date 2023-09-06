@@ -4,11 +4,19 @@ import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
 
 /**
- * A 2D shape that can be used in a game.
+ * A 2D shape that can be used in a game. This shape is a [Shape2D]. For convenience reasons, this
+ * also extends [GameShape2DSupplier].
  *
  * @see Shape2D
  */
 interface GameShape2D : Shape2D {
+
+  /**
+   * Returns a copy of this shape.
+   *
+   * @return A copy of this shape.
+   */
+  fun copy(): GameShape2D
 
   /**
    * Returns whether this shape overlaps the given shape.

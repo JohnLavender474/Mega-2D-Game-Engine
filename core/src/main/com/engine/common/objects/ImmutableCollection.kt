@@ -63,28 +63,4 @@ class ImmutableCollection<E>(private val collection: Collection<E>) : Collection
    * @return a stream of the elements in this collection
    */
   override fun stream() = collection.stream()
-
-  /**
-   * Applies the given action to each element in this collection.
-   *
-   * @param action the action to apply
-   */
-  fun forEach(action: (E) -> Unit) = collection.forEach(action)
-
-  /**
-   * Applies the given mapping function to each element in this collection and returns a list of the
-   * results.
-   *
-   * @param transform the mapping function to apply
-   * @return a list of the results of applying the given mapping function to each element in this
-   */
-  fun <R> map(transform: (E) -> R) = collection.map(transform)
-
-  /**
-   * Filters this collection by the given predicate and returns a list of the results.
-   *
-   * @param predicate the predicate to filter by
-   * @return a list of the results of filtering this collection by the given predicate
-   */
-  fun filter(predicate: (E) -> Boolean) = collection.filter(predicate)
 }

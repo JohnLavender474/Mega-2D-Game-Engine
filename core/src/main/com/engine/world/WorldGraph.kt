@@ -16,6 +16,7 @@ import kotlin.math.min
  * @param height the tile height of the world
  * @param ppm the pixels per meter (tile) of the world
  */
+@Deprecated("Use instances of GraphMap instead")
 class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
 
   private val bodies: HashMap<Pair<Int, Int>, ArrayList<Body>> = HashMap()
@@ -144,12 +145,14 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
       filter: ((Fixture) -> Boolean)? = null
   ): ArrayList<Fixture> {
     val m = getMinsAndMaxes(fixture.shape.getBoundingRectangle())
+
     val xMin = m[0]
     val yMin = m[1]
     val xMax = m[2]
     val yMax = m[3]
     val overlapping = ArrayList<Fixture>()
     val checked = HashSet<Fixture>()
+
     for (x in xMin until xMax) {
       for (y in yMin until yMax) {
         val c = Pair(x, y)

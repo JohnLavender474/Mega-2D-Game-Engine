@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2
 import com.engine.common.interfaces.Propertizable
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameShape2D
+import com.engine.common.shapes.GameShape2DSupplier
 
 /**
  * A fixture for a [Body]. A fixture is a shape that is attached to a body. It can be used to detect
@@ -27,7 +28,9 @@ class Fixture(
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),
     override var properties: Properties = Properties(),
-) : Propertizable {
+) : GameShape2DSupplier, Propertizable {
+
+  override fun getGameShape2D() = shape
 
   /**
    * Returns if this fixture's shape overlaps the given shape.

@@ -3,15 +3,17 @@ package com.engine.world
 import com.badlogic.gdx.utils.OrderedSet
 import com.engine.GameEntity
 import com.engine.GameSystem
+import com.engine.common.extensions.filterType
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
+import com.engine.graph.GraphMap
 import kotlin.math.abs
 
 /**
  * A system that handles the physics of the game. This system is responsible for updating the
  * positions of all bodies, resolving collisions, and notifying the [ContactListener] of any
  * contacts that occur. This system is stateful. This system processes entities that have a
- * [BodyComponent]. This system uses a [WorldGraph] to determine which bodies are overlapping.
+ * [BodyComponent]. This system uses a [GraphMap] to determine which bodies are overlapping.
  *
  * This system uses a [ContactListener] to notify of contacts.
  *
@@ -39,7 +41,7 @@ import kotlin.math.abs
  */
 class WorldSystem(
     private val contactListener: ContactListener,
-    private val worldGraphSupplier: () -> WorldGraph,
+    private val worldGraphSupplier: () -> GraphMap,
     private val fixedStep: Float,
     private val collisionHandler: CollisionHandler = StandardCollisionHandler,
     private val contactFilterMap: Map<String, Set<String>>? = null,
@@ -88,8 +90,8 @@ class WorldSystem(
 
   /**
    * Pre-processes the entities. This method is called by the [cycle] method. This method is
-   * responsible for resetting the [WorldGraph] and the [PhysicsData] of all bodies, and updating
-   * the [Updatable]s of all bodies.
+   * responsible for resetting the [GraphMap] and the [PhysicsData] of all bodies, and updating the
+   * [Updatable]s of all bodies.
    *
    * @param entities the [Collection] of [GameEntity]s to process
    * @param delta the time in seconds since the last frame
@@ -113,7 +115,9 @@ class WorldSystem(
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       updatePhysics(b, delta)
       updateFixturePositions(b)
-      worldGraphSupplier().addBody(b).addFixtures(b.fixtures)
+      val graph = worldGraphSupplier()
+      graph.add(b)
+      b.fixtures.forEach { f -> graph.add(f) }
     }
   }
 
@@ -229,8 +233,11 @@ class WorldSystem(
   internal fun checkForContacts(body: Body) {
     body.fixtures.forEach { f ->
       if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
+        val graph = worldGraphSupplier()
         val overlapping =
-            worldGraphSupplier().getFixturesOverlapping(f) { o -> o.active && filterContact(f, o) }
+            graph.get(f.getGameShape2D()).filterType<Fixture> { o ->
+              o.active && filterContact(f, o)
+            }
         overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
       }
     }
@@ -243,7 +250,7 @@ class WorldSystem(
    * @param body the [Body] to resolve the collisions of
    */
   internal fun resolveCollisions(body: Body) {
-    val overlapping = worldGraphSupplier().getBodiesOverlapping(body)
-    overlapping.forEach { collisionHandler.handleCollision(body, it) }
+    val overlapping = worldGraphSupplier().get(body)
+    overlapping.filterIsInstance<Body>().forEach { collisionHandler.handleCollision(body, it) }
   }
 }

@@ -1,6 +1,7 @@
 package com.engine.common.interfaces
 
 import com.engine.common.objects.Properties
+import kotlin.reflect.KClass
 
 /**
  * An interface for objects that can have properties.
@@ -33,6 +34,15 @@ interface Propertizable {
    * @param key The key of the property.
    */
   fun getProperty(key: String) = properties[key]
+
+  /**
+   * Gets a property from this object's [Properties] and casts it to the given type.
+   *
+   * @param key The key of the property.
+   * @param type The type to cast the property to.
+   * @return The property cast to the given type.
+   */
+  fun <T : Any> getProperty(key: String, type: KClass<T>) = properties.get(key, type)
 
   /**
    * Checks if this object's [Properties] contains a property with the given key.

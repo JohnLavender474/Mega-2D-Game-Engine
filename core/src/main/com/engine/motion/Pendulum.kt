@@ -2,23 +2,30 @@ package com.engine.motion
 
 import com.badlogic.gdx.math.MathUtils.*
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.interfaces.Resettable
-import com.engine.common.interfaces.Updatable
 
 class Pendulum(
-    private val length: Float,
-    private val gravity: Float,
-    private val anchor: Vector2,
-    private val targetFPS: Float,
-    private val scalar: Float = 1f
-) : Updatable, Resettable {
+    var length: Float,
+    var gravity: Float,
+    var anchor: Vector2,
+    var targetFPS: Float,
+    var scalar: Float = 1f
+) : Motion {
 
   private var angleVel = 0f
   private var angleAccel = 0f
   private var accumulator = 0f
   private var angle = PI / 2f
 
-  private val end: Vector2 = Vector2()
+  private val endPoint = Vector2()
+
+  fun getPointFromAnchor(distance: Float): Vector2 {
+    val point = Vector2()
+    point.x = (anchor.x + sin(angle) * distance)
+    point.y = (anchor.y + cos(angle) * distance)
+    return point
+  }
+
+  override fun getMotionValue() = Vector2(endPoint)
 
   override fun update(delta: Float) {
     accumulator += delta
@@ -28,7 +35,7 @@ class Pendulum(
       angleVel += angleAccel * targetFPS * scalar
       angle += angleVel * targetFPS * scalar
     }
-    end.set(getPointFromAnchor(length))
+    endPoint.set(getPointFromAnchor(length))
   }
 
   override fun reset() {
@@ -36,13 +43,6 @@ class Pendulum(
     angleAccel = 0f
     accumulator = 0f
     angle = PI / 2f
-    end.setZero()
-  }
-
-  fun getPointFromAnchor(dist: Float): Vector2 {
-    val point = Vector2()
-    point.x = (anchor.x + sin(angle) * dist)
-    point.y = (anchor.y + cos(angle) * dist)
-    return point
+    endPoint.setZero()
   }
 }

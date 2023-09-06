@@ -30,7 +30,22 @@ class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
     }
   }
 
-  /** Creates a line with the given points. */
+  /**
+   * Creates a line with the given points.
+   *
+   * @param line The line to copy.
+   * @return A line with the given points.
+   */
+  constructor(line: GameLine) : this(line.point1, line.point2)
+
+  /**
+   * Creates a line with the given points.
+   *
+   * @param x1 The x coordinate of the first point of this line.
+   * @param y1 The y coordinate of the first point of this line.
+   * @param x2 The x coordinate of the second point of this line.
+   * @param y2 The y coordinate of the second point of this line.
+   */
   constructor(x1: Float, y1: Float, x2: Float, y2: Float) : this(Vector2(x1, y1), Vector2(x2, y2))
 
   override fun contains(point: Vector2) = Intersector.pointLineSide(point1, point2, point) == 0
@@ -90,6 +105,8 @@ class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
     point2.y += translateY
     return this
   }
+
+  override fun copy(): GameLine = GameLine(this)
 
   override fun overlaps(other: GameShape2D) =
       when (other) {

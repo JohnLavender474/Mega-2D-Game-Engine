@@ -47,7 +47,12 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
    * @param height The height of this rectangle.
    * @see Rectangle
    */
-  constructor(x: Float, y: Float, width: Float, height: Float) : super(x, y, width, height)
+  constructor(
+      x: Number,
+      y: Number,
+      width: Number,
+      height: Number
+  ) : super(x.toFloat(), y.toFloat(), width.toFloat(), height.toFloat())
 
   /**
    * Creates a new [GameRectangle] with the given [Rectangle].
@@ -86,7 +91,8 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
 
   override fun getPosition(): Vector2 = super<Rectangle>.getPosition(Vector2())
 
-  override fun setPosition(position: Vector2) = super<Rectangle>.setPosition(position) as GameRectangle
+  override fun setPosition(position: Vector2) =
+      super<Rectangle>.setPosition(position) as GameRectangle
 
   override fun setPosition(x: Float, y: Float) = super<Rectangle>.setPosition(x, y) as GameRectangle
 
@@ -174,6 +180,8 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
         Position.BOTTOM_CENTER -> getBottomCenterPoint()
         Position.BOTTOM_RIGHT -> getBottomRightPoint()
       }
+
+  override fun copy(): GameRectangle = GameRectangle(this)
 
   /**
    * Sets the top left corner of this [GameRectangle] to the given point. Returns this

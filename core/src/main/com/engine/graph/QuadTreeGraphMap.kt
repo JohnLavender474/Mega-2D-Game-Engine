@@ -51,8 +51,13 @@ open class QuadTreeGraphMap(
   override fun get(x: Int, y: Int) =
       objects.getOrDefault(IntPair(x, y), emptySet()).toImmutableCollection()
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ImmutableCollection<Any> {
-    val set = HashSet<Any>()
+  override fun get(
+      minX: Int,
+      minY: Int,
+      maxX: Int,
+      maxY: Int
+  ): ImmutableCollection<GameShape2DSupplier> {
+    val set = HashSet<GameShape2DSupplier>()
 
     for (x in minX..maxX) {
       for (y in minY..maxY) {

@@ -46,7 +46,7 @@ interface GraphMap : Resettable {
    * @param y the y coordinate
    * @return the objects at the specified coordinate
    */
-  fun get(x: Int, y: Int): Collection<Any>
+  fun get(x: Int, y: Int): Collection<GameShape2DSupplier>
 
   /**
    * Gets the objects in the specified area.
@@ -57,7 +57,7 @@ interface GraphMap : Resettable {
    * @param maxY the maximum y coordinate
    * @return the objects in the specified area
    */
-  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Collection<Any>
+  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Collection<GameShape2DSupplier>
 
   /**
    * Gets the objects in the specified area.

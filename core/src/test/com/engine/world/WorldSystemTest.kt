@@ -29,7 +29,7 @@ class WorldSystemTest :
                     putAllProperties(spawnProps)
                   }
 
-                  override fun runOnDeath() {}
+                  override fun destroy() {}
 
                   override fun reset() {
                     clearComponents()
@@ -43,9 +43,7 @@ class WorldSystemTest :
 
         val fixedStep = 0.02f
         val worldSystem =
-            spyk(
-                WorldSystem(
-                    mockContactListener, { mockWorldGraph }, fixedStep, mockCollisionHandler))
+            spyk(WorldSystem(mockContactListener, mockWorldGraph, fixedStep, mockCollisionHandler))
 
         beforeEach {
           clearAllMocks()
@@ -182,11 +180,7 @@ class WorldSystemTest :
 
           val filteredSystem =
               WorldSystem(
-                  mockContactListener,
-                  { mockWorldGraph },
-                  fixedStep,
-                  mockCollisionHandler,
-                  filterMap)
+                  mockContactListener, mockWorldGraph, fixedStep, mockCollisionHandler, filterMap)
 
           filteredSystem.filterContact(fixture1, fixture2) shouldBe true
           filteredSystem.filterContact(fixture1, fixture1) shouldBe false
@@ -200,7 +194,7 @@ class WorldSystemTest :
               object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun runOnDeath() {}
+                override fun destroy() {}
 
                 override fun reset() {}
               }
@@ -212,7 +206,7 @@ class WorldSystemTest :
               object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun runOnDeath() {}
+                override fun destroy() {}
 
                 override fun reset() {}
               }
@@ -315,7 +309,7 @@ class WorldSystemTest :
 
             every { mockWorldGraph.reset() } just Runs
 
-            every { mockWorldGraph.add(any()) } just Runs
+            every { mockWorldGraph.add(any()) } returns true
 
             physicsData.gravity.x = -0.5f
             physicsData.gravity.y = -1f
@@ -338,7 +332,7 @@ class WorldSystemTest :
           every { worldSystem.updatePhysics(any(), any()) } just Runs
           every { worldSystem.resolveCollisions(any()) } just Runs
 
-          every { mockWorldGraph.add(any()) } just Runs
+          every { mockWorldGraph.add(any()) } returns true
 
           every { mockWorldGraph.get(any<MinsAndMaxes>()) } returns ArrayList()
           every { mockWorldGraph.get(any<GameShape2D>()) } returns ArrayList()

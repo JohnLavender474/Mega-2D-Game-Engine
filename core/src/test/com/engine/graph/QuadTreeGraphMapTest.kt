@@ -15,26 +15,27 @@ class QuadTreeGraphMapTest :
           // if
           val width = 100
           val height = 100
-          val ppm = 1
-          val depth = 4
+          val ppm = 10
+          val depth = 10
           val quadTreeGraphMap = QuadTreeGraphMap(width, height, ppm, depth)
-          val objects =
+
+          val bodies =
               listOf(
-                  Body(BodyType.ABSTRACT, 10f, 10f, 20f, 20f),
-                  Body(BodyType.ABSTRACT, 40f, 40f, 10f, 10f),
-                  Body(BodyType.ABSTRACT, 80f, 80f, 5f, 5f))
+                  Body(BodyType.ABSTRACT, 10f, 10f, 10f, 10f),
+                  Body(BodyType.ABSTRACT, 40f, 40f, 20f, 20f),
+                  Body(BodyType.ABSTRACT, 500f, 500f, 5f, 5f))
 
           // when
-          objects.forEach { quadTreeGraphMap.add(it) }
+          quadTreeGraphMap.addAll(bodies)
 
           // then
           for (x in 0 until width) {
             for (y in 0 until height) {
+              val rectangle = GameRectangle(x.toFloat() * ppm, y.toFloat() * ppm, ppm, ppm)
               val cellObjects = quadTreeGraphMap.get(x, y)
-              objects
-                  .filter {
-                    it.overlaps(GameRectangle(x.toFloat(), y.toFloat(), 1f, 1f) as GameShape2D)
-                  }
+
+              bodies
+                  .filter { it.overlaps(rectangle as GameShape2D) }
                   .forEach { cellObjects shouldContain it }
             }
           }

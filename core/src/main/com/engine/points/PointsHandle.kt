@@ -1,7 +1,7 @@
 package com.engine.points
 
 /**
- * The points handle. Contains the stats and the listener for the stats.
+ * The pointsHandles handle. Contains the stats and the listener for the stats.
  *
  * @param points The stats.
  * @param pointsListener The listener.

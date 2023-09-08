@@ -135,6 +135,7 @@ class Body(
   override fun hashCode() = System.identityHashCode(this)
 
   override fun toString() =
-      "Body(hashCode=${hashCode()} bodyType=$bodyType, physicsData=$physicsData, fixtures=$fixtures, " +
-          "userData=$userData, preProcess=$preProcess, postProcess=$postProcess, previousBounds=$previousBounds)"
+      "Body(x=$x y=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
+          "physicsData=$physicsData, fixtures=$fixtures, userData=$userData, 9preProcess=$preProcess, " +
+          "postProcess=$postProcess, previousBounds=$previousBounds)"
 }

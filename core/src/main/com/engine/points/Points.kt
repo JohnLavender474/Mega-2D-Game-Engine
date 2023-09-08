@@ -17,7 +17,7 @@ class Points(var min: Int, var max: Int, current: Int) {
    * be set to the minimum stat. If the current stat is greater than the maximum stat, the current
    * stat will be set to the maximum stat.
    *
-   * @param points The current points.
+   * @param points The current pointsHandles.
    */
   fun set(points: Int) {
     current = points

@@ -6,11 +6,11 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.*
 
-class BehaviorSystemTest :
+class BehaviorsSystemTest :
     DescribeSpec({
       describe("BehaviorSystem") {
-        lateinit var behaviorComponent: BehaviorComponent
-        lateinit var behaviorSystem: BehaviorSystem
+        lateinit var behaviorsComponent: BehaviorsComponent
+        lateinit var behaviorsSystem: BehaviorsSystem
         lateinit var behavior: Behavior
         lateinit var entity: GameEntity
 
@@ -22,57 +22,57 @@ class BehaviorSystemTest :
             every { isActive() } returns true
           }
 
-          behaviorComponent = spyk(BehaviorComponent())
-          behaviorComponent.addBehavior("key", behavior)
+          behaviorsComponent = spyk(BehaviorsComponent())
+          behaviorsComponent.addBehavior("key", behavior)
 
-          behaviorSystem = BehaviorSystem()
+          behaviorsSystem = BehaviorsSystem()
 
           entity =
               spyk(
                   object : GameEntity() {
                     override fun spawn(spawnProps: Properties) {}
 
-                    override fun runOnDeath() {}
+                    override fun destroy() {}
 
                     override fun reset() {}
                   })
         }
 
-        it("should not add entity") { behaviorSystem.add(entity) shouldBe false }
+        it("should not add entity") { behaviorsSystem.add(entity) shouldBe false }
 
         it("should add entity") {
-          entity.addComponent(behaviorComponent)
-          behaviorSystem.add(entity) shouldBe true
+          entity.addComponent(behaviorsComponent)
+          behaviorsSystem.add(entity) shouldBe true
         }
 
         it("should process behaviors when turned on") {
           // if
-          entity.addComponent(behaviorComponent)
-          behaviorSystem.add(entity) shouldBe true
+          entity.addComponent(behaviorsComponent)
+          behaviorsSystem.add(entity) shouldBe true
 
           // when
-          behaviorSystem.update(1f)
+          behaviorsSystem.update(1f)
 
           // then
           verify(exactly = 1) {
             behavior.update(1f)
-            behaviorComponent.setActive("key", true)
+            behaviorsComponent.setActive("key", true)
           }
         }
 
         it("should not process behaviors when turned off") {
           // if
-          entity.addComponent(behaviorComponent)
-          behaviorSystem.add(entity) shouldBe true
-          behaviorSystem.on = false
+          entity.addComponent(behaviorsComponent)
+          behaviorsSystem.add(entity) shouldBe true
+          behaviorsSystem.on = false
 
           // when
-          behaviorSystem.update(1f)
+          behaviorsSystem.update(1f)
 
           // then
           verify(exactly = 0) {
             behavior.update(any())
-            behaviorComponent.setActive(any(), any())
+            behaviorsComponent.setActive(any(), any())
           }
         }
       }

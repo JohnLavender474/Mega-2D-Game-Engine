@@ -41,7 +41,7 @@ import kotlin.math.abs
  */
 class WorldSystem(
     private val contactListener: ContactListener,
-    private val worldGraphSupplier: () -> GraphMap,
+    private val worldGraph: GraphMap,
     private val fixedStep: Float,
     private val collisionHandler: CollisionHandler = StandardCollisionHandler,
     private val contactFilterMap: Map<String, Set<String>>? = null,
@@ -68,7 +68,7 @@ class WorldSystem(
     accumulator = 0f
     priorContactSet.clear()
     currentContactSet.clear()
-    worldGraphSupplier().reset()
+    worldGraph.reset()
   }
 
   /**
@@ -81,7 +81,7 @@ class WorldSystem(
    */
   internal fun cycle(entities: ImmutableCollection<GameEntity>, delta: Float) {
     preProcess(entities, delta)
-    worldGraphSupplier().reset()
+    worldGraph.reset()
     entities.forEach { processPhysicsAndGraph(it, delta) }
     entities.forEach { processContactsAndCollisions(it) }
     processContacts()
@@ -115,9 +115,8 @@ class WorldSystem(
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       updatePhysics(b, delta)
       updateFixturePositions(b)
-      val graph = worldGraphSupplier()
-      graph.add(b)
-      b.fixtures.forEach { f -> graph.add(f) }
+      worldGraph.add(b)
+      b.fixtures.forEach { f -> worldGraph.add(f) }
     }
   }
 
@@ -233,9 +232,8 @@ class WorldSystem(
   internal fun checkForContacts(body: Body) {
     body.fixtures.forEach { f ->
       if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
-        val graph = worldGraphSupplier()
         val overlapping =
-            graph.get(f.getGameShape2D()).filterType<Fixture> { o ->
+            worldGraph.get(f.getGameShape2D()).filterType<Fixture> { o ->
               o.active && filterContact(f, o)
             }
         overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
@@ -250,7 +248,8 @@ class WorldSystem(
    * @param body the [Body] to resolve the collisions of
    */
   internal fun resolveCollisions(body: Body) {
-    val overlapping = worldGraphSupplier().get(body)
-    overlapping.filterIsInstance<Body>().forEach { collisionHandler.handleCollision(body, it) }
+    worldGraph.get(body).filterIsInstance<Body>().forEach {
+      collisionHandler.handleCollision(body, it)
+    }
   }
 }

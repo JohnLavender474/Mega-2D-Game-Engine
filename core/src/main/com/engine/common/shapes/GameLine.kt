@@ -6,7 +6,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * A line that can be used in a game. A line is defined by two points.
+ * A line that can be used in a game. A line is defined by two pointsHandles.
  *
  * @param point1 The first point of this line.
  * @param point2 The second point of this line.
@@ -31,15 +31,15 @@ class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
   }
 
   /**
-   * Creates a line with the given points.
+   * Creates a line with the given pointsHandles.
    *
    * @param line The line to copy.
-   * @return A line with the given points.
+   * @return A line with the given pointsHandles.
    */
   constructor(line: GameLine) : this(line.point1, line.point2)
 
   /**
-   * Creates a line with the given points.
+   * Creates a line with the given pointsHandles.
    *
    * @param x1 The x coordinate of the first point of this line.
    * @param y1 The y coordinate of the first point of this line.

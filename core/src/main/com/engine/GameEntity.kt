@@ -44,7 +44,7 @@ abstract class GameEntity() : Resettable, Propertizable {
   abstract fun spawn(spawnProps: Properties)
 
   /** Logic to run when this entity dies. */
-  abstract fun runOnDeath()
+  abstract fun destroy()
 
   /**
    * Adds a [GameComponent] to this [GameEntity].

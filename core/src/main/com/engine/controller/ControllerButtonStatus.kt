@@ -1,4 +1,4 @@
-package com.engine.controllers
+package com.engine.controller
 
 /** The current status of a button. */
 enum class ControllerButtonStatus {

@@ -1,4 +1,4 @@
-package com.engine.controllers
+package com.engine.controller
 
 import com.badlogic.gdx.Gdx
 

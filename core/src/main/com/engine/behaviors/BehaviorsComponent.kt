@@ -3,13 +3,13 @@ package com.engine.behaviors
 import com.engine.GameComponent
 
 /** A [GameComponent] that manages a collection of [Behavior]s. */
-class BehaviorComponent : GameComponent {
+class BehaviorsComponent : GameComponent {
 
   internal val behaviors = LinkedHashMap<String, Behavior>()
   private val activeBehaviors = HashSet<String>()
 
   /**
-   * Adds a [Behavior] to this [BehaviorComponent] with the given [key]. If a [Behavior] already
+   * Adds a [Behavior] to this [BehaviorsComponent] with the given [key]. If a [Behavior] already
    * exists with the given [key], it will be overwritten. Insertion order of behaviors is preserved
    * via a [LinkedHashMap]. The [Behavior] will be inactive by default.
    *

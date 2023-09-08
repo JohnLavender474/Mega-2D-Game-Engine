@@ -38,7 +38,7 @@ class GameEngineTest :
                   object : GameEntity() {
                     override fun spawn(spawnProps: Properties) {}
 
-                    override fun runOnDeath() {}
+                    override fun destroy() {}
 
                     override fun reset() {}
                   })
@@ -47,7 +47,7 @@ class GameEngineTest :
                   object : GameEntity() {
                     override fun spawn(spawnProps: Properties) {}
 
-                    override fun runOnDeath() {}
+                    override fun destroy() {}
 
                     override fun reset() {}
                   })
@@ -119,7 +119,7 @@ class GameEngineTest :
           mockEntity1.dead shouldBe false
           mockEntity2.dead shouldBe false
 
-          gameEngine.purge()
+          gameEngine.reset()
 
           gameEngine.entities.isEmpty() shouldBe true
           mockEntity1.dead shouldBe true
@@ -127,8 +127,8 @@ class GameEngineTest :
           mockSystem1.contains(mockEntity1) shouldBe false
           mockSystem2.contains(mockEntity2) shouldBe false
 
-          verify(exactly = 1) { mockEntity1.runOnDeath() }
-          verify(exactly = 1) { mockEntity2.runOnDeath() }
+          verify(exactly = 1) { mockEntity1.destroy() }
+          verify(exactly = 1) { mockEntity2.destroy() }
         }
 
         it("should add entities to systems correctly") {

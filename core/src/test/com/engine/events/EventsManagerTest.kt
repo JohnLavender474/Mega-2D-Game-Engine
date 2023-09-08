@@ -7,15 +7,15 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.mockk.*
 
-class EventManagerTest :
+class EventsManagerTest :
     DescribeSpec({
       describe("EventManager") {
         var eventHandled = false
-        lateinit var eventManager: EventManager
+        lateinit var eventsManager: EventsManager
 
         beforeEach {
           eventHandled = false
-          eventManager = EventManager()
+          eventsManager = EventsManager()
         }
 
         it("should queue an event") {
@@ -23,10 +23,10 @@ class EventManagerTest :
           val event = Event("testEvent", Properties())
 
           // when
-          eventManager.queueEvent(event)
+          eventsManager.queueEvent(event)
 
           // then
-          eventManager.eventQueue shouldContain event
+          eventsManager.eventQueue shouldContain event
         }
 
         it("should add and remove a listener") {
@@ -34,16 +34,16 @@ class EventManagerTest :
           val listener = EventListener { eventHandled = true }
 
           // when
-          eventManager.addListener(listener)
+          eventsManager.addListener(listener)
 
           // then
-          eventManager.listeners.size shouldBe 1
+          eventsManager.listeners.size shouldBe 1
 
           // when
-          eventManager.removeListener(listener)
+          eventsManager.removeListener(listener)
 
           // then
-          eventManager.listeners.shouldBeEmpty()
+          eventsManager.listeners.shouldBeEmpty()
         }
 
         it("should clear all listeners") {
@@ -52,12 +52,12 @@ class EventManagerTest :
           val listener2 = EventListener {}
 
           // when
-          eventManager.addListener(listener1)
-          eventManager.addListener(listener2)
-          eventManager.clearListeners()
+          eventsManager.addListener(listener1)
+          eventsManager.addListener(listener2)
+          eventsManager.clearListeners()
 
           // then
-          eventManager.listeners.shouldBeEmpty()
+          eventsManager.listeners.shouldBeEmpty()
         }
 
         it("should run and handle an event") {
@@ -66,13 +66,13 @@ class EventManagerTest :
           val event = Event("testEvent", Properties())
 
           // when
-          eventManager.addListener(listener)
-          eventManager.queueEvent(event)
-          eventManager.run()
+          eventsManager.addListener(listener)
+          eventsManager.queueEvent(event)
+          eventsManager.run()
 
           // then
           eventHandled shouldBe true
-          eventManager.eventQueue.shouldBeEmpty()
+          eventsManager.eventQueue.shouldBeEmpty()
         }
 
         it("should handle multiple listeners") {
@@ -81,11 +81,11 @@ class EventManagerTest :
           val listener2 = mockk<EventListener> { every { onEvent(any()) } just Runs }
 
           // when
-          eventManager.addListener(listener1)
-          eventManager.addListener(listener2)
+          eventsManager.addListener(listener1)
+          eventsManager.addListener(listener2)
           val event = Event("testEvent", Properties())
-          eventManager.queueEvent(event)
-          eventManager.run()
+          eventsManager.queueEvent(event)
+          eventsManager.run()
 
           // then
           verify(exactly = 1) {

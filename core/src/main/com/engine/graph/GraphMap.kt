@@ -2,7 +2,9 @@ package com.engine.graph
 
 import com.badlogic.gdx.math.MathUtils.ceil
 import com.badlogic.gdx.math.MathUtils.floor
+import com.badlogic.gdx.math.Vector2
 import com.engine.common.interfaces.Resettable
+import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2D
 import com.engine.common.shapes.GameShape2DSupplier
@@ -25,6 +27,19 @@ fun GraphMap.convertToMinsAndMaxes(obj: GameShape2D): MinsAndMaxes {
   return MinsAndMaxes(minX, minY, maxX, maxY)
 }
 
+/**
+ * Converts the given x and y coordinates to graph coordinates.
+ *
+ * @param x the x coordinate
+ * @param y the y coordinate
+ * @return the graph coordinates
+ */
+fun GraphMap.convertToGraphCoordinate(x: Float, y: Float) =
+    IntPair((x / ppm).toInt(), (y / ppm).toInt())
+
+/** @see [convertToGraphCoordinate] */
+fun GraphMap.convertToGraphCoordinate(v: Vector2) = convertToGraphCoordinate(v.x, v.y)
+
 /** A graph that can be used to store and retrieve objects. */
 interface GraphMap : Resettable {
 
@@ -36,8 +51,23 @@ interface GraphMap : Resettable {
    * Adds the given object to this graph.
    *
    * @param obj the object to add
+   * @param shape the shape of the object
    */
-  fun add(obj: GameShape2DSupplier)
+  fun add(obj: Any, shape: GameShape2D): Boolean
+
+  /**
+   * Adds the given object to this graph.
+   *
+   * @param obj the object to add
+   */
+  fun add(obj: GameShape2DSupplier) = add(obj, obj.getGameShape2D())
+
+  /**
+   * Adds the given objects to this graph.
+   *
+   * @param objs the objects to add
+   */
+  fun addAll(objs: Collection<GameShape2DSupplier>) = objs.forEach { add(it) }
 
   /**
    * Gets the objects at the specified coordinate.
@@ -46,7 +76,7 @@ interface GraphMap : Resettable {
    * @param y the y coordinate
    * @return the objects at the specified coordinate
    */
-  fun get(x: Int, y: Int): Collection<GameShape2DSupplier>
+  fun get(x: Int, y: Int): Collection<Any>
 
   /**
    * Gets the objects in the specified area.
@@ -57,7 +87,7 @@ interface GraphMap : Resettable {
    * @param maxY the maximum y coordinate
    * @return the objects in the specified area
    */
-  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Collection<GameShape2DSupplier>
+  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Collection<Any>
 
   /**
    * Gets the objects in the specified area.

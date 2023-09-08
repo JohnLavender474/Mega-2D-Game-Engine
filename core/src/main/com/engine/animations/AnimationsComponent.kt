@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.engine.GameComponent
 
 // TODO: should this component reset all animations?
-class AnimationComponent(
+class AnimationsComponent(
     val animations: HashMap<Sprite, IAnimator> = HashMap(),
 ) : GameComponent {
 

@@ -39,7 +39,7 @@ class SpriteSystemTest :
               object : GameEntity(mockSpriteComponent) {
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun runOnDeath() {}
+                override fun destroy() {}
 
                 override fun reset() {}
               }

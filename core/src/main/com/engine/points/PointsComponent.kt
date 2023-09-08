@@ -5,6 +5,6 @@ import com.engine.GameComponent
 /**
  * The stats component. Contains all the stats for an entity.
  *
- * @param points The stats each mapped to a key.
+ * @param pointsHandles The points handles.
  */
-class PointsComponent(val points: MutableMap<String, PointsHandle> = HashMap()) : GameComponent
+class PointsComponent(val pointsHandles: MutableList<PointsHandle> = ArrayList()) : GameComponent

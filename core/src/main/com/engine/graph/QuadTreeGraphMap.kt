@@ -4,7 +4,7 @@ import com.engine.common.extensions.toImmutableCollection
 import com.engine.common.objects.ImmutableCollection
 import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameRectangle
-import com.engine.common.shapes.GameShape2DSupplier
+import com.engine.common.shapes.GameShape2D
 
 /**
  * A [GraphMap] that uses a quad tree to store and retrieve objects.
@@ -22,7 +22,7 @@ open class QuadTreeGraphMap(
 ) : GraphMap {
 
   // A map of the objects in each cell.
-  protected val objects = HashMap<IntPair, ArrayList<GameShape2DSupplier>>()
+  protected val objects = HashMap<IntPair, ArrayList<Any>>()
 
   /**
    * Adds the given object to this graph. This method is recursive. It will add the object to the
@@ -30,55 +30,53 @@ open class QuadTreeGraphMap(
    * four sub-cells and add the object to the correct sub-cell.
    *
    * @param obj The object to add.
-   * @param current The current depth of the recursive call.
+   * @param currentDepth The currentDepth depth of the recursive call.
    * @param minX The minimum x coordinate of the cell.
    * @param minY The minimum y coordinate of the cell.
    * @param maxX The maximum x coordinate of the cell.
    * @param maxY The maximum y coordinate of the cell.
    */
   protected fun add(
-      obj: GameShape2DSupplier,
-      current: Int,
+      obj: Any,
+      shape: GameShape2D,
+      currentDepth: Int,
       minX: Int,
       minY: Int,
       maxX: Int,
       maxY: Int
-  ) {
+  ): Boolean {
     val overlap =
-        GameRectangle(minX, minY, (maxX - minX) * ppm, (maxY - minY) * ppm)
-            .overlaps(obj.getGameShape2D())
+        GameRectangle(minX * ppm, minY * ppm, (maxX - minX) * ppm, (maxY - minY) * ppm)
+            .overlaps(shape)
 
     if (overlap) {
-      if (current < depth) {
+      if (currentDepth < depth) {
         val midX = (minX + maxX) / 2
         val midY = (minY + maxY) / 2
 
-        add(obj, current + 1, minX, minY, midX, midY)
-        add(obj, current + 1, midX, minY, maxX, midY)
-        add(obj, current + 1, minX, midY, midX, maxY)
-        add(obj, current + 1, midX, midY, maxX, maxY)
+        add(obj, shape, currentDepth + 1, minX, minY, midX, midY)
+        add(obj, shape, currentDepth + 1, midX, minY, maxX, midY)
+        add(obj, shape, currentDepth + 1, minX, midY, midX, maxY)
+        add(obj, shape, currentDepth + 1, midX, midY, maxX, maxY)
       } else {
         for (x in minX until maxX) {
           for (y in minY until maxY) {
-            objects.computeIfAbsent(IntPair(x, y)) { ArrayList() }.add(obj)
+            return objects.computeIfAbsent(IntPair(x, y)) { ArrayList() }.add(obj)
           }
         }
       }
     }
+
+    return false
   }
 
-  override fun add(obj: GameShape2DSupplier) = add(obj, 0, 0, 0, width, height)
+  override fun add(obj: Any, shape: GameShape2D) = add(obj, shape, 0, 0, 0, width, height)
 
   override fun get(x: Int, y: Int) =
       objects.getOrDefault(IntPair(x, y), emptySet()).toImmutableCollection()
 
-  override fun get(
-      minX: Int,
-      minY: Int,
-      maxX: Int,
-      maxY: Int
-  ): ImmutableCollection<GameShape2DSupplier> {
-    val set = HashSet<GameShape2DSupplier>()
+  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ImmutableCollection<Any> {
+    val set = HashSet<Any>()
 
     for (x in minX..maxX) {
       for (y in minY..maxY) {

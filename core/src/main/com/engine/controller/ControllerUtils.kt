@@ -1,4 +1,4 @@
-package com.engine.controllers
+package com.engine.controller
 
 import org.lwjgl.input.Controller
 import org.lwjgl.input.Controllers

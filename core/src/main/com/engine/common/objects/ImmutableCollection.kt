@@ -13,54 +13,23 @@ class ImmutableCollection<E>(private val collection: Collection<E>) : Collection
   override val size: Int
     get() = collection.size
 
-  /**
-   * Returns whether this collection contains the given element.
-   *
-   * @param element the element to check
-   * @return whether this collection contains the given element
-   */
   override fun contains(element: E) = collection.contains(element)
 
-  /**
-   * Returns whether this collection contains all the given elements.
-   *
-   * @param elements the elements to check
-   * @return whether this collection contains all the given elements
-   */
   override fun containsAll(elements: Collection<E>) = collection.containsAll(elements)
 
-  /**
-   * Returns whether this collection is empty.
-   *
-   * @return whether this collection is empty
-   */
   override fun isEmpty() = collection.isEmpty()
 
-  /**
-   * Returns an iterator over the elements in this collection.
-   *
-   * @return an iterator over the elements in this collection
-   */
   override fun iterator(): ImmutableIterator<E> = ImmutableIterator(collection.iterator())
 
-  /**
-   * Returns a parallel stream of the elements in this collection.
-   *
-   * @return a parallel stream of the elements in this collection
-   */
   override fun parallelStream() = collection.parallelStream()
 
-  /**
-   * Returns a spliterator over the elements in this collection.
-   *
-   * @return a spliterator over the elements in this collection
-   */
   override fun spliterator() = collection.spliterator()
 
-  /**
-   * Returns a stream of the elements in this collection.
-   *
-   * @return a stream of the elements in this collection
-   */
   override fun stream() = collection.stream()
+
+  override fun equals(other: Any?) = collection == other
+
+  override fun hashCode() = collection.hashCode()
+
+  override fun toString() = "ImmutableCollection(collection=$collection)"
 }

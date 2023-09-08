@@ -1,4 +1,4 @@
-package com.engine.controllers
+package com.engine.controller
 
 /**
  * The polling option for the controller poller.

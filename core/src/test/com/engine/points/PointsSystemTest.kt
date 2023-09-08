@@ -10,7 +10,7 @@ import io.kotest.property.checkAll
 class PointsSystemTest :
     DescribeSpec({
       describe("PointsSystem") {
-        it("should call the points listener for each entity's points") {
+        it("should call the pointsHandles listener for each entity's pointsHandles") {
           val pointsSystem = PointsSystem()
 
           val entity1 = SimpleMockEntity()
@@ -21,13 +21,11 @@ class PointsSystemTest :
 
           val pointsComponent1 =
               PointsComponent(
-                  mutableMapOf(
-                      "Points1" to
+                  mutableListOf(
                           PointsHandle(points1) { newPoints -> newPoints shouldBe points1 }))
           val pointsComponent2 =
               PointsComponent(
-                  mutableMapOf(
-                      "Points2" to
+                  mutableListOf(
                           PointsHandle(points2) { newPoints -> newPoints shouldBe points2 }))
 
           entity1.addComponent(pointsComponent1)

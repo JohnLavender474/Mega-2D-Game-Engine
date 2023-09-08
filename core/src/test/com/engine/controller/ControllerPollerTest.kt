@@ -1,4 +1,4 @@
-package com.engine.controllers
+package com.engine.controller
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

@@ -42,35 +42,29 @@ class GameEngine(override val systems: Collection<GameSystem>, var autoSetAlive:
         .forEach {
           entities.remove(it)
           systems.forEach { s -> s.remove(it) }
-          it.runOnDeath()
+          it.destroy()
         }
 
     // update systems
     systems.forEach { it.update(delta) }
 
-    // purge if necessary
-    if (purge) {
-      purge()
-      purge = false
-    }
-
     updating = false
+    if (purge) purge()
   }
 
-  fun purge() {
-    entities.forEach {
-      it.runOnDeath()
-      it.dead = true
-    }
-    entities.clear()
-    systems.forEach { it.purge() }
-  }
-
-  override fun reset() {
+  private fun purge() {
     if (updating) {
       purge = true
     } else {
-      purge()
+      entities.forEach {
+        it.destroy()
+        it.dead = true
+      }
+      entities.clear()
+      systems.forEach { it.purge() }
+      purge = false
     }
   }
+
+  override fun reset() = purge()
 }

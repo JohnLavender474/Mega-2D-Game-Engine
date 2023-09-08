@@ -8,4 +8,4 @@ import com.engine.common.interfaces.Updatable
  *
  * @param updatables The updatables
  */
-class UpdatableComponent(val updatables: ArrayList<Updatable> = ArrayList()) : GameComponent
+class UpdatablesComponent(val updatables: ArrayList<Updatable> = ArrayList()) : GameComponent

@@ -7,14 +7,14 @@ import com.engine.common.objects.Properties
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
-class AnimationSystemTest :
+class AnimationsSystemTest :
     DescribeSpec({
       describe("AnimationSystem") {
         lateinit var entity: GameEntity
         lateinit var mockSprite: Sprite
         lateinit var mockAnimator: IAnimator
-        lateinit var animationComponent: AnimationComponent
-        lateinit var animationSystem: AnimationSystem
+        lateinit var animationsComponent: AnimationsComponent
+        lateinit var animationsSystem: AnimationsSystem
 
         beforeEach {
           clearAllMocks()
@@ -23,7 +23,7 @@ class AnimationSystemTest :
 
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun runOnDeath() {}
+                override fun destroy() {}
 
                 override fun reset() {}
               }
@@ -38,15 +38,15 @@ class AnimationSystemTest :
                 }
           }
 
-          animationComponent = spyk(AnimationComponent(hashMapOf(mockSprite to mockAnimator)))
-          animationSystem = spyk(AnimationSystem())
+          animationsComponent = spyk(AnimationsComponent(hashMapOf(mockSprite to mockAnimator)))
+          animationsSystem = spyk(AnimationsSystem())
 
-          entity.addComponent(animationComponent)
-          animationSystem.add(entity)
+          entity.addComponent(animationsComponent)
+          animationsSystem.add(entity)
         }
 
         it("process") {
-          animationSystem.update(1f)
+          animationsSystem.update(1f)
           verify(exactly = 1) { mockAnimator.animate(mockSprite, 1f) }
           verify(exactly = 1) { mockSprite.setRegion(any<TextureRegion>()) }
         }

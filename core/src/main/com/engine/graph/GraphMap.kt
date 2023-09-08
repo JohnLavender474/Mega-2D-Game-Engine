@@ -69,6 +69,9 @@ interface GraphMap : Resettable {
    */
   fun addAll(objs: Collection<GameShape2DSupplier>) = objs.forEach { add(it) }
 
+  /** @see [get(Int, Int)] */
+  fun get(coordinate: IntPair) = get(coordinate.x, coordinate.y)
+
   /**
    * Gets the objects at the specified coordinate.
    *

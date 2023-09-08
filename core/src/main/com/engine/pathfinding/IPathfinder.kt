@@ -1,5 +1,6 @@
 package com.engine.pathfinding
 
+import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameRectangle
 import java.util.concurrent.Callable
 
@@ -11,4 +12,4 @@ import java.util.concurrent.Callable
  * If a path is found, the [call] function should return a collection of [GameRectangle]s that
  * represent the path from the start point to the target point. Otherwise, it should return null.
  */
-interface IPathfinder : Callable<Collection<GameRectangle>?>
+interface IPathfinder : Callable<Collection<IntPair>?>

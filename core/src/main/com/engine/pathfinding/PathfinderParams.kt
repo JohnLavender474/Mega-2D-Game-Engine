@@ -14,5 +14,6 @@ class PathfinderParams(
     val startSupplier: () -> Vector2,
     val targetSupplier: () -> Vector2,
     val filter: (Any) -> Boolean,
+    val allowDiagonal: Boolean,
     val targetListener: (Vector2) -> Boolean
 )

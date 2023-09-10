@@ -61,10 +61,10 @@ class Array2DIterator<T : Any?>(private val array2D: Array2D<T>) {
 class Array2D<T>(val rows: Int, val columns: Int) {
 
   val size: Int
-    get() = array2DMap.size
+    get() = rows * columns
 
-  private val array2DMap = LinkedHashMap<IntPair, T>()
-  private val elementToIndexMap = HashMap<T, HashSet<IntPair>>()
+  internal val array2DMap = LinkedHashMap<IntPair, T>()
+  internal val elementToIndexMap = HashMap<T, HashSet<IntPair>>()
 
   /**
    * Creates an Array2D using the provided 2D array. The array is copied into the Array2D. If the
@@ -90,17 +90,45 @@ class Array2D<T>(val rows: Int, val columns: Int) {
     }
   }
 
+  /**
+   * Returns true if the Array2D contains the specified element.
+   *
+   * @param element the element to check for
+   * @return true if the Array2D contains the specified element, false otherwise
+   */
   fun contains(element: T) = elementToIndexMap.contains(element)
 
+  /**
+   * Returns true if the Array2D contains all the specified elements.
+   *
+   * @param elements the elements to check for
+   * @return true if the Array2D contains all the specified elements, false otherwise
+   */
   fun containsAll(elements: Collection<T>) = elements.all { contains(it) }
 
+  /**
+   * Returns an iterator over the elements of the Array2D. The elements are iterated through in row
+   * major order. This means that the iterator will iterate through the elements of the first row,
+   * then the second row, and so on. The iterator will iterate through the elements of the first
+   * column, then the second column, and so on.
+   *
+   * @return an iterator over the elements of the Array2D
+   * @see Array2DIterator
+   */
   fun iterator() = Array2DIterator(this)
 
-  fun isEmpty() = array2DMap.isEmpty()
-
+  /**
+   * Removes elements from this Array2D that are not contained in the specified collection. This
+   * method returns true if any elements were removed from this Array2D.
+   *
+   * @param elements the collection of elements to retain
+   * @return true if any elements were removed from this Array2D, false otherwise
+   * @see [remove]
+   */
   fun retainAll(elements: Collection<T>): Boolean {
     var removed = false
     val toRemove = HashSet<T>()
+
     array2DMap.forEach { (_, e) ->
       e?.let {
         if (!elements.contains(it)) {
@@ -109,23 +137,46 @@ class Array2D<T>(val rows: Int, val columns: Int) {
         }
       }
     }
+
     toRemove.forEach { remove(it) }
+
     return removed
   }
 
+  /**
+   * Adds all the specified elements to this Array2D. This method returns true if all elements were
+   * added to this Array2D. An elements is not added if this Array2D is already full, i.e. there are
+   * no more null elements.
+   *
+   * @param elements the elements to add
+   * @return true if all elements were added to this Array2D, false otherwise
+   * @see [add]
+   */
   fun addAll(elements: Collection<T>) = elements.all { add(it) }
 
+  /**
+   * Adds the specified element to this Array2D. This method returns true if the element was added
+   * to this Array2D. The element is not added if this Array2D is already full, i.e. there are no
+   * more null elements. Inside this function, the Array2D is iterated through in row major order.
+   * This means that the first row is iterated through, then the second row, and so on. The first
+   * column is iterated through, then the second column, and so on. The first null element is set
+   * with the specified element.
+   *
+   * @param element the element to add
+   * @return true if the element was added to this Array2D, false otherwise
+   * @see [set]
+   */
   fun add(element: T): Boolean {
     for (i in 0..rows) {
       for (j in 0..columns) {
-        val indexPair = i pairTo j
-        if (array2DMap[indexPair] == null) {
-          array2DMap[indexPair] = element
-          elementToIndexMap.getOrPut(element) { HashSet() }.add(indexPair)
+        if (array2DMap[i pairTo j] == null) {
+          set(i, j, element)
+
           return true
         }
       }
     }
+
     return false
   }
 
@@ -136,9 +187,11 @@ class Array2D<T>(val rows: Int, val columns: Int) {
 
   fun <R> map(transform: (T) -> R): Array2D<R> {
     val mappedArray2D = Array2D<R>(rows, columns)
+
     array2DMap.forEach { (indexPair, element) ->
       mappedArray2D[indexPair.x, indexPair.y] = transform(element)
     }
+
     return mappedArray2D
   }
 
@@ -155,31 +208,152 @@ class Array2D<T>(val rows: Int, val columns: Int) {
     }
   }
 
-  operator fun set(rowIndex: Int, columnIndex: Int, element: T) {
-    if (rowIndex < 0 || rowIndex >= rows) {
+  /**
+   * Sets the element at the specified row and column to the specified element. This method throws
+   * an [IndexOutOfBoundsException] if the specified row or column is out of bounds. This method
+   * also throws an [IllegalArgumentException] if the specified element is null. This method returns
+   * the element that was previously at the specified row and column. If there was no element at the
+   * specified row and column, null is returned.
+   *
+   * @param rowIndex the row index of the element to set
+   * @param columnIndex the column index of the element to set
+   * @param element the element to set
+   * @return the element that was previously at the specified row and column, or null if there was
+   */
+  operator fun set(rowIndex: Int, columnIndex: Int, element: T?): T? {
+    // Indexes must be within bounds
+    if (isRowOutOfBounds(rowIndex)) {
       throw IndexOutOfBoundsException("Row index $rowIndex is out of bounds")
     }
-    if (columnIndex < 0 || columnIndex >= columns) {
+    if (isColumnOutOfBounds(columnIndex)) {
       throw IndexOutOfBoundsException("Column index $columnIndex is out of bounds")
     }
+
+    // Convert row and column index to index pair
     val indexPair = rowIndex pairTo columnIndex
-    array2DMap[indexPair] = element
-    elementToIndexMap[element] =
-        elementToIndexMap.getOrPut(element) { HashSet() }.apply { add(indexPair) }
+
+    // Remove the old value from the elementToIndexMap if it exists
+    // This is done so that the elementToIndexMap does not contain any stale values
+    val oldValue = array2DMap[indexPair]
+    if (oldValue != null) {
+      val oldValueSet = elementToIndexMap[oldValue]
+      oldValueSet?.remove(indexPair)
+      if (oldValueSet?.isEmpty() == true) elementToIndexMap.remove(oldValue)
+    } else {
+      array2DMap.remove(indexPair)
+    }
+
+    // If the new value is null, then simply remove the index pair from the array 2D map,
+    // otherwise add the index pair and element to the array 2D map and element to the element to
+    // index map respectively
+    if (element != null) {
+      array2DMap[indexPair] = element
+      elementToIndexMap[element] =
+          elementToIndexMap.getOrPut(element) { HashSet() }.apply { add(indexPair) }
+    } else {
+      array2DMap.remove(indexPair)
+    }
+
+    // Return the old value
+    return oldValue
   }
 
-  operator fun get(rowIndex: Int, columnIndex: Int): T? = array2DMap[rowIndex pairTo columnIndex]
+  /**
+   * Returns the element at the specified row and column. This method throws an
+   * [IndexOutOfBoundsException] if the specified row or column is out of bounds. This method
+   * returns null if there is no element
+   */
+  operator fun get(rowIndex: Int, columnIndex: Int): T? {
+    // Indexes must be within bounds
+    if (isRowOutOfBounds(rowIndex)) {
+      throw IndexOutOfBoundsException("Row index $rowIndex is out of bounds")
+    }
+    if (isColumnOutOfBounds(columnIndex)) {
+      throw IndexOutOfBoundsException("Column index $columnIndex is out of bounds")
+    }
 
-  fun getIndexes(element: T) = elementToIndexMap[element] ?: emptySet()
+    return array2DMap[rowIndex pairTo columnIndex]
+  }
 
+  /**
+   * Returns true if the specified row or column are out of bounds. This method returns true if the
+   * specified row is less than 0 or greater than or equal to the number of rows. This method
+   * returns true if the specified column is less than 0 or greater than or equal to the number of
+   * columns. This method returns false otherwise.
+   *
+   * @param rowIndex the row index
+   * @param columnIndex the column index
+   * @return true if the specified row or column are out of bounds, false otherwise
+   */
+  fun isOutOfBounds(rowIndex: Int, columnIndex: Int) =
+      isRowOutOfBounds(rowIndex) || isColumnOutOfBounds(columnIndex)
+
+  /**
+   * Returns true if the specified row is out of bounds. This method returns true if the specified
+   * row is less than 0 or greater than or equal to the number of rows. This method returns false
+   * otherwise.
+   *
+   * @param rowIndex the row index
+   * @return true if the specified row is out of bounds, false otherwise
+   */
+  fun isRowOutOfBounds(rowIndex: Int) = rowIndex < 0 || rowIndex >= rows
+
+  /**
+   * Returns true if the specified column is out of bounds. This method returns true if the
+   * specified column is less than 0 or greater than or equal to the number of columns. This method
+   * returns false otherwise.
+   *
+   * @param columnIndex the column index
+   * @return true if the specified column is out of bounds, false otherwise
+   */
+  fun isColumnOutOfBounds(columnIndex: Int) = columnIndex < 0 || columnIndex >= columns
+
+  /**
+   * Returns the indexes of the specified element. This method returns an empty set if the element
+   * is not in the Array2D.
+   *
+   * @param element the element
+   * @return the indexes of the specified element
+   */
+  fun getIndexes(element: T?) =
+      if (element == null) {
+        val nullIndexes = HashSet<IntPair>()
+
+        for (i in 0 until rows) {
+          for (j in 0 until columns) {
+            if (this[i, j] == null) {
+              nullIndexes.add(i pairTo j)
+            }
+          }
+        }
+
+        nullIndexes
+      } else {
+        elementToIndexMap[element] ?: emptySet()
+      }
+
+  /**
+   * Removes all the specified elements from this Array2D.
+   *
+   * @param elements the elements to remove
+   * @return true if any elements were removed from this Array2D, false otherwise
+   */
   fun removeAll(elements: Collection<T>): Boolean {
     elements.forEach { remove(it) }
     return true
   }
 
+  /**
+   * Removes the specified element from this Array2D. This method returns true if the element was
+   * removed from this Array2D. This method returns false if the element was not in this Array2D.
+   *
+   * @param element the element to remove
+   * @return true if the element was removed from this Array2D, false otherwise
+   */
   fun remove(element: T): Boolean {
     val indexPairs = elementToIndexMap.remove(element) ?: return false
     indexPairs.forEach { array2DMap.remove(it) }
+
     return true
   }
 
@@ -209,17 +383,21 @@ class Array2D<T>(val rows: Int, val columns: Int) {
 
   override fun toString(): String {
     val sb = StringBuilder()
+
     for (i in 0 until rows) {
       for (j in 0 until columns) {
         sb.append(this[i, j])
+
         if (j < columns - 1) {
           sb.append(", ")
         }
       }
+
       if (i < rows - 1) {
         sb.append("\n")
       }
     }
+
     return sb.toString()
   }
 }

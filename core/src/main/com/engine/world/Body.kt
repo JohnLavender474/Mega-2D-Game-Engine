@@ -17,8 +17,8 @@ import kotlin.reflect.cast
  * processed by the [WorldSystem].
  *
  * @param bodyType the [BodyType] of the body
- * @param x the x position of the body
- * @param y the y position of the body
+ * @param x the first position of the body
+ * @param y the second position of the body
  * @param width the width of the body
  * @param height the height of the body
  * @param physicsData the [PhysicsData] of the body
@@ -135,7 +135,7 @@ class Body(
   override fun hashCode() = System.identityHashCode(this)
 
   override fun toString() =
-      "Body(x=$x y=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
+      "Body(first=$x second=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
           "physicsData=$physicsData, fixtures=$fixtures, userData=$userData, 9preProcess=$preProcess, " +
           "postProcess=$postProcess, previousBounds=$previousBounds)"
 }

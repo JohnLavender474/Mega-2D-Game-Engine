@@ -10,14 +10,14 @@ import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2D
 import com.engine.common.shapes.GameShape2DSupplier
 
-/** The minimum and maximum x and y coordinates of an object. */
+/** The minimum and maximum first and second coordinates of an object. */
 data class MinsAndMaxes(val minX: Int, val minY: Int, val maxX: Int, val maxY: Int)
 
 /**
- * Gets the minimum and maximum x and y coordinates of the given object.
+ * Gets the minimum and maximum first and second coordinates of the given object.
  *
- * @param obj the object to get the minimum and maximum x and y coordinates of
- * @return the minimum and maximum x and y coordinates of the given object
+ * @param obj the object to get the minimum and maximum first and second coordinates of
+ * @return the minimum and maximum first and second coordinates of the given object
  */
 fun GraphMap.convertToMinsAndMaxes(obj: GameShape2D): MinsAndMaxes {
   val minX = floor(obj.getX() / ppm) - 1
@@ -29,10 +29,10 @@ fun GraphMap.convertToMinsAndMaxes(obj: GameShape2D): MinsAndMaxes {
 }
 
 /**
- * Converts the given x and y coordinates to graph coordinates.
+ * Converts the given first and second coordinates to graph coordinates.
  *
- * @param worldX the x coordinate
- * @param worldY the y coordinate
+ * @param worldX the first coordinate
+ * @param worldY the second coordinate
  * @return the graph coordinates
  */
 fun GraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
@@ -58,10 +58,10 @@ fun GraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
 fun GraphMap.convertToGraphCoordinate(v: Vector2) = convertToGraphCoordinate(v.x, v.y)
 
 /**
- * Converts the given x and y coordinates to world coordinates.
+ * Converts the given first and second coordinates to world coordinates.
  *
- * @param x the x coordinate
- * @param y the y coordinate
+ * @param x the first coordinate
+ * @param y the second coordinate
  * @return the world coordinates
  */
 fun GraphMap.convertToWorldCoordinate(x: Int, y: Int) =
@@ -69,13 +69,13 @@ fun GraphMap.convertToWorldCoordinate(x: Int, y: Int) =
 
 /** @see [convertToWorldCoordinate] */
 fun GraphMap.convertToWorldCoordinate(coordinate: IntPair) =
-    convertToWorldCoordinate(coordinate.x, coordinate.y)
+    convertToWorldCoordinate(coordinate.first, coordinate.second)
 
 /**
  * Checks if the given coordinates are out of bounds.
  *
- * @param _x the x coordinate
- * @param _y the y coordinate
+ * @param _x the first coordinate
+ * @param _y the second coordinate
  * @return true if the given coordinates are out of bounds, false otherwise
  */
 fun GraphMap.isOutOfBounds(_x: Int, _y: Int) =
@@ -87,7 +87,7 @@ fun GraphMap.isOutOfBounds(_x: Int, _y: Int) =
  * @param coordinate the coordinate
  * @return true if the given coordinate is out of bounds, false otherwise
  */
-fun GraphMap.isOutOfBounds(coordinate: IntPair) = isOutOfBounds(coordinate.x, coordinate.y)
+fun GraphMap.isOutOfBounds(coordinate: IntPair) = isOutOfBounds(coordinate.first, coordinate.second)
 
 /** A graph that can be used to store and retrieve objects. */
 interface GraphMap : Resettable {
@@ -121,13 +121,13 @@ interface GraphMap : Resettable {
   fun addAll(objs: Collection<GameShape2DSupplier>) = objs.forEach { add(it) }
 
   /** @see [get(Int, Int)] */
-  fun get(coordinate: IntPair) = get(coordinate.x, coordinate.y)
+  fun get(coordinate: IntPair) = get(coordinate.first, coordinate.second)
 
   /**
    * Gets the objects at the specified coordinate.
    *
-   * @param x the x coordinate
-   * @param y the y coordinate
+   * @param x the first coordinate
+   * @param y the second coordinate
    * @return the objects at the specified coordinate
    */
   fun get(x: Int, y: Int): Collection<Any>
@@ -135,10 +135,10 @@ interface GraphMap : Resettable {
   /**
    * Gets the objects in the specified area.
    *
-   * @param minX the minimum x coordinate
-   * @param minY the minimum y coordinate
-   * @param maxX the maximum x coordinate
-   * @param maxY the maximum y coordinate
+   * @param minX the minimum first coordinate
+   * @param minY the minimum second coordinate
+   * @param maxX the maximum first coordinate
+   * @param maxY the maximum second coordinate
    * @return the objects in the specified area
    */
   fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Collection<Any>
@@ -146,7 +146,7 @@ interface GraphMap : Resettable {
   /**
    * Gets the objects in the specified area.
    *
-   * @param m the minimum and maximum x and y coordinates of the area
+   * @param m the minimum and maximum first and second coordinates of the area
    * @return the objects in the specified area
    */
   fun get(m: MinsAndMaxes) = get(m.minX, m.minY, m.maxX, m.maxY)

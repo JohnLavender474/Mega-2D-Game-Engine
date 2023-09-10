@@ -86,16 +86,16 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
   /**
    * Returns the [ArrayList] of [Fixture]s at the given position.
    *
-   * @param x the x position of the tile to fetch from
-   * @param y the y position of the tile to fetch from
+   * @param x the first position of the tile to fetch from
+   * @param y the second position of the tile to fetch from
    */
   fun getFixtures(x: Int, y: Int) = fixtures.getOrDefault(Pair(x, y), ArrayList())
 
   /**
    * Returns the [ArrayList] of [Body]s at the given position.
    *
-   * @param x the x position of the tile to fetch from
-   * @param y the y position of the tile to fetch from
+   * @param x the first position of the tile to fetch from
+   * @param y the second position of the tile to fetch from
    */
   fun getBodies(x: Int, y: Int) = bodies.getOrDefault(Pair(x, y), ArrayList())
 

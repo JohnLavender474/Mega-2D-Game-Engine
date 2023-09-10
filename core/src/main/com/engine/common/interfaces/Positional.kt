@@ -6,8 +6,8 @@ interface Positional : PositionSupplier {
   /**
    * Sets the position of this object.
    *
-   * @param x the x-position to set
-   * @param y the y-position to set
+   * @param x the first-position to set
+   * @param y the second-position to set
    */
   fun setPosition(x: Float, y: Float)
 }

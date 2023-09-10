@@ -35,9 +35,9 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
   internal class Node(val coordinate: IntPair, val ppm: Int) : Comparable<Node> {
 
     val x: Int
-      get() = coordinate.x
+      get() = coordinate.first
     val y: Int
-      get() = coordinate.y
+      get() = coordinate.second
 
     var distance = 0
     var previous: Node? = null
@@ -47,8 +47,8 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
 
     override fun hashCode(): Int {
       var hash = 49
-      hash = hash * 31 + coordinate.x
-      hash = hash * 31 + coordinate.y
+      hash = hash * 31 + coordinate.first
+      hash = hash * 31 + coordinate.second
       return hash
     }
 
@@ -71,13 +71,8 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
     val targetCoordinate = graph.convertToGraphCoordinate(params.targetSupplier())
     val startCoordinate = graph.convertToGraphCoordinate(params.startSupplier())
 
-    println("Start coordinate: $startCoordinate")
-    println("Target coordinate: $targetCoordinate")
-
     // If the start or target points are out of bounds, return null
     if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate)) {
-      println("Out of bounds")
-      println("graph bounds: ${graph.x}, ${graph.y}, ${graph.width}, ${graph.height}")
       return PathfinderResult(null, null, false)
     }
 
@@ -125,14 +120,16 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
       // println("Max: $max")
 
       // For each adjacent node
-      for (x in min.x..max.x) {
-        for (y in min.y..max.y) {
+      for (x in min.first..max.first) {
+        for (y in min.second..max.second) {
           // If the adjacent node is out of bounds, skip it
           if (graph.isOutOfBounds(x, y)) continue
 
           // If diagonal movement is not allowed and the adjacent node is diagonal to the current
           // node, skip it
-          if (!params.allowDiagonal() && (x == min.x || x == max.x) && (y == min.y || y == max.y))
+          if (!params.allowDiagonal() &&
+              (x == min.first || x == max.first) &&
+              (y == min.second || y == max.second))
               continue
 
           // Get the adjacent node
@@ -143,9 +140,7 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
           if (neighbor?.discovered == true) continue
 
           // If the adjacent node is an obstacle, skip it
-          if (x != targetCoordinate.x &&
-              y != targetCoordinate.y &&
-              !params.filter(x pairTo y, graph.get(x, y)))
+          if (x pairTo y != targetCoordinate && !params.filter(x pairTo y, graph.get(x, y)))
               continue
 
           // Calculate the total distance from the start node to the adjacent node
@@ -157,11 +152,11 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
           // accordingly
           if (neighbor == null) {
             neighbor = Node(neighborCoordinate, graph.ppm)
-
             map[neighborCoordinate] = neighbor
 
             neighbor.distance = totalDistance
             neighbor.previous = currentNode
+
             open.add(neighbor)
           } else if (totalDistance < neighbor.distance) {
             neighbor.distance = totalDistance

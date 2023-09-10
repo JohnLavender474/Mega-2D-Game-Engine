@@ -2,26 +2,25 @@ package com.engine.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.common.interfaces.Drawable
-import com.engine.common.objects.Array2D
+import com.engine.common.objects.Matrix
 
 /**
- * A 2D array of sprites. The sprites are positioned in a grid. The number of rows and columns are
+ * A matrix of sprites. The sprites are positioned in a grid. The number of rows and columns are
  * specified in the constructor.
  *
  * @param model The model sprite that the sprites are copied on.
  * @param priority The priority of the sprites.
  * @param rows The number of rows.
- * @param cols The number of columns.
+ * @param columns The number of columns.
  */
-@Deprecated("Should use Sprite Matrix instead.", ReplaceWith("SpriteMatrix"))
-class Sprite2dArray(model: Sprite, priority: Int, val rows: Int, val cols: Int) : Drawable {
+class SpriteMatrix(model: Sprite, priority: Int, val rows: Int, val columns: Int) : Drawable {
 
-  private val sprite2dArray = Array2D<Sprite>(rows, cols)
+  private val spriteMatrix = Matrix<Sprite>(rows, columns)
 
   init {
-    for (i in 0 until rows) {
-      for (j in 0 until cols) {
-        sprite2dArray[i, j] = Sprite(model, priority)
+    for (x in 0 until columns) {
+      for (y in 0 until rows) {
+        spriteMatrix[x, y] = Sprite(model, priority)
       }
     }
     setPosition(model.x, model.y)
@@ -30,14 +29,14 @@ class Sprite2dArray(model: Sprite, priority: Int, val rows: Int, val cols: Int) 
   override fun draw(batch: Batch) = forEach { if (it.texture != null) it.draw(batch) }
 
   /**
-   * Applies the specified action to each sprite in the array.
+   * Applies the specified action to each sprite in the matrix.
    *
    * @param action The action to apply to each sprite.
    */
   fun forEach(action: (Sprite) -> Unit) {
-    for (i in 0 until rows) {
-      for (j in 0 until cols) {
-        sprite2dArray[i, j]?.let { action(it) }
+    for (x in 0 until columns) {
+      for (y in 0 until rows) {
+        spriteMatrix[x, y]?.let { action(it) }
       }
     }
   }

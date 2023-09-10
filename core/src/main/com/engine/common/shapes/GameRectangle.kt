@@ -39,10 +39,10 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
   constructor() : super()
 
   /**
-   * Creates a new [GameRectangle] with the given x, y, width, and height.
+   * Creates a new [GameRectangle] with the given first, second, width, and height.
    *
-   * @param x The x coordinate of the bottom left corner of this rectangle.
-   * @param y The y coordinate of the bottom left corner of this rectangle.
+   * @param x The first coordinate of the bottom left corner of this rectangle.
+   * @param y The second coordinate of the bottom left corner of this rectangle.
    * @param width The width of this rectangle.
    * @param height The height of this rectangle.
    * @see Rectangle

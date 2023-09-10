@@ -1,75 +1,42 @@
 package com.engine.pathfinding
 
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.objects.Array2D
 import com.engine.common.objects.IntPair
+import com.engine.common.objects.Matrix
 import com.engine.common.objects.pairTo
 import com.engine.graph.GraphMap
 import com.engine.graph.SimpleMockGraphMap
+import com.engine.graph.convertToWorldCoordinate
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
 
-/**
- * Tests for the [Pathfinder] class. These tests are not exhaustive, but they should be enough to
- * ensure that the [Pathfinder] class works as intended. The [Pathfinder] class is used to find a
- * graphPath from a start point to a target point. It uses the [GraphMap] class to represent the
- * world. The [GraphMap] class is used to store and retrieve objects in the world. The [Pathfinder]
- * class uses the [GraphMap] class to determine if a graphPath exists from the start point to the
- * target point. If a graphPath exists, the [Pathfinder] class returns a collection of [IntPair]s
- * that represent the graphPath from the start point to the target point
- *
- * @see [Pathfinder]
- * @see [GraphMap]
- */
 class PathfinderTest :
     DescribeSpec({
       lateinit var graph: GraphMap
 
-      /**
-       * Creates a [PathfinderParams] instance from the given matrix and whether diagonal movement
-       * is allowed. The matrix is used to determine the start point, target point, and obstacles.
-       * The start point is represented by an S, the target point is represented by a T, and
-       * obstacles are represented by !s. The 0s represent empty spaces.
-       *
-       * @param matrix the matrix that represents the world
-       * @param allowDiagonal whether diagonal movement is allowed
-       * @return a [PathfinderParams] instance
-       */
-      fun createPathfinderParams(
-          matrix: Array2D<String>,
-          allowDiagonal: Boolean
-      ): PathfinderParams {
+      fun createPathfinderParams(matrix: Matrix<String>, allowDiagonal: Boolean): PathfinderParams {
         lateinit var startSupplier: () -> Vector2
         lateinit var targetSupplier: () -> Vector2
         val nodesToFilter = HashSet<IntPair>()
 
         matrix.forEach(
-            flipHorizontally = false,
-            flipVertically = true,
-            action = { coordinate: IntPair, value: String? ->
-              val (row, column) = coordinate
-
+            action = { x: Int, y: Int, value: String? ->
               when (value) {
                 "S" -> {
-                  println("Start supplier: ${row pairTo column}")
-                  startSupplier = {
-                    Vector2(column.toFloat() * graph.ppm, row.toFloat() * graph.ppm)
-                  }
+                  startSupplier = { Vector2(x.toFloat() * graph.ppm, y.toFloat() * graph.ppm) }
                 }
                 "T" -> {
-                  println("Target supplier: ${row pairTo column}")
-                  targetSupplier = {
-                    Vector2(column.toFloat() * graph.ppm, row.toFloat() * graph.ppm)
-                  }
+                  targetSupplier = { Vector2(x.toFloat() * graph.ppm, y.toFloat() * graph.ppm) }
                 }
-                "!" -> nodesToFilter.add(row pairTo column)
-                else -> {}
+                "X" -> {
+                  startSupplier = { Vector2(x.toFloat() * graph.ppm, y.toFloat() * graph.ppm) }
+                  targetSupplier = { Vector2(x.toFloat() * graph.ppm, y.toFloat() * graph.ppm) }
+                }
+                "!" -> nodesToFilter.add(x pairTo y)
               }
             })
 
-        println("Nodes to filter: $nodesToFilter")
         val filter: (IntPair, Collection<Any>) -> Boolean = { coordinate, _ ->
           !nodesToFilter.contains(coordinate)
         }
@@ -77,44 +44,193 @@ class PathfinderTest :
         return PathfinderParams(startSupplier, targetSupplier, { allowDiagonal }, filter)
       }
 
-      describe("Pathfinder") {
-        beforeEach { clearAllMocks() }
+      it("createPathfinderParams") {
 
+        // If
+        graph = SimpleMockGraphMap(0, 0, 3, 2, 1)
+        val world = Matrix(arrayOf(arrayOf("S", "0", "0"), arrayOf("0", "0", "T")))
+
+        // when
+        val params = createPathfinderParams(world, true)
+
+        // then
+        world.forEach { x, y, element ->
+          when (element) {
+            "S" -> {
+              x shouldBe 0
+              y shouldBe 1
+            }
+            "T" -> {
+              x shouldBe 2
+              y shouldBe 0
+            }
+            else -> {}
+          }
+        }
+
+        params.startSupplier() shouldBe Vector2(0f, 1f)
+        params.targetSupplier() shouldBe Vector2(2f, 0f)
+      }
+
+      describe("Pathfinder") {
         it("should find the fastest path - test 1") {
           // If
           graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
           val world =
-              Array2D(
+              Matrix(
                   arrayOf(
                       arrayOf("S", "0", "0", "0"),
                       arrayOf("0", "0", "0", "0"),
                       arrayOf("0", "0", "0", "0"),
                       arrayOf("0", "0", "0", "T"),
-                  ),
-                  flipVertically = true)
-          println("World: \n$world")
+                  ))
 
           val params = createPathfinderParams(world, true)
-          println("Params: $params")
-
           val pathfinder = Pathfinder(graph, params)
 
           // when
           val result = pathfinder.call()
-          println(result)
+
+          val graphPath = result.graphPath
+          val worldPath = result.worldPath
 
           // then
-          result.graphPath shouldNotBe null
-          result.worldPath shouldNotBe null
+          graphPath shouldNotBe null
+          worldPath shouldNotBe null
 
-          result.graphPath?.size shouldBe 4
-          result.worldPath?.size shouldBe 4
+          graphPath!!.size shouldBe 4
+          worldPath!!.size shouldBe 4
 
-          for (i in 0 until 3) {
-            result.graphPath?.get(i) shouldBe IntPair(i, i)
-            result.worldPath?.get(i) shouldBe
-                Vector2(i * graph.ppm.toFloat(), i * graph.ppm.toFloat())
+          graphPath[0] shouldBe IntPair(0, 3)
+          graphPath[1] shouldBe IntPair(1, 2)
+          graphPath[2] shouldBe IntPair(2, 1)
+          graphPath[3] shouldBe IntPair(3, 0)
+
+          for (i in 0..3) {
+            val graphPoint = graphPath[i]
+            worldPath[i] shouldBe graph.convertToWorldCoordinate(graphPoint)
           }
+        }
+
+        it("should find the fastest path - test 2") {
+          // If
+          graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
+          val world =
+              Matrix(
+                  arrayOf(
+                      arrayOf("S", "0", "!", "T"),
+                      arrayOf("!", "0", "!", "0"),
+                      arrayOf("0", "0", "!", "0"),
+                      arrayOf("0", "0", "0", "0"),
+                  ))
+
+          val params = createPathfinderParams(world, true)
+          val pathfinder = Pathfinder(graph, params)
+
+          // when
+          val result = pathfinder.call()
+
+          val graphPath = result.graphPath
+
+          // then
+          graphPath shouldNotBe null
+          graphPath!!.size shouldBe 7
+
+          graphPath[0] shouldBe IntPair(0, 3)
+          graphPath[1] shouldBe IntPair(1, 2)
+          graphPath[2] shouldBe IntPair(1, 1)
+          graphPath[3] shouldBe IntPair(2, 0)
+          graphPath[4] shouldBe IntPair(3, 1)
+          graphPath[5] shouldBe IntPair(3, 2)
+          graphPath[6] shouldBe IntPair(3, 3)
+
+          result.targetReached shouldBe false
+        }
+
+        it("should find the fastest path - test 3") {
+          // If
+          graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
+          val world =
+              Matrix(
+                  arrayOf(
+                      arrayOf("S", "0", "!", "T"),
+                      arrayOf("!", "0", "!", "0"),
+                      arrayOf("0", "0", "!", "0"),
+                      arrayOf("0", "0", "0", "0"),
+                  ))
+
+          val params = createPathfinderParams(world, false)
+          val pathfinder = Pathfinder(graph, params)
+
+          // when
+          val result = pathfinder.call()
+          val graphPath = result.graphPath
+
+          // then
+          graphPath shouldNotBe null
+          graphPath!!.size shouldBe 10
+
+          graphPath[0] shouldBe IntPair(0, 3)
+          graphPath[1] shouldBe IntPair(1, 3)
+          graphPath[2] shouldBe IntPair(1, 2)
+          graphPath[3] shouldBe IntPair(1, 1)
+          graphPath[4] shouldBe IntPair(1, 0)
+          graphPath[5] shouldBe IntPair(2, 0)
+          graphPath[6] shouldBe IntPair(3, 0)
+          graphPath[7] shouldBe IntPair(3, 1)
+          graphPath[8] shouldBe IntPair(3, 2)
+          graphPath[9] shouldBe IntPair(3, 3)
+
+          result.targetReached shouldBe false
+        }
+
+        it("should find the fastest path - test 4") {
+          // If
+          graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
+          val world =
+              Matrix(
+                  arrayOf(
+                      arrayOf("S", "0", "!", "T"),
+                      arrayOf("!", "0", "!", "0"),
+                      arrayOf("0", "0", "!", "0"),
+                      arrayOf("0", "0", "!", "0"),
+                  ))
+
+          val params = createPathfinderParams(world, true)
+          val pathfinder = Pathfinder(graph, params)
+
+          // when
+          val result = pathfinder.call()
+
+          val graphPath = result.graphPath
+
+          // then
+          graphPath shouldBe null
+          result.targetReached shouldBe false
+        }
+
+        it("should find the fastest path - test 5") {
+          // If
+          graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
+          val world =
+              Matrix(
+                  arrayOf(
+                      arrayOf("X", "0", "0", "0"),
+                      arrayOf("0", "0", "0", "0"),
+                      arrayOf("0", "0", "0", "0"),
+                      arrayOf("0", "0", "0", "0"),
+                  ))
+
+          val params = createPathfinderParams(world, true)
+          val pathfinder = Pathfinder(graph, params)
+
+          // when
+          val result = pathfinder.call()
+
+          // then
+          result.graphPath shouldBe null
+          result.worldPath shouldBe null
+          result.targetReached shouldBe true
         }
       }
     })

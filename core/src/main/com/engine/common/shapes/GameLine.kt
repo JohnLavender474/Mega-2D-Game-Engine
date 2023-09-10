@@ -41,10 +41,10 @@ class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
   /**
    * Creates a line with the given pointsHandles.
    *
-   * @param x1 The x coordinate of the first point of this line.
-   * @param y1 The y coordinate of the first point of this line.
-   * @param x2 The x coordinate of the second point of this line.
-   * @param y2 The y coordinate of the second point of this line.
+   * @param x1 The first coordinate of the first point of this line.
+   * @param y1 The second coordinate of the first point of this line.
+   * @param x2 The first coordinate of the second point of this line.
+   * @param y2 The second coordinate of the second point of this line.
    */
   constructor(x1: Float, y1: Float, x2: Float, y2: Float) : this(Vector2(x1, y1), Vector2(x2, y2))
 

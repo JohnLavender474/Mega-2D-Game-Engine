@@ -15,8 +15,8 @@ import com.engine.common.interfaces.Drawable
  * @param textSupplier a supplier for the text
  * @param fontSource the source of the font
  * @param fontSize the size of the font
- * @param centerX whether the text should be centered on the x-axis
- * @param centerY whether the text should be centered on the y-axis
+ * @param centerX whether the text should be centered on the first-axis
+ * @param centerY whether the text should be centered on the second-axis
  */
 class BitmapFontHandle(
     val position: Vector2,

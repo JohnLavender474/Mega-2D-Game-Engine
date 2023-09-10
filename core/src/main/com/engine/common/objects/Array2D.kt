@@ -9,6 +9,7 @@ package com.engine.common.objects
  * @param T the type of elements in the Array2D
  * @param array2D the Array2D to iterate through
  */
+@Deprecated("Use Matrix instead.", ReplaceWith("Matrix Iterator"))
 class Array2DIterator<T : Any?>(private val array2D: Array2D<T>) {
 
   var rowIndex = 0
@@ -58,6 +59,9 @@ class Array2DIterator<T : Any?>(private val array2D: Array2D<T>) {
  * @param T the type of elements in the array
  * @constructor Creates an Array2D with the specified number of rows and columns
  */
+@Deprecated(
+    "Should use Matrix instead. By default, Matrix iterates from bottom to top. " +
+        "This is almost always the desired behavior.", ReplaceWith("Matrix"))
 class Array2D<T>(val rows: Int, val columns: Int) {
 
   val size: Int
@@ -145,7 +149,7 @@ class Array2D<T>(val rows: Int, val columns: Int) {
 
   /**
    * Adds all the specified elements to this Array2D. This method returns true if all elements were
-   * added to this Array2D. An elements is not added if this Array2D is already full, i.e. there are
+   * added to this Array2D. An element is not added if this Array2D is already full, i.e. there are
    * no more null elements.
    *
    * @param elements the elements to add
@@ -180,32 +184,111 @@ class Array2D<T>(val rows: Int, val columns: Int) {
     return false
   }
 
+  /** Removes all the elements from this Array2D. */
   fun clear() {
     array2DMap.clear()
     elementToIndexMap.clear()
   }
 
+  /**
+   * Maps the elements of this Array2D to a new Array2D using the specified transform function. This
+   * method returns a new Array2D with the same dimensions as this Array2D. The transform function
+   * is applied to each element in this Array2D and the result is stored in the new Array2D. The
+   * transform function is applied in row major order. This means that the first row is iterated
+   * through, then the second row, and so on. The first column is iterated through, then the second
+   * column, and so on.
+   *
+   * @param transform the transform function
+   * @return a new Array2D with the same dimensions as this Array2D
+   */
   fun <R> map(transform: (T) -> R): Array2D<R> {
     val mappedArray2D = Array2D<R>(rows, columns)
 
     array2DMap.forEach { (indexPair, element) ->
-      mappedArray2D[indexPair.x, indexPair.y] = transform(element)
+      mappedArray2D[indexPair.first, indexPair.second] = transform(element)
     }
 
     return mappedArray2D
   }
 
-  fun forEach(action: (IntPair, T?) -> Unit) = array2DMap.forEach(action)
+  /**
+   * Applies the specified action to each element in this Array2D. The action is applied in row
+   * major order. This means that the first row is iterated through, then the second row, and so on.
+   * Keep in mind that for the [action], the first integer value is the row (y value) and the second
+   * is the column (x value).
+   *
+   * @param action the action to apply
+   */
+  fun forEach(action: (Int, Int, T?) -> Unit) =
+      array2DMap.forEach { (indexPair, element) ->
+        action(indexPair.first, indexPair.second, element)
+      }
 
-  fun forEach(flipHorizontally: Boolean, flipVertically: Boolean, action: (IntPair, T?) -> Unit) {
+  /**
+   * Applies the specified action to each element in this Array2D. This method has two parameters
+   * that allow for flipping the iteration. If [flipHorizontally] is true, the iteration will be
+   * flipped horizontally. This means that the first column will be iterated through, then the
+   * second column, and so on. If [flipVertically] is true, the iteration will be flipped
+   * vertically. This means the first row will be iterated through, then the second, and so on. Keep
+   * in mind that for the [action], the first integer value is the row (y value) and the second is
+   * the column (x value).
+   *
+   * @param flipHorizontally whether to flip the iteration horizontally
+   * @param flipVertically whether to flip the iteration vertically
+   * @param action the action to apply
+   * @see [forEach]
+   */
+  fun forEach(flipHorizontally: Boolean, flipVertically: Boolean, action: (Int, Int, T?) -> Unit) {
+    array2DMap.forEach { (indexPair, element) ->
+      val row = if (flipVertically) rows - 1 - indexPair.first else indexPair.first
+      val column = if (flipHorizontally) columns - 1 - indexPair.second else indexPair.second
+
+      action(row, column, element)
+    }
+  }
+
+  /**
+   * Returns a new Array2D where the elements are flipped horizontally.
+   *
+   * @return a new Array2D where the elements are flipped horizontally
+   */
+  fun flipHorizontally(): Array2D<T> {
+    val flippedArray2D = Array2D<T>(rows, columns)
+
     for (i in 0 until rows) {
       for (j in 0 until columns) {
-        val row = if (flipVertically) rows - 1 - i else i
-        val column = if (flipHorizontally) columns - 1 - j else j
-
-        action(row pairTo column, this[i, j])
+        flippedArray2D[i, j] = this[i, columns - 1 - j]
       }
     }
+
+    return flippedArray2D
+  }
+
+  /**
+   * Returns a new Array2D where the elements are flipped vertically.
+   *
+   * @return a new Array2D where the elements are flipped vertically
+   */
+  fun flipVertically(): Array2D<T> {
+    val flippedArray2D = Array2D<T>(rows, columns)
+
+    for (i in 0 until rows) {
+      for (j in 0 until columns) {
+        flippedArray2D[i, j] = this[rows - 1 - i, j]
+      }
+    }
+
+    return flippedArray2D
+  }
+
+  /**
+   * Returns a new Array2D where the elements are flipped horizontally and vertically.
+   *
+   * @return a new Array2D where the elements are flipped horizontally and vertically
+   */
+  fun flip(): Array2D<T> {
+    val v = flipHorizontally()
+    return v.flipVertically()
   }
 
   /**

@@ -51,10 +51,10 @@ open class QuadTreeGraphMap(
    *
    * @param obj The object to add.
    * @param currentDepth The currentDepth depth of the recursive call.
-   * @param minX The minimum x coordinate of the cell.
-   * @param minY The minimum y coordinate of the cell.
-   * @param maxX The maximum x coordinate of the cell.
-   * @param maxY The maximum y coordinate of the cell.
+   * @param minX The minimum first coordinate of the cell.
+   * @param minY The minimum second coordinate of the cell.
+   * @param maxX The maximum first coordinate of the cell.
+   * @param maxY The maximum second coordinate of the cell.
    */
   protected fun add(
       obj: Any,

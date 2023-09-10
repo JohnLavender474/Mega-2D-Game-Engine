@@ -383,18 +383,152 @@ class Array2DTest :
           array2D[2, 2] shouldBe 3
         }
 
-        it("should apply for each correctly") {
-          // if
-          array2D[0, 0] = 1
-          array2D[1, 1] = 2
-          array2D[2, 2] = 3
+        describe("forEach") {
+          it("should apply for each correctly") {
+            // if
+            val _array2D = Array2D<Int>(3, 3)
+            _array2D[0, 0] = 1
+            _array2D[1, 1] = 2
+            _array2D[2, 2] = 3
 
-          // when
-          val set = HashSet<Int?>()
-          array2D.forEach { _, element -> set.add(element?.times(2)) }
+            // when
+            val set = HashSet<Int?>()
+            _array2D.forEach { _, _, element -> set.add(element?.times(2)) }
 
-          // then
-          set shouldContainAll setOf(2, 4, 6)
+            // then
+            set shouldContainAll setOf(2, 4, 6)
+          }
+
+          it("should apply for each correctly when vertically flipped") {
+            // if
+            val _array2D = Array2D<Int>(3, 3)
+            _array2D[0, 0] = 1
+            _array2D[1, 1] = 2
+            _array2D[2, 2] = 3
+
+            // when
+            _array2D.forEach(flipHorizontally = false, flipVertically = true) { row, column, element
+              ->
+              when (element) {
+                1 -> {
+                  row shouldBe 2
+                  column shouldBe 0
+                }
+                2 -> {
+                  row shouldBe 1
+                  column shouldBe 1
+                }
+                3 -> {
+                  row shouldBe 0
+                  column shouldBe 2
+                }
+              }
+            }
+          }
+
+          it("should apply for each correctly when horizontally flipped") {
+            // if
+            val _array2D = Array2D<Int>(3, 3)
+            _array2D[0, 0] = 1
+            _array2D[1, 1] = 2
+            _array2D[2, 2] = 3
+
+            // then
+            _array2D.forEach(flipHorizontally = true, flipVertically = false) { row, column, element
+              ->
+              when (element) {
+                1 -> {
+                  row shouldBe 0
+                  column shouldBe 2
+                }
+                2 -> {
+                  row shouldBe 1
+                  column shouldBe 1
+                }
+                3 -> {
+                  row shouldBe 2
+                  column shouldBe 0
+                }
+              }
+            }
+          }
+
+          it("should apply for each correctly when flipped") {
+            // if
+            val _array2D = Array2D<Int>(3, 3)
+            _array2D[0, 0] = 1
+            _array2D[1, 1] = 2
+            _array2D[2, 2] = 3
+
+            // then
+            _array2D.forEach(flipHorizontally = true, flipVertically = true) { row, column, element
+              ->
+              when (element) {
+                1 -> {
+                  row shouldBe 2
+                  column shouldBe 2
+                }
+                2 -> {
+                  row shouldBe 1
+                  column shouldBe 1
+                }
+                3 -> {
+                  row shouldBe 0
+                  column shouldBe 0
+                }
+              }
+            }
+          }
+        }
+
+        describe("flip") {
+          it("should flip horizontally correctly") {
+            // if
+            val _array2D = Array2D<Int>(3, 3)
+            _array2D[0, 0] = 1
+            _array2D[1, 1] = 2
+            _array2D[2, 2] = 3
+
+            // when
+            val flippedArray2D = _array2D.flipHorizontally()
+
+            // then
+            flippedArray2D[0, 2] shouldBe 1
+            flippedArray2D[1, 1] shouldBe 2
+            flippedArray2D[2, 0] shouldBe 3
+          }
+
+          it("should flip vertically correctly") {
+            // if
+            val _array2D = Array2D<Int>(3, 3)
+            _array2D[0, 0] = 1
+            _array2D[1, 1] = 2
+            _array2D[2, 2] = 3
+
+            // when
+            val flippedArray2D = _array2D.flipVertically()
+
+            // then
+            flippedArray2D[2, 0] shouldBe 1
+            flippedArray2D[1, 1] shouldBe 2
+            flippedArray2D[0, 2] shouldBe 3
+          }
+
+          it("should flip correctly") {
+            // if
+            val _array2D = Array2D<Int>(3, 3)
+            _array2D[0, 0] = 1
+            _array2D[1, 1] = 2
+            _array2D[2, 2] = 3
+
+            // when
+            val flippedArray2D = _array2D.flip()
+
+            // then
+            flippedArray2D[0, 0] shouldBe 3
+            flippedArray2D[1, 1] shouldBe 2
+            flippedArray2D[2, 2] shouldBe 1
+          }
         }
 
         it("should construct correctly with matrix") {

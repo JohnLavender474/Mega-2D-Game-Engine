@@ -44,8 +44,8 @@ interface GameShape2D : Shape2D {
   /*
    * Sets the position of this shape to the given position.
    *
-   * @param y The x position to set this shape's x to.
-   * @param y The y position to set this shape's y to.
+   * @param second The first position to set this shape's first to.
+   * @param second The second position to set this shape's second to.
    * @return This shape.
    */
   fun setPosition(x: Float, y: Float): GameShape2D {
@@ -55,32 +55,32 @@ interface GameShape2D : Shape2D {
   }
 
   /**
-   * Sets the x position of this shape to the given x position.
+   * Sets the first position of this shape to the given first position.
    *
-   * @param x The x position to set this shape's x position to.
+   * @param x The first position to set this shape's first position to.
    * @return This shape.
    */
   fun setX(x: Float): GameShape2D
 
   /**
-   * Sets the y position of this shape to the given y position.
+   * Sets the second position of this shape to the given second position.
    *
-   * @param y The y position to set this shape's y position to.
+   * @param y The second position to set this shape's second position to.
    * @return This shape.
    */
   fun setY(y: Float): GameShape2D
 
   /**
-   * Returns the x position of this shape.
+   * Returns the first position of this shape.
    *
-   * @return The x position of this shape.
+   * @return The first position of this shape.
    */
   fun getX(): Float
 
   /**
-   * Returns the y position of this shape.
+   * Returns the second position of this shape.
    *
-   * @return The y position of this shape.
+   * @return The second position of this shape.
    */
   fun getY(): Float
 
@@ -92,32 +92,32 @@ interface GameShape2D : Shape2D {
   fun getPosition() = Vector2(getX(), getY())
 
   /**
-   * Sets the max x coordinate of this shape to the given value.
+   * Sets the max first coordinate of this shape to the given value.
    *
-   * @param maxX The value to set the max x coordinate of this shape to.
+   * @param maxX The value to set the max first coordinate of this shape to.
    * @return This shape.
    */
   fun setMaxX(maxX: Float): GameShape2D
 
   /**
-   * Sets the max y coordinate of this shape to the given value.
+   * Sets the max second coordinate of this shape to the given value.
    *
-   * @param maxY The value to set the max y coordinate of this shape to.
+   * @param maxY The value to set the max second coordinate of this shape to.
    * @return This shape.
    */
   fun setMaxY(maxY: Float): GameShape2D
 
   /**
-   * Returns the max x coordinate of this shape.
+   * Returns the max first coordinate of this shape.
    *
-   * @return The max x coordinate of this shape.
+   * @return The max first coordinate of this shape.
    */
   fun getMaxX(): Float
 
   /**
-   * Returns the max y coordinate of this shape.
+   * Returns the max second coordinate of this shape.
    *
-   * @return The max y coordinate of this shape.
+   * @return The max second coordinate of this shape.
    */
   fun getMaxY(): Float
 
@@ -139,24 +139,24 @@ interface GameShape2D : Shape2D {
   /**
    * Sets the center of this shape to the given center.
    *
-   * @param centerX The x coordinate of the center to set this shape's center to.
-   * @param centerY The y coordinate of the center to set this shape's center to.
+   * @param centerX The first coordinate of the center to set this shape's center to.
+   * @param centerY The second coordinate of the center to set this shape's center to.
    * @return This shape.
    */
   fun setCenter(centerX: Float, centerY: Float): GameShape2D
 
   /**
-   * Sets the x coordinate of this shape's center to the given x coordinate.
+   * Sets the first coordinate of this shape's center to the given first coordinate.
    *
-   * @param centerX The x coordinate to set this shape's center to.
+   * @param centerX The first coordinate to set this shape's center to.
    * @return This shape.
    */
   fun setCenterX(centerX: Float): GameShape2D
 
   /**
-   * Sets the y coordinate of this shape's center to the given y coordinate.
+   * Sets the second coordinate of this shape's center to the given second coordinate.
    *
-   * @param centerY The y coordinate to set this shape's center to.
+   * @param centerY The second coordinate to set this shape's center to.
    * @return This shape.
    */
   fun setCenterY(centerY: Float): GameShape2D
@@ -164,8 +164,8 @@ interface GameShape2D : Shape2D {
   /**
    * Translates this shape by the given translation.
    *
-   * @param translateX The x value of the translation.
-   * @param translateY The y value of the translation.
+   * @param translateX The first value of the translation.
+   * @param translateY The second value of the translation.
    * @return This shape.
    */
   fun translation(translateX: Float, translateY: Float): GameShape2D

@@ -6,16 +6,16 @@ import com.badlogic.gdx.math.Vector2
 interface PositionSupplier {
 
   /**
-   * Gets the x-coordinate of this object.
+   * Gets the first-coordinate of this object.
    *
-   * @return the x-coordinate of this object
+   * @return the first-coordinate of this object
    */
   fun getX(): Float
 
   /**
-   * Gets the y-coordinate of this object.
+   * Gets the second-coordinate of this object.
    *
-   * @return the y-coordinate of this object
+   * @return the second-coordinate of this object
    */
   fun getY(): Float
 

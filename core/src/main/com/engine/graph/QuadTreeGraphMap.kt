@@ -15,14 +15,34 @@ import com.engine.common.shapes.GameShape2D
  * @param depth The depth of the quad tree.
  */
 open class QuadTreeGraphMap(
+    override val x: Int,
+    override val y: Int,
     override val width: Int,
     override val height: Int,
     override val ppm: Int,
     val depth: Int
 ) : GraphMap {
 
-  // A map of the objects in each cell.
   protected val objects = HashMap<IntPair, ArrayList<Any>>()
+
+  override fun get(x: Int, y: Int) =
+      objects.getOrDefault(IntPair(x, y), emptySet()).toImmutableCollection()
+
+  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ImmutableCollection<Any> {
+    val set = HashSet<Any>()
+
+    for (x in minX..maxX) {
+      for (y in minY..maxY) {
+        if (isOutOfBounds(x, y)) {
+          continue
+        }
+
+        set.addAll(get(x, y))
+      }
+    }
+
+    return set.toImmutableCollection()
+  }
 
   /**
    * Adds the given object to this graph. This method is recursive. It will add the object to the
@@ -61,6 +81,10 @@ open class QuadTreeGraphMap(
       } else {
         for (x in minX until maxX) {
           for (y in minY until maxY) {
+            if (isOutOfBounds(x, y)) {
+              continue
+            }
+
             return objects.computeIfAbsent(IntPair(x, y)) { ArrayList() }.add(obj)
           }
         }
@@ -71,21 +95,6 @@ open class QuadTreeGraphMap(
   }
 
   override fun add(obj: Any, shape: GameShape2D) = add(obj, shape, 0, 0, 0, width, height)
-
-  override fun get(x: Int, y: Int) =
-      objects.getOrDefault(IntPair(x, y), emptySet()).toImmutableCollection()
-
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ImmutableCollection<Any> {
-    val set = HashSet<Any>()
-
-    for (x in minX..maxX) {
-      for (y in minY..maxY) {
-        set.addAll(get(x, y))
-      }
-    }
-
-    return set.toImmutableCollection()
-  }
 
   override fun reset() = objects.clear()
 }

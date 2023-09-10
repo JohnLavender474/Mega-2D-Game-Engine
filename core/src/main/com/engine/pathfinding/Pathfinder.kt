@@ -1,31 +1,33 @@
 package com.engine.pathfinding
 
 import com.engine.common.objects.IntPair
-import com.engine.common.shapes.GameRectangle
+import com.engine.common.objects.pairTo
 import com.engine.graph.GraphMap
 import com.engine.graph.convertToGraphCoordinate
+import com.engine.graph.convertToWorldCoordinate
+import com.engine.graph.isOutOfBounds
 import java.util.*
 import java.util.concurrent.Callable
 import kotlin.math.abs
 
 /**
- * A pathfinder that finds a path from a start point to a target point. Implements the [Callable]
- * interface so that it can be called in a separate thread if desired. Pathfinding is usually an
- * expensive operation, so it might be good to call this in a separate thread.
+ * A pathfinder that finds a graphPath from a start point to a target point. Implements the
+ * [Callable] interface so that it can be called in a separate thread if desired. Pathfinding is
+ * usually an expensive operation, so it might be good to call this in a separate thread.
  *
- * If a path is found, the [call] function should return a collection of [IntPair]s that represent
- * the path from the start point to the target point. Otherwise, it should return null.
+ * If a graphPath is found, the [call] function should return a collection of [IntPair]s that
+ * represent the graphPath from the start point to the target point. Otherwise, it should return
+ * null.
  *
- * @param worldGraph the graph that represents the world
+ * @param graph the graph that represents the world
  * @param params the parameters used to create this pathfinder
  * @see [IPathfinder]
  */
-class Pathfinder(private val worldGraph: GraphMap, private val params: PathfinderParams) :
-    IPathfinder {
+class Pathfinder(private val graph: GraphMap, private val params: PathfinderParams) : IPathfinder {
 
   /**
-   * A node in the worldGraph. A node is a point in the worldGraph that has a position and a list of
-   * edges that connect it to other nodes. The edges are the nodes that are adjacent to this node.
+   * A node in the graph. A node is a point in the graph that has a position and a list of edges
+   * that connect it to other nodes. The edges are the nodes that are adjacent to this node.
    *
    * @param coordinate the coordinate of this node
    * @param ppm the number of pixels per meter
@@ -36,8 +38,6 @@ class Pathfinder(private val worldGraph: GraphMap, private val params: Pathfinde
       get() = coordinate.x
     val y: Int
       get() = coordinate.y
-
-    val bounds = GameRectangle(coordinate.x.toFloat() * ppm, coordinate.y.toFloat() * ppm, ppm, ppm)
 
     var distance = 0
     var previous: Node? = null
@@ -53,81 +53,117 @@ class Pathfinder(private val worldGraph: GraphMap, private val params: Pathfinde
     }
 
     override fun equals(other: Any?) = other is Node && other.coordinate == coordinate
-
-    override fun toString() = "Node(coordinate=$coordinate, bounds=$bounds)"
   }
 
   /**
-   * Finds a path from the start point to the target point. If a path is found, this function should
-   * return a collection of [IntPair]s that represent the path from the start point to the target
-   * point. Otherwise, it should return null.
+   * Finds a graphPath from the start point to the target point. If a graphPath is found, this
+   * function should return a collection of [IntPair]s that represent the graphPath from the start
+   * point to the target point. Otherwise, it should return null.
    *
-   * @return a collection of [IntPair]s that represent the path from the start point to the target
-   *   point, or null if no path was found
+   * @return a collection of [IntPair]s that represent the graphPath from the start point to the
+   *   target point, or null if no graphPath was found
    */
-  override fun call(): Collection<IntPair>? {
+  override fun call(): PathfinderResult {
+    // A map that maps coordinates to nodes
     val map = HashMap<IntPair, Node>()
 
-    val targetCoordinate = worldGraph.convertToGraphCoordinate(params.targetSupplier())
-    val startCoordinate = worldGraph.convertToGraphCoordinate(params.startSupplier())
+    // Convert the start and target points to graph coordinates
+    val targetCoordinate = graph.convertToGraphCoordinate(params.targetSupplier())
+    val startCoordinate = graph.convertToGraphCoordinate(params.startSupplier())
 
-    val startNode = Node(startCoordinate, worldGraph.ppm)
+    println("Start coordinate: $startCoordinate")
+    println("Target coordinate: $targetCoordinate")
+
+    // If the start or target points are out of bounds, return null
+    if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate)) {
+      println("Out of bounds")
+      println("graph bounds: ${graph.x}, ${graph.y}, ${graph.width}, ${graph.height}")
+      return PathfinderResult(null, null, false)
+    }
+
+    // If the start and target points are the same, return an empty graphPath
+    if (startCoordinate == targetCoordinate) {
+      return PathfinderResult(null, null, true)
+    }
+
+    // Add the start node to the map
+    val startNode = Node(startCoordinate, graph.ppm)
     map[startCoordinate] = startNode
 
+    // When a node is added, it is sorted based on its distance from all others
     val open = PriorityQueue<Node>()
     open.add(startNode)
 
+    // While there are still nodes to visit
     while (open.isNotEmpty()) {
+      // Get the node with the smallest distance
       val currentNode = open.poll()
       currentNode.discovered = true
 
+      // If the current node is the target node, return the result
       if (currentNode.coordinate == targetCoordinate) {
-        val path = LinkedList<IntPair>()
+        val graphPath = LinkedList<IntPair>()
 
         var node = currentNode
         while (node != null) {
-          path.addFirst(node.coordinate)
+          graphPath.addFirst(node.coordinate)
           node = node.previous
         }
 
-        return path
+        // Convert the graphPath to world coordinates
+        val worldPath = graphPath.map { graph.convertToWorldCoordinate(it) }
+        return PathfinderResult(graphPath, worldPath, false)
       }
 
+      // Get the coordinates of the current node
       val currentCoordinate = currentNode.coordinate
+      // println("Current coordinate: $currentCoordinate")
+
       val min = currentCoordinate - 1
       val max = currentCoordinate + 1
+      // println("Min: $min")
+      // println("Max: $max")
 
+      // For each adjacent node
       for (x in min.x..max.x) {
         for (y in min.y..max.y) {
-          if (isOutOfBounds(x, y)) continue
+          // If the adjacent node is out of bounds, skip it
+          if (graph.isOutOfBounds(x, y)) continue
 
-          if (!params.allowDiagonal && (x == min.x || x == max.x) && (y == min.y || y == max.y))
+          // If diagonal movement is not allowed and the adjacent node is diagonal to the current
+          // node, skip it
+          if (!params.allowDiagonal() && (x == min.x || x == max.x) && (y == min.y || y == max.y))
               continue
 
+          // Get the adjacent node
           val neighborCoordinate = IntPair(x, y)
           var neighbor = map[neighborCoordinate]
 
-          if (neighbor?.discovered == true) {
-            continue
-          }
+          // If the adjacent node has already been discovered, skip it
+          if (neighbor?.discovered == true) continue
 
+          // If the adjacent node is an obstacle, skip it
           if (x != targetCoordinate.x &&
               y != targetCoordinate.y &&
-              !params.filter(worldGraph.get(x, y))) {
-            continue
-          }
+              !params.filter(x pairTo y, graph.get(x, y)))
+              continue
 
+          // Calculate the total distance from the start node to the adjacent node
           val totalDistance = currentNode.distance + cost(currentNode.x, currentNode.y, x, y)
 
+          // If the adjacent node has not been discovered or the total distance from the start node
+          // to the adjacent node is less than the adjacent node's distance from the start node,
+          // update the adjacent node's distance from the start node and previous node
+          // accordingly
           if (neighbor == null) {
-            neighbor = Node(neighborCoordinate, worldGraph.ppm)
+            neighbor = Node(neighborCoordinate, graph.ppm)
 
             map[neighborCoordinate] = neighbor
 
             neighbor.distance = totalDistance
             neighbor.previous = currentNode
             open.add(neighbor)
-          } else {
+          } else if (totalDistance < neighbor.distance) {
             neighbor.distance = totalDistance
             neighbor.previous = currentNode
 
@@ -138,11 +174,8 @@ class Pathfinder(private val worldGraph: GraphMap, private val params: Pathfinde
       }
     }
 
-    return null
+    return PathfinderResult(null, null, false)
   }
-
-  internal fun isOutOfBounds(x: Int, y: Int) =
-      x < 0 || x >= worldGraph.width || y < 0 || y >= worldGraph.height
 
   internal fun cost(x1: Int, y1: Int, x2: Int, y2: Int) = abs(x1 - x2) + abs(y1 - y2)
 }

@@ -1,74 +1,120 @@
 package com.engine.pathfinding
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.objects.Array2D
+import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
-import com.engine.common.shapes.GameRectangle
 import com.engine.graph.GraphMap
-import com.engine.graph.convertToGraphCoordinate
+import com.engine.graph.SimpleMockGraphMap
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearMocks
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.clearAllMocks
 
+/**
+ * Tests for the [Pathfinder] class. These tests are not exhaustive, but they should be enough to
+ * ensure that the [Pathfinder] class works as intended. The [Pathfinder] class is used to find a
+ * graphPath from a start point to a target point. It uses the [GraphMap] class to represent the
+ * world. The [GraphMap] class is used to store and retrieve objects in the world. The [Pathfinder]
+ * class uses the [GraphMap] class to determine if a graphPath exists from the start point to the
+ * target point. If a graphPath exists, the [Pathfinder] class returns a collection of [IntPair]s
+ * that represent the graphPath from the start point to the target point
+ *
+ * @see [Pathfinder]
+ * @see [GraphMap]
+ */
 class PathfinderTest :
     DescribeSpec({
-      val worldGraph = mockk<GraphMap>()
-      val params = createTestPathfinderParams()
+      lateinit var graph: GraphMap
 
-      describe("Pathfinder class") {
-        beforeEach {
-          // Reset the mocks before each test
-          clearMocks(worldGraph)
+      /**
+       * Creates a [PathfinderParams] instance from the given matrix and whether diagonal movement
+       * is allowed. The matrix is used to determine the start point, target point, and obstacles.
+       * The start point is represented by an S, the target point is represented by a T, and
+       * obstacles are represented by !s. The 0s represent empty spaces.
+       *
+       * @param matrix the matrix that represents the world
+       * @param allowDiagonal whether diagonal movement is allowed
+       * @return a [PathfinderParams] instance
+       */
+      fun createPathfinderParams(
+          matrix: Array2D<String>,
+          allowDiagonal: Boolean
+      ): PathfinderParams {
+        lateinit var startSupplier: () -> Vector2
+        lateinit var targetSupplier: () -> Vector2
+        val nodesToFilter = HashSet<IntPair>()
+
+        matrix.forEach(
+            flipHorizontally = false,
+            flipVertically = true,
+            action = { coordinate: IntPair, value: String? ->
+              val (row, column) = coordinate
+
+              when (value) {
+                "S" -> {
+                  println("Start supplier: ${row pairTo column}")
+                  startSupplier = {
+                    Vector2(column.toFloat() * graph.ppm, row.toFloat() * graph.ppm)
+                  }
+                }
+                "T" -> {
+                  println("Target supplier: ${row pairTo column}")
+                  targetSupplier = {
+                    Vector2(column.toFloat() * graph.ppm, row.toFloat() * graph.ppm)
+                  }
+                }
+                "!" -> nodesToFilter.add(row pairTo column)
+                else -> {}
+              }
+            })
+
+        println("Nodes to filter: $nodesToFilter")
+        val filter: (IntPair, Collection<Any>) -> Boolean = { coordinate, _ ->
+          !nodesToFilter.contains(coordinate)
         }
 
-        it("should find a valid path") {
-          // Set up a valid path in the worldGraph
-          every { worldGraph.convertToGraphCoordinate(any()) } answers
-              {
-                if (firstArg<Vector2>() == params.startSupplier()) 0 pairTo 0 else 2 pairTo 2
-              }
+        return PathfinderParams(startSupplier, targetSupplier, { allowDiagonal }, filter)
+      }
 
-          // Create a Pathfinder instance
-          val pathfinder = Pathfinder(worldGraph, params)
+      describe("Pathfinder") {
+        beforeEach { clearAllMocks() }
 
-          // Test finding a valid path
-          val path = pathfinder.call()
+        it("should find the fastest path - test 1") {
+          // If
+          graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
+          val world =
+              Array2D(
+                  arrayOf(
+                      arrayOf("S", "0", "0", "0"),
+                      arrayOf("0", "0", "0", "0"),
+                      arrayOf("0", "0", "0", "0"),
+                      arrayOf("0", "0", "0", "T"),
+                  ),
+                  flipVertically = true)
+          println("World: \n$world")
 
-          // Assert that the path is not null (a valid path is found)
-          path shouldNotBe null
+          val params = createPathfinderParams(world, true)
+          println("Params: $params")
 
-          // You can add more assertions to validate the path if needed
-          // For example, check if the path contains the expected coordinates.
-        }
+          val pathfinder = Pathfinder(graph, params)
 
-        it("should not find a path when none exists") {
-          // Set up a scenario where there is no valid path in the worldGraph
-          every { worldGraph.convertToGraphCoordinate(any()) } answers
-              {
-                if (firstArg<Vector2>() == params.startSupplier()) 0 pairTo 0 else 10 pairTo 10
-              }
+          // when
+          val result = pathfinder.call()
+          println(result)
 
-          // Create a Pathfinder instance
-          val pathfinder = Pathfinder(worldGraph, params)
+          // then
+          result.graphPath shouldNotBe null
+          result.worldPath shouldNotBe null
 
-          // Test finding a path when there's no valid path
-          val path = pathfinder.call()
+          result.graphPath?.size shouldBe 4
+          result.worldPath?.size shouldBe 4
 
-          // Assert that the path is null (no valid path is found)
-          path shouldBe null
+          for (i in 0 until 3) {
+            result.graphPath?.get(i) shouldBe IntPair(i, i)
+            result.worldPath?.get(i) shouldBe
+                Vector2(i * graph.ppm.toFloat(), i * graph.ppm.toFloat())
+          }
         }
       }
     })
-
-// Helper method to create test PathfinderParams
-private fun createTestPathfinderParams(): PathfinderParams {
-  return PathfinderParams(
-      { Vector2(0f, 0f) }, // Replace with your start point supplier logic
-      { Vector2(2f, 2f) }, // Replace with your target point supplier logic
-      { obj -> obj is GameRectangle }, // Replace with your filter logic
-      true, // Allow diagonal movement
-      { true } // Replace with your target listener logic
-      )
-}

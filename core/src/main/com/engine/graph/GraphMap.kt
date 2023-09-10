@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils.floor
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.IntPair
+import com.engine.common.objects.pairTo
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2D
 import com.engine.common.shapes.GameShape2DSupplier
@@ -30,19 +31,69 @@ fun GraphMap.convertToMinsAndMaxes(obj: GameShape2D): MinsAndMaxes {
 /**
  * Converts the given x and y coordinates to graph coordinates.
  *
- * @param x the x coordinate
- * @param y the y coordinate
+ * @param worldX the x coordinate
+ * @param worldY the y coordinate
  * @return the graph coordinates
  */
-fun GraphMap.convertToGraphCoordinate(x: Float, y: Float) =
-    IntPair((x / ppm).toInt(), (y / ppm).toInt())
+fun GraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
+  var graphX = (worldX / ppm).toInt()
+  var graphY = (worldY / ppm).toInt()
+
+  if (graphX < x) {
+    graphX = x
+  } else if (graphX >= x + width) {
+    graphX = x + width - 1
+  }
+
+  if (graphY < y) {
+    graphY = y
+  } else if (graphY >= y + height) {
+    graphY = y + height - 1
+  }
+
+  return graphX pairTo graphY
+}
 
 /** @see [convertToGraphCoordinate] */
 fun GraphMap.convertToGraphCoordinate(v: Vector2) = convertToGraphCoordinate(v.x, v.y)
 
+/**
+ * Converts the given x and y coordinates to world coordinates.
+ *
+ * @param x the x coordinate
+ * @param y the y coordinate
+ * @return the world coordinates
+ */
+fun GraphMap.convertToWorldCoordinate(x: Int, y: Int) =
+    Vector2(x * ppm.toFloat(), y * ppm.toFloat())
+
+/** @see [convertToWorldCoordinate] */
+fun GraphMap.convertToWorldCoordinate(coordinate: IntPair) =
+    convertToWorldCoordinate(coordinate.x, coordinate.y)
+
+/**
+ * Checks if the given coordinates are out of bounds.
+ *
+ * @param _x the x coordinate
+ * @param _y the y coordinate
+ * @return true if the given coordinates are out of bounds, false otherwise
+ */
+fun GraphMap.isOutOfBounds(_x: Int, _y: Int) =
+    _x < x || _y < y || _x >= x + width || _y >= y + height
+
+/**
+ * Checks if the given coordinate is out of bounds.
+ *
+ * @param coordinate the coordinate
+ * @return true if the given coordinate is out of bounds, false otherwise
+ */
+fun GraphMap.isOutOfBounds(coordinate: IntPair) = isOutOfBounds(coordinate.x, coordinate.y)
+
 /** A graph that can be used to store and retrieve objects. */
 interface GraphMap : Resettable {
 
+  val x: Int
+  val y: Int
   val width: Int
   val height: Int
   val ppm: Int

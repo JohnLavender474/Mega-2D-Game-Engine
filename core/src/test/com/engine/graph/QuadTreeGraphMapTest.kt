@@ -1,5 +1,6 @@
 package com.engine.graph
 
+import com.engine.common.objects.Array2D
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2D
 import com.engine.world.Body
@@ -11,13 +12,30 @@ import io.kotest.matchers.shouldBe
 class QuadTreeGraphMapTest :
     DescribeSpec({
       describe("QuadTreeGraphMap") {
+        it("should not add out-of-bounds object") {
+          // if
+          val width = 100
+          val height = 100
+          val ppm = 1
+          val depth = 4
+
+          val quadTreeGraphMap = QuadTreeGraphMap(0, 0, width, height, ppm, depth)
+          val body = Body(BodyType.ABSTRACT, 110f, 110f, 10f, 10f)
+
+          // when
+          val result = quadTreeGraphMap.add(body)
+
+          // then
+          result shouldBe false
+        }
+
         it("should add objects to the correct cells") {
           // if
           val width = 100
           val height = 100
           val ppm = 10
           val depth = 10
-          val quadTreeGraphMap = QuadTreeGraphMap(width, height, ppm, depth)
+          val quadTreeGraphMap = QuadTreeGraphMap(0, 0, width, height, ppm, depth)
 
           val bodies =
               listOf(
@@ -48,7 +66,7 @@ class QuadTreeGraphMapTest :
           val ppm = 1
           val depth = 4
 
-          val quadTreeGraphMap = QuadTreeGraphMap(width, height, ppm, depth)
+          val quadTreeGraphMap = QuadTreeGraphMap(0, 0, width, height, ppm, depth)
 
           val objects =
               listOf(
@@ -83,7 +101,7 @@ class QuadTreeGraphMapTest :
           val ppm = 1
           val depth = 4
 
-          val quadTreeGraphMap = QuadTreeGraphMap(width, height, ppm, depth)
+          val quadTreeGraphMap = QuadTreeGraphMap(0, 0, width, height, ppm, depth)
 
           val objects =
               listOf(

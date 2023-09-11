@@ -24,7 +24,7 @@ abstract class Game2D : ApplicationListener, Propertizable {
   lateinit var shapeRenderer: ShapeRenderer
     protected set
 
-  val disposables = LinkedList<Disposable>()
+  private val disposables = LinkedList<Disposable>()
 
   var currentScreenKey: String? = null
   val currentScreen: Screen?
@@ -83,6 +83,14 @@ abstract class Game2D : ApplicationListener, Propertizable {
    * @return the [GameEngine] for this [Game2D]
    */
   protected abstract fun createGameEngine(): GameEngine
+
+  /**
+   * Adds the given [Disposable] to the [disposables] list.
+   *
+   * @param disposable the [Disposable] to add
+   * @return the [Disposable] that was added
+   */
+  fun addDisposable(disposable: Disposable) = disposables.add(disposable)
 
   /**
    * Gets the [Screen] with the given key.

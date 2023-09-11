@@ -11,10 +11,11 @@ import com.engine.common.enums.Direction
  * @param game the game instance
  * @param firstButtonKey the key of the first button to be selected
  */
-abstract class MenuScreen(protected val game: Game2D, protected val firstButtonKey: String) :
-    Screen {
-
-  protected val buttons = HashMap<String, MenuButton>()
+abstract class MenuScreen(
+    protected val game: Game2D,
+    protected val firstButtonKey: String,
+    protected val buttons: MutableMap<String, MenuButton> = HashMap()
+) : Screen {
 
   var currentButtonKey: String? = firstButtonKey
   var selectionMade = false
@@ -56,7 +57,7 @@ abstract class MenuScreen(protected val game: Game2D, protected val firstButtonK
     buttons[currentButtonKey]?.let { button ->
       getNavigationDirection()?.let {
         onAnyMovement()
-        button.onNavigate(it, delta)
+        currentButtonKey = button.onNavigate(it, delta)
       }
 
       if (selectionRequested()) {

@@ -2,6 +2,11 @@ package com.engine.cullables
 
 import com.engine.common.interfaces.Resettable
 
+/**
+ * An object that can be culled.
+ *
+ * @see Resettable
+ */
 interface Cullable : Resettable {
 
   /**

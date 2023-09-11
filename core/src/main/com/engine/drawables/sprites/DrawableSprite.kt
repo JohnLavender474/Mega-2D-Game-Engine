@@ -1,9 +1,9 @@
-package com.engine.common.interfaces
+package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 
 /** An interface for objects that can be drawn. */
-fun interface Drawable {
+fun interface DrawableSprite {
 
   /**
    * Draws this object.

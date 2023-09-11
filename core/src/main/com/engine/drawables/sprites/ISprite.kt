@@ -1,7 +1,6 @@
-package com.engine.sprites
+package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.common.interfaces.Positional
 
 /**
@@ -13,7 +12,7 @@ import com.engine.common.interfaces.Positional
  * @see Positional
  * @see Comparable
  */
-interface ISprite : Positional, Comparable<ISprite> {
+interface ISprite : DrawableSprite, Positional, Comparable<ISprite> {
 
   var priority: Int
 
@@ -24,11 +23,4 @@ interface ISprite : Positional, Comparable<ISprite> {
    * @return whether this sprite is in the specified camera
    */
   fun isInCamera(camera: Camera): Boolean
-
-  /**
-   * Draws this sprite.
-   *
-   * @param batch the sprite batch to use
-   */
-  fun draw(batch: Batch)
 }

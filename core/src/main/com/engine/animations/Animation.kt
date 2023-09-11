@@ -1,7 +1,7 @@
 package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.engine.sprites.splitAndFlatten
+import com.engine.drawables.sprites.splitAndFlatten
 
 /**
  * An animation that can be used to animate a texture region. The animation is created by splitting

@@ -1,8 +1,11 @@
-package com.engine.sprites
+package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.GameEntity
 import com.engine.common.objects.Properties
+import com.engine.drawables.sprites.ISprite
+import com.engine.drawables.sprites.SpriteComponent
+import com.engine.drawables.sprites.SpriteSystem
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 

@@ -1,4 +1,4 @@
-package com.engine.sprites
+package com.engine.drawables.sprites
 
 import com.engine.GameComponent
 

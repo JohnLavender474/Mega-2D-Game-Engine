@@ -15,7 +15,6 @@ import com.engine.common.objects.Properties
 import com.engine.controller.ControllerPoller
 import com.engine.events.EventsManager
 import java.util.*
-import kotlin.collections.HashMap
 
 /** The main class of the game. */
 abstract class Game2D : ApplicationListener, Propertizable {
@@ -185,6 +184,6 @@ abstract class Game2D : ApplicationListener, Propertizable {
 
   override fun dispose() {
     screens.values.forEach { it.dispose() }
-    disposables.forEach{ it.dispose() }
+    disposables.forEach { it.dispose() }
   }
 }

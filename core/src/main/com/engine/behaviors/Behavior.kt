@@ -53,7 +53,7 @@ abstract class Behavior : Updatable, Resettable {
     }
   }
 
-  final override fun reset() {
+  override fun reset() {
     runningNow = false
     onReset()
   }

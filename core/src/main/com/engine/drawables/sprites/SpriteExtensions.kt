@@ -4,6 +4,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Position
 
+/**
+ * Sets the position of this sprite to the specified position.
+ *
+ * @param p the position to set
+ * @param pos the position to set this sprite to
+ */
 fun Sprite.setPosition(p: Vector2, pos: Position) {
   when (pos) {
     Position.BOTTOM_LEFT -> setPosition(p.x, p.y)
@@ -27,6 +33,16 @@ fun Sprite.setPosition(p: Vector2, pos: Position) {
   }
 }
 
+/**
+ * Sets the position of this sprite to the specified position and offsets it by the specified
+ * amount. The offset is applied after the position is set. The offset is applied to the x and y
+ * coordinates.
+ *
+ * @param p the position to set
+ * @param pos the position to set this sprite to
+ * @param xOffset the x offset
+ * @param yOffset the y offset
+ */
 fun Sprite.setPosition(p: Vector2, pos: Position, xOffset: Float, yOffset: Float) {
   setPosition(p, pos)
   translate(xOffset, yOffset)

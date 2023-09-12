@@ -3,9 +3,6 @@ package com.engine.drawables.sprites
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.GameEntity
 import com.engine.common.objects.Properties
-import com.engine.drawables.sprites.ISprite
-import com.engine.drawables.sprites.SpriteComponent
-import com.engine.drawables.sprites.SpriteSystem
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -13,14 +10,14 @@ class SpriteSystemTest :
     DescribeSpec({
       describe("SpriteSystem") {
         lateinit var mockBatch: Batch
-        lateinit var mockSprite1: ISprite
-        lateinit var mockSprite2: ISprite
-        lateinit var mockSprite3: ISprite
+        lateinit var mockSprite1: IGameSprite
+        lateinit var mockSprite2: IGameSprite
+        lateinit var mockSprite3: IGameSprite
         lateinit var mockSpriteComponent: SpriteComponent
         lateinit var entity: GameEntity
         lateinit var spriteSystem: SpriteSystem
 
-        fun createMockSprite(priority: Int): ISprite = mockk {
+        fun createMockSprite(priority: Int): IGameSprite = mockk {
           every { draw(mockBatch) } just Runs
           every { compareTo(any()) } returns priority
         }

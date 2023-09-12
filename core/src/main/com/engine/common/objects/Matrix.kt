@@ -50,7 +50,7 @@ class MatrixIterator<T>(private val matrix: Matrix<T>) : MutableIterator<T> {
  * @param rows the number of rows
  * @param columns the number of columns
  */
-class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
+open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
 
   override val size: Int
     get() = matrixMap.size

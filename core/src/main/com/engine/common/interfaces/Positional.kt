@@ -10,4 +10,12 @@ interface Positional : PositionSupplier {
    * @param y the second-position to set
    */
   fun setPosition(x: Float, y: Float)
+
+  /**
+   * Translates this object by the specified amount.
+   *
+   * @param x the first-translation
+   * @param y the second-translation
+   */
+  fun translate(x: Float, y: Float) = setPosition(getX() + x, getY() + y)
 }

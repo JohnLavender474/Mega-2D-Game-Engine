@@ -6,6 +6,7 @@ import com.engine.GameComponent
 class BehaviorsComponent : GameComponent {
 
   internal val behaviors = LinkedHashMap<String, Behavior>()
+
   private val activeBehaviors = HashSet<String>()
 
   /**

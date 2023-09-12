@@ -19,7 +19,7 @@ class SpriteSystem(private val batch: Batch) : GameSystem(listOf(SpriteComponent
       return
     }
 
-    val sortedSprites = PriorityQueue<ISprite>()
+    val sortedSprites = PriorityQueue<IGameSprite>()
 
     entities.forEach { entity ->
       val spriteComponent = entity.getComponent(SpriteComponent::class)

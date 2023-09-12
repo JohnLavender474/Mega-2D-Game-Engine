@@ -1,7 +1,7 @@
 package com.engine.drawables.sprites
 
-import com.badlogic.gdx.graphics.Camera
 import com.engine.common.interfaces.Positional
+import com.engine.common.interfaces.Sizable
 
 /**
  * An interface for objects that can be drawn. This interface extends the [Positional] interface and
@@ -12,15 +12,7 @@ import com.engine.common.interfaces.Positional
  * @see Positional
  * @see Comparable
  */
-interface ISprite : DrawableSprite, Positional, Comparable<ISprite> {
+interface IGameSprite : DrawableSprite, Positional, Sizable, Comparable<IGameSprite> {
 
   var priority: Int
-
-  /**
-   * Returns whether this sprite is in the specified camera.
-   *
-   * @param camera the camera to check
-   * @return whether this sprite is in the specified camera
-   */
-  fun isInCamera(camera: Camera): Boolean
 }

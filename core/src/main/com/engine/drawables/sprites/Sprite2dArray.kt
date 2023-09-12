@@ -13,14 +13,14 @@ import com.engine.common.objects.Array2D
  * @param cols The number of columns.
  */
 @Deprecated("Should use Sprite Matrix instead.", ReplaceWith("SpriteMatrix"))
-class Sprite2dArray(model: Sprite, priority: Int, val rows: Int, val cols: Int) : DrawableSprite {
+class Sprite2dArray(model: GameSprite, priority: Int, val rows: Int, val cols: Int) : DrawableSprite {
 
-  private val sprite2dArray = Array2D<Sprite>(rows, cols)
+  private val sprite2dArray = Array2D<GameSprite>(rows, cols)
 
   init {
     for (i in 0 until rows) {
       for (j in 0 until cols) {
-        sprite2dArray[i, j] = Sprite(model, priority)
+        sprite2dArray[i, j] = GameSprite(model, priority)
       }
     }
     setPosition(model.x, model.y)
@@ -33,7 +33,7 @@ class Sprite2dArray(model: Sprite, priority: Int, val rows: Int, val cols: Int) 
    *
    * @param action The action to apply to each sprite.
    */
-  fun forEach(action: (Sprite) -> Unit) {
+  fun forEach(action: (GameSprite) -> Unit) {
     for (i in 0 until rows) {
       for (j in 0 until cols) {
         sprite2dArray[i, j]?.let { action(it) }

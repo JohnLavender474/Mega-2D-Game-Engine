@@ -1,6 +1,7 @@
 package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.objects.Matrix
 
 /**
@@ -12,30 +13,35 @@ import com.engine.common.objects.Matrix
  * @param rows The number of rows.
  * @param columns The number of columns.
  */
-class SpriteMatrix(model: Sprite, priority: Int, val rows: Int, val columns: Int) : DrawableSprite {
-
-  private val spriteMatrix = Matrix<Sprite>(rows, columns)
+class SpriteMatrix(
+    model: TextureRegion,
+    priority: Int,
+    rows: Int,
+    columns: Int,
+    _x: Float,
+    _y: Float
+) : DrawableSprite, Matrix<IGameSprite>(rows, columns) {
 
   init {
     for (x in 0 until columns) {
       for (y in 0 until rows) {
-        spriteMatrix[x, y] = Sprite(model, priority)
+        this[x, y] = GameSprite(model, priority)
       }
     }
-    setPosition(model.x, model.y)
+    setPosition(_x, _y)
   }
 
-  override fun draw(batch: Batch) = forEach { if (it.texture != null) it.draw(batch) }
+  override fun draw(batch: Batch) = forEach { it.draw(batch) }
 
   /**
    * Applies the specified action to each sprite in the matrix.
    *
    * @param action The action to apply to each sprite.
    */
-  fun forEach(action: (Sprite) -> Unit) {
+  fun forEach(action: (IGameSprite) -> Unit) {
     for (x in 0 until columns) {
       for (y in 0 until rows) {
-        spriteMatrix[x, y]?.let { action(it) }
+        this[x, y]?.let { action(it) }
       }
     }
   }
@@ -51,8 +57,8 @@ class SpriteMatrix(model: Sprite, priority: Int, val rows: Int, val columns: Int
     var y = startY
     forEach {
       it.setPosition(x, y)
-      x += it.width
-      y += it.height
+      x += it.getWidth()
+      y += it.getHeight()
     }
   }
 

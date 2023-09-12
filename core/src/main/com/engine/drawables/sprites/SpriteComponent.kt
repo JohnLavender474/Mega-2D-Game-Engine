@@ -7,4 +7,4 @@ import com.engine.GameComponent
  *
  * @property sprites The sprites.
  */
-class SpriteComponent(var sprites: ArrayList<ISprite> = ArrayList()) : GameComponent
+class SpriteComponent(var sprites: ArrayList<IGameSprite> = ArrayList()) : GameComponent

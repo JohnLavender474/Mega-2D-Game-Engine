@@ -32,7 +32,10 @@ abstract class GameSystem(
   private var purgeEntities = false
 
   /** @see GameSystem(componentMask: Collection<KClass<out GameComponent>>) */
-  constructor(vararg componentMask: KClass<out GameComponent>) : this(componentMask.toList())
+  constructor(
+      vararg componentMask: KClass<out GameComponent>,
+      entities: MutableCollection<GameEntity> = LinkedHashSet()
+  ) : this(componentMask.toList(), entities)
 
   /**
    * Processes the given [GameEntity]s. This method is called by the [update] method.

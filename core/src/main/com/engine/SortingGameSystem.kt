@@ -14,4 +14,13 @@ import kotlin.reflect.KClass
 abstract class SortingGameSystem(
     comparator: Comparator<GameEntity>,
     componentMask: Collection<KClass<out GameComponent>>
-) : GameSystem(componentMask, TreeSet<GameEntity>(comparator))
+) : GameSystem(componentMask, TreeSet<GameEntity>(comparator)) {
+
+  /**
+   * @see SortingGameSystem(comparator: Comparator<GameEntity>, componentMask: Collection<KClass<out
+   */
+  constructor(
+      comparator: Comparator<GameEntity>,
+      vararg componentMask: KClass<out GameComponent>
+  ) : this(comparator, componentMask.toList())
+}

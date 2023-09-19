@@ -27,6 +27,7 @@ class AnimationsSystemTest :
 
                 override fun reset() {}
               }
+          entity.dead = false
 
           mockSprite = mockk { every { setRegion(any<TextureRegion>()) } just Runs }
 

@@ -36,6 +36,7 @@ class WorldSystemTest :
                     clearProperties()
                   }
                 })
+        entity.dead = false
 
         val physicsData = spyk(PhysicsData())
         val body = spyk(Body(BodyType.DYNAMIC, physicsData))
@@ -198,6 +199,7 @@ class WorldSystemTest :
 
                 override fun reset() {}
               }
+          entity1.dead = false
           entity1.addComponent(BodyComponent(body1))
 
           val fixture2 = Fixture(GameRectangle(5f, 5f, 15f, 15f), "Type2")
@@ -210,6 +212,7 @@ class WorldSystemTest :
 
                 override fun reset() {}
               }
+          entity2.dead = false
           entity2.addComponent(BodyComponent(body2))
 
           it("should process contacts correctly - test 1") {

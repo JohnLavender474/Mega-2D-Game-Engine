@@ -12,7 +12,7 @@ import java.util.*
  *
  * @param batch the sprite batch to use
  */
-class SpriteSystem(private val batch: Batch) : GameSystem(listOf(SpriteComponent::class)) {
+class SpriteSystem(private val batch: Batch) : GameSystem(SpriteComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
     if (!on) {

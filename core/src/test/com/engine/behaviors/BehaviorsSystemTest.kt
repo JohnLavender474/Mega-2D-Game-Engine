@@ -36,6 +36,7 @@ class BehaviorsSystemTest :
 
                     override fun reset() {}
                   })
+          entity.dead = false
         }
 
         it("should not add entity") { behaviorsSystem.add(entity) shouldBe false }

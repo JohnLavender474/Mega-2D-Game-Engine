@@ -43,6 +43,7 @@ class SpriteSystemTest :
 
                 override fun reset() {}
               }
+          entity.dead = false
 
           spriteSystem = SpriteSystem(mockBatch)
           spriteSystem.on = true

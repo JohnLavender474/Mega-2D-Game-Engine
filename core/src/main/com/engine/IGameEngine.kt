@@ -11,7 +11,7 @@ import com.engine.common.objects.Properties
 interface IGameEngine : Updatable, Resettable {
 
   /** The [GameSystem]s in this [IGameEngine]. */
-  val systems: Collection<GameSystem>
+  val systems: Collection<IGameSystem>
 
   /**
    * Spawns a [GameEntity] with the given [Properties].

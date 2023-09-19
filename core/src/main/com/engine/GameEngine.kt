@@ -9,7 +9,7 @@ import com.engine.common.objects.Properties
  * @property autoSetAlive whether to automatically set [GameEntity]s to alive ([GameEntity.dead] set
  *   to false) every time they are spawned
  */
-class GameEngine(override val systems: Collection<GameSystem>, var autoSetAlive: Boolean = true) :
+class GameEngine(override val systems: Collection<IGameSystem>, var autoSetAlive: Boolean = true) :
     IGameEngine {
 
   internal val entities = HashSet<GameEntity>()

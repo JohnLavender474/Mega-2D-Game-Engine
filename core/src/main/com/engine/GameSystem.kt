@@ -1,24 +1,26 @@
 package com.engine
 
-import com.engine.common.interfaces.Activatable
 import com.engine.common.interfaces.Resettable
-import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
 import kotlin.reflect.KClass
 
 /**
- * A [GameSystem] is an [Updatable] that processes [GameEntity]s. It contains a [componentMask]
- * which determines which [GameEntity]s it processes.
+ * An abstract implementation of [IGameSystem]. It contains a [componentMask] which determines which
+ * [GameEntity]s it processes. It also contains a [Collection] of [GameEntity]s that it processes.
+ * The [Collection] by default is a [LinkedHashSet], which ensures that each entity is not processed
+ * more than once per update and at the same time retains insertion order; but the [Collection] type
+ * can be changed by overriding the [entities] property. It is recommended that the [entities]
+ * property NOT be modified outside the [GameSystem] class. Instead, the user should use the [add]
+ * and [remove] methods.
  *
- * @see GameEntity
- * @see Updatable
- * @see Resettable
- * @see GameComponent
+ * @param componentMask the [KClass]es of [GameComponent]s that this [GameSystem] accepts
+ * @param entities the [Collection] of [GameEntity]s that this [GameSystem] processes
  */
-abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) :
-    Activatable, Updatable, Resettable {
+abstract class GameSystem(
+    componentMask: Collection<KClass<out GameComponent>>,
+    private val entities: MutableCollection<GameEntity> = LinkedHashSet()
+) : IGameSystem {
 
-  private val entities = LinkedHashSet<GameEntity>()
   private val entitiesToAdd = ArrayList<GameEntity>()
   private val componentMask = HashSet<KClass<out GameComponent>>(componentMask)
 
@@ -50,55 +52,20 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
       delta: Float
   )
 
-  /** Purges all [GameEntity]s from this [GameSystem]. */
-  fun purge() = if (updating) purgeEntities = true else entities.clear()
+  final override fun purge() = if (updating) purgeEntities = true else entities.clear()
 
-  /**
-   * Returns whether this [GameSystem] contains the given [GameEntity]. This method is called by the
-   * [IGameEngine] when an [GameEntity] is added to the game.
-   *
-   * @param e the [GameEntity] to check
-   * @return whether this [GameSystem] contains the given [GameEntity]
-   */
-  fun contains(e: GameEntity) = entities.contains(e)
+  final override fun contains(e: GameEntity) = entities.contains(e)
 
-  /**
-   * Removes the given [GameEntity] from this [GameSystem]. This method is called by the
-   * [IGameEngine] when an [GameEntity] is removed from the game.
-   *
-   * @param e the [GameEntity] to remove
-   */
-  fun remove(e: GameEntity) = if (updating) entities.remove(e) else entitiesToAdd.remove(e)
+  final override fun remove(e: GameEntity) =
+      if (updating) entities.remove(e) else entitiesToAdd.remove(e)
 
-  /**
-   * Adds the given [GameEntity] to this [GameSystem] if it qualifies. An [GameEntity] qualifies if
-   * it has all of the [GameComponent]s in this [GameSystem]'s [componentMask].
-   *
-   * @param e the [GameEntity] to add
-   * @return whether the [GameEntity] was added
-   */
-  fun add(e: GameEntity) = if (qualifies(e)) entitiesToAdd.add(e) else false
+  final override fun add(e: GameEntity) = if (qualifies(e)) entitiesToAdd.add(e) else false
 
-  /** @see addAll */
-  fun addAll(vararg entities: GameEntity) = addAll(entities.toList())
+  final override fun addAll(vararg entities: GameEntity) = addAll(entities.toList())
 
-  /**
-   * Adds all the given [GameEntity]s to this [GameSystem] if they qualify. An [GameEntity]
-   * qualifies if it has all of the [GameComponent]s in this [GameSystem]'s [componentMask].
-   *
-   * @param entities the [Collection] of [GameEntity]s to add
-   * @return the [GameEntity]s that could not be added
-   */
-  fun addAll(entities: Collection<GameEntity>) = entities.filter { !add(it) }
+  final override fun addAll(entities: Collection<GameEntity>) = entities.filter { !add(it) }
 
-  /**
-   * Returns whether the given [GameEntity] qualifies. An [GameEntity] qualifies if it has all of
-   * the [GameComponent]s in this [GameSystem]'s [componentMask].
-   *
-   * @param e the [GameEntity] to check
-   * @return whether the [GameEntity] qualifies
-   */
-  fun qualifies(e: GameEntity) = componentMask.all { e.hasComponent(it) }
+  final override fun qualifies(e: GameEntity) = componentMask.all { e.hasComponent(it) }
 
   /**
    * Updates this [GameSystem]. This method is called by the [IGameEngine] every frame. Entities
@@ -108,11 +75,11 @@ abstract class GameSystem(componentMask: Collection<KClass<out GameComponent>>) 
    * @param delta the time in seconds since the last frame
    * @see IGameEngine
    */
-  final override fun update(delta: Float) {
+  override fun update(delta: Float) {
     updating = true
     entities.addAll(entitiesToAdd)
     entitiesToAdd.clear()
-    entities.filter { !it.dead && qualifies(it) }
+    entities.removeIf { it.dead || !qualifies(it) }
     process(on, ImmutableCollection(entities), delta)
     updating = false
   }

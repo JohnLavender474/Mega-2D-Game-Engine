@@ -1,7 +1,13 @@
-package com.engine
+package com.engine.systems
 
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectSet
+import com.engine.IGameEngine
 import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.ImmutableCollection
+import com.engine.common.objects.MutableOrderedSet
+import com.engine.components.IGameComponent
+import com.engine.entities.GameEntity
 import kotlin.reflect.KClass
 
 /**
@@ -13,16 +19,17 @@ import kotlin.reflect.KClass
  * property NOT be modified outside the [GameSystem] class. Instead, the user should use the [add]
  * and [remove] methods.
  *
- * @param componentMask the [KClass]es of [GameComponent]s that this [GameSystem] accepts
+ * @param componentMask the [KClass]es of [IGameComponent]s that this [GameSystem] accepts
  * @param entities the [Collection] of [GameEntity]s that this [GameSystem] processes
  */
 abstract class GameSystem(
-    componentMask: Collection<KClass<out GameComponent>>,
-    private val entities: MutableCollection<GameEntity> = LinkedHashSet()
+    componentMask: Iterable<KClass<out IGameComponent>>,
+    private val entities: MutableCollection<GameEntity> = MutableOrderedSet()
 ) : IGameSystem {
 
-  private val entitiesToAdd = ArrayList<GameEntity>()
-  private val componentMask = HashSet<KClass<out GameComponent>>(componentMask)
+  private val entitiesToAdd = Array<GameEntity>()
+  private val componentMask =
+      ObjectSet<KClass<out IGameComponent>>().apply { componentMask.forEach { add(it) } }
 
   override var on = true
 
@@ -31,16 +38,16 @@ abstract class GameSystem(
 
   private var purgeEntities = false
 
-  /** @see GameSystem(componentMask: Collection<KClass<out GameComponent>>) */
+  /** @see GameSystem(componentMask: Collection<KClass<out IGameComponent>>) */
   constructor(
-      vararg componentMask: KClass<out GameComponent>,
-      entities: MutableCollection<GameEntity> = LinkedHashSet()
+      vararg componentMask: KClass<out IGameComponent>,
+      entities: MutableCollection<GameEntity> = MutableOrderedSet()
   ) : this(componentMask.toList(), entities)
 
   /**
    * Processes the given [GameEntity]s. This method is called by the [update] method.
    * Implementations of this method should process the given [GameEntity]s. The given [GameEntity]s
-   * are guaranteed to have all of the [GameComponent]s in this [GameSystem]'s [componentMask]. The
+   * are guaranteed to have all of the [IGameComponent]s in this [GameSystem]'s [componentMask]. The
    * collection is immutable. To make changes to the underlying collection of entities, use the
    * [add] and [remove] methods. This is to prevent [ConcurrentModificationException]s and to ensure
    * that the [GameEntity]s are processed correctly.
@@ -60,13 +67,17 @@ abstract class GameSystem(
   final override fun contains(e: GameEntity) = entities.contains(e)
 
   final override fun remove(e: GameEntity) =
-      if (updating) entities.remove(e) else entitiesToAdd.remove(e)
+      if (updating) entities.remove(e) else entitiesToAdd.removeValue(e, true)
 
-  final override fun add(e: GameEntity) = if (qualifies(e)) entitiesToAdd.add(e) else false
+  final override fun add(e: GameEntity): Boolean =
+      if (qualifies(e)) {
+        entitiesToAdd.add(e)
+        true
+      } else false
 
   final override fun addAll(vararg entities: GameEntity) = addAll(entities.toList())
 
-  final override fun addAll(entities: Collection<GameEntity>) = entities.filter { !add(it) }
+  final override fun addAll(entities: Iterable<GameEntity>) = entities.filter { !add(it) }
 
   final override fun qualifies(e: GameEntity) = componentMask.all { e.hasComponent(it) }
 

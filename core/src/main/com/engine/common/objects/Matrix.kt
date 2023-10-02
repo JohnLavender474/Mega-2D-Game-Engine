@@ -1,5 +1,10 @@
 package com.engine.common.objects
 
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.ObjectSet
+import com.badlogic.gdx.utils.OrderedMap
+
 /**
  * This iterator iterates through the elements of the Matrix beginning at index [0, 0] and moving to
  * the right, moving up each time a row is completely iterated through.
@@ -10,6 +15,7 @@ package com.engine.common.objects
 class MatrixIterator<T>(private val matrix: Matrix<T>) : MutableIterator<T> {
   var rowIndex = 0
     private set
+
   var columnIndex = -1
     private set
 
@@ -55,8 +61,8 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
   override val size: Int
     get() = matrixMap.size
 
-  internal val matrixMap = LinkedHashMap<IntPair, T>()
-  internal val elementToIndexMap = HashMap<T, HashSet<IntPair>>()
+  internal val matrixMap = OrderedMap<IntPair, T>()
+  internal val elementToIndexMap = ObjectMap<T, ObjectSet<IntPair>>()
 
   /**
    * Creates a [Matrix] using the provided 2D array. The array is copied in last to first order,
@@ -69,7 +75,7 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     for (x in 0 until columns) {
       for (y in 0 until rows) {
         val row = rows - 1 - y
-        this[x, y] = array[row][x]
+        set(x, y, array[row][x])
       }
     }
   }
@@ -115,7 +121,7 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
       val oldValueSet = elementToIndexMap[oldValue]
       oldValueSet?.remove(indexPair)
 
-      if (oldValueSet?.isEmpty() == true) elementToIndexMap.remove(oldValue)
+      if (oldValueSet?.isEmpty == true) elementToIndexMap.remove(oldValue)
     } else {
       matrixMap.remove(indexPair)
     }
@@ -124,9 +130,13 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     // otherwise add the index pair and element to the array 2D map and element to the element to
     // index map respectively
     if (element != null) {
-      matrixMap[indexPair] = element
-      elementToIndexMap[element] =
-          elementToIndexMap.getOrPut(element) { HashSet() }.apply { add(indexPair) }
+      matrixMap.put(indexPair, element)
+
+      if (!elementToIndexMap.containsKey(element)) {
+        elementToIndexMap.put(element, ObjectSet())
+      }
+      val set = elementToIndexMap.get(element)
+      set.add(indexPair)
     } else {
       matrixMap.remove(indexPair)
     }
@@ -206,7 +216,7 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     }
   }
 
-  override fun contains(element: T) = elementToIndexMap.contains(element)
+  override fun contains(element: T) = elementToIndexMap.containsKey(element)
 
   override fun containsAll(elements: Collection<T>) = elements.all { contains(it) }
 
@@ -239,7 +249,8 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     var removed = false
     val toRemove = HashSet<T>()
 
-    matrixMap.forEach { (_, e) ->
+    matrixMap.forEach { entry ->
+      val e = entry.value
       e?.let {
         if (!elements.contains(it)) {
           toRemove.add(it)
@@ -274,7 +285,7 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is Array2D<*>) {
+    if (other !is Matrix<*>) {
       return false
     }
 

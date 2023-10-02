@@ -1,5 +1,7 @@
 package com.engine
 
+import com.engine.common.LogLevel
+import com.engine.common.Logger
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

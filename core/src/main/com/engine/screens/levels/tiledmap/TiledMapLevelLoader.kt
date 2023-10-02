@@ -3,6 +3,7 @@ package com.engine.screens.levels.tiledmap
 import com.badlogic.gdx.maps.MapObjects
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
+import com.badlogic.gdx.utils.ObjectMap
 
 /**
  * The result of loading a [TiledMap] using [TiledMapLevelLoader].
@@ -14,7 +15,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader
  */
 data class TiledMapLoadResult(
     val map: TiledMap,
-    val layers: Map<String, MapObjects>,
+    val layers: ObjectMap<String, MapObjects>,
     val worldWidth: Int,
     val worldHeight: Int
 )
@@ -39,7 +40,8 @@ object TiledMapLevelLoader {
       val worldWidth = it.properties["width"] as Int
       val worldHeight = it.properties["height"] as Int
 
-      val layers = it.layers.associate { layer -> layer.name to layer.objects }
+      val layers = ObjectMap<String, MapObjects>()
+      it.layers.forEach { layer -> layers.put(layer.name, layer.objects) }
       return TiledMapLoadResult(it, layers, worldWidth, worldHeight)
     }
 

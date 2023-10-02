@@ -2,6 +2,7 @@ package com.engine.screens.menus
 
 import com.engine.Game2D
 import com.engine.common.enums.Direction
+import com.engine.common.extensions.objectMapOf
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.*
@@ -19,7 +20,7 @@ class MenuScreenTest :
         val firstButtonKey = "firstButtonKey"
         val secondButtonKey = "secondButtonKey"
         val buttons =
-            mutableMapOf(
+            objectMapOf(
                 firstButtonKey to
                     spyk(
                         object : MenuButton {

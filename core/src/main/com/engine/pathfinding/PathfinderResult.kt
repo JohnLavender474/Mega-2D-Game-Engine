@@ -1,6 +1,7 @@
 package com.engine.pathfinding
 
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
 import com.engine.common.objects.IntPair
 
 /**
@@ -12,7 +13,7 @@ import com.engine.common.objects.IntPair
  *   this is true, then the paths should be null.
  */
 data class PathfinderResult(
-    val graphPath: List<IntPair>?,
-    val worldPath: List<Vector2>?,
+    val graphPath: Array<IntPair>?,
+    val worldPath: Array<Vector2>?,
     val targetReached: Boolean
 )

@@ -1,6 +1,7 @@
 package com.engine.screens.levels.tiledmap
 
 import com.badlogic.gdx.maps.MapObjects
+import com.badlogic.gdx.utils.ObjectMap
 
 /**
  * A [TiledMapLayerBuilder] is used to build a [MapObjects] layer. It is used in conjunction with
@@ -35,7 +36,11 @@ object TiledMapLevelBuilder {
    * @param layerBuilders the map of layer names to [TiledMapLayerBuilder]
    * @see TiledMapLayerBuilder
    */
-  fun build(map: Map<String, MapObjects>, layerBuilders: Map<String, TiledMapLayerBuilder>) {
-    map.forEach { (layerName, objects) -> layerBuilders[layerName]?.build(objects) }
+  fun build(map: ObjectMap<String, MapObjects>, layerBuilders: ObjectMap<String, TiledMapLayerBuilder>) {
+    map.forEach { e ->
+      val layerName = e.key
+      val objects = e.value
+      layerBuilders[layerName]?.build(objects)
+    }
   }
 }

@@ -1,5 +1,6 @@
-package com.engine
+package com.engine.systems
 
+import com.engine.components.IGameComponent
 import kotlin.reflect.KClass
 
 /**
@@ -7,22 +8,22 @@ import kotlin.reflect.KClass
  * contains a [componentMask] which determines which [GameEntity]s it processes.
  *
  * @param intervalSupplier a lambda that supplies the interval in seconds between each update
- * @param componentMask the [Collection] of [KClass]es of [GameComponent]s that this
+ * @param componentMask the [Collection] of [KClass]es of [IGameComponent]s that this
  */
 abstract class IntervalGameSystem(
     var intervalSupplier: () -> Float,
-    componentMask: Collection<KClass<out GameComponent>>
+    componentMask: Iterable<KClass<out IGameComponent>>
 ) : GameSystem(componentMask) {
 
   /**
    * @param interval the interval in seconds between each update
-   * @param componentMask the [Collection] of [KClass]es of [GameComponent]s that this
+   * @param componentMask the [Collection] of [KClass]es of [IGameComponent]s that this
    * @see IntervalGameSystem(intervalSupplier: () -> Float, componentMask: Collection<KClass<out
-   *   GameComponent>>)
+   *   IGameComponent>>)
    */
   constructor(
       interval: Float,
-      vararg componentMask: KClass<out GameComponent>
+      vararg componentMask: KClass<out IGameComponent>
   ) : this({ interval }, componentMask.toList())
 
   var accumulator = 0f

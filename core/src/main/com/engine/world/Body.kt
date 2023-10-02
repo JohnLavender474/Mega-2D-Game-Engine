@@ -1,5 +1,7 @@
 package com.engine.world
 
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.shapes.GameRectangle
@@ -41,8 +43,8 @@ class Body(
     width: Float = 0f,
     height: Float = 0f,
     var physicsData: PhysicsData = PhysicsData(),
-    var fixtures: ArrayList<Fixture> = ArrayList(),
-    var userData: HashMap<String, Any?> = HashMap(),
+    var fixtures: Array<Fixture> = Array(),
+    var userData: ObjectMap<String, Any?> = ObjectMap(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
 ) : GameRectangle(x, y, width, height), GameShape2DSupplier, Resettable {
@@ -61,8 +63,8 @@ class Body(
   constructor(
       bodyType: BodyType,
       physicsData: PhysicsData,
-      fixtures: ArrayList<Fixture> = ArrayList(),
-      userData: HashMap<String, Any?> = HashMap(),
+      fixtures: Array<Fixture> = Array(),
+      userData: ObjectMap<String, Any?> = ObjectMap(),
       preProcess: Updatable? = null,
       postProcess: Updatable? = null
   ) : this(bodyType, 0f, 0f, 0f, 0f, physicsData, fixtures, userData, preProcess, postProcess)

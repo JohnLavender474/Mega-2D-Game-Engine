@@ -1,5 +1,6 @@
 package com.engine.common.objects
 
+import com.badlogic.gdx.utils.ObjectMap
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -13,7 +14,7 @@ fun props(vararg pairs: Pair<String, Any?>) =
     Properties().apply { pairs.forEach { put(it.first, it.second) } }
 
 /** A [HashMap] that stores [String] keys and [Any] type values. */
-class Properties : HashMap<String, Any?> {
+class Properties : ObjectMap<String, Any?> {
 
   /**
    * Constructs an empty [Properties] instance with the specified initial capacity and load factor.
@@ -43,7 +44,7 @@ class Properties : HashMap<String, Any?> {
    *
    * @param m the map whose mappings are to be placed in this map.
    */
-  constructor(m: MutableMap<String, Any?>) : super(m)
+  constructor(m: ObjectMap<String, Any?>) : super(m)
 
   /**
    * Gets a property and casts it.

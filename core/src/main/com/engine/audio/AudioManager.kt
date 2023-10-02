@@ -2,6 +2,7 @@ package com.engine.audio
 
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.interfaces.Initializable
 import com.engine.common.interfaces.Updatable
 import java.io.File
@@ -27,8 +28,8 @@ object AudioUtils {
  * @property musicSuppliers A map of musicSuppliers sources to musicSuppliers objects.
  */
 class AudioManager(
-    private val soundSuppliers: HashMap<String, () -> Sound>,
-    private val musicSuppliers: HashMap<String, () -> Music>
+  private val soundSuppliers: ObjectMap<String, () -> Sound>,
+  private val musicSuppliers: ObjectMap<String, () -> Music>
 ) : Initializable, Updatable {
 
   /**
@@ -106,7 +107,7 @@ class AudioManager(
    */
   fun setMusicVolume(volume: Int) {
     musicVolume = restrictVolume(volume)
-    musicSuppliers.values.forEach { it.invoke().volume = (musicVolume / MAX_VOLUME).toFloat() }
+    musicSuppliers.values().forEach { it.invoke().volume = (musicVolume / MAX_VOLUME).toFloat() }
   }
 
   private fun restrictVolume(requestedVolume: Int): Int {
@@ -150,13 +151,13 @@ class AudioManager(
   }
 
   /** Stops all sounds. If a sound is not playing, it does nothing. */
-  fun stopAllSounds() = soundSuppliers.values.forEach { it.invoke().stop() }
+  fun stopAllSounds() = soundSuppliers.values().forEach { it.invoke().stop() }
 
   /** Pauses all sounds. If a sound is not playing, it does nothing. */
-  fun pauseAllSounds() = soundSuppliers.values.forEach { it.invoke().pause() }
+  fun pauseAllSounds() = soundSuppliers.values().forEach { it.invoke().pause() }
 
   /** Resumes all sounds. If a sound is not paused, it does nothing. */
-  fun resumeAllSounds() = soundSuppliers.values.forEach { it.invoke().resume() }
+  fun resumeAllSounds() = soundSuppliers.values().forEach { it.invoke().resume() }
 
   /**
    * Stops a musicSuppliers. If the musicSuppliers is not playing, it does nothing.
@@ -192,7 +193,7 @@ class AudioManager(
 
   /** Stops all musicSuppliers. If a musicSuppliers is not playing, it does nothing. */
   fun stopAllMusic() {
-    musicSuppliers.values.forEach {
+    musicSuppliers.values().forEach {
       val music = it.invoke()
       music.stop()
       music.setOnCompletionListener(null)
@@ -201,5 +202,5 @@ class AudioManager(
   }
 
   /** Pauses all musicSuppliers. If a musicSuppliers is not playing, it does nothing. */
-  fun pauseAllMusic() = musicSuppliers.values.forEach { it.invoke().pause() }
+  fun pauseAllMusic() = musicSuppliers.values().forEach { it.invoke().pause() }
 }

@@ -3,15 +3,17 @@ package com.engine
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
+import com.engine.entities.GameEntity
+import com.engine.systems.IGameSystem
 
 /**
  * An interface for the game engine. The game engine is the main class of the game, and it contains
- * all of the [GameSystem]s and [GameEntity]s.
+ * all of the [IGameSystem]s and [GameEntity]s.
  */
 interface IGameEngine : Updatable, Resettable {
 
-  /** The [GameSystem]s in this [IGameEngine]. */
-  val systems: Collection<IGameSystem>
+  /** The [IGameSystem]s in this [IGameEngine]. */
+  val systems: Iterable<IGameSystem>
 
   /**
    * Spawns a [GameEntity] with the given [Properties].
@@ -22,6 +24,6 @@ interface IGameEngine : Updatable, Resettable {
    */
   fun spawn(entity: GameEntity, spawnProps: Properties): Boolean
 
-  /** Resets all [GameSystem]s in this [IGameEngine]. */
+  /** Resets all [IGameSystem]s in this [IGameEngine]. */
   override fun reset() = systems.forEach { it.reset() }
 }

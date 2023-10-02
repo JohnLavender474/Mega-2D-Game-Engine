@@ -1,16 +1,17 @@
 package com.engine.motion
 
 import com.badlogic.gdx.math.Vector2
-import com.engine.GameComponent
+import com.badlogic.gdx.utils.Array
+import com.engine.components.IGameComponent
 import com.engine.common.shapes.GameShape2D
 
 /**
  * A component that holds a list of [Motion]s and a list of functions that are called when the
  * [Motion]s are updated. The object to be moved by the motion value should be a [GameShape2D].
  */
-class MotionComponent : GameComponent {
+class MotionComponent : IGameComponent {
 
-  internal val motions = ArrayList<Pair<Motion, (Vector2) -> Unit>>()
+  internal val motions = Array<Pair<Motion, (Vector2) -> Unit>>()
 
   /**
    * Adds a [Motion] to this component. The function is called when the [Motion] is updated and a

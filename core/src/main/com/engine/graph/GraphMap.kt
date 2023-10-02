@@ -3,6 +3,8 @@ package com.engine.graph
 import com.badlogic.gdx.math.MathUtils.ceil
 import com.badlogic.gdx.math.MathUtils.floor
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
@@ -130,7 +132,7 @@ interface GraphMap : Resettable {
    * @param y the second coordinate
    * @return the objects at the specified coordinate
    */
-  fun get(x: Int, y: Int): Collection<Any>
+  fun get(x: Int, y: Int): Array<Any>
 
   /**
    * Gets the objects in the specified area.
@@ -141,7 +143,7 @@ interface GraphMap : Resettable {
    * @param maxY the maximum second coordinate
    * @return the objects in the specified area
    */
-  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Collection<Any>
+  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any>
 
   /**
    * Gets the objects in the specified area.

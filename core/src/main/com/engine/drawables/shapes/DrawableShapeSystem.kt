@@ -1,8 +1,10 @@
 package com.engine.drawables.shapes
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.engine.GameEntity
-import com.engine.GameSystem
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
+import com.engine.entities.GameEntity
+import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
 
 /**
@@ -17,10 +19,14 @@ class DrawableShapeSystem(private val shapeRenderer: ShapeRenderer) :
   override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
     if (!on) return
 
-    val map = HashMap<ShapeRenderer.ShapeType, ArrayList<DrawableShapeHandle>>()
+    val map = ObjectMap<ShapeRenderer.ShapeType, Array<DrawableShapeHandle>>()
     entities.forEach {
       it.getComponent(DrawableShapeComponent::class)?.shapes?.forEach { shape ->
-        map.getOrPut(shape.shapeType) { ArrayList() }.add(shape)
+        if (!map.containsKey(shape.shapeType)) {
+          map.put(shape.shapeType, Array())
+        }
+        val list = map[shape.shapeType]
+        list.add(shape)
       }
     }
 

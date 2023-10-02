@@ -2,33 +2,34 @@ package com.engine
 
 import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.engine.assets.GameAssetManager
 import com.engine.audio.AudioManager
 import com.engine.common.interfaces.Propertizable
 import com.engine.common.objects.Properties
 import com.engine.controller.ControllerPoller
 import com.engine.events.EventsManager
-import java.util.*
 
 /** The main class of the game. */
 abstract class Game2D : ApplicationListener, Propertizable {
 
   lateinit var batch: SpriteBatch
     protected set
+
   lateinit var shapeRenderer: ShapeRenderer
     protected set
 
-  private val disposables = LinkedList<Disposable>()
+  private val disposables = Array<Disposable>()
 
   var currentScreenKey: String? = null
   val currentScreen: Screen?
     get() = currentScreenKey?.let { getScreen(it) }
+
   val screens = HashMap<String, Screen>()
   val viewports = HashMap<String, Viewport>()
 
@@ -36,8 +37,10 @@ abstract class Game2D : ApplicationListener, Propertizable {
 
   lateinit var assetManager: GameAssetManager
     protected set
+
   lateinit var audioManager: AudioManager
     protected set
+
   lateinit var eventsManager: EventsManager
     protected set
 
@@ -154,12 +157,6 @@ abstract class Game2D : ApplicationListener, Propertizable {
   }
 
   override fun render() {
-    Gdx.gl20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-    Gdx.graphics.gL20.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
-    if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-      Gdx.app.exit()
-    }
     val delta = Gdx.graphics.deltaTime
 
     audioManager.update(delta)
@@ -192,6 +189,8 @@ abstract class Game2D : ApplicationListener, Propertizable {
 
   override fun dispose() {
     screens.values.forEach { it.dispose() }
+    screens.clear()
     disposables.forEach { it.dispose() }
+    disposables.clear()
   }
 }

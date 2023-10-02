@@ -1,5 +1,6 @@
 package com.engine.common.time
 
+import com.badlogic.gdx.utils.Array
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -23,7 +24,9 @@ class TimerTest :
         }
 
         it("should reset correctly") {
-          timer.setRunnables(listOf(mockRunnable))
+          val array = Array<TimeMarkedRunnable>()
+          array.add(mockRunnable)
+          timer.setRunnables(array)
 
           timer.runnableQueue.size shouldBe 1
           timer.update(1f)
@@ -88,9 +91,10 @@ class TimerTest :
 
         it("should set runnables correctly") {
           timer.runnableQueue.size shouldBe 0
-          timer.setRunnables(listOf(mockRunnable))
+          val array = Array<TimeMarkedRunnable>()
+          array.add(mockRunnable)
+          timer.setRunnables(array)
           timer.runnableQueue.size shouldBe 1
         }
-
       }
     })

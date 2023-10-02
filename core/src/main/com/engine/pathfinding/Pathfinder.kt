@@ -1,5 +1,8 @@
 package com.engine.pathfinding
 
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
 import com.engine.graph.GraphMap
@@ -65,7 +68,7 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
    */
   override fun call(): PathfinderResult {
     // A map that maps coordinates to nodes
-    val map = HashMap<IntPair, Node>()
+    val map = ObjectMap<IntPair, Node>()
 
     // Convert the start and target points to graph coordinates
     val targetCoordinate = graph.convertToGraphCoordinate(params.targetSupplier())
@@ -83,7 +86,7 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
 
     // Add the start node to the map
     val startNode = Node(startCoordinate, graph.ppm)
-    map[startCoordinate] = startNode
+    map.put(startCoordinate, startNode)
 
     // When a node is added, it is sorted based on its distance from all others
     val open = PriorityQueue<Node>()
@@ -97,16 +100,17 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
 
       // If the current node is the target node, return the result
       if (currentNode.coordinate == targetCoordinate) {
-        val graphPath = LinkedList<IntPair>()
+        val graphPath = Array<IntPair>()
 
         var node = currentNode
         while (node != null) {
-          graphPath.addFirst(node.coordinate)
+          graphPath.add(node.coordinate)
           node = node.previous
         }
 
         // Convert the graphPath to world coordinates
-        val worldPath = graphPath.map { graph.convertToWorldCoordinate(it) }
+        val worldPath = Array<Vector2>()
+        graphPath.forEach { worldPath.add(graph.convertToWorldCoordinate(it)) }
         return PathfinderResult(graphPath, worldPath, false)
       }
 
@@ -152,7 +156,7 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
           // accordingly
           if (neighbor == null) {
             neighbor = Node(neighborCoordinate, graph.ppm)
-            map[neighborCoordinate] = neighbor
+            map.put(neighborCoordinate, neighbor)
 
             neighbor.distance = totalDistance
             neighbor.previous = currentNode

@@ -1,6 +1,7 @@
 package com.engine.pathfinding
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.Matrix
 import com.engine.common.objects.pairTo
@@ -37,7 +38,7 @@ class PathfinderTest :
               }
             })
 
-        val filter: (IntPair, Collection<Any>) -> Boolean = { coordinate, _ ->
+        val filter: (IntPair, Iterable<Any>) -> Boolean = { coordinate, _ ->
           !nodesToFilter.contains(coordinate)
         }
 
@@ -48,7 +49,12 @@ class PathfinderTest :
 
         // If
         graph = SimpleMockGraphMap(0, 0, 3, 2, 1)
-        val world = Matrix(arrayOf(arrayOf("S", "0", "0"), arrayOf("0", "0", "T")))
+        val array =
+            gdxArrayOf(
+                gdxArrayOf("S", "0", "0"),
+                gdxArrayOf("0", "0", "T"),
+            )
+        val world = Matrix(array)
 
         // when
         val params = createPathfinderParams(world, true)
@@ -78,11 +84,11 @@ class PathfinderTest :
           graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
           val world =
               Matrix(
-                  arrayOf(
-                      arrayOf("S", "0", "0", "0"),
-                      arrayOf("0", "0", "0", "0"),
-                      arrayOf("0", "0", "0", "0"),
-                      arrayOf("0", "0", "0", "T"),
+                  gdxArrayOf(
+                      gdxArrayOf("S", "0", "0", "0"),
+                      gdxArrayOf("0", "0", "0", "0"),
+                      gdxArrayOf("0", "0", "0", "0"),
+                      gdxArrayOf("0", "0", "0", "T"),
                   ))
 
           val params = createPathfinderParams(world, true)
@@ -101,10 +107,10 @@ class PathfinderTest :
           graphPath!!.size shouldBe 4
           worldPath!!.size shouldBe 4
 
-          graphPath[0] shouldBe IntPair(0, 3)
-          graphPath[1] shouldBe IntPair(1, 2)
-          graphPath[2] shouldBe IntPair(2, 1)
-          graphPath[3] shouldBe IntPair(3, 0)
+          graphPath[3] shouldBe IntPair(0, 3)
+          graphPath[2] shouldBe IntPair(1, 2)
+          graphPath[1] shouldBe IntPair(2, 1)
+          graphPath[0] shouldBe IntPair(3, 0)
 
           for (i in 0..3) {
             val graphPoint = graphPath[i]
@@ -117,11 +123,11 @@ class PathfinderTest :
           graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
           val world =
               Matrix(
-                  arrayOf(
-                      arrayOf("S", "0", "!", "T"),
-                      arrayOf("!", "0", "!", "0"),
-                      arrayOf("0", "0", "!", "0"),
-                      arrayOf("0", "0", "0", "0"),
+                  gdxArrayOf(
+                      gdxArrayOf("S", "0", "!", "T"),
+                      gdxArrayOf("!", "0", "!", "0"),
+                      gdxArrayOf("0", "0", "!", "0"),
+                      gdxArrayOf("0", "0", "0", "0"),
                   ))
 
           val params = createPathfinderParams(world, true)
@@ -136,13 +142,13 @@ class PathfinderTest :
           graphPath shouldNotBe null
           graphPath!!.size shouldBe 7
 
-          graphPath[0] shouldBe IntPair(0, 3)
-          graphPath[1] shouldBe IntPair(1, 2)
-          graphPath[2] shouldBe IntPair(1, 1)
+          graphPath[6] shouldBe IntPair(0, 3)
+          graphPath[5] shouldBe IntPair(1, 2)
+          graphPath[4] shouldBe IntPair(1, 1)
           graphPath[3] shouldBe IntPair(2, 0)
-          graphPath[4] shouldBe IntPair(3, 1)
-          graphPath[5] shouldBe IntPair(3, 2)
-          graphPath[6] shouldBe IntPair(3, 3)
+          graphPath[2] shouldBe IntPair(3, 1)
+          graphPath[1] shouldBe IntPair(3, 2)
+          graphPath[0] shouldBe IntPair(3, 3)
 
           result.targetReached shouldBe false
         }
@@ -152,11 +158,11 @@ class PathfinderTest :
           graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
           val world =
               Matrix(
-                  arrayOf(
-                      arrayOf("S", "0", "!", "T"),
-                      arrayOf("!", "0", "!", "0"),
-                      arrayOf("0", "0", "!", "0"),
-                      arrayOf("0", "0", "0", "0"),
+                  gdxArrayOf(
+                      gdxArrayOf("S", "0", "!", "T"),
+                      gdxArrayOf("!", "0", "!", "0"),
+                      gdxArrayOf("0", "0", "!", "0"),
+                      gdxArrayOf("0", "0", "0", "0"),
                   ))
 
           val params = createPathfinderParams(world, false)
@@ -170,16 +176,16 @@ class PathfinderTest :
           graphPath shouldNotBe null
           graphPath!!.size shouldBe 10
 
-          graphPath[0] shouldBe IntPair(0, 3)
-          graphPath[1] shouldBe IntPair(1, 3)
-          graphPath[2] shouldBe IntPair(1, 2)
-          graphPath[3] shouldBe IntPair(1, 1)
-          graphPath[4] shouldBe IntPair(1, 0)
-          graphPath[5] shouldBe IntPair(2, 0)
-          graphPath[6] shouldBe IntPair(3, 0)
-          graphPath[7] shouldBe IntPair(3, 1)
-          graphPath[8] shouldBe IntPair(3, 2)
-          graphPath[9] shouldBe IntPair(3, 3)
+          graphPath[9] shouldBe IntPair(0, 3)
+          graphPath[8] shouldBe IntPair(1, 3)
+          graphPath[7] shouldBe IntPair(1, 2)
+          graphPath[6] shouldBe IntPair(1, 1)
+          graphPath[5] shouldBe IntPair(1, 0)
+          graphPath[4] shouldBe IntPair(2, 0)
+          graphPath[3] shouldBe IntPair(3, 0)
+          graphPath[2] shouldBe IntPair(3, 1)
+          graphPath[1] shouldBe IntPair(3, 2)
+          graphPath[0] shouldBe IntPair(3, 3)
 
           result.targetReached shouldBe false
         }
@@ -189,11 +195,11 @@ class PathfinderTest :
           graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
           val world =
               Matrix(
-                  arrayOf(
-                      arrayOf("S", "0", "!", "T"),
-                      arrayOf("!", "0", "!", "0"),
-                      arrayOf("0", "0", "!", "0"),
-                      arrayOf("0", "0", "!", "0"),
+                  gdxArrayOf(
+                      gdxArrayOf("S", "0", "!", "T"),
+                      gdxArrayOf("!", "0", "!", "0"),
+                      gdxArrayOf("0", "0", "!", "0"),
+                      gdxArrayOf("0", "0", "!", "0"),
                   ))
 
           val params = createPathfinderParams(world, true)
@@ -212,13 +218,14 @@ class PathfinderTest :
         it("should find the fastest path - test 5") {
           // If
           graph = SimpleMockGraphMap(0, 0, 4, 4, 16)
+
           val world =
               Matrix(
-                  arrayOf(
-                      arrayOf("X", "0", "0", "0"),
-                      arrayOf("0", "0", "0", "0"),
-                      arrayOf("0", "0", "0", "0"),
-                      arrayOf("0", "0", "0", "0"),
+                  gdxArrayOf(
+                      gdxArrayOf("X", "0", "0", "0"),
+                      gdxArrayOf("0", "0", "0", "0"),
+                      gdxArrayOf("0", "0", "0", "0"),
+                      gdxArrayOf("0", "0", "0", "0"),
                   ))
 
           val params = createPathfinderParams(world, true)

@@ -2,6 +2,9 @@ package com.engine
 
 import com.engine.common.objects.ImmutableCollection
 import com.engine.common.objects.Properties
+import com.engine.components.IGameComponent
+import com.engine.entities.GameEntity
+import com.engine.systems.GameSystem
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -16,8 +19,8 @@ class GameEngineTest :
         lateinit var mockEntity1: GameEntity
         lateinit var mockEntity2: GameEntity
 
-        class MockComponent1 : GameComponent
-        class MockComponent2 : GameComponent
+        class MockComponent1 : IGameComponent
+        class MockComponent2 : IGameComponent
         lateinit var mockComponent1: MockComponent1
         lateinit var mockComponent2: MockComponent2
 
@@ -61,17 +64,17 @@ class GameEngineTest :
           mockSystem1 =
               object : GameSystem(MockComponent1::class) {
                 override fun process(
-                    on: Boolean,
-                    entities: ImmutableCollection<GameEntity>,
-                    delta: Float
+                  on: Boolean,
+                  entities: ImmutableCollection<GameEntity>,
+                  delta: Float
                 ) {}
               }
           mockSystem2 =
               object : GameSystem(MockComponent2::class) {
                 override fun process(
-                    on: Boolean,
-                    entities: ImmutableCollection<GameEntity>,
-                    delta: Float
+                  on: Boolean,
+                  entities: ImmutableCollection<GameEntity>,
+                  delta: Float
                 ) {}
               }
 

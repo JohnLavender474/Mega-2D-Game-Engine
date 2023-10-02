@@ -1,6 +1,6 @@
 package com.engine.spawns
 
-import com.engine.GameEntity
+import com.engine.entities.GameEntity
 import com.engine.common.objects.Properties
 
 /**

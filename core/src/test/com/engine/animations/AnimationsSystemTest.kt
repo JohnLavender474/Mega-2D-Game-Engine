@@ -2,8 +2,9 @@ package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.engine.GameEntity
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.objects.Properties
+import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -39,7 +40,9 @@ class AnimationsSystemTest :
                 }
           }
 
-          animationsComponent = spyk(AnimationsComponent(hashMapOf(mockSprite to mockAnimator)))
+          val map = ObjectMap<Sprite, IAnimator>()
+          map.put(mockSprite, mockAnimator)
+          animationsComponent = spyk(AnimationsComponent(map))
           animationsSystem = spyk(AnimationsSystem())
 
           entity.addComponent(animationsComponent)

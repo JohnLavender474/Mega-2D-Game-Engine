@@ -1,6 +1,8 @@
 package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.utils.Array
+import com.engine.common.extensions.fill
 import com.engine.drawables.sprites.splitAndFlatten
 
 /**
@@ -14,7 +16,7 @@ import com.engine.drawables.sprites.splitAndFlatten
 class Animation : IAnimation {
 
   private val animation: Array<TextureRegion>
-  private val durations: FloatArray
+  private val durations: Array<Float>
 
   private var loop = true
 
@@ -38,7 +40,7 @@ class Animation : IAnimation {
       columns: Int,
       duration: Float,
       loop: Boolean = true
-  ) : this(region, rows, columns, FloatArray(rows * columns) { duration }, loop)
+  ) : this(region, rows, columns, Array<Float>(rows * columns).fill(duration), loop)
 
   /**
    * Creates an animation with the specified texture region, rows, columns, and duration. The
@@ -53,7 +55,7 @@ class Animation : IAnimation {
       region: TextureRegion,
       rows: Int,
       columns: Int,
-      durations: FloatArray,
+      durations: Array<Float>,
       loop: Boolean = true
   ) {
     if (rows <= 0) {
@@ -71,7 +73,7 @@ class Animation : IAnimation {
     this.loop = loop
   }
 
-  override fun getCurrentRegion() = animation[currentIndex]
+  override fun getCurrentRegion(): TextureRegion = animation[currentIndex]
 
   override fun isFinished() = !loop && elapsedTime >= getDuration()
 

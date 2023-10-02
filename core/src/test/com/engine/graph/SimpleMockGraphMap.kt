@@ -1,5 +1,8 @@
 package com.engine.graph
 
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameShape2D
 
@@ -19,7 +22,7 @@ class SimpleMockGraphMap(
     override val ppm: Int
 ) : GraphMap {
 
-  private val objs = HashMap<IntPair, MutableList<Any>>()
+  private val objs = ObjectMap<IntPair, Array<Any>>()
 
   override fun add(obj: Any, shape: GameShape2D): Boolean {
     val bounds = shape.getBoundingRectangle()
@@ -31,17 +34,24 @@ class SimpleMockGraphMap(
 
     for (i in x..maxX) {
       for (j in y..maxY) {
-        objs.getOrPut(IntPair(i, j)) { ArrayList() }.add(obj)
+        if (!objs.containsKey(IntPair(i, j))) objs.put(IntPair(i, j), Array())
+        val array = objs.get(IntPair(i, j))
+        array.add(obj)
       }
     }
 
     return true
   }
 
-  override fun get(x: Int, y: Int) = objs.getOrDefault(IntPair(x, y), emptyList())
+  override fun get(x: Int, y: Int): Array<Any> {
+    if (objs.containsKey(IntPair(x, y))) {
+      return objs.get(IntPair(x, y))
+    }
+    return Array()
+  }
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Collection<Any> {
-    val objs = HashSet<Any>()
+  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any> {
+    val objs = ObjectSet<Any>()
 
     for (i in minX..maxX) {
       for (j in minY..maxY) {

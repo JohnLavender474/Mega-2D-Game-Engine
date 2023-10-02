@@ -1,31 +1,23 @@
 package com.engine.common.time
 
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.Queue
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
-import java.util.*
 import kotlin.math.min
 
 class Timer(val duration: Float = 0f) : Updatable, Resettable {
 
-  internal var runnables: ArrayList<TimeMarkedRunnable> = ArrayList()
-  internal var runnableQueue: Queue<TimeMarkedRunnable> = PriorityQueue()
+  internal var runnables: Array<TimeMarkedRunnable> = Array()
+  internal var runnableQueue = Queue<TimeMarkedRunnable>()
 
   var time = 0f
     private set
+
   var justFinished = false
     private set
 
   var runOnFinished: Runnable? = null
-
-  constructor(timer: Timer) : this(timer.duration) {
-    runnables.clear()
-    runnables.addAll(timer.runnables)
-    runnableQueue.clear()
-    runnableQueue.addAll(timer.runnableQueue)
-    time = timer.time
-    justFinished = timer.justFinished
-    runOnFinished = timer.runOnFinished
-  }
 
   constructor(duration: Float, _runOnFinished: Runnable) : this(duration) {
     runOnFinished = _runOnFinished
@@ -33,13 +25,13 @@ class Timer(val duration: Float = 0f) : Updatable, Resettable {
 
   constructor(
       duration: Float,
-      _runnables: Collection<TimeMarkedRunnable>
+      _runnables: Array<TimeMarkedRunnable>
   ) : this(duration, false, _runnables)
 
   constructor(
       duration: Float,
       setToEnd: Boolean,
-      _runnables: Collection<TimeMarkedRunnable>
+      _runnables: Array<TimeMarkedRunnable>
   ) : this(duration) {
     setRunnables(_runnables)
     time =
@@ -53,8 +45,8 @@ class Timer(val duration: Float = 0f) : Updatable, Resettable {
   override fun update(delta: Float) {
     val finishedBefore = isFinished()
     time = min(duration, time + delta)
-    while (runnableQueue.isNotEmpty() && runnableQueue.peek().time <= time) {
-      val runnable = runnableQueue.poll()
+    while (!runnableQueue.isEmpty && runnableQueue.first().time <= time) {
+      val runnable = runnableQueue.removeFirst()
       if (runnable.time <= time) {
         break
       }
@@ -69,8 +61,11 @@ class Timer(val duration: Float = 0f) : Updatable, Resettable {
   override fun reset() {
     time = 0f
     justFinished = false
+
     runnableQueue.clear()
-    runnableQueue.addAll(runnables)
+    val temp = Array(runnables)
+    temp.sort()
+    temp.forEach { runnableQueue.addLast(it) }
   }
 
   fun getRatio() = if (duration > 0f) min(time / duration, 1f) else 0f
@@ -81,11 +76,15 @@ class Timer(val duration: Float = 0f) : Updatable, Resettable {
 
   fun isJustFinished() = justFinished
 
-  fun setRunnables(_runnables: Collection<TimeMarkedRunnable>): Timer {
+  fun setRunnables(_runnables: Array<TimeMarkedRunnable>): Timer {
     runnables.clear()
     runnables.addAll(_runnables)
+
     runnableQueue.clear()
-    runnableQueue.addAll(runnables)
+    val temp = Array(_runnables)
+    temp.sort()
+    temp.forEach { runnableQueue.addLast(it) }
+
     return this
   }
 
@@ -93,5 +92,4 @@ class Timer(val duration: Float = 0f) : Updatable, Resettable {
     runnables.clear()
     runnableQueue.clear()
   }
-
 }

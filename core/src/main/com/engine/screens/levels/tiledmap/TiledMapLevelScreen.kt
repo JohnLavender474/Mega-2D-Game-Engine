@@ -1,6 +1,7 @@
 package com.engine.screens.levels.tiledmap
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.Game2D
 import com.engine.screens.levels.LevelScreen
 
@@ -22,7 +23,7 @@ abstract class TiledMapLevelScreen(protected val game: Game2D, protected val tmx
    *
    * @see TiledMapLayerBuilder
    */
-  protected abstract fun getLayerBuilders(): Map<String, TiledMapLayerBuilder>
+  protected abstract fun getLayerBuilders(): ObjectMap<String, TiledMapLayerBuilder>
 
   /**
    * Calls the [TiledMapLevelRenderer] using the specified [OrthographicCamera].

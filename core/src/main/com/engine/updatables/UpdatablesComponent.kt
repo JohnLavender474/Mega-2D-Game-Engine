@@ -1,6 +1,7 @@
 package com.engine.updatables
 
-import com.engine.GameComponent
+import com.badlogic.gdx.utils.Array
+import com.engine.components.IGameComponent
 import com.engine.common.interfaces.Updatable
 
 /**
@@ -8,4 +9,4 @@ import com.engine.common.interfaces.Updatable
  *
  * @param updatables The updatables
  */
-class UpdatablesComponent(val updatables: ArrayList<Updatable> = ArrayList()) : GameComponent
+class UpdatablesComponent(val updatables: Array<Updatable> = Array()) : IGameComponent

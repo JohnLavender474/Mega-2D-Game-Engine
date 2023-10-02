@@ -1,6 +1,7 @@
 package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.utils.Array
 import com.engine.common.extensions.round
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -13,8 +14,7 @@ class AnimationTest :
       describe("Animation") {
         val rows = 2
         val columns = 2
-        // sum = 1.5f
-        val durations = floatArrayOf(0.25f, 0.5f, 0.25f, 0.5f)
+        val durations = Array<Float>()
 
         val mockRegionWidth = 4
         val mockRegionHeight = 4
@@ -24,6 +24,13 @@ class AnimationTest :
 
         beforeEach {
           clearAllMocks()
+
+          durations.clear()
+          durations.add(0.25f)
+          durations.add(0.5f)
+          durations.add(0.25f)
+          durations.add(0.5f)
+
           every { mockRegion.regionWidth } returns mockRegionWidth
           every { mockRegion.regionHeight } returns mockRegionHeight
           every { mockRegion.texture } returns null

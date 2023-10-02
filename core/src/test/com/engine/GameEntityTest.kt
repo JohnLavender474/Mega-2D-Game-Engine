@@ -1,6 +1,9 @@
 package com.engine
 
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.objects.Properties
+import com.engine.components.IGameComponent
+import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -18,7 +21,7 @@ class GameEntityTest :
               override fun reset() {}
             }
 
-        class MockComponent : GameComponent
+        class MockComponent : IGameComponent
 
         val mockComponent = MockComponent()
 
@@ -28,8 +31,8 @@ class GameEntityTest :
         }
 
         it("should have the correct initial properties") {
-          entity.components shouldBe emptyMap()
-          entity.properties shouldBe emptyMap()
+          entity.components shouldBe ObjectMap()
+          entity.properties shouldBe Properties()
           entity.dead shouldBe true
         }
 

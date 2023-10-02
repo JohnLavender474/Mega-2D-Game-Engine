@@ -1,5 +1,6 @@
 package com.engine.controller
 
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.SimpleMockEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
@@ -21,7 +22,9 @@ class ControllerSystemTest :
                 every { onReleaseContinued(any()) } just Runs
               }
 
-          val controllerComponent = ControllerComponent(mapOf("ButtonA" to actuator))
+          val map = ObjectMap<String, ControllerButtonActuator>()
+          map.put("ButtonA", actuator)
+          val controllerComponent = ControllerComponent(map)
           entity.addComponent(controllerComponent)
 
           controllerSystem.add(entity)

@@ -1,6 +1,6 @@
 package com.engine.behaviors
 
-import com.engine.GameEntity
+import com.engine.entities.GameEntity
 import com.engine.common.objects.Properties
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

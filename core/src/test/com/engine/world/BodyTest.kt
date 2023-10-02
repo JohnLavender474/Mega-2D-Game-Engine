@@ -1,5 +1,7 @@
 package com.engine.world
 
+import com.engine.common.extensions.gdxArrayOf
+import com.engine.common.extensions.objectMapOf
 import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -11,8 +13,8 @@ class BodyTest :
       describe("Body") {
         val bodyType = BodyType.ABSTRACT
         val physicsData = PhysicsData()
-        val fixtures = arrayListOf<Fixture>()
-        val userData = hashMapOf<String, Any?>()
+        val fixtures = gdxArrayOf<Fixture>()
+        val userData = objectMapOf<String, Any?>()
         val body = Body(bodyType, physicsData, fixtures, userData)
 
         it("should have the correct initial properties") {

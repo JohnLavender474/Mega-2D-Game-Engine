@@ -1,6 +1,7 @@
 package com.engine.points
 
 import com.engine.SimpleMockEntity
+import com.engine.common.extensions.gdxArrayOf
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
@@ -21,11 +22,11 @@ class PointsSystemTest :
 
           val pointsComponent1 =
               PointsComponent(
-                  mutableListOf(
+                  gdxArrayOf(
                           PointsHandle(points1) { newPoints -> newPoints shouldBe points1 }))
           val pointsComponent2 =
               PointsComponent(
-                  mutableListOf(
+                  gdxArrayOf(
                           PointsHandle(points2) { newPoints -> newPoints shouldBe points2 }))
 
           entity1.addComponent(pointsComponent1)

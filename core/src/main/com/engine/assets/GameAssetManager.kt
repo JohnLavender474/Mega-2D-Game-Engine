@@ -1,10 +1,12 @@
-package com.engine
+package com.engine.assets
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Disposable
+import com.badlogic.gdx.utils.ObjectMap
 import kotlin.reflect.KClass
 
 /**
@@ -17,10 +19,10 @@ import kotlin.reflect.KClass
  * @property otherEntries the entries for any other types of assets
  */
 class GameAssetManager(
-    private val musicEntries: Collection<String>,
-    private val soundEntries: Collection<String>,
-    private val textureAtlasEntries: Collection<String>,
-    private val otherEntries: Map<KClass<*>, Collection<String>>? = null,
+    private val musicEntries: Array<String>,
+    private val soundEntries: Array<String>,
+    private val textureAtlasEntries: Array<String>,
+    private val otherEntries: ObjectMap<Class<*>, Array<String>>? = null,
     private val assetManager: AssetManager = AssetManager(),
 ) : Disposable {
 
@@ -33,8 +35,10 @@ class GameAssetManager(
     musicEntries.forEach { assetManager.load(it, Music::class.java) }
     soundEntries.forEach { assetManager.load(it, Sound::class.java) }
     textureAtlasEntries.forEach { assetManager.load(it, TextureAtlas::class.java) }
-    otherEntries?.forEach { (type, entries) ->
-      entries.forEach { assetManager.load(it, type.java) }
+    otherEntries?.entries()?.forEach { e ->
+      val type = e.key
+      val entries = e.value
+      entries.forEach { assetManager.load(it, type) }
     }
     assetManager.finishLoading()
   }
@@ -86,9 +90,15 @@ class GameAssetManager(
    *
    * @return a [HashMap] of the [Sound]s, with the source as the key
    */
-  fun getAllSounds(): HashMap<String, Sound> {
-    val sounds = HashMap<String, Sound>()
-    soundEntries.forEach { getSound(it)?.let { sound -> sounds[it] = sound } }
+  fun getAllSounds(): ObjectMap<String, Sound> {
+    val sounds = ObjectMap<String, Sound>()
+    for (i in 0 until soundEntries.size) {
+      val entry = soundEntries[i]
+      val sound = getSound(entry)
+      if (sound != null) {
+        sounds.put(entry, sound)
+      }
+    }
     return sounds
   }
 
@@ -97,9 +107,15 @@ class GameAssetManager(
    *
    * @return a [HashMap] of the [Music]s, with the source as the key
    */
-  fun getAllMusic(): HashMap<String, Music> {
-    val music = HashMap<String, Music>()
-    musicEntries.forEach { getMusic(it)?.let { m -> music[it] = m } }
+  fun getAllMusic(): ObjectMap<String, Music> {
+    val music = ObjectMap<String, Music>()
+    for (i in 0 until musicEntries.size) {
+        val entry = musicEntries[i]
+        val m = getMusic(entry)
+        if (m != null) {
+            music.put(entry, m)
+        }
+    }
     return music
   }
 

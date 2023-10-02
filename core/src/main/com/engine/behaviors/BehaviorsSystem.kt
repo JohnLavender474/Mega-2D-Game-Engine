@@ -1,8 +1,8 @@
 package com.engine.behaviors
 
-import com.engine.GameEntity
-import com.engine.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.GameEntity
+import com.engine.systems.GameSystem
 
 /** A [GameSystem] that processes [BehaviorsComponent]s. */
 class BehaviorsSystem : GameSystem(BehaviorsComponent::class) {
@@ -14,7 +14,9 @@ class BehaviorsSystem : GameSystem(BehaviorsComponent::class) {
 
     entities.forEach { entity ->
       entity.getComponent(BehaviorsComponent::class)?.let { b ->
-        b.behaviors.forEach { (key, behavior) ->
+        b.behaviors.forEach { e ->
+          val key = e.key
+          val behavior = e.value
           behavior.update(delta)
           val active = behavior.isActive()
           b.setActive(key, active)

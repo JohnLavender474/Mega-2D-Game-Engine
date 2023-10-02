@@ -1,6 +1,7 @@
 package com.engine
 
 import com.engine.common.objects.Properties
+import com.engine.entities.GameEntity
 
 /**
  * A simple [GameEntity] for testing purposes. Dead is set to false by default.

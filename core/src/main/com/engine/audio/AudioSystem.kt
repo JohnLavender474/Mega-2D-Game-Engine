@@ -1,7 +1,7 @@
 package com.engine.audio
 
-import com.engine.GameEntity
-import com.engine.GameSystem
+import com.engine.entities.GameEntity
+import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
 
 /**

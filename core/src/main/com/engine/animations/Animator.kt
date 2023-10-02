@@ -1,6 +1,7 @@
 package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.utils.ObjectMap
 
 /**
  * An animator that can be used to animate a sprite. The animator is created with a key supplier
@@ -14,11 +15,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite
  */
 class Animator(
     val keySupplier: () -> String?,
-    val animations: Map<String, IAnimation>,
+    val animations: ObjectMap<String, IAnimation>,
 ) : IAnimator {
 
   val currentAnimation: IAnimation?
-    get() = animations[currentKey]
+    get() = if (currentKey != null) animations[currentKey] else null
+
   var currentKey: String? = null
     private set
 

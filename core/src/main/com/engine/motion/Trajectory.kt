@@ -1,6 +1,7 @@
 package com.engine.motion
 
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
 
 fun parseTrajectoryDefinitions(trajectoryDefinitionString: String) =
     trajectoryDefinitionString.split(";".toRegex()).map {
@@ -12,11 +13,11 @@ data class TrajectoryDefinition(val xVelocity: Float, val yVelocity: Float, val 
 
 class Trajectory(
     private val ppm: Int,
-    private val trajectoryDefinitions: List<TrajectoryDefinition>
+    private val trajectoryDefinitions: Array<TrajectoryDefinition>
 ) : Motion {
 
   private var currentDefinition =
-      if (trajectoryDefinitions.isNotEmpty()) trajectoryDefinitions[0] else null
+      if (!trajectoryDefinitions.isEmpty) trajectoryDefinitions[0] else null
   private var duration = 0f
   private var index = 0
 

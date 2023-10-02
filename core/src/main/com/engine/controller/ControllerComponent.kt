@@ -1,6 +1,7 @@
 package com.engine.controller
 
-import com.engine.GameComponent
+import com.badlogic.gdx.utils.ObjectMap
+import com.engine.components.IGameComponent
 
 /**
  * A component that contains a map of [ControllerButtonActuator]s. The key is the name of the button
@@ -9,4 +10,4 @@ import com.engine.GameComponent
  * @param actuators The map of actuators.
  * @see ControllerButtonActuator
  */
-class ControllerComponent(val actuators: Map<String, ControllerButtonActuator>) : GameComponent
+class ControllerComponent(val actuators: ObjectMap<String, ControllerButtonActuator>) : IGameComponent

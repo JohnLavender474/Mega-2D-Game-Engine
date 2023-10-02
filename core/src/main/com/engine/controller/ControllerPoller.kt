@@ -20,7 +20,7 @@ enum class ControllerPollingOption {
  * @param buttons The collection of buttons to manage.
  */
 class ControllerPoller(
-    buttons: Collection<Pair<String, IControllerButtonPoller>>,
+    buttons: Iterable<Pair<String, IControllerButtonPoller>>,
     var pollingOption: ControllerPollingOption = ControllerPollingOption.BOTH
 ) : IControllerPoller {
 

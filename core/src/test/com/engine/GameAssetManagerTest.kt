@@ -4,6 +4,8 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.utils.Array
+import com.engine.assets.GameAssetManager
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -12,15 +14,27 @@ import io.mockk.*
 class GameAssetManagerTest :
     DescribeSpec({
       describe("GameAssetManager") {
-        val musicEntries = listOf("music1.mp3", "music2.mp3")
-        val soundEntries = listOf("sound1.wav", "sound2.wav")
-        val textureAtlasEntries = listOf("atlas1.atlas", "atlas2.atlas")
+        val musicEntries = Array<String>()
+        val soundEntries = Array<String>()
+        val textureAtlasEntries = Array<String>()
 
         lateinit var mockAssetManager: AssetManager
         lateinit var gameAssetManager: GameAssetManager
 
         beforeTest {
           clearAllMocks()
+
+          musicEntries.clear()
+          musicEntries.add("music1.mp3")
+          musicEntries.add("music2.mp3")
+
+          soundEntries.clear()
+          soundEntries.add("sound1.wav")
+          soundEntries.add("sound2.wav")
+
+          textureAtlasEntries.clear()
+          textureAtlasEntries.add("atlas1.atlas")
+          textureAtlasEntries.add("atlas2.atlas")
 
           mockAssetManager = mockk {
             every { load<Any>(any(), any()) } just Runs
@@ -119,16 +133,16 @@ class GameAssetManagerTest :
         it("should get all sounds") {
           val sounds = gameAssetManager.getAllSounds()
           sounds.size shouldBe soundEntries.size
-          sounds.keys.forEach {
+          sounds.keys().forEach {
             soundEntries.contains(it) shouldBe true
-            sounds[it] shouldNotBe null
+            sounds.get(it) shouldNotBe null
           }
         }
 
         it("should get all music") {
           val music = gameAssetManager.getAllMusic()
           music.size shouldBe musicEntries.size
-          music.keys.forEach {
+          music.keys().forEach {
             musicEntries.contains(it) shouldBe true
             music[it] shouldNotBe null
           }

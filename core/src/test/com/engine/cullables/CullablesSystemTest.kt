@@ -1,16 +1,10 @@
 package com.engine.cullables
 
-import com.engine.GameEntity
+import com.engine.entities.GameEntity
 import com.engine.SimpleMockEntity
-import com.engine.common.extensions.toImmutableCollection
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.bool
-import io.kotest.property.arbitrary.list
-import io.kotest.property.arbitrary.numericFloats
-import io.kotest.property.checkAll
 
 class CullablesSystemTest :
     DescribeSpec({

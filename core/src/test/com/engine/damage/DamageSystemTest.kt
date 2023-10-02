@@ -1,6 +1,6 @@
 package com.engine.damage
 
-import com.engine.GameEntity
+import com.engine.entities.GameEntity
 import com.engine.SimpleMockEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*

@@ -2,6 +2,7 @@ package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.utils.ObjectMap
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -36,13 +37,18 @@ class AnimatorTest :
 
         var key = "idle"
         val keySupplier: () -> String? = { key }
-        val animations =
-            mapOf("idle" to spyk(MockAnimation("idle")), "walk" to spyk(MockAnimation("walk")))
+        val animations = ObjectMap<String, IAnimation>()
+        // mapOf("idle" to spyk(MockAnimation("idle")), "walk" to spyk(MockAnimation("walk")))
         lateinit var mockSprite: Sprite
         lateinit var animator: Animator
 
         beforeEach {
           clearAllMocks()
+
+          animations.clear()
+          animations.put("idle", spyk(MockAnimation("idle")))
+          animations.put("walk", spyk(MockAnimation("walk")))
+
           key = "idle"
           region = mockk()
           mockSprite = mockk()

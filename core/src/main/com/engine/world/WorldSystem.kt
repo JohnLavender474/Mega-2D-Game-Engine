@@ -1,12 +1,13 @@
 package com.engine.world
 
+import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
-import com.engine.GameEntity
-import com.engine.GameSystem
-import com.engine.common.extensions.filterType
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.GameEntity
 import com.engine.graph.GraphMap
+import com.engine.systems.GameSystem
 import kotlin.math.abs
 
 /**
@@ -44,7 +45,7 @@ class WorldSystem(
     private val worldGraph: GraphMap,
     private val fixedStep: Float,
     private val collisionHandler: CollisionHandler = StandardCollisionHandler,
-    private val contactFilterMap: Map<String, Set<String>>? = null,
+    private val contactFilterMap: ObjectMap<String, Set<String>>? = null,
 ) : GameSystem(BodyComponent::class) {
 
   private var priorContactSet = OrderedSet<Contact>()
@@ -232,10 +233,14 @@ class WorldSystem(
   internal fun checkForContacts(body: Body) {
     body.fixtures.forEach { f ->
       if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
-        val overlapping =
-            worldGraph.get(f.getGameShape2D()).filterType<Fixture> { o ->
-              o.active && filterContact(f, o)
-            }
+        val overlapping = ObjectSet<Fixture>()
+
+        worldGraph.get(f.getGameShape2D()).forEach {
+          if (it is Fixture && it.active && filterContact(f, it)) {
+            overlapping.add(it)
+          }
+        }
+
         overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
       }
     }

@@ -2,8 +2,8 @@ package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.engine.GameEntity
-import com.engine.GameSystem
+import com.engine.entities.GameEntity
+import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
 import java.util.*
 

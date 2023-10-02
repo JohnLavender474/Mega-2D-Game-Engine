@@ -16,7 +16,7 @@ class PathfinderParams(
     val startSupplier: () -> Vector2,
     val targetSupplier: () -> Vector2,
     val allowDiagonal: (() -> Boolean) = { true },
-    val filter: ((IntPair, Collection<Any>) -> Boolean) = { _, _ -> true },
+    val filter: ((IntPair, Iterable<Any>) -> Boolean) = { _, _ -> true },
 ) {
 
   override fun toString() =

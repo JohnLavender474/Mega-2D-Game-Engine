@@ -1,5 +1,7 @@
-package com.engine
+package com.engine.systems
 
+import com.engine.components.IGameComponent
+import com.engine.entities.GameEntity
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -9,11 +11,11 @@ import kotlin.reflect.KClass
  * [LinkedHashSet]) to ensure that the [GameEntity]s are processed in a sorted order.
  *
  * @param comparator the [Comparator] to sort the [GameEntity]s with
- * @param componentMask the [Collection] of [KClass]es of [GameComponent]s that this
+ * @param componentMask the [Collection] of [KClass]es of [IGameComponent]s that this
  */
 abstract class SortingGameSystem(
     comparator: Comparator<GameEntity>,
-    componentMask: Collection<KClass<out GameComponent>>
+    componentMask: Iterable<KClass<out IGameComponent>>
 ) : GameSystem(componentMask, TreeSet<GameEntity>(comparator)) {
 
   /**
@@ -21,6 +23,6 @@ abstract class SortingGameSystem(
    */
   constructor(
       comparator: Comparator<GameEntity>,
-      vararg componentMask: KClass<out GameComponent>
+      vararg componentMask: KClass<out IGameComponent>
   ) : this(comparator, componentMask.toList())
 }

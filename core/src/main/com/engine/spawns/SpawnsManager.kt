@@ -1,5 +1,6 @@
 package com.engine.spawns
 
+import com.badlogic.gdx.utils.Array
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 
@@ -13,8 +14,8 @@ import com.engine.common.interfaces.Updatable
  */
 class SpawnsManager : Updatable, Resettable {
 
-  private val spawns = ArrayList<Spawn>()
-  private val spawners = ArrayList<Spawner>()
+  private val spawns = Array<Spawn>()
+  private val spawners = Array<Spawner>()
 
   /**
    * Returns a list of the [Spawn]s that were spawned since the last update, and then clears the
@@ -23,8 +24,8 @@ class SpawnsManager : Updatable, Resettable {
    *
    * @return the [Spawn]s that were spawned since the last update.
    */
-  fun getSpawns(): MutableList<Spawn> {
-    val spawnsToReturn = ArrayList(spawns)
+  fun getSpawns(): Array<Spawn> {
+    val spawnsToReturn = Array(spawns)
     spawns.clear()
     return spawnsToReturn
   }
@@ -35,7 +36,7 @@ class SpawnsManager : Updatable, Resettable {
    * @param spawners the [Spawner]s to manage.
    * @see Spawner
    */
-  fun setSpawners(spawners: Collection<Spawner>) {
+  fun setSpawners(spawners: Array<Spawner>) {
     this.spawners.clear()
     this.spawners.addAll(spawners)
   }

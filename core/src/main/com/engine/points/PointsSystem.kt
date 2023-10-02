@@ -1,7 +1,7 @@
 package com.engine.points
 
-import com.engine.GameEntity
-import com.engine.GameSystem
+import com.engine.entities.GameEntity
+import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
 
 /** The pointsHandles system. Processes all the stats of each [GameEntity]. */

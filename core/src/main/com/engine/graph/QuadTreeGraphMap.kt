@@ -1,7 +1,8 @@
 package com.engine.graph
 
-import com.engine.common.extensions.toImmutableCollection
-import com.engine.common.objects.ImmutableCollection
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2D
@@ -23,13 +24,18 @@ open class QuadTreeGraphMap(
     val depth: Int
 ) : GraphMap {
 
-  protected val objects = HashMap<IntPair, ArrayList<Any>>()
+  protected val objects = ObjectMap<IntPair, Array<Any>>()
 
-  override fun get(x: Int, y: Int) =
-      objects.getOrDefault(IntPair(x, y), emptySet()).toImmutableCollection()
+  override fun get(x: Int, y: Int): Array<Any> {
+    var array = objects.get(IntPair(x, y))
+    if (array == null) {
+      array = Array()
+    }
+    return array
+  }
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ImmutableCollection<Any> {
-    val set = HashSet<Any>()
+  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any> {
+    val set = ObjectSet<Any>()
 
     for (x in minX..maxX) {
       for (y in minY..maxY) {
@@ -41,7 +47,7 @@ open class QuadTreeGraphMap(
       }
     }
 
-    return set.toImmutableCollection()
+    return set
   }
 
   /**
@@ -85,7 +91,12 @@ open class QuadTreeGraphMap(
               continue
             }
 
-            return objects.computeIfAbsent(IntPair(x, y)) { ArrayList() }.add(obj)
+            if (!objects.containsKey(IntPair(x, y))) {
+              objects.put(IntPair(x, y), Array())
+            }
+            val array = objects.get(IntPair(x, y))
+            array.add(obj)
+            return true
           }
         }
       }

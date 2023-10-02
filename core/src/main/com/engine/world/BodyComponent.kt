@@ -1,8 +1,8 @@
 package com.engine.world
 
-import com.engine.GameComponent
+import com.engine.components.IGameComponent
 
-class BodyComponent(var body: Body) : GameComponent {
+class BodyComponent(var body: Body) : IGameComponent {
 
   override fun reset() {
     body.reset()

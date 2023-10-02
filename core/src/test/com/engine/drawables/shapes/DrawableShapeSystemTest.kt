@@ -2,9 +2,10 @@ package com.engine.drawables.shapes
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
-import com.engine.GameEntity
+import com.badlogic.gdx.utils.Array
 import com.engine.SimpleMockEntity
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -27,7 +28,9 @@ class DrawableShapeSystemTest :
           }
           mockDrawableShape = DrawableShape { it.rect(0.0f, 0.0f, 0.0f, 0.0f) }
           mockDrawableShapeHandle = spyk(DrawableShapeHandle(mockDrawableShape, ShapeType.Line))
-          mockDrawableShapeComponent = DrawableShapeComponent(arrayListOf(mockDrawableShapeHandle))
+          val array = Array<DrawableShapeHandle>()
+          array.add(mockDrawableShapeHandle)
+          mockDrawableShapeComponent = DrawableShapeComponent(array)
           mockEntity = SimpleMockEntity().apply { addComponent(mockDrawableShapeComponent) }
           drawableShapeSystem = DrawableShapeSystem(shapeRenderer)
         }
@@ -66,8 +69,9 @@ class DrawableShapeSystemTest :
           // if
           val otherMockDrawableShapeHandle =
               spyk(DrawableShapeHandle(mockDrawableShape, ShapeType.Point))
-          val otherMockDrawableShapeComponent =
-              DrawableShapeComponent(arrayListOf(otherMockDrawableShapeHandle))
+          val array = Array<DrawableShapeHandle>()
+          array.add(otherMockDrawableShapeHandle)
+          val otherMockDrawableShapeComponent = DrawableShapeComponent(array)
           val otherMockEntity =
               SimpleMockEntity().apply { addComponent(otherMockDrawableShapeComponent) }
           val entities = ImmutableCollection(listOf(mockEntity, otherMockEntity))

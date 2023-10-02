@@ -1,25 +1,33 @@
 package com.engine
 
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.objects.Properties
+import com.engine.entities.GameEntity
+import com.engine.systems.IGameSystem
 
 /**
- * The main class of the game. It contains all of the [GameSystem]s and [GameEntity]s.
+ * The main class of the game. It contains all of the [IGameSystem]s and [GameEntity]s.
  *
- * @property systems the [GameSystem]s in this [GameEngine]
+ * @property systems the [IGameSystem]s in this [GameEngine]
  * @property autoSetAlive whether to automatically set [GameEntity]s to alive ([GameEntity.dead] set
- *   to false) every time they are spawned
+ *   to false) every time they are spawned. If this is false, then the [spawn] method of the
+ *   [GameEntity] should set [GameEntity.dead] to false (in case successful spawning is
+ *   conditional).
  */
-class GameEngine(override val systems: Collection<IGameSystem>, var autoSetAlive: Boolean = true) :
+class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: Boolean = true) :
     IGameEngine {
 
-  internal val entities = HashSet<GameEntity>()
-  internal val entitiesToAdd = ArrayList<Pair<GameEntity, Properties>>()
+  internal val entities = OrderedSet<GameEntity>()
+  internal val entitiesToAdd = Array<Pair<GameEntity, Properties>>()
 
   private var purge = false
   private var updating = false
 
-  override fun spawn(entity: GameEntity, spawnProps: Properties) =
-      entitiesToAdd.add(entity to spawnProps)
+  override fun spawn(entity: GameEntity, spawnProps: Properties): Boolean {
+    entitiesToAdd.add(entity to spawnProps)
+    return true
+  }
 
   override fun update(delta: Float) {
     updating = true

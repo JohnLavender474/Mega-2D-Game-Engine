@@ -1,5 +1,6 @@
-package com.engine
+package com.engine.systems
 
+import com.engine.entities.GameEntity
 import com.engine.common.interfaces.Activatable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
@@ -40,10 +41,10 @@ interface IGameSystem : Activatable, Updatable, Resettable {
   /**
    * Adds all the given [GameEntity]s to this [GameSystem] if they qualify.
    *
-   * @param entities the [Collection] of [GameEntity]s to add
+   * @param entities the [Iterable] of [GameEntity]s to add
    * @return the [GameEntity]s that could not be added
    */
-  fun addAll(entities: Collection<GameEntity>): Collection<GameEntity>
+  fun addAll(entities: Iterable<GameEntity>): Collection<GameEntity>
 
   /**
    * Returns whether the given [GameEntity] qualifies to be added to this [IGameSystem].

@@ -1,8 +1,9 @@
 package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.engine.GameEntity
+import com.badlogic.gdx.utils.Array
 import com.engine.common.objects.Properties
+import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -31,9 +32,11 @@ class SpriteSystemTest :
           mockSprite2 = createMockSprite(-1)
           mockSprite3 = createMockSprite(0)
 
-          mockSpriteComponent = mockk {
-            every { sprites } returns arrayListOf(mockSprite1, mockSprite2, mockSprite3)
-          }
+          val array = Array<IGameSprite>()
+          array.add(mockSprite1)
+          array.add(mockSprite2)
+          array.add(mockSprite3)
+          mockSpriteComponent = mockk { every { sprites } returns array }
 
           entity =
               object : GameEntity(mockSpriteComponent) {

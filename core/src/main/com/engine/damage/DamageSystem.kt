@@ -1,7 +1,7 @@
 package com.engine.damage
 
-import com.engine.GameEntity
-import com.engine.GameSystem
+import com.engine.entities.GameEntity
+import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
 
 /** A [DamageSystem] is a [GameSystem] that processes [DamageComponent]s. */

@@ -1,5 +1,6 @@
 package com.engine.common.interfaces
 
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.objects.Properties
 import kotlin.reflect.KClass
 
@@ -26,7 +27,7 @@ interface Propertizable {
    *
    * @param p The [HashMap] of properties.
    */
-  fun putAllProperties(p: HashMap<String, Any?>) = properties.putAll(p)
+  fun putAllProperties(p: ObjectMap<String, Any?>) = properties.putAll(p)
 
   /**
    * Gets a property from this object's [Properties].

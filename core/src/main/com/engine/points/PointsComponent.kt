@@ -1,10 +1,11 @@
 package com.engine.points
 
-import com.engine.GameComponent
+import com.badlogic.gdx.utils.Array
+import com.engine.components.IGameComponent
 
 /**
  * The stats component. Contains all the stats for an entity.
  *
  * @param pointsHandles The points handles.
  */
-class PointsComponent(val pointsHandles: MutableList<PointsHandle> = ArrayList()) : GameComponent
+class PointsComponent(val pointsHandles: Array<PointsHandle> = Array()) : IGameComponent

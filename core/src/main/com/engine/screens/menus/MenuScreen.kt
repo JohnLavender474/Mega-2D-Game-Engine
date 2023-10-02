@@ -1,6 +1,7 @@
 package com.engine.screens.menus
 
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.Game2D
 import com.engine.common.enums.Direction
 
@@ -14,7 +15,7 @@ import com.engine.common.enums.Direction
 abstract class MenuScreen(
     protected val game: Game2D,
     protected val firstButtonKey: String,
-    protected val buttons: MutableMap<String, MenuButton> = HashMap()
+    protected val buttons: ObjectMap<String, MenuButton> = ObjectMap()
 ) : Screen {
 
   var currentButtonKey: String? = firstButtonKey

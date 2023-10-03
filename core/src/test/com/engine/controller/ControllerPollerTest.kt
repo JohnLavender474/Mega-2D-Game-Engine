@@ -21,8 +21,8 @@ class ControllerPollerTest :
             every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
 
             val buttons = Buttons()
-            buttons.put("ButtonA", Button({ 1 }, { 1 }, true))
-            buttons.put("ButtonB", Button({ 1 }, { 1 }, true))
+            buttons.put("ButtonA", Button(1, 1, true))
+            buttons.put("ButtonB", Button(1, 1, true))
             val controllerPoller = ControllerPoller(buttons)
 
             controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
@@ -34,7 +34,7 @@ class ControllerPollerTest :
           mockkObject(ControllerUtils) {
             every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
             every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
-            val buttonPoller = spyk(Button({ 1 }, { 1 }, true))
+            val buttonPoller = spyk(Button(1, 1, true))
             val buttons = Buttons()
             buttons.put("ButtonA", buttonPoller)
             val controllerPoller = ControllerPoller(buttons)
@@ -66,7 +66,7 @@ class ControllerPollerTest :
           mockkObject(ControllerUtils) {
             every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
             every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
-            val buttonPollerA = spyk(Button({ 1 }, { 1 }, true))
+            val buttonPollerA = spyk(Button(1, 1, true))
             val buttons = Buttons()
             buttons.put("ButtonA", buttonPollerA)
             val controllerPoller = ControllerPoller(buttons)
@@ -77,7 +77,7 @@ class ControllerPollerTest :
             controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
             controllerPoller.getButtonStatus("ButtonB") shouldBe null
 
-            val buttonPollerB = spyk(Button({ 1 }, { 1 }, true))
+            val buttonPollerB = spyk(Button(1, 1, true))
             buttons.put("ButtonB", buttonPollerB)
 
             controllerPoller.run()
@@ -90,7 +90,7 @@ class ControllerPollerTest :
           mockkObject(ControllerUtils) {
             every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
             every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
-            val buttonPollerA = spyk(Button({ 1 }, { 1 }, true))
+            val buttonPollerA = spyk(Button(1, 1, true))
             val buttons = Buttons()
             buttons.put("ButtonA", buttonPollerA)
             val controllerPoller = ControllerPoller(buttons)

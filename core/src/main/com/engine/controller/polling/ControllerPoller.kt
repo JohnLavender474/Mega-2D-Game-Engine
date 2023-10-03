@@ -33,13 +33,13 @@ class ControllerPoller(val buttonMap: Buttons) : IControllerPoller {
       }
       val status = statusMap.get(key)
 
-      var pressed = false
-      button.keyboardCode?.let {
-        pressed = ControllerUtils.isKeyboardKeyPressed(it())
+      var pressed: Boolean
+      button.keyboardCode.let {
+        pressed = ControllerUtils.isKeyboardKeyPressed(it)
       }
       if (!pressed) {
         button.controllerCode?.let {
-          pressed = ControllerUtils.isControllerKeyPressed(it())
+          pressed = ControllerUtils.isControllerKeyPressed(it)
         }
       }
 

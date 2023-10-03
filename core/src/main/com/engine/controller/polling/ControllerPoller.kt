@@ -1,4 +1,7 @@
-package com.engine.controller
+package com.engine.controller.polling
+
+import com.badlogic.gdx.utils.ObjectMap
+import com.engine.controller.ControllerButtonMap
 
 /**
  * The polling option for the controller poller.
@@ -17,28 +20,19 @@ enum class ControllerPollingOption {
  * passed into the constructor is internally converted into a map. The key is the name of the button
  * and the value is the button itself. The controller should be polled every frame.
  *
- * @param buttons The collection of buttons to manage.
+ * @param buttonMap The map of buttons to poll.
  */
 class ControllerPoller(
-    buttons: Iterable<Pair<String, IControllerButtonPoller>>,
+    val buttonMap: ControllerButtonMap,
     var pollingOption: ControllerPollingOption = ControllerPollingOption.BOTH
 ) : IControllerPoller {
 
-  /**
-   * Handle class for a controller button. Contains the button itself and the status of the button.
-   *
-   * @param status The status of the button.
-   */
-  internal data class ControllerButtonHandle(
-      internal val poller: IControllerButtonPoller,
-      internal var status: ControllerButtonStatus = ControllerButtonStatus.RELEASED
-  )
-
-  internal val buttonHandles =
-      buttons.associate { (name, poller) -> name to ControllerButtonHandle(poller) }
-
-  // if the poller should run
+  internal val statusMap = ObjectMap<String, ControllerButtonStatus>()
   override var on = true
+
+  init {
+    buttonMap.getKeys().forEach { statusMap.put(it, ControllerButtonStatus.RELEASED) }
+  }
 
   /**
    * Gets the status of the button mapped to the key.
@@ -46,7 +40,7 @@ class ControllerPoller(
    * @param name The button name.
    * @return The status of the button mapped to the key.
    */
-  override fun getButtonStatus(name: String) = buttonHandles[name]?.status
+  override fun getButtonStatus(name: String): ControllerButtonStatus? = statusMap[name]
 
   /**
    * Runs the controller poller. This should be called every frame. This will update the status of
@@ -56,8 +50,16 @@ class ControllerPoller(
    */
   override fun run() {
     if (!on) return
-    buttonHandles.values.forEach {
-      val (poller, status) = it
+
+    buttonMap.getKeys().forEach {
+      val poller =
+          buttonMap.getButtonPoller(it)
+              ?: throw IllegalStateException("Button key $it does not have a poller")
+
+      if (!statusMap.containsKey(it)) {
+        statusMap.put(it, ControllerButtonStatus.RELEASED)
+      }
+      val status = statusMap.get(it)
 
       val pressed =
           when (pollingOption) {
@@ -67,18 +69,26 @@ class ControllerPoller(
                 poller.isKeyboardButtonPressed() || poller.isControllerButtonPressed(0)
           }
 
-      if (pressed) {
-        when (status) {
-          ControllerButtonStatus.RELEASED,
-          ControllerButtonStatus.JUST_RELEASED -> it.status = ControllerButtonStatus.JUST_PRESSED
-          else -> it.status = ControllerButtonStatus.PRESSED
-        }
-      } else if (status == ControllerButtonStatus.RELEASED ||
-          status == ControllerButtonStatus.JUST_RELEASED) {
-        it.status = ControllerButtonStatus.RELEASED
-      } else {
-        it.status = ControllerButtonStatus.JUST_RELEASED
-      }
+      val newStatus =
+          if (buttonMap.isEnabled(it)) {
+            when (status) {
+              ControllerButtonStatus.RELEASED,
+              ControllerButtonStatus.JUST_RELEASED ->
+                  if (pressed) ControllerButtonStatus.JUST_PRESSED
+                  else ControllerButtonStatus.RELEASED
+              else ->
+                  if (pressed) ControllerButtonStatus.PRESSED
+                  else ControllerButtonStatus.JUST_RELEASED
+            }
+          } else {
+            if (status == ControllerButtonStatus.JUST_RELEASED) {
+              ControllerButtonStatus.RELEASED
+            } else {
+              ControllerButtonStatus.JUST_RELEASED
+            }
+          }
+
+      statusMap.put(it, newStatus)
     }
   }
 }

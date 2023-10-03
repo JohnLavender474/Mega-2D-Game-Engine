@@ -1,4 +1,4 @@
-package com.engine.controller
+package com.engine.controller.polling
 
 /** Interface for controller buttons. */
 interface ControllerButtonActuator {

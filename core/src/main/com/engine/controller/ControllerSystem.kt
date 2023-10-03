@@ -3,6 +3,8 @@ package com.engine.controller
 import com.engine.entities.GameEntity
 import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.controller.polling.ControllerButtonStatus
+import com.engine.controller.polling.IControllerPoller
 
 /**
  * System for controllers. This system will call the appropriate methods on the actuators of the

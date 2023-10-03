@@ -2,6 +2,7 @@ package com.engine.controller
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.components.IGameComponent
+import com.engine.controller.polling.ControllerButtonActuator
 
 /**
  * A component that contains a map of [ControllerButtonActuator]s. The key is the name of the button

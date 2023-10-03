@@ -2,6 +2,9 @@ package com.engine.controller
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.SimpleMockEntity
+import com.engine.controller.polling.ControllerButtonActuator
+import com.engine.controller.polling.ControllerButtonStatus
+import com.engine.controller.polling.IControllerPoller
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 

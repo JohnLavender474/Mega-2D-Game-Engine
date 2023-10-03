@@ -3,7 +3,7 @@ package com.engine.controller
 import com.engine.entities.GameEntity
 import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
-import com.engine.controller.polling.ControllerButtonStatus
+import com.engine.controller.buttons.ButtonStatus
 import com.engine.controller.polling.IControllerPoller
 
 /**
@@ -23,10 +23,10 @@ class ControllerSystem(private val poller: IControllerPoller) :
         val name = e.key
         val actuator = e.value
         when (poller.getButtonStatus(name)) {
-          ControllerButtonStatus.JUST_PRESSED -> actuator.onJustPressed()
-          ControllerButtonStatus.PRESSED -> actuator.onPressContinued(delta)
-          ControllerButtonStatus.JUST_RELEASED -> actuator.onJustReleased()
-          ControllerButtonStatus.RELEASED -> actuator.onReleaseContinued(delta)
+          ButtonStatus.JUST_PRESSED -> actuator.onJustPressed()
+          ButtonStatus.PRESSED -> actuator.onPressContinued(delta)
+          ButtonStatus.JUST_RELEASED -> actuator.onJustReleased()
+          ButtonStatus.RELEASED -> actuator.onReleaseContinued(delta)
           else -> {}
         }
       }

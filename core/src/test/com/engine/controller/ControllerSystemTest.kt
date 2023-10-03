@@ -2,8 +2,8 @@ package com.engine.controller
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.SimpleMockEntity
-import com.engine.controller.polling.ControllerButtonActuator
-import com.engine.controller.polling.ControllerButtonStatus
+import com.engine.controller.buttons.ButtonActuator
+import com.engine.controller.buttons.ButtonStatus
 import com.engine.controller.polling.IControllerPoller
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
@@ -18,14 +18,14 @@ class ControllerSystemTest :
           val entity = SimpleMockEntity()
 
           val actuator =
-              mockk<ControllerButtonActuator> {
+              mockk<ButtonActuator> {
                 every { onJustPressed() } just Runs
                 every { onPressContinued(any()) } just Runs
                 every { onJustReleased() } just Runs
                 every { onReleaseContinued(any()) } just Runs
               }
 
-          val map = ObjectMap<String, ControllerButtonActuator>()
+          val map = ObjectMap<String, ButtonActuator>()
           map.put("ButtonA", actuator)
           val controllerComponent = ControllerComponent(map)
           entity.addComponent(controllerComponent)
@@ -36,16 +36,16 @@ class ControllerSystemTest :
             when (buttonStatus) {
               0 ->
                   every { mockControllerPoller.getButtonStatus("ButtonA") } returns
-                      ControllerButtonStatus.JUST_PRESSED
+                      ButtonStatus.JUST_PRESSED
               1 ->
                   every { mockControllerPoller.getButtonStatus("ButtonA") } returns
-                      ControllerButtonStatus.PRESSED
+                      ButtonStatus.PRESSED
               2 ->
                   every { mockControllerPoller.getButtonStatus("ButtonA") } returns
-                      ControllerButtonStatus.JUST_RELEASED
+                      ButtonStatus.JUST_RELEASED
               3 ->
                   every { mockControllerPoller.getButtonStatus("ButtonA") } returns
-                      ControllerButtonStatus.RELEASED
+                      ButtonStatus.RELEASED
             }
 
             controllerSystem.update(0.1f)

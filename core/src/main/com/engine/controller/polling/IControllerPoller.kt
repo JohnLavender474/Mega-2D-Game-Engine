@@ -1,6 +1,7 @@
 package com.engine.controller.polling
 
 import com.engine.common.interfaces.Activatable
+import com.engine.controller.buttons.ButtonStatus
 
 /**
  * Interface for controller pollers. A controller poller polls the controller for button status and
@@ -15,5 +16,5 @@ interface IControllerPoller : Activatable, Runnable {
    * @param name The button name.
    * @return The status of the button mapped to the key.
    */
-  fun getButtonStatus(name: String): ControllerButtonStatus?
+  fun getButtonStatus(name: String): ButtonStatus?
 }

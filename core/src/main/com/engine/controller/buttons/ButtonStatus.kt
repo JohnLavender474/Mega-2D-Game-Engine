@@ -1,7 +1,7 @@
-package com.engine.controller.polling
+package com.engine.controller.buttons
 
 /** The current status of a button. */
-enum class ControllerButtonStatus {
+enum class ButtonStatus {
   PRESSED,
   RELEASED,
   JUST_PRESSED,

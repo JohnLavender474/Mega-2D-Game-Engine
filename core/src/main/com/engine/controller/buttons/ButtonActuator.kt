@@ -1,7 +1,7 @@
-package com.engine.controller.polling
+package com.engine.controller.buttons
 
 /** Interface for controller buttons. */
-interface ControllerButtonActuator {
+interface ButtonActuator {
 
   /** Called when the button is now pressed and wasn't pressed before. */
   fun onJustPressed()

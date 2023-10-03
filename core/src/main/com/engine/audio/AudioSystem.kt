@@ -1,20 +1,23 @@
 package com.engine.audio
 
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
+import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.GameEntity
 import com.engine.systems.GameSystem
-import com.engine.common.objects.ImmutableCollection
 
 /**
  * A [GameSystem] that processes [SoundComponent]s. It plays and stops sounds and music.
  *
- * @property audioManager the [AudioManager] to use
+ * @property assetManager the [AssetManager]
  * @property playSoundsWhenOff whether to play sounds when the system is off
  * @property playMusicWhenOff whether to play music when the system is off
  * @property stopSoundsWhenOff whether to stop sounds when the system is off
  * @property stopMusicWhenOff whether to stop music when the system is off
  */
 class AudioSystem(
-    private val audioManager: AudioManager,
+    private val assetManager: AssetManager,
     var playSoundsWhenOff: Boolean = false,
     var playMusicWhenOff: Boolean = false,
     var stopSoundsWhenOff: Boolean = true,
@@ -27,24 +30,37 @@ class AudioSystem(
 
       // play sounds
       if (on || playSoundsWhenOff) {
-        soundComponent?.playSoundRequests?.forEach { audioManager.playSound(it.source, it.loop) }
+        soundComponent?.playSoundRequests?.forEach {
+          val sound = assetManager.get(it.source, Sound::class.java)
+          if (it.loop) {
+            sound.loop()
+          } else {
+            sound.play()
+          }
+        }
       }
 
       // play music
       if (on || playMusicWhenOff) {
         soundComponent?.playMusicRequests?.forEach {
-          audioManager.playMusic(it.source, it.onCompletionListener)
+          val music = assetManager.get(it.source, Music::class.java)
+          it.onCompletionListener?.let { listener -> music.setOnCompletionListener(listener) }
+          music.play()
         }
       }
 
       // stop sounds
       if (on || stopSoundsWhenOff) {
-        soundComponent?.stopSoundRequests?.forEach { audioManager.stopSound(it) }
+        soundComponent?.stopSoundRequests?.forEach {
+          assetManager.get(it, Sound::class.java).stop()
+        }
       }
 
       // stop music
       if (on || stopMusicWhenOff) {
-        soundComponent?.stopMusicRequests?.forEach { audioManager.stopMusic(it) }
+        soundComponent?.stopMusicRequests?.forEach {
+          assetManager.get(it, Music::class.java).stop()
+        }
       }
     }
   }

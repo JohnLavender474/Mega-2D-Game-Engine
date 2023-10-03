@@ -1,6 +1,5 @@
 package com.engine.screens.menus
 
-import com.engine.Game2D
 import com.engine.common.enums.Direction
 import com.engine.common.extensions.objectMapOf
 import io.kotest.core.spec.style.DescribeSpec
@@ -10,7 +9,7 @@ import io.mockk.*
 class MenuScreenTest :
     DescribeSpec({
       describe("MenuScreen") {
-        lateinit var mockGame: Game2D
+        lateinit var pauseSupplier: () -> Boolean
         lateinit var menuScreen: MenuScreen
 
         var direction: Direction?
@@ -45,11 +44,11 @@ class MenuScreenTest :
           selectionRequested = false
           onAnyMovement = false
 
-          mockGame = mockk { every { paused } returns false }
+          pauseSupplier = { false }
 
           menuScreen =
               spyk(
-                  object : MenuScreen(mockGame, firstButtonKey, buttons) {
+                  object : MenuScreen(pauseSupplier, firstButtonKey, buttons) {
 
                     override fun onAnyMovement() {
                       onAnyMovement = true

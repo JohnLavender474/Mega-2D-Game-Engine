@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Queue
  * [EventListener]s are added to the [EventsManager]. When an [Event] is submitted, all
  * [EventListener]s are notified of the [Event] when the [run] method is called.
  */
-class EventsManager : Runnable {
+class EventsManager : IEventsManager {
 
   internal val listeners = OrderedSet<EventListener>()
   internal val eventQueue = Queue<Event>()
@@ -17,7 +17,7 @@ class EventsManager : Runnable {
    * Submits an [Event] to this [EventsManager]. The [Event] will be added to the [eventQueue] and
    * will be fired when the [run] method is called.
    */
-  fun queueEvent(event: Event) = eventQueue.addLast(event)
+  override fun queueEvent(event: Event) = eventQueue.addLast(event)
 
   /**
    * Adds an [EventListener] to this [EventsManager]. The [EventListener] will be notified of
@@ -26,7 +26,7 @@ class EventsManager : Runnable {
    * @param listener The [EventListener] to add.
    * @return If the [EventListener] was added.
    */
-  fun addListener(listener: EventListener) = listeners.add(listener)
+  override fun addListener(listener: EventListener) = listeners.add(listener)
 
   /**
    * Removes an [EventListener] from this [EventsManager]. The [EventListener] will no longer be
@@ -35,13 +35,13 @@ class EventsManager : Runnable {
    * @param listener The [EventListener] to remove.
    * @return If the [EventListener] was removed.
    */
-  fun removeListener(listener: EventListener) = listeners.remove(listener)
+  override fun removeListener(listener: EventListener) = listeners.remove(listener)
 
   /**
    * Removes all [EventListener]s from this [EventsManager]. The [EventListener]s will no longer be
    * notified of [Event]s when the [run] method is called.
    */
-  fun clearListeners() = listeners.clear()
+  override fun clearListeners() = listeners.clear()
 
   /**
    * Notifies all [EventListener]s of [Event]s that have been submitted to this [EventsManager].

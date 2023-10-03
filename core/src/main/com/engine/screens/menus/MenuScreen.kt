@@ -2,18 +2,17 @@ package com.engine.screens.menus
 
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.Game2D
 import com.engine.common.enums.Direction
 
 /**
  * Abstract class for menu screens. Handles navigation and selection of buttons. The first button is
  * selected by default.
  *
- * @param game the game instance
+ * @param pauseSupplier a supplier for if the game is paused
  * @param firstButtonKey the key of the first button to be selected
  */
 abstract class MenuScreen(
-    protected val game: Game2D,
+    protected val pauseSupplier: () -> Boolean,
     protected val firstButtonKey: String,
     protected val buttons: ObjectMap<String, MenuButton> = ObjectMap()
 ) : Screen {
@@ -51,7 +50,7 @@ abstract class MenuScreen(
   }
 
   override fun render(delta: Float) {
-    if (selectionMade || game.paused) {
+    if (selectionMade || pauseSupplier.invoke()) {
       return
     }
 

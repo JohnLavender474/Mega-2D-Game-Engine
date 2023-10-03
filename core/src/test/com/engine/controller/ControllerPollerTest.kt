@@ -6,101 +6,116 @@ import com.engine.controller.buttons.Buttons
 import com.engine.controller.polling.ControllerPoller
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockkObject
 import io.mockk.spyk
 
 class ControllerPollerTest :
     DescribeSpec({
       describe("ControllerPoller") {
-        it("should initialize with the provided buttons") {
-          val buttons = Buttons()
-          buttons.put("ButtonA", Button({ true }, true))
-          buttons.put("ButtonB", Button({ true }, true))
-          val controllerPoller = ControllerPoller(buttons)
+        var pressed = true
 
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
-          controllerPoller.getButtonStatus("ButtonB") shouldBe ButtonStatus.RELEASED
+        it("should initialize with the provided buttons") {
+          mockkObject(ControllerUtils) {
+            every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
+            every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
+
+            val buttons = Buttons()
+            buttons.put("ButtonA", Button({ 1 }, { 1 }, true))
+            buttons.put("ButtonB", Button({ 1 }, { 1 }, true))
+            val controllerPoller = ControllerPoller(buttons)
+
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getButtonStatus("ButtonB") shouldBe ButtonStatus.RELEASED
+          }
         }
 
         it("should update button status when run") {
-          var pressed = true
+          mockkObject(ControllerUtils) {
+            every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
+            every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
+            val buttonPoller = spyk(Button({ 1 }, { 1 }, true))
+            val buttons = Buttons()
+            buttons.put("ButtonA", buttonPoller)
+            val controllerPoller = ControllerPoller(buttons)
 
-          val buttonPoller = spyk(Button({ pressed }, true))
-          val buttons = Buttons()
-          buttons.put("ButtonA", buttonPoller)
-          val controllerPoller = ControllerPoller(buttons)
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
 
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
 
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            pressed = false
 
-          pressed = false
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
 
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            pressed = true
 
-          pressed = true
-
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+          }
         }
 
         it("should put status for new button") {
-          val pressed = true
+          mockkObject(ControllerUtils) {
+            every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
+            every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
+            val buttonPollerA = spyk(Button({ 1 }, { 1 }, true))
+            val buttons = Buttons()
+            buttons.put("ButtonA", buttonPollerA)
+            val controllerPoller = ControllerPoller(buttons)
 
-          val buttonPollerA = spyk(Button({ pressed }, true))
-          val buttons = Buttons()
-          buttons.put("ButtonA", buttonPollerA)
-          val controllerPoller = ControllerPoller(buttons)
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.getButtonStatus("ButtonB") shouldBe null
 
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
-          controllerPoller.getButtonStatus("ButtonB") shouldBe null
+            val buttonPollerB = spyk(Button({ 1 }, { 1 }, true))
+            buttons.put("ButtonB", buttonPollerB)
 
-          val buttonPollerB = spyk(Button({ pressed }, true))
-          buttons.put("ButtonB", buttonPollerB)
-
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
-          controllerPoller.getButtonStatus("ButtonB") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            controllerPoller.getButtonStatus("ButtonB") shouldBe ButtonStatus.JUST_PRESSED
+          }
         }
 
         it("should release button when disabled") {
-          val pressed = true
+          mockkObject(ControllerUtils) {
+            every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
+            every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
+            val buttonPollerA = spyk(Button({ 1 }, { 1 }, true))
+            val buttons = Buttons()
+            buttons.put("ButtonA", buttonPollerA)
+            val controllerPoller = ControllerPoller(buttons)
 
-          val buttonPollerA = spyk(Button({ pressed }, true))
-          val buttons = Buttons()
-          buttons.put("ButtonA", buttonPollerA)
-          val controllerPoller = ControllerPoller(buttons)
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
 
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            buttons.get("ButtonA")?.enabled = false
 
-          buttons.get("ButtonA")?.enabled = false
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            buttons.get("ButtonA")?.enabled = true
 
-          buttons.get("ButtonA")?.enabled = true
-
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
-          controllerPoller.run()
-          controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.run()
+            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+          }
         }
       }
     })

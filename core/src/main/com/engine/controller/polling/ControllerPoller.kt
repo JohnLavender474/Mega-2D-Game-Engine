@@ -1,6 +1,7 @@
 package com.engine.controller.polling
 
 import com.badlogic.gdx.utils.ObjectMap
+import com.engine.controller.ControllerUtils
 import com.engine.controller.buttons.Buttons
 import com.engine.controller.buttons.ButtonStatus
 
@@ -32,15 +33,25 @@ class ControllerPoller(val buttonMap: Buttons) : IControllerPoller {
       }
       val status = statusMap.get(key)
 
+      var pressed = false
+      button.keyboardCode?.let {
+        pressed = ControllerUtils.isKeyboardKeyPressed(it())
+      }
+      if (!pressed) {
+        button.controllerCode?.let {
+          pressed = ControllerUtils.isControllerKeyPressed(it())
+        }
+      }
+
       val newStatus =
           if (button.enabled) {
             when (status) {
               ButtonStatus.RELEASED,
               ButtonStatus.JUST_RELEASED ->
-                  if (button.pressed) ButtonStatus.JUST_PRESSED
+                  if (pressed) ButtonStatus.JUST_PRESSED
                   else ButtonStatus.RELEASED
               else ->
-                  if (button.pressed) ButtonStatus.PRESSED
+                  if (pressed) ButtonStatus.PRESSED
                   else ButtonStatus.JUST_RELEASED
             }
           } else {

@@ -1,10 +1,18 @@
 package com.engine.controller
 
+import com.badlogic.gdx.Gdx
 import org.lwjgl.input.Controller
 import org.lwjgl.input.Controllers
 
 /** Utility class for controllers. */
 object ControllerUtils {
+
+  fun isKeyboardKeyPressed(key: Int) = Gdx.input.isKeyPressed(key)
+
+  fun isControllerKeyPressed(key: Int) = isControllerKeyPressed(0, key)
+
+  fun isControllerKeyPressed(index: Int, key: Int) =
+      getController(index)?.isButtonPressed(key) ?: false
 
   /**
    * Gets the controller with the specified index.

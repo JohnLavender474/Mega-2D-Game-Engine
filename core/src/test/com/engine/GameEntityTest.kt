@@ -29,7 +29,7 @@ class GameEntityTest :
         }
 
         it("should have the correct initial properties") {
-          entity.components shouldBe ObjectMap()
+          entity.componentMap shouldBe ObjectMap()
           entity.properties shouldBe Properties()
           entity.dead shouldBe true
         }
@@ -47,7 +47,7 @@ class GameEntityTest :
           entity.hasProperty(key) shouldBe false
         }
 
-        it("should put and get components correctly") {
+        it("should put and get componentMap correctly") {
           entity.addComponent(mockComponent)
           entity.getComponent(MockComponent::class) shouldBe mockComponent
           entity.hasComponent(MockComponent::class) shouldBe true
@@ -57,7 +57,7 @@ class GameEntityTest :
           entity.hasComponent(MockComponent::class) shouldBe false
         }
 
-        it("should clear components correctly") {
+        it("should clear componentMap correctly") {
           entity.addComponent(mockComponent)
           entity.clearComponents()
 

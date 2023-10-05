@@ -121,7 +121,7 @@ class GameEngineTest :
 
           gameEngine.reset()
 
-          gameEngine.entities.isEmpty() shouldBe true
+          gameEngine.entities.isEmpty shouldBe true
           mockEntity1.dead shouldBe true
           mockEntity1.dead shouldBe true
           mockSystem1.contains(mockEntity1) shouldBe false

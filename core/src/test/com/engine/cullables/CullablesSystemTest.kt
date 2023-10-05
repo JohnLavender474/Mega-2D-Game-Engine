@@ -13,7 +13,7 @@ class CullablesSystemTest :
           val cullablesSystem = CullablesSystem()
           val entities = mutableListOf<GameEntity>()
 
-          // Create a few entities with cullable components
+          // Create a few entities with cullable componentMap
           for (i in 0..10) {
             val shouldCull = i % 2 == 0
 
@@ -48,11 +48,11 @@ class CullablesSystemTest :
           }
         }
 
-        it("should not cull entities with no cullable components") {
+        it("should not cull entities with no cullable componentMap") {
           val cullablesSystem = CullablesSystem()
           val entities = mutableListOf<GameEntity>()
 
-          // Create a few entities with cullable components
+          // Create a few entities with cullable componentMap
           for (i in 0..10) {
             val entity = SimpleMockEntity()
             entities.add(entity)

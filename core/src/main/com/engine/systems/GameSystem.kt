@@ -28,6 +28,7 @@ abstract class GameSystem(
 ) : IGameSystem {
 
   private val entitiesToAdd = Array<IGameEntity>()
+  private val entitiesToRemove = Array<IGameEntity>()
   private val componentMask =
       ObjectSet<KClass<out IGameComponent>>().apply { componentMask.forEach { add(it) } }
 
@@ -46,11 +47,12 @@ abstract class GameSystem(
 
   /**
    * Processes the given [IGameEntity]s. This method is called by the [update] method.
-   * Implementations of this method should process the given [IGameEntity]s. The given [IGameEntity]s
-   * are guaranteed to have all of the [IGameComponent]s in this [GameSystem]'s [componentMask]. The
-   * collection is immutable. To make changes to the underlying collection of entities, use the
-   * [add] and [remove] methods. This is to prevent [ConcurrentModificationException]s and to ensure
-   * that the [IGameEntity]s are processed correctly.
+   * Implementations of this method should process the given [IGameEntity]s. The given
+   * [IGameEntity]s are guaranteed to have all of the [IGameComponent]s in this [GameSystem]'s
+   * [componentMask]. The collection is immutable. To make changes to the underlying collection of
+   * entities, use the [add] and [remove] methods. This is to prevent
+   * [ConcurrentModificationException]s and to ensure that the [IGameEntity]s are processed
+   * correctly.
    *
    * @param on whether this [GameSystem] is on
    * @param entities the [Collection] of [IGameEntity]s to process
@@ -66,8 +68,10 @@ abstract class GameSystem(
 
   final override fun contains(e: IGameEntity) = entities.contains(e)
 
-  final override fun remove(e: IGameEntity) =
-      if (updating) entities.remove(e) else entitiesToAdd.removeValue(e, true)
+  final override fun remove(e: IGameEntity): Boolean {
+    if (updating) entitiesToRemove.add(e) else entities.remove(e)
+    return true
+  }
 
   final override fun add(e: IGameEntity): Boolean =
       if (qualifies(e)) {
@@ -91,16 +95,22 @@ abstract class GameSystem(
    */
   override fun update(delta: Float) {
     updating = true
+
     entities.addAll(entitiesToAdd)
     entitiesToAdd.clear()
+
+    entities.removeAll(entitiesToRemove)
+    entitiesToRemove.clear()
     entities.removeIf { it.dead || !qualifies(it) }
+
     process(on, ImmutableCollection(entities), delta)
+
     updating = false
   }
 
   /**
-   * Clears all [IGameEntity]s from this [GameSystem] and resets it to its default state. This method
-   * is called by the [IGameEngine] when the game is reset.
+   * Clears all [IGameEntity]s from this [GameSystem] and resets it to its default state. This
+   * method is called by the [IGameEngine] when the game is reset.
    *
    * @see IGameEngine
    * @see Resettable

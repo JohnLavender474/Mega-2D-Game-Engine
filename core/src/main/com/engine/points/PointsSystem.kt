@@ -1,11 +1,11 @@
 package com.engine.points
 
-import com.engine.entities.GameEntity
-import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.GameEntity
 import com.engine.entities.IGameEntity
+import com.engine.systems.GameSystem
 
-/** The pointsHandles system. Processes all the stats of each [GameEntity]. */
+/** The points system. Processes all the points of each [GameEntity]. */
 class PointsSystem : GameSystem(PointsComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
@@ -14,7 +14,7 @@ class PointsSystem : GameSystem(PointsComponent::class) {
     entities.forEach { entity ->
       val pointsComponent = entity.getComponent(PointsComponent::class)
 
-      pointsComponent?.pointsHandles?.forEach {
+      pointsComponent?.points?.values()?.forEach {
         val (points, pointsListener) = it
         pointsListener(points)
       }

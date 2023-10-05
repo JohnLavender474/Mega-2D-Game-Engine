@@ -3,11 +3,12 @@ package com.engine.motion
 import com.engine.entities.GameEntity
 import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.IGameEntity
 
 /** A system that updates the [MotionComponent]s of [GameEntity]s. */
 class MotionSystem : GameSystem(MotionComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
 
     entities.forEach {

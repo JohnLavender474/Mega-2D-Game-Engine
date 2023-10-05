@@ -11,6 +11,33 @@ class BehaviorsComponent : IGameComponent {
   private val activeBehaviors = ObjectSet<String>()
 
   /**
+   * Creates a [BehaviorsComponent] with the given [behaviors].
+   *
+   * @param _behaviors The [Behavior]s to add to this [BehaviorsComponent].
+   */
+  constructor(vararg _behaviors: Pair<String, Behavior>) {
+    _behaviors.forEach { addBehavior(it.first, it.second) }
+  }
+
+  /**
+   * Creates a [BehaviorsComponent] with the given [behaviors].
+   *
+   * @param _behaviors The [Behavior]s to add to this [BehaviorsComponent].
+   */
+  constructor(_behaviors: Iterable<Pair<String, Behavior>>) {
+    _behaviors.forEach { addBehavior(it.first, it.second) }
+  }
+
+  /**
+   * Creates a [BehaviorsComponent] with the given [behaviors].
+   *
+   * @param _behaviors The [Behavior]s to add to this [BehaviorsComponent].
+   */
+  constructor(_behaviors: OrderedMap<String, Behavior>) {
+    _behaviors.forEach { addBehavior(it.key, it.value) }
+  }
+
+  /**
    * Adds a [Behavior] to this [BehaviorsComponent] with the given [key]. If a [Behavior] already
    * exists with the given [key], it will be overwritten. Insertion order of behaviors is preserved
    * via a [LinkedHashMap]. The [Behavior] will be inactive by default.

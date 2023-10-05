@@ -1,13 +1,13 @@
 package com.engine.behaviors
 
 import com.engine.common.objects.ImmutableCollection
-import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /** A [GameSystem] that processes [BehaviorsComponent]s. */
 class BehaviorsSystem : GameSystem(BehaviorsComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) {
       return
     }

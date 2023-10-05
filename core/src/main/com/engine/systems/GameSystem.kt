@@ -7,12 +7,12 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.ImmutableCollection
 import com.engine.common.objects.MutableOrderedSet
 import com.engine.components.IGameComponent
-import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import kotlin.reflect.KClass
 
 /**
  * An abstract implementation of [IGameSystem]. It contains a [componentMask] which determines which
- * [GameEntity]s it processes. It also contains a [Collection] of [GameEntity]s that it processes.
+ * [IGameEntity]s it processes. It also contains a [Collection] of [IGameEntity]s that it processes.
  * The [Collection] by default is a [LinkedHashSet], which ensures that each entity is not processed
  * more than once per update and at the same time retains insertion order; but the [Collection] type
  * can be changed by overriding the [entities] property. It is recommended that the [entities]
@@ -20,14 +20,14 @@ import kotlin.reflect.KClass
  * and [remove] methods.
  *
  * @param componentMask the [KClass]es of [IGameComponent]s that this [GameSystem] accepts
- * @param entities the [Collection] of [GameEntity]s that this [GameSystem] processes
+ * @param entities the [Collection] of [IGameEntity]s that this [GameSystem] processes
  */
 abstract class GameSystem(
     componentMask: Iterable<KClass<out IGameComponent>>,
-    private val entities: MutableCollection<GameEntity> = MutableOrderedSet()
+    private val entities: MutableCollection<IGameEntity> = MutableOrderedSet()
 ) : IGameSystem {
 
-  private val entitiesToAdd = Array<GameEntity>()
+  private val entitiesToAdd = Array<IGameEntity>()
   private val componentMask =
       ObjectSet<KClass<out IGameComponent>>().apply { componentMask.forEach { add(it) } }
 
@@ -41,45 +41,45 @@ abstract class GameSystem(
   /** @see GameSystem(componentMask: Collection<KClass<out IGameComponent>>) */
   constructor(
       vararg componentMask: KClass<out IGameComponent>,
-      entities: MutableCollection<GameEntity> = MutableOrderedSet()
+      entities: MutableCollection<IGameEntity> = MutableOrderedSet()
   ) : this(componentMask.toList(), entities)
 
   /**
-   * Processes the given [GameEntity]s. This method is called by the [update] method.
-   * Implementations of this method should process the given [GameEntity]s. The given [GameEntity]s
+   * Processes the given [IGameEntity]s. This method is called by the [update] method.
+   * Implementations of this method should process the given [IGameEntity]s. The given [IGameEntity]s
    * are guaranteed to have all of the [IGameComponent]s in this [GameSystem]'s [componentMask]. The
    * collection is immutable. To make changes to the underlying collection of entities, use the
    * [add] and [remove] methods. This is to prevent [ConcurrentModificationException]s and to ensure
-   * that the [GameEntity]s are processed correctly.
+   * that the [IGameEntity]s are processed correctly.
    *
    * @param on whether this [GameSystem] is on
-   * @param entities the [Collection] of [GameEntity]s to process
+   * @param entities the [Collection] of [IGameEntity]s to process
    * @param delta the time in seconds since the last frame
    */
   internal abstract fun process(
       on: Boolean,
-      entities: ImmutableCollection<GameEntity>,
+      entities: ImmutableCollection<IGameEntity>,
       delta: Float
   )
 
   final override fun purge() = if (updating) purgeEntities = true else entities.clear()
 
-  final override fun contains(e: GameEntity) = entities.contains(e)
+  final override fun contains(e: IGameEntity) = entities.contains(e)
 
-  final override fun remove(e: GameEntity) =
+  final override fun remove(e: IGameEntity) =
       if (updating) entities.remove(e) else entitiesToAdd.removeValue(e, true)
 
-  final override fun add(e: GameEntity): Boolean =
+  final override fun add(e: IGameEntity): Boolean =
       if (qualifies(e)) {
         entitiesToAdd.add(e)
         true
       } else false
 
-  final override fun addAll(vararg entities: GameEntity) = addAll(entities.toList())
+  final override fun addAll(vararg entities: IGameEntity) = addAll(entities.toList())
 
-  final override fun addAll(entities: Iterable<GameEntity>) = entities.filter { !add(it) }
+  final override fun addAll(entities: Iterable<IGameEntity>) = entities.filter { !add(it) }
 
-  final override fun qualifies(e: GameEntity) = componentMask.all { e.hasComponent(it) }
+  final override fun qualifies(e: IGameEntity) = componentMask.all { e.hasComponent(it) }
 
   /**
    * Updates this [GameSystem]. This method is called by the [IGameEngine] every frame. Entities
@@ -99,7 +99,7 @@ abstract class GameSystem(
   }
 
   /**
-   * Clears all [GameEntity]s from this [GameSystem] and resets it to its default state. This method
+   * Clears all [IGameEntity]s from this [GameSystem] and resets it to its default state. This method
    * is called by the [IGameEngine] when the game is reset.
    *
    * @see IGameEngine

@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
-import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import com.engine.graph.GraphMap
 import com.engine.systems.GameSystem
 import kotlin.math.abs
@@ -48,12 +48,12 @@ class WorldSystem(
     private val contactFilterMap: ObjectMap<String, Set<String>>? = null,
 ) : GameSystem(BodyComponent::class) {
 
-  private var priorContactSet = OrderedSet<Contact>()
-  private var currentContactSet = OrderedSet<Contact>()
+  internal var priorContactSet = OrderedSet<Contact>()
+  internal var currentContactSet = OrderedSet<Contact>()
 
-  private var accumulator = 0f
+  internal var accumulator = 0f
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) {
       return
     }
@@ -77,10 +77,10 @@ class WorldSystem(
    * responsible for updating the positions of all bodies, resolving collisions, and notifying the
    * [ContactListener] of any contacts that occur.
    *
-   * @param entities the [Collection] of [GameEntity]s to process
+   * @param entities the [Collection] of [IGameEntity]s to process
    * @param delta the time in seconds since the last frame
    */
-  internal fun cycle(entities: ImmutableCollection<GameEntity>, delta: Float) {
+  internal fun cycle(entities: ImmutableCollection<IGameEntity>, delta: Float) {
     preProcess(entities, delta)
     worldGraph.reset()
     entities.forEach { processPhysicsAndGraph(it, delta) }
@@ -94,10 +94,10 @@ class WorldSystem(
    * responsible for resetting the [GraphMap] and the [PhysicsData] of all bodies, and updating the
    * [Updatable]s of all bodies.
    *
-   * @param entities the [Collection] of [GameEntity]s to process
+   * @param entities the [Collection] of [IGameEntity]s to process
    * @param delta the time in seconds since the last frame
    */
-  internal fun preProcess(entities: ImmutableCollection<GameEntity>, delta: Float) {
+  internal fun preProcess(entities: ImmutableCollection<IGameEntity>, delta: Float) {
     entities.forEach { e ->
       e.getComponent(BodyComponent::class)?.body?.let { b ->
         b.previousBounds.set(b)
@@ -112,7 +112,7 @@ class WorldSystem(
    * @param entity the entity to process
    * @param delta the time in seconds since the last frame
    */
-  internal fun processPhysicsAndGraph(entity: GameEntity, delta: Float) {
+  internal fun processPhysicsAndGraph(entity: IGameEntity, delta: Float) {
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       updatePhysics(b, delta)
       updateFixturePositions(b)
@@ -126,7 +126,7 @@ class WorldSystem(
    *
    * @param entity the entity to process
    */
-  internal fun processContactsAndCollisions(entity: GameEntity) {
+  internal fun processContactsAndCollisions(entity: IGameEntity) {
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       checkForContacts(b)
       resolveCollisions(b)
@@ -137,10 +137,10 @@ class WorldSystem(
    * Post-processes the entities. This method is called by the [cycle] method. This method is
    * responsible for notifying the [ContactListener] of any contacts that occur.
    *
-   * @param entities the [Collection] of [GameEntity]s to process
+   * @param entities the [Collection] of [IGameEntity]s to process
    * @param delta the time in seconds since the last frame
    */
-  internal fun postProcess(entities: ImmutableCollection<GameEntity>, delta: Float) {
+  internal fun postProcess(entities: ImmutableCollection<IGameEntity>, delta: Float) {
     entities.forEach { e ->
       e.getComponent(BodyComponent::class)?.body?.let { b -> b.postProcess?.update(delta) }
     }

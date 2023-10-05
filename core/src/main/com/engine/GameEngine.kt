@@ -3,23 +3,23 @@ package com.engine
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.objects.Properties
-import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
 
 /**
- * The main class of the game. It contains all of the [IGameSystem]s and [GameEntity]s.
+ * The main class of the game. It contains all of the [IGameSystem]s and [IGameEntity]s.
  *
  * @property systems the [IGameSystem]s in this [GameEngine]
- * @property autoSetAlive whether to automatically set [GameEntity]s to alive ([GameEntity.dead] set
- *   to false) every time they are spawned. If this is false, then the [spawn] method of the
- *   [GameEntity] should set [GameEntity.dead] to false (in case successful spawning is
+ * @property autoSetAlive whether to automatically set [IGameEntity]s to alive ([IGameEntity.dead]
+ *   set to false) every time they are spawned. If this is false, then the [spawn] method of the
+ *   [IGameEntity] should set [IGameEntity.dead] to false (in case successful spawning is
  *   conditional).
  */
 class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: Boolean = true) :
     IGameEngine {
 
-  internal val entities = OrderedSet<GameEntity>()
-  internal val entitiesToAdd = Array<Pair<GameEntity, Properties>>()
+  internal val entities = OrderedSet<IGameEntity>()
+  internal val entitiesToAdd = Array<Pair<IGameEntity, Properties>>()
 
   private var purge = false
   private var updating = false
@@ -27,9 +27,9 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
   /**
    * Creates a [GameEngine] with the given [IGameSystem]s.
    *
-   * @param autoSetAlive whether to automatically set [GameEntity]s to alive ([GameEntity.dead] set
-   *   to false) every time they are spawned. If this is false, then the [spawn] method of the
-   *   [GameEntity] should set [GameEntity.dead] to false (in case successful spawning is
+   * @param autoSetAlive whether to automatically set [IGameEntity]s to alive ([IGameEntity.dead]
+   *   set to false) every time they are spawned. If this is false, then the [spawn] method of the
+   *   [IGameEntity] should set [IGameEntity.dead] to false (in case successful spawning is
    *   conditional).
    * @param systems the [IGameSystem]s to add to this [GameEngine]
    */
@@ -38,7 +38,7 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
       vararg systems: IGameSystem
   ) : this(systems.asIterable(), autoSetAlive)
 
-  override fun spawn(entity: GameEntity, spawnProps: Properties): Boolean {
+  override fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean {
     entitiesToAdd.add(entity to spawnProps)
     return true
   }
@@ -51,7 +51,7 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
       val (entity, spawnProps) = it
       entities.add(entity)
       entity.spawn(spawnProps)
-      entity.components.values().forEach { c -> c.reset() }
+      entity.getComponents().forEach { c -> c.reset() }
       systems.forEach { s -> s.add(entity) }
 
       // set alive if necessary

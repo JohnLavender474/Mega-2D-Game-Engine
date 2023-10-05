@@ -1,11 +1,12 @@
 package com.engine.systems
 
 import com.engine.components.IGameComponent
+import com.engine.entities.IGameEntity
 import kotlin.reflect.KClass
 
 /**
- * An [IntervalGameSystem] is a [GameSystem] that processes [GameEntity]s at a fixed interval. It
- * contains a [componentMask] which determines which [GameEntity]s it processes.
+ * An [IntervalGameSystem] is a [GameSystem] that processes [IGameEntity]s at a fixed interval. It
+ * contains a [componentMask] which determines which [IGameEntity]s it processes.
  *
  * @param intervalSupplier a lambda that supplies the interval in seconds between each update
  * @param componentMask the [Collection] of [KClass]es of [IGameComponent]s that this

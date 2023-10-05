@@ -1,9 +1,10 @@
 package com.engine.cullables
 
 import com.engine.GameEngine
-import com.engine.entities.GameEntity
-import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
+import com.engine.systems.GameSystem
 
 /**
  * A [GameSystem] that culls [GameEntity]s with [CullablesComponent]s. Culled entities are marked as
@@ -13,7 +14,7 @@ import com.engine.common.objects.ImmutableCollection
  */
 class CullablesSystem : GameSystem(CullablesComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
 
     entities.forEach { entity ->

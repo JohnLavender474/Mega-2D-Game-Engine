@@ -4,6 +4,7 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
 import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
 
 /**
@@ -22,7 +23,7 @@ interface IGameEngine : Updatable, Resettable {
    * @param spawnProps the [Properties] to spawn the [GameEntity] with
    * @return whether the [GameEntity] was spawned
    */
-  fun spawn(entity: GameEntity, spawnProps: Properties): Boolean
+  fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean
 
   /** Resets all [IGameSystem]s in this [IGameEngine]. */
   override fun reset() = systems.forEach { it.reset() }

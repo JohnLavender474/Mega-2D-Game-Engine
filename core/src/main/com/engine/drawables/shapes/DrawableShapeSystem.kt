@@ -3,9 +3,9 @@ package com.engine.drawables.shapes
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.entities.GameEntity
-import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.IGameEntity
+import com.engine.systems.GameSystem
 
 /**
  * A system that can be used to draw shapes. This system requires a [ShapeRenderer].
@@ -16,7 +16,7 @@ import com.engine.common.objects.ImmutableCollection
 class DrawableShapeSystem(private val shapeRenderer: ShapeRenderer) :
     GameSystem(DrawableShapeComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
 
     val map = ObjectMap<ShapeRenderer.ShapeType, Array<DrawableShapeHandle>>()

@@ -4,6 +4,7 @@ import com.engine.common.objects.ImmutableCollection
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
 import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -60,17 +61,17 @@ class GameEngineTest :
           mockSystem1 =
               object : GameSystem(MockComponent1::class) {
                 override fun process(
-                  on: Boolean,
-                  entities: ImmutableCollection<GameEntity>,
-                  delta: Float
+                    on: Boolean,
+                    entities: ImmutableCollection<IGameEntity>,
+                    delta: Float
                 ) {}
               }
           mockSystem2 =
               object : GameSystem(MockComponent2::class) {
                 override fun process(
-                  on: Boolean,
-                  entities: ImmutableCollection<GameEntity>,
-                  delta: Float
+                    on: Boolean,
+                    entities: ImmutableCollection<IGameEntity>,
+                    delta: Float
                 ) {}
               }
 

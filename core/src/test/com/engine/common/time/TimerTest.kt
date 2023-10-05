@@ -23,6 +23,23 @@ class TimerTest :
           timer.time shouldBe 1f
         }
 
+        describe("should set to end correctly") {
+          it("just finished should be true") {
+            timer.setToEnd()
+            timer.time shouldBe timer.duration
+            timer.justFinished shouldBe true
+            timer.isFinished() shouldBe true
+          }
+
+          it("just finished should be false") {
+            timer.update(5f)
+            timer.setToEnd()
+            timer.time shouldBe timer.duration
+            timer.justFinished shouldBe false
+            timer.isFinished() shouldBe true
+          }
+        }
+
         it("should reset correctly") {
           val array = Array<TimeMarkedRunnable>()
           array.add(mockRunnable)

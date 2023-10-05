@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.utils.Array
 import com.engine.SimpleMockEntity
 import com.engine.common.objects.ImmutableCollection
-import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -16,7 +16,7 @@ class DrawableShapeSystemTest :
         lateinit var mockDrawableShape: DrawableShape
         lateinit var mockDrawableShapeHandle: DrawableShapeHandle
         lateinit var mockDrawableShapeComponent: DrawableShapeComponent
-        lateinit var mockEntity: GameEntity
+        lateinit var mockEntity: IGameEntity
         lateinit var drawableShapeSystem: DrawableShapeSystem
 
         beforeEach {

@@ -2,9 +2,9 @@ package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.engine.entities.GameEntity
-import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.IGameEntity
+import com.engine.systems.GameSystem
 import java.util.*
 
 /**
@@ -14,7 +14,7 @@ import java.util.*
  */
 class SpriteSystem(private val batch: Batch) : GameSystem(SpriteComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) {
       return
     }

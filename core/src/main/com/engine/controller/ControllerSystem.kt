@@ -1,10 +1,10 @@
 package com.engine.controller
 
-import com.engine.entities.GameEntity
-import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
 import com.engine.controller.buttons.ButtonStatus
 import com.engine.controller.polling.IControllerPoller
+import com.engine.entities.IGameEntity
+import com.engine.systems.GameSystem
 
 /**
  * System for controllers. This system will call the appropriate methods on the actuators of the
@@ -13,7 +13,7 @@ import com.engine.controller.polling.IControllerPoller
 class ControllerSystem(private val poller: IControllerPoller) :
     GameSystem(ControllerComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
 
     entities.forEach {

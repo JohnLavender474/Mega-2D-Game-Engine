@@ -4,7 +4,7 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.engine.common.objects.ImmutableCollection
-import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /**
@@ -24,7 +24,7 @@ class AudioSystem(
     var stopMusicWhenOff: Boolean = true
 ) : GameSystem(SoundComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
+  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     entities.forEach { entity ->
       val soundComponent = entity.getComponent(SoundComponent::class)
 

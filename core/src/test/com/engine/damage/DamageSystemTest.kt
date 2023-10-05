@@ -12,7 +12,8 @@ class DamageSystemTest :
         lateinit var entity: GameEntity
         lateinit var damageable: Damageable
         lateinit var damager: Damager
-        lateinit var damageComponent: DamageComponent
+        lateinit var damagerComponent: DamagerComponent
+        lateinit var damageableComponent: DamageableComponent
 
         var takeDamageFrom = true
         var canDamage = true
@@ -26,9 +27,10 @@ class DamageSystemTest :
             every { canDamage(any()) } answers { canDamage }
             every { onDamageInflictedTo(any()) } just Runs
           }
-          damageComponent = DamageComponent(damageable)
-          damageComponent.damagers.add(damager)
-          entity.addComponent(damageComponent)
+          damagerComponent = DamagerComponent(damager)
+          damageableComponent = DamageableComponent(damageable)
+          damageableComponent.damagers.add(damagerComponent)
+          entity.addComponent(damageableComponent)
           damageSystem.add(entity)
         }
 

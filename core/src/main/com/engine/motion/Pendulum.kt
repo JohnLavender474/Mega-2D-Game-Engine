@@ -9,7 +9,7 @@ class Pendulum(
     var anchor: Vector2,
     var targetFPS: Float,
     var scalar: Float = 1f
-) : Motion {
+) : IMotion {
 
   private var angleVel = 0f
   private var angleAccel = 0f

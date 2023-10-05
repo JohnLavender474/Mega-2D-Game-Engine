@@ -5,9 +5,9 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 
 /**
- * Manages the spawning of entities. This class is responsible for updating all of the [Spawner]s
+ * Manages the spawning of entities. This class is responsible for updating all of the [ISpawner]s
  * and adding the [Spawn]s to the [spawns] list. This class is also responsible for culling the
- * [Spawner]s that should no longer be considered for spawning.
+ * [ISpawner]s that should no longer be considered for spawning.
  *
  * @see Updatable
  * @see Resettable
@@ -15,7 +15,7 @@ import com.engine.common.interfaces.Updatable
 class SpawnsManager : Updatable, Resettable {
 
   private val spawns = Array<Spawn>()
-  private val spawners = Array<Spawner>()
+  private val spawners = Array<ISpawner>()
 
   /**
    * Returns a list of the [Spawn]s that were spawned since the last update, and then clears the
@@ -31,18 +31,18 @@ class SpawnsManager : Updatable, Resettable {
   }
 
   /**
-   * Sets the [Spawner]s to manage.
+   * Sets the [ISpawner]s to manage.
    *
-   * @param spawners the [Spawner]s to manage.
-   * @see Spawner
+   * @param spawners the [ISpawner]s to manage.
+   * @see ISpawner
    */
-  fun setSpawners(spawners: Array<Spawner>) {
+  fun setSpawners(spawners: Array<ISpawner>) {
     this.spawners.clear()
     this.spawners.addAll(spawners)
   }
 
   /**
-   * Updates the [Spawner]s and adds the [Spawn]s to the [spawns] list. Also culls the [Spawner]s
+   * Updates the [ISpawner]s and adds the [Spawn]s to the [spawns] list. Also culls the [ISpawner]s
    * that should no longer be considered for spawning. This method should be called once per frame.
    * This method should be called before the [getSpawns] method.
    *
@@ -65,7 +65,7 @@ class SpawnsManager : Updatable, Resettable {
     }
   }
 
-  /** Clears the [Spawner]s and [Spawn]s. */
+  /** Clears the [ISpawner]s and [Spawn]s. */
   override fun reset() {
     spawners.clear()
     spawns.clear()

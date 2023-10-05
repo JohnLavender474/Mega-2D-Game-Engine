@@ -4,13 +4,13 @@ import com.badlogic.gdx.utils.OrderedSet
 import com.badlogic.gdx.utils.Queue
 
 /**
- * A manager for [Event]s and [EventListener]s. [Event]s are submitted to the [EventsManager] and
- * [EventListener]s are added to the [EventsManager]. When an [Event] is submitted, all
- * [EventListener]s are notified of the [Event] when the [run] method is called.
+ * A manager for [Event]s and [IEventListener]s. [Event]s are submitted to the [EventsManager] and
+ * [IEventListener]s are added to the [EventsManager]. When an [Event] is submitted, all
+ * [IEventListener]s are notified of the [Event] when the [run] method is called.
  */
 class EventsManager : IEventsManager {
 
-  internal val listeners = OrderedSet<EventListener>()
+  internal val listeners = OrderedSet<IEventListener>()
   internal val eventQueue = Queue<Event>()
 
   /**
@@ -20,31 +20,31 @@ class EventsManager : IEventsManager {
   override fun queueEvent(event: Event) = eventQueue.addLast(event)
 
   /**
-   * Adds an [EventListener] to this [EventsManager]. The [EventListener] will be notified of
+   * Adds an [IEventListener] to this [EventsManager]. The [IEventListener] will be notified of
    * [Event]s when the [run] method is called.
    *
-   * @param listener The [EventListener] to add.
-   * @return If the [EventListener] was added.
+   * @param listener The [IEventListener] to add.
+   * @return If the [IEventListener] was added.
    */
-  override fun addListener(listener: EventListener) = listeners.add(listener)
+  override fun addListener(listener: IEventListener) = listeners.add(listener)
 
   /**
-   * Removes an [EventListener] from this [EventsManager]. The [EventListener] will no longer be
+   * Removes an [IEventListener] from this [EventsManager]. The [IEventListener] will no longer be
    * notified of [Event]s when the [run] method is called.
    *
-   * @param listener The [EventListener] to remove.
-   * @return If the [EventListener] was removed.
+   * @param listener The [IEventListener] to remove.
+   * @return If the [IEventListener] was removed.
    */
-  override fun removeListener(listener: EventListener) = listeners.remove(listener)
+  override fun removeListener(listener: IEventListener) = listeners.remove(listener)
 
   /**
-   * Removes all [EventListener]s from this [EventsManager]. The [EventListener]s will no longer be
+   * Removes all [IEventListener]s from this [EventsManager]. The [IEventListener]s will no longer be
    * notified of [Event]s when the [run] method is called.
    */
   override fun clearListeners() = listeners.clear()
 
   /**
-   * Notifies all [EventListener]s of [Event]s that have been submitted to this [EventsManager].
+   * Notifies all [IEventListener]s of [Event]s that have been submitted to this [EventsManager].
    * This method should be called once per game loop.
    */
   override fun run() {

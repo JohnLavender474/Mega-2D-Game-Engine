@@ -9,8 +9,8 @@ class DamageSystemTest :
       describe("DamageSystem") {
         lateinit var damageSystem: DamageSystem
         lateinit var entity: GameEntity
-        lateinit var damageable: Damageable
-        lateinit var damager: Damager
+        lateinit var damageable: IDamageable
+        lateinit var damager: IDamager
         lateinit var damagerComponent: DamagerComponent
         lateinit var damageableComponent: DamageableComponent
 
@@ -33,7 +33,7 @@ class DamageSystemTest :
           damageSystem.add(entity)
         }
 
-        it("should call when a Damager damages a Damageable") {
+        it("should call when a IDamager damages a IDamageable") {
           // if
           takeDamageFrom = true
           canDamage = true
@@ -47,7 +47,7 @@ class DamageSystemTest :
           verify(exactly = 1) { damageable.takeDamageFrom(damager) }
         }
 
-        it("should not call when Damager cannot damage Damageable") {
+        it("should not call when IDamager cannot damage IDamageable") {
           // if
           takeDamageFrom = true
           canDamage = false
@@ -61,7 +61,7 @@ class DamageSystemTest :
           verify(exactly = 0) { damageable.takeDamageFrom(damager) }
         }
 
-        it("should not call onDamageInflictedTo when Damageable doesn't take damage") {
+        it("should not call onDamageInflictedTo when IDamageable doesn't take damage") {
           // if
           takeDamageFrom = false
           canDamage = true

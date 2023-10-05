@@ -20,7 +20,7 @@ class SpriteMatrix(
     columns: Int,
     _x: Float,
     _y: Float
-) : DrawableSprite, Matrix<IGameSprite>(rows, columns) {
+) : IDrawableSprite, Matrix<IGameSprite>(rows, columns) {
 
   init {
     for (x in 0 until columns) {

@@ -4,14 +4,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 
 /**
- * A handle for a [DrawableShape]. This handle is used to sort shapes by priority.
+ * A handle for a [IDrawableShape]. This handle is used to sort shapes by priority.
  *
  * @param shape the shape
  */
 data class DrawableShapeHandle(
-    private val shape: DrawableShape,
+    private val shape: IDrawableShape,
     val shapeType: ShapeType,
-) : DrawableShape {
+) : IDrawableShape {
 
   override fun draw(renderer: ShapeRenderer) = shape.draw(renderer)
 }

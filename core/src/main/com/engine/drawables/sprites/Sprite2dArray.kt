@@ -13,7 +13,7 @@ import com.engine.common.objects.Array2D
  * @param cols The number of columns.
  */
 @Deprecated("Should use Sprite Matrix instead.", ReplaceWith("SpriteMatrix"))
-class Sprite2dArray(model: GameSprite, priority: Int, val rows: Int, val cols: Int) : DrawableSprite {
+class Sprite2dArray(model: GameSprite, priority: Int, val rows: Int, val cols: Int) : IDrawableSprite {
 
   private val sprite2dArray = Array2D<GameSprite>(rows, cols)
 

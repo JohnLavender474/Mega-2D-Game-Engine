@@ -20,7 +20,7 @@ class CullablesSystemTest :
             val cullablesComponent = CullablesComponent()
 
             cullablesComponent.cullables.add(
-              object : Cullable {
+              object : ICullable {
                 override fun shouldBeCulled() = shouldCull
               })
             entity.addComponent(cullablesComponent)

@@ -13,7 +13,7 @@ class DrawableShapeSystemTest :
     DescribeSpec({
       describe("DrawableShapeSystem") {
         lateinit var shapeRenderer: ShapeRenderer
-        lateinit var mockDrawableShape: DrawableShape
+        lateinit var mockDrawableShape: IDrawableShape
         lateinit var mockDrawableShapeHandle: DrawableShapeHandle
         lateinit var mockDrawableShapeComponent: DrawableShapeComponent
         lateinit var mockEntity: IGameEntity
@@ -26,7 +26,7 @@ class DrawableShapeSystemTest :
             every { end() } just Runs
             every { rect(any(), any(), any(), any()) } just Runs
           }
-          mockDrawableShape = DrawableShape { it.rect(0.0f, 0.0f, 0.0f, 0.0f) }
+          mockDrawableShape = IDrawableShape { it.rect(0.0f, 0.0f, 0.0f, 0.0f) }
           mockDrawableShapeHandle = spyk(DrawableShapeHandle(mockDrawableShape, ShapeType.Line))
           val array = Array<DrawableShapeHandle>()
           array.add(mockDrawableShapeHandle)

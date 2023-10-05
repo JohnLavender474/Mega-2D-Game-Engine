@@ -1,7 +1,7 @@
 package com.engine.controller
 
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.controller.buttons.ButtonActuator
+import com.engine.controller.buttons.IButtonActuator
 import com.engine.controller.buttons.ButtonStatus
 import com.engine.controller.polling.IControllerPoller
 import com.engine.entities.GameEntity
@@ -18,14 +18,14 @@ class ControllerSystemTest :
           val entity = GameEntity()
 
           val actuator =
-              mockk<ButtonActuator> {
+              mockk<IButtonActuator> {
                 every { onJustPressed(any()) } just Runs
                 every { onPressContinued(any(), any()) } just Runs
                 every { onJustReleased(any()) } just Runs
                 every { onReleaseContinued(any(), any()) } just Runs
               }
 
-          val map = ObjectMap<String, ButtonActuator>()
+          val map = ObjectMap<String, IButtonActuator>()
           map.put("ButtonA", actuator)
           val controllerComponent = ControllerComponent(map)
           entity.addComponent(controllerComponent)

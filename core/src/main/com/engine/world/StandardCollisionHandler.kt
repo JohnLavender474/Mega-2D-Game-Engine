@@ -12,9 +12,9 @@ import com.badlogic.gdx.math.Rectangle
  *
  * @see WorldSystem
  * @see Body
- * @see CollisionHandler
+ * @see ICollisionHandler
  */
-object StandardCollisionHandler : CollisionHandler {
+object StandardCollisionHandler : ICollisionHandler {
 
   /**
    * Handles a collision between two bodies. This collision handler handles collisions by moving the
@@ -24,7 +24,7 @@ object StandardCollisionHandler : CollisionHandler {
    *
    * @param body1 The first body in the collision.
    * @param body2 The second body in the collision.
-   * @see CollisionHandler.handleCollision
+   * @see ICollisionHandler.handleCollision
    */
   override fun handleCollision(body1: Body, body2: Body): Boolean {
     if (!body1.physics.collisionOn || !body2.physics.collisionOn) {

@@ -12,7 +12,7 @@ import com.engine.common.interfaces.Sizable
  * @see Positional
  * @see Comparable
  */
-interface IGameSprite : DrawableSprite, Positional, Sizable, Comparable<IGameSprite> {
+interface IGameSprite : IDrawableSprite, Positional, Sizable, Comparable<IGameSprite> {
 
   var priority: Int
 }

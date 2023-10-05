@@ -22,7 +22,7 @@ class MenuScreenTest :
             objectMapOf(
                 firstButtonKey to
                     spyk(
-                        object : MenuButton {
+                        object : IMenuButton {
                           override fun onSelect(delta: Float) = true
 
                           override fun onNavigate(direction: Direction, delta: Float) =
@@ -30,7 +30,7 @@ class MenuScreenTest :
                         }),
                 secondButtonKey to
                     spyk(
-                        object : MenuButton {
+                        object : IMenuButton {
                           override fun onSelect(delta: Float) = false
 
                           override fun onNavigate(direction: Direction, delta: Float) =

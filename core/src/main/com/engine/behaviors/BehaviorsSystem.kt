@@ -17,7 +17,9 @@ class BehaviorsSystem : GameSystem(BehaviorsComponent::class) {
         b.behaviors.forEach { e ->
           val key = e.key
           val behavior = e.value
+
           behavior.update(delta)
+
           val active = behavior.isActive()
           b.setActive(key, active)
         }

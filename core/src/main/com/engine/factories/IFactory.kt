@@ -5,7 +5,7 @@ package com.engine.factories
  *
  * @param T the type of object to fetch
  */
-interface Factory<T> {
+interface IFactory<T> {
 
   /**
    * Fetches an object from the given key.

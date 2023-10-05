@@ -1,14 +1,14 @@
 package com.engine.cullables
 
 import com.engine.events.Event
-import com.engine.events.EventListener
+import com.engine.events.IEventListener
 
 /**
- * A [Cullable] that will be culled if [cullOnEvent] returns true for any event.
+ * A [ICullable] that will be culled if [cullOnEvent] returns true for any event.
  *
- * @param cullOnEvent a function that returns true if the [Cullable] should be culled for the event.
+ * @param cullOnEvent a function that returns true if the [ICullable] should be culled for the event.
  */
-class CullableOnEvent(private val cullOnEvent: (Event) -> Boolean) : Cullable, EventListener {
+class CullableOnEvent(private val cullOnEvent: (Event) -> Boolean) : ICullable, IEventListener {
 
   private var cull: Boolean = false
 

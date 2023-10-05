@@ -3,7 +3,7 @@ package com.engine.screens.menus
 import com.engine.common.enums.Direction
 
 /** A button that can be selected and navigated. */
-interface MenuButton {
+interface IMenuButton {
 
   /**
    * The action that occurs when this button is selected.

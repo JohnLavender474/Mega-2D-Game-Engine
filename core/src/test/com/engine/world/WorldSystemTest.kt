@@ -19,9 +19,9 @@ import io.mockk.*
 class WorldSystemTest :
     DescribeSpec({
       describe("WorldSystem class") {
-        val mockContactListener = mockk<ContactListener>()
+        val mockContactListener = mockk<IContactListener>()
         val mockWorldGraph = mockk<GraphMap>()
-        val mockCollisionHandler = mockk<CollisionHandler>()
+        val mockCollisionHandler = mockk<ICollisionHandler>()
 
         val entity =
             spyk(

@@ -31,7 +31,7 @@ class EventsManagerTest :
 
         it("should add and remove a listener") {
           // if
-          val listener = EventListener { eventHandled = true }
+          val listener = IEventListener { eventHandled = true }
 
           // when
           eventsManager.addListener(listener)
@@ -48,8 +48,8 @@ class EventsManagerTest :
 
         it("should clear all listeners") {
           // if
-          val listener1 = EventListener {}
-          val listener2 = EventListener {}
+          val listener1 = IEventListener {}
+          val listener2 = IEventListener {}
 
           // when
           eventsManager.addListener(listener1)
@@ -62,7 +62,7 @@ class EventsManagerTest :
 
         it("should run and handle an event") {
           // if
-          val listener = EventListener { eventHandled = true }
+          val listener = IEventListener { eventHandled = true }
           val event = Event("testEvent", Properties())
 
           // when
@@ -77,8 +77,8 @@ class EventsManagerTest :
 
         it("should handle multiple listeners") {
           // if
-          val listener1 = mockk<EventListener> { every { onEvent(any()) } just Runs }
-          val listener2 = mockk<EventListener> { every { onEvent(any()) } just Runs }
+          val listener1 = mockk<IEventListener> { every { onEvent(any()) } just Runs }
+          val listener2 = mockk<IEventListener> { every { onEvent(any()) } just Runs }
 
           // when
           eventsManager.addListener(listener1)

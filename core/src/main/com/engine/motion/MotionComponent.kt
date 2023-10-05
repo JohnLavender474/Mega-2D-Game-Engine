@@ -6,22 +6,22 @@ import com.engine.components.IGameComponent
 import com.engine.common.shapes.GameShape2D
 
 /**
- * A component that holds a list of [Motion]s and a list of functions that are called when the
- * [Motion]s are updated. The object to be moved by the motion value should be a [GameShape2D].
+ * A component that holds a list of [IMotion]s and a list of functions that are called when the
+ * [IMotion]s are updated. The object to be moved by the motion value should be a [GameShape2D].
  */
 class MotionComponent : IGameComponent {
 
-  internal val motions = Array<Pair<Motion, (Vector2) -> Unit>>()
+  internal val motions = Array<Pair<IMotion, (Vector2) -> Unit>>()
 
   /**
-   * Adds a [Motion] to this component. The function is called when the [Motion] is updated and a
-   * value has been obtained from [Motion.getMotionValue].
+   * Adds a [IMotion] to this component. The function is called when the [IMotion] is updated and a
+   * value has been obtained from [IMotion.getMotionValue].
    *
-   * @param motion the [Motion] to add
-   * @param function the function to call when the [Motion] is updated
-   * @return if the [Motion] and function pair was added
+   * @param motion the [IMotion] to add
+   * @param function the function to call when the [IMotion] is updated
+   * @return if the [IMotion] and function pair was added
    */
-  fun add(motion: Motion, function: (Vector2) -> Unit) = motions.add(motion to function)
+  fun add(motion: IMotion, function: (Vector2) -> Unit) = motions.add(motion to function)
 
   /** Resets the motions in this component */
   override fun reset() = motions.map { it.first }.forEach { it.reset() }

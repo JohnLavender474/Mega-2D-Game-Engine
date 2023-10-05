@@ -8,7 +8,7 @@ class RotatingLine(
     radius: Float,
     var speed: Float,
     var degreesOnReset: Float = 0f
-) : Motion {
+) : IMotion {
 
   private val vertices = FloatArray(4)
   private val polyline = Polyline()

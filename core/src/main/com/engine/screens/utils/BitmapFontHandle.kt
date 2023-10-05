@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Vector2
-import com.engine.drawables.sprites.DrawableSprite
+import com.engine.drawables.sprites.IDrawableSprite
 
 /**
  * A class that represents a bitmap font. The text is centered by default.
@@ -25,7 +25,7 @@ class BitmapFontHandle(
     fontSize: Int,
     var centerX: Boolean = true,
     var centerY: Boolean = true
-) : DrawableSprite {
+) : IDrawableSprite {
 
   private var font: BitmapFont = BitmapFont()
   private val layout: GlyphLayout = GlyphLayout()

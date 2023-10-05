@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
  *
  * @see ShapeRenderer
  */
-fun interface DrawableShape {
+fun interface IDrawableShape {
 
   /**
    * Draws this shape.

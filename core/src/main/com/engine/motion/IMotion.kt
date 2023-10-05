@@ -8,7 +8,7 @@ import com.engine.common.interfaces.Updatable
  * An interface for objects that have a motion value. The motion value is the value that is used to
  * move the object.
  */
-interface Motion : Updatable, Resettable {
+interface IMotion : Updatable, Resettable {
 
   /**
    * Gets the motion value of this object. The motion value is the value that is used to move the

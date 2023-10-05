@@ -14,7 +14,7 @@ import com.engine.common.enums.Direction
 abstract class MenuScreen(
     protected val pauseSupplier: () -> Boolean,
     protected val firstButtonKey: String,
-    protected val buttons: ObjectMap<String, MenuButton> = ObjectMap()
+    protected val buttons: ObjectMap<String, IMenuButton> = ObjectMap()
 ) : Screen {
 
   var currentButtonKey: String? = firstButtonKey

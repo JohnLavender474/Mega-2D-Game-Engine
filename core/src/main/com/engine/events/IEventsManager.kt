@@ -6,21 +6,21 @@ interface IEventsManager : Runnable {
   fun queueEvent(event: Event)
 
   /**
-   * Adds an [EventListener] to this [IEventsManager].
+   * Adds an [IEventListener] to this [IEventsManager].
    *
-   * @param listener The [EventListener] to add.
-   * @return If the [EventListener] was added.
+   * @param listener The [IEventListener] to add.
+   * @return If the [IEventListener] was added.
    */
-  fun addListener(listener: EventListener): Boolean
+  fun addListener(listener: IEventListener): Boolean
 
   /**
-   * Removes an [EventListener] from this [IEventsManager].
+   * Removes an [IEventListener] from this [IEventsManager].
    *
-   * @param listener The [EventListener] to remove.
-   * @return If the [EventListener] was removed.
+   * @param listener The [IEventListener] to remove.
+   * @return If the [IEventListener] was removed.
    */
-  fun removeListener(listener: EventListener): Boolean
+  fun removeListener(listener: IEventListener): Boolean
 
-  /** Removes all [EventListener]s from this [IEventsManager]. */
+  /** Removes all [IEventListener]s from this [IEventsManager]. */
   fun clearListeners()
 }

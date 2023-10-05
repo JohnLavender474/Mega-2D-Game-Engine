@@ -14,7 +14,7 @@ data class TrajectoryDefinition(val xVelocity: Float, val yVelocity: Float, val 
 class Trajectory(
     private val ppm: Int,
     private val trajectoryDefinitions: Array<TrajectoryDefinition>
-) : Motion {
+) : IMotion {
 
   private var currentDefinition =
       if (!trajectoryDefinitions.isEmpty) trajectoryDefinitions[0] else null

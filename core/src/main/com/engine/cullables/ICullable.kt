@@ -7,7 +7,7 @@ import com.engine.common.interfaces.Resettable
  *
  * @see Resettable
  */
-interface Cullable : Resettable {
+interface ICullable : Resettable {
 
   /**
    * Determines if this object should be culled.

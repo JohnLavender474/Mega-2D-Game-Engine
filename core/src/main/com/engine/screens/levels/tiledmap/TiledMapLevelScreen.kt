@@ -3,17 +3,17 @@ package com.engine.screens.levels.tiledmap
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.screens.levels.LevelScreen
+import com.engine.screens.levels.ILevelScreen
 
 /**
- * A [TiledMapLevelScreen] is a [LevelScreen] that loads a tiled map and builds the layers using a
+ * A [TiledMapLevelScreen] is a [ILevelScreen] that loads a tiled map and builds the layers using a
  * map of [TiledMapLayerBuilder]s.
  *
  * @param batch the sprite batch
  * @param tmxSrc the path to the tmx file
  */
 abstract class TiledMapLevelScreen(protected val batch: SpriteBatch, protected val tmxSrc: String) :
-    LevelScreen {
+    ILevelScreen {
 
   protected lateinit var tiledMapLoadResult: TiledMapLoadResult
   protected lateinit var tiledMapLevelRenderer: TiledMapLevelRenderer

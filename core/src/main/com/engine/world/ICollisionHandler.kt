@@ -8,7 +8,7 @@ package com.engine.world
  * @see WorldSystem
  * @see Body
  */
-interface CollisionHandler {
+interface ICollisionHandler {
 
   /**
    * Handles a collision between two bodies. Implementations of this method should be stateless.

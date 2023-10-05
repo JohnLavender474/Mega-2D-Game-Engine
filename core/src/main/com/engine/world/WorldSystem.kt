@@ -12,13 +12,13 @@ import kotlin.math.abs
 
 /**
  * A system that handles the physics of the game. This system is responsible for updating the
- * positions of all bodies, resolving collisions, and notifying the [ContactListener] of any
+ * positions of all bodies, resolving collisions, and notifying the [IContactListener] of any
  * contacts that occur. This system is stateful. This system processes entities that have a
  * [BodyComponent]. This system uses a [GraphMap] to determine which bodies are overlapping.
  *
- * This system uses a [ContactListener] to notify of contacts.
+ * This system uses a [IContactListener] to notify of contacts.
  *
- * This system uses a [CollisionHandler] to resolve collisions.
+ * This system uses a [ICollisionHandler] to resolve collisions.
  *
  * This system uses a [fixedStep] to update the physics. If the delta time during an update is
  * greater than the fixed step, the physics will possibly be updated multiple times in one update
@@ -31,21 +31,21 @@ import kotlin.math.abs
  * more accurate and reliable physics, but will also result in more processing time.
  *
  * This system uses an optional [contactFilterMap] to optimize the determination of which contacts
- * to notify the [ContactListener] of. The [contactFilterMap] can be used to filter only cases where
+ * to notify the [IContactListener] of. The [contactFilterMap] can be used to filter only cases where
  * the user has an implementation for two fixtures. For example, let's say there's a contact between
  * one fixture with type "Type1" and another fixture with type "Type2". If there's no implementation
- * in the provided [ContactListener] for the case of "Type1" touching "Type2", then by not providing
- * the entry in the [contactFilterMap], the [ContactListener] will NOT be notified. The order of the
+ * in the provided [IContactListener] for the case of "Type1" touching "Type2", then by not providing
+ * the entry in the [contactFilterMap], the [IContactListener] will NOT be notified. The order of the
  * entry is not important, so using "Type1" as the key with "Type2" inside the value [Set<String>],
  * or else vice versa, will NOT change the result. If the [contactFilterMap] is null, then the
- * [ContactListener] will be notified of ALL contacts.
+ * [IContactListener] will be notified of ALL contacts.
  */
 class WorldSystem(
-    private val contactListener: ContactListener,
-    private val worldGraph: GraphMap,
-    private val fixedStep: Float,
-    private val collisionHandler: CollisionHandler = StandardCollisionHandler,
-    private val contactFilterMap: ObjectMap<String, Set<String>>? = null,
+  private val contactListener: IContactListener,
+  private val worldGraph: GraphMap,
+  private val fixedStep: Float,
+  private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
+  private val contactFilterMap: ObjectMap<String, Set<String>>? = null,
 ) : GameSystem(BodyComponent::class) {
 
   internal var priorContactSet = OrderedSet<Contact>()
@@ -75,7 +75,7 @@ class WorldSystem(
   /**
    * Cycles through the entities. This method is called by the [process] method. This method is
    * responsible for updating the positions of all bodies, resolving collisions, and notifying the
-   * [ContactListener] of any contacts that occur.
+   * [IContactListener] of any contacts that occur.
    *
    * @param entities the [Collection] of [IGameEntity]s to process
    * @param delta the time in seconds since the last frame
@@ -135,7 +135,7 @@ class WorldSystem(
 
   /**
    * Post-processes the entities. This method is called by the [cycle] method. This method is
-   * responsible for notifying the [ContactListener] of any contacts that occur.
+   * responsible for notifying the [IContactListener] of any contacts that occur.
    *
    * @param entities the [Collection] of [IGameEntity]s to process
    * @param delta the time in seconds since the last frame
@@ -248,7 +248,7 @@ class WorldSystem(
 
   /**
    * Resolves the collisions of the given body. This method is responsible for resolving the
-   * collisions of the given body and notifying the [CollisionHandler] of any collisions that occur.
+   * collisions of the given body and notifying the [ICollisionHandler] of any collisions that occur.
    *
    * @param body the [Body] to resolve the collisions of
    */

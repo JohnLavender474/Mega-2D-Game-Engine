@@ -2,26 +2,27 @@ package com.engine.controller.buttons
 
 import com.engine.controller.polling.IControllerPoller
 
-/** Interface for controller buttons. */
-interface ButtonActuator {
+/** Implementation for [IButtonActuator] that uses lambdas. */
+class ButtonActuator(
+    private val onJustPressed: ((IControllerPoller) -> Unit)? = null,
+    private val onPressContinued: ((IControllerPoller, Float) -> Unit)? = null,
+    private val onJustReleased: ((IControllerPoller) -> Unit)? = null,
+    private val onReleaseContinued: ((IControllerPoller, Float) -> Unit)? = null
+) : IButtonActuator {
 
-  /** Called when the button is now pressed and wasn't pressed before. */
-  fun onJustPressed(poller: IControllerPoller)
+  override fun onJustPressed(poller: IControllerPoller) {
+    onJustPressed?.invoke(poller)
+  }
 
-  /**
-   * Called when the button is now pressed and was pressed before.
-   *
-   * @param delta The time in seconds since the last frame.
-   */
-  fun onPressContinued(poller: IControllerPoller, delta: Float)
+  override fun onPressContinued(poller: IControllerPoller, delta: Float) {
+    onPressContinued?.invoke(poller, delta)
+  }
 
-  /** Called when the button is now released and was pressed before. */
-  fun onJustReleased(poller: IControllerPoller)
+  override fun onJustReleased(poller: IControllerPoller) {
+    onJustReleased?.invoke(poller)
+  }
 
-  /**
-   * Called when the button is now released and wasn't pressed before.
-   *
-   * @param delta The time in seconds since the last frame.
-   */
-  fun onReleaseContinued(poller: IControllerPoller, delta: Float)
+  override fun onReleaseContinued(poller: IControllerPoller, delta: Float) {
+    onReleaseContinued?.invoke(poller, delta)
+  }
 }

@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.ObjectMap
  */
 class Factories<T> {
 
-  val factories = ObjectMap<String, Factory<T>>()
+  val factories = ObjectMap<String, IFactory<T>>()
 
   /**
    * Add a factory to the collection.
@@ -17,14 +17,14 @@ class Factories<T> {
    * @param factoryKey the key of the factory
    * @param factory the factory to add
    */
-  fun add(factoryKey: String, factory: Factory<T>): Factory<T> = factories.put(factoryKey, factory)
+  fun add(factoryKey: String, factory: IFactory<T>): IFactory<T> = factories.put(factoryKey, factory)
 
   /**
    * Remove a factory from the collection.
    *
    * @param factoryKey the key of the factory to remove
    */
-  fun remove(factoryKey: String): Factory<T> = factories.remove(factoryKey)
+  fun remove(factoryKey: String): IFactory<T> = factories.remove(factoryKey)
 
   /**
    * Fetch an object from the given factory and key.

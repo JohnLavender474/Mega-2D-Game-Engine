@@ -8,9 +8,6 @@ import com.engine.entities.IGameEntity
 /** An [IGameSystem] is an [Updatable] that processes [IGameEntity]s. */
 interface IGameSystem : Activatable, Updatable, Resettable {
 
-  /** Purges all [IGameEntity]s from this [IGameSystem]. */
-  fun purge()
-
   /**
    * Returns whether this [IGameSystem] contains the given [IGameEntity].
    *

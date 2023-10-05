@@ -27,7 +27,7 @@ class PointsComponent(val pointsMap: ObjectMap<String, PointsHandle>) : IGameCom
   ) : this(ObjectMap<String, PointsHandle>().apply { _points.forEach { put(it.first, it.second) } })
 
   override fun reset() {
-    pointsMap.values().map { it.points }.forEach { it.reset() }
+    pointsMap.values().forEach { it.reset() }
   }
 
   /**

@@ -1,24 +1,16 @@
 package com.engine.points
 
-import com.engine.common.interfaces.Resettable
-
 /**
  * Points are a value between the minimum stat and the maximum stat.
  *
  * @param min The minimum value.
  * @param max The maximum value.
  * @param current The current value.
- * @param onReset The function to call when [reset] is called.
  */
-class Points(var min: Int, var max: Int, current: Int, var onReset: (() -> Unit)? = null) :
-    Resettable {
+class Points(var min: Int, var max: Int, current: Int) {
 
   var current = current
     private set
-
-  override fun reset() {
-    onReset?.invoke()
-  }
 
   /**
    * Sets the current stat. If the current stat is less than the minimum stat, the current stat will

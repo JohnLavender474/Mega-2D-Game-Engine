@@ -37,8 +37,6 @@ abstract class GameSystem(
   var updating = true
     private set
 
-  private var purgeEntities = false
-
   /** @see GameSystem(componentMask: Collection<KClass<out IGameComponent>>) */
   constructor(
       vararg componentMask: KClass<out IGameComponent>,
@@ -63,8 +61,6 @@ abstract class GameSystem(
       entities: ImmutableCollection<IGameEntity>,
       delta: Float
   )
-
-  final override fun purge() = if (updating) purgeEntities = true else entities.clear()
 
   final override fun contains(e: IGameEntity) = entities.contains(e)
 

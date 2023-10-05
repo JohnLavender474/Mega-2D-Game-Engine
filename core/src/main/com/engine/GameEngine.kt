@@ -21,7 +21,7 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
   internal val entities = OrderedSet<IGameEntity>()
   internal val entitiesToAdd = Array<Pair<IGameEntity, Properties>>()
 
-  private var purge = false
+  private var reset = false
   private var updating = false
 
   /**
@@ -51,7 +51,6 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
       val (entity, spawnProps) = it
       entities.add(entity)
       entity.spawn(spawnProps)
-      entity.getComponents().forEach { c -> c.reset() }
       systems.forEach { s -> s.add(entity) }
 
       // set alive if necessary
@@ -66,28 +65,31 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
           entities.remove(it)
           systems.forEach { s -> s.remove(it) }
           it.destroy()
+          it.getComponents().forEach { c -> c.reset() }
         }
 
     // update systems
     systems.forEach { it.update(delta) }
 
     updating = false
-    if (purge) purge()
+    if (reset) reset()
   }
 
-  private fun purge() {
+  override fun reset() {
     if (updating) {
-      purge = true
+      reset = true
     } else {
-      entities.forEach {
-        it.destroy()
-        it.dead = true
+      entities.forEach { e ->
+        e.destroy()
+        e.dead = true
+        e.getComponents().forEach { c -> c.reset() }
       }
       entities.clear()
-      systems.forEach { it.purge() }
-      purge = false
+      entitiesToAdd.clear()
+
+      systems.forEach { it.reset() }
+
+      reset = false
     }
   }
-
-  override fun reset() = purge()
 }

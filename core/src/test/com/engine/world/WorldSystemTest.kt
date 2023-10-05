@@ -222,7 +222,7 @@ class WorldSystemTest :
             every { mockContactListener.continueContact(any(), any(), any()) } just Runs
             every { mockContactListener.endContact(any(), any(), any()) } just Runs
 
-            worldSystem.purge()
+            worldSystem.reset()
             worldSystem.add(entity1)
             worldSystem.add(entity2)
 
@@ -259,7 +259,7 @@ class WorldSystemTest :
             every { mockContactListener.continueContact(any(), any(), any()) } just Runs
             every { mockContactListener.endContact(any(), any(), any()) } just Runs
 
-            worldSystem.purge()
+            worldSystem.reset()
             worldSystem.add(entity1)
             worldSystem.add(entity2)
 

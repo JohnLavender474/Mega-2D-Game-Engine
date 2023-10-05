@@ -1,9 +1,9 @@
 package com.engine.points
 
 /**
- * The pointsHandles handle. Contains the stats and the listener for the stats.
+ * The points handle. Contains the points and the listener for the points.
  *
- * @param points The stats.
- * @param pointsListener The listener.
+ * @param points The [Points].
+ * @param listener The listener.
  */
-data class PointsHandle(val points: Points, val pointsListener: (Points) -> Unit)
+data class PointsHandle(val points: Points, val listener: (Points) -> Unit)

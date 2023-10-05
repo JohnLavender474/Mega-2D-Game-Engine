@@ -36,9 +36,6 @@ abstract class Behavior : Updatable, Resettable {
   /** Ends this [Behavior]. This is called when this [Behavior] becomes inactive. */
   protected abstract fun end()
 
-  /** Optional method to run when this [Behavior] is reset. */
-  protected open fun onReset() {}
-
   override fun update(delta: Float) {
     val runningPrior = runningNow
     runningNow = evaluate(delta)
@@ -55,6 +52,5 @@ abstract class Behavior : Updatable, Resettable {
 
   override fun reset() {
     runningNow = false
-    onReset()
   }
 }

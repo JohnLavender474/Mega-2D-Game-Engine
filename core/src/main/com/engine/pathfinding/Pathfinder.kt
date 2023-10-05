@@ -70,16 +70,16 @@ class Pathfinder(private val graph: GraphMap, private val params: PathfinderPara
     // A map that maps coordinates to nodes
     val map = ObjectMap<IntPair, Node>()
 
-    // Convert the start and target points to graph coordinates
+    // Convert the start and target pointsMap to graph coordinates
     val targetCoordinate = graph.convertToGraphCoordinate(params.targetSupplier())
     val startCoordinate = graph.convertToGraphCoordinate(params.startSupplier())
 
-    // If the start or target points are out of bounds, return null
+    // If the start or target pointsMap are out of bounds, return null
     if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate)) {
       return PathfinderResult(null, null, false)
     }
 
-    // If the start and target points are the same, return an empty graphPath
+    // If the start and target pointsMap are the same, return an empty graphPath
     if (startCoordinate == targetCoordinate) {
       return PathfinderResult(null, null, true)
     }

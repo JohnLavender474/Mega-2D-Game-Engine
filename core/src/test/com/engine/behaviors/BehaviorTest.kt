@@ -31,7 +31,8 @@ class BehaviorTest :
             end = true
           }
 
-          override fun onReset() {
+          override fun reset() {
+            super.reset()
             init = false
             end = false
             act = 0f

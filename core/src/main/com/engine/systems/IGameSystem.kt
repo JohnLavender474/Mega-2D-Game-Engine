@@ -1,5 +1,6 @@
 package com.engine.systems
 
+import com.badlogic.gdx.utils.Array
 import com.engine.common.interfaces.Activatable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
@@ -33,7 +34,7 @@ interface IGameSystem : Activatable, Updatable, Resettable {
   fun add(e: IGameEntity): Boolean
 
   /** @see addAll */
-  fun addAll(vararg entities: IGameEntity): Collection<IGameEntity>
+  fun addAll(vararg entities: IGameEntity): Array<IGameEntity>
 
   /**
    * Adds all the given [IGameEntity]s to this [GameSystem] if they qualify.
@@ -41,7 +42,7 @@ interface IGameSystem : Activatable, Updatable, Resettable {
    * @param entities the [Iterable] of [IGameEntity]s to add
    * @return the [IGameEntity]s that could not be added
    */
-  fun addAll(entities: Iterable<IGameEntity>): Collection<IGameEntity>
+  fun addAll(entities: Iterable<IGameEntity>): Array<IGameEntity>
 
   /**
    * Returns whether the given [IGameEntity] qualifies to be added to this [IGameSystem].

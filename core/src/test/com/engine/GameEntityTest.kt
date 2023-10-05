@@ -16,7 +16,7 @@ class GameEntityTest :
 
               override fun spawn(spawnProps: Properties) {}
 
-              override fun destroy() {}
+              override fun onDestroy() {}
             }
 
         class MockComponent : IGameComponent
@@ -31,7 +31,7 @@ class GameEntityTest :
         it("should have the correct initial properties") {
           entity.componentMap shouldBe ObjectMap()
           entity.properties shouldBe Properties()
-          entity.dead shouldBe true
+          entity.dead shouldBe false
         }
 
         it("should put, get, and remove properties correctly") {

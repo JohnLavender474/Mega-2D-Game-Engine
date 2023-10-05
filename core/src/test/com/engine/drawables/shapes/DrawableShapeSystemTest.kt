@@ -3,8 +3,8 @@ package com.engine.drawables.shapes
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.utils.Array
-import com.engine.SimpleMockEntity
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.GameEntity
 import com.engine.entities.IGameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
@@ -31,7 +31,7 @@ class DrawableShapeSystemTest :
           val array = Array<DrawableShapeHandle>()
           array.add(mockDrawableShapeHandle)
           mockDrawableShapeComponent = DrawableShapeComponent(array)
-          mockEntity = SimpleMockEntity().apply { addComponent(mockDrawableShapeComponent) }
+          mockEntity = GameEntity().apply { addComponent(mockDrawableShapeComponent) }
           drawableShapeSystem = DrawableShapeSystem(shapeRenderer)
         }
 
@@ -73,7 +73,7 @@ class DrawableShapeSystemTest :
           array.add(otherMockDrawableShapeHandle)
           val otherMockDrawableShapeComponent = DrawableShapeComponent(array)
           val otherMockEntity =
-              SimpleMockEntity().apply { addComponent(otherMockDrawableShapeComponent) }
+              GameEntity().apply { addComponent(otherMockDrawableShapeComponent) }
           val entities = ImmutableCollection(listOf(mockEntity, otherMockEntity))
 
           // when

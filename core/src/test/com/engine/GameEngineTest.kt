@@ -37,20 +37,8 @@ class GameEngineTest :
           props1 = Properties()
           props2 = Properties()
 
-          mockEntity1 =
-              spyk(
-                  object : GameEntity() {
-                    override fun spawn(spawnProps: Properties) {}
-
-                    override fun destroy() {}
-                  })
-          mockEntity2 =
-              spyk(
-                  object : GameEntity() {
-                    override fun spawn(spawnProps: Properties) {}
-
-                    override fun destroy() {}
-                  })
+          mockEntity1 = spyk(GameEntity())
+          mockEntity2 = spyk(GameEntity())
 
           mockComponent1 = MockComponent1()
           mockComponent2 = MockComponent2()
@@ -77,7 +65,7 @@ class GameEngineTest :
 
           systems = listOf(mockSystem1, mockSystem2)
 
-          gameEngine = GameEngine(systems, true)
+          gameEngine = GameEngine(systems)
         }
 
         it("should spawn and update entities") {
@@ -127,8 +115,8 @@ class GameEngineTest :
           mockSystem1.contains(mockEntity1) shouldBe false
           mockSystem2.contains(mockEntity2) shouldBe false
 
-          verify(exactly = 1) { mockEntity1.destroy() }
-          verify(exactly = 1) { mockEntity2.destroy() }
+          verify(exactly = 1) { mockEntity1.onDestroy() }
+          verify(exactly = 1) { mockEntity2.onDestroy() }
         }
 
         it("should add entities to systems correctly") {

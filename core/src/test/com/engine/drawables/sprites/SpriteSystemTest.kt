@@ -42,7 +42,7 @@ class SpriteSystemTest :
               object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun destroy() {}
+                override fun onDestroy() {}
               }
           entity.addComponent(mockSpriteComponent)
           entity.dead = false

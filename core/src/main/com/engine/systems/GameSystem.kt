@@ -75,9 +75,17 @@ abstract class GameSystem(
         true
       } else false
 
-  final override fun addAll(vararg entities: IGameEntity) = addAll(entities.toList())
+  final override fun addAll(vararg entities: IGameEntity) = addAll(entities.asIterable())
 
-  final override fun addAll(entities: Iterable<IGameEntity>) = entities.filter { !add(it) }
+  final override fun addAll(entities: Iterable<IGameEntity>): Array<IGameEntity> {
+    val rejected = Array<IGameEntity>()
+    entities.forEach {
+      if (!add(it)) {
+        rejected.add(it)
+      }
+    }
+    return rejected
+  }
 
   final override fun qualifies(e: IGameEntity) = componentMask.all { e.hasComponent(it) }
 
@@ -97,8 +105,8 @@ abstract class GameSystem(
 
     entities.removeAll(entitiesToRemove)
     entitiesToRemove.clear()
-    entities.removeIf { it.dead || !qualifies(it) }
 
+    entities.removeIf { it.dead || !qualifies(it) }
     process(on, ImmutableCollection(entities), delta)
 
     updating = false

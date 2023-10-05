@@ -24,7 +24,4 @@ interface IGameEngine : Updatable, Resettable {
    * @return whether the [GameEntity] was spawned
    */
   fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean
-
-  /** Resets all [IGameSystem]s in this [IGameEngine]. */
-  override fun reset() = systems.forEach { it.reset() }
 }

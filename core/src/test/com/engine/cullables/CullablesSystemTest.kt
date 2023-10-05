@@ -1,7 +1,6 @@
 package com.engine.cullables
 
 import com.engine.entities.GameEntity
-import com.engine.SimpleMockEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -17,7 +16,7 @@ class CullablesSystemTest :
           for (i in 0..10) {
             val shouldCull = i % 2 == 0
 
-            val entity = SimpleMockEntity()
+            val entity = GameEntity()
             val cullablesComponent = CullablesComponent()
 
             cullablesComponent.cullables.add(
@@ -54,7 +53,7 @@ class CullablesSystemTest :
 
           // Create a few entities with cullable componentMap
           for (i in 0..10) {
-            val entity = SimpleMockEntity()
+            val entity = GameEntity()
             entities.add(entity)
           }
 

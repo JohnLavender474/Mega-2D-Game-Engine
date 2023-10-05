@@ -1,7 +1,7 @@
 package com.engine
 
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedSet
+import com.badlogic.gdx.utils.Queue
 import com.engine.common.objects.Properties
 import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
@@ -9,17 +9,12 @@ import com.engine.systems.IGameSystem
 /**
  * The main class of the game. It contains all of the [IGameSystem]s and [IGameEntity]s.
  *
- * @property systems the [IGameSystem]s in this [GameEngine]
- * @property autoSetAlive whether to automatically set [IGameEntity]s to alive ([IGameEntity.dead]
- *   set to false) every time they are spawned. If this is false, then the [spawn] method of the
- *   [IGameEntity] should set [IGameEntity.dead] to false (in case successful spawning is
- *   conditional).
+ * @param systems the [IGameSystem]s in this [GameEngine]
  */
-class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: Boolean = true) :
-    IGameEngine {
+class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
 
   internal val entities = OrderedSet<IGameEntity>()
-  internal val entitiesToAdd = Array<Pair<IGameEntity, Properties>>()
+  internal val entitiesToAdd = Queue<Pair<IGameEntity, Properties>>()
 
   private var reset = false
   private var updating = false
@@ -27,69 +22,73 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
   /**
    * Creates a [GameEngine] with the given [IGameSystem]s.
    *
-   * @param autoSetAlive whether to automatically set [IGameEntity]s to alive ([IGameEntity.dead]
-   *   set to false) every time they are spawned. If this is false, then the [spawn] method of the
-   *   [IGameEntity] should set [IGameEntity.dead] to false (in case successful spawning is
-   *   conditional).
    * @param systems the [IGameSystem]s to add to this [GameEngine]
    */
-  constructor(
-      autoSetAlive: Boolean = true,
-      vararg systems: IGameSystem
-  ) : this(systems.asIterable(), autoSetAlive)
+  constructor(vararg systems: IGameSystem) : this(systems.asIterable())
 
+  /**
+   * @inheritDoc
+   *
+   * [IGameEntity]s passed into the [spawn] method will be added to a queue, and will not truly be
+   * spawned until the next call to [update].
+   *
+   * @param entity the [IGameEntity] to spawn
+   * @param spawnProps the [Properties] to spawn the [IGameEntity] with
+   */
   override fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean {
-    entitiesToAdd.add(entity to spawnProps)
+    entitiesToAdd.addLast(entity to spawnProps)
     return true
   }
 
+  /**
+   * @inheritDoc
+   *
+   * [IGameEntity]s that are dead will be destroyed. [IGameEntity]s that are spawned will be added.
+   *
+   * @param delta the time in seconds since the last update
+   */
   override fun update(delta: Float) {
     updating = true
 
-    // add entities if necessary
-    entitiesToAdd.forEach {
-      val (entity, spawnProps) = it
+    // add new entities
+    while (!entitiesToAdd.isEmpty) {
+      val (entity, spawnProps) = entitiesToAdd.removeFirst()
+
       entities.add(entity)
       entity.spawn(spawnProps)
       systems.forEach { s -> s.add(entity) }
-
-      // set alive if necessary
-      if (autoSetAlive) entity.dead = false
     }
-    entitiesToAdd.clear()
 
-    // remove dead entities
-    entities
-        .filter { it.dead }
-        .forEach {
-          entities.remove(it)
-          systems.forEach { s -> s.remove(it) }
-          it.destroy()
-          it.getComponents().forEach { c -> c.reset() }
-        }
+    // remove and destroy dead entities
+    val eIter = entities.iterator()
+    while (eIter.hasNext) {
+      val e = eIter.next()
+      if (!e.dead) continue
+
+      systems.forEach { s -> s.remove(e) }
+      e.onDestroy()
+      eIter.remove()
+    }
 
     // update systems
     systems.forEach { it.update(delta) }
 
     updating = false
+    // if reset flag is true, then reset the engine
     if (reset) reset()
   }
 
+  /** Resets the [GameEngine]. This will destroy all [IGameEntity]s and reset all [IGameSystem]s. */
   override fun reset() {
-    if (updating) {
-      reset = true
-    } else {
-      entities.forEach { e ->
-        e.destroy()
-        e.dead = true
-        e.getComponents().forEach { c -> c.reset() }
-      }
-      entities.clear()
-      entitiesToAdd.clear()
-
-      systems.forEach { it.reset() }
-
-      reset = false
-    }
+    reset =
+        if (updating) {
+          true
+        } else {
+          entities.forEach { e -> e.onDestroy() }
+          entities.clear()
+          entitiesToAdd.clear()
+          systems.forEach { it.reset() }
+          false
+        }
   }
 }

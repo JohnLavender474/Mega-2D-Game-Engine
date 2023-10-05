@@ -31,7 +31,7 @@ class WorldSystemTest :
                     putAllProperties(spawnProps)
                   }
 
-                  override fun destroy() {
+                  override fun onDestroy() {
                     clearComponents()
                     clearProperties()
                   }
@@ -54,7 +54,7 @@ class WorldSystemTest :
 
           physicsData.resetToDefault()
 
-          entity.destroy()
+          entity.onDestroy()
           entity.addComponent(bodyComponent)
 
           every { mockWorldGraph.reset() } just Runs
@@ -195,7 +195,7 @@ class WorldSystemTest :
               object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun destroy() {}
+                override fun onDestroy() {}
               }
           entity1.dead = false
           entity1.addComponent(BodyComponent(body1))
@@ -206,7 +206,7 @@ class WorldSystemTest :
               object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun destroy() {}
+                override fun onDestroy() {}
               }
           entity2.dead = false
           entity2.addComponent(BodyComponent(body2))

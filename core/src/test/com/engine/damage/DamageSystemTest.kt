@@ -1,7 +1,6 @@
 package com.engine.damage
 
 import com.engine.entities.GameEntity
-import com.engine.SimpleMockEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -21,7 +20,7 @@ class DamageSystemTest :
         beforeEach {
           clearAllMocks()
           damageSystem = DamageSystem()
-          entity = SimpleMockEntity()
+          entity = GameEntity()
           damageable = mockk { every { takeDamageFrom(any()) } answers { takeDamageFrom } }
           damager = mockk {
             every { canDamage(any()) } answers { canDamage }

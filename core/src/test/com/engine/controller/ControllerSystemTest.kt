@@ -1,10 +1,10 @@
 package com.engine.controller
 
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.SimpleMockEntity
 import com.engine.controller.buttons.ButtonActuator
 import com.engine.controller.buttons.ButtonStatus
 import com.engine.controller.polling.IControllerPoller
+import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
 
@@ -15,7 +15,7 @@ class ControllerSystemTest :
           val mockControllerPoller = mockk<IControllerPoller>()
           val controllerSystem = ControllerSystem(mockControllerPoller)
 
-          val entity = SimpleMockEntity()
+          val entity = GameEntity()
 
           val actuator =
               mockk<ButtonActuator> {

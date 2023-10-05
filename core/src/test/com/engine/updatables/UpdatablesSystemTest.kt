@@ -1,9 +1,10 @@
 package com.engine.updatables
 
-import com.engine.SimpleMockEntity
 import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.interfaces.Updatable
+import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
@@ -15,8 +16,8 @@ class UpdatablesSystemTest :
         it("should call the update method for each updatable in each entity") {
           val updatablesSystem = UpdatablesSystem()
 
-          val entity1 = SimpleMockEntity()
-          val entity2 = SimpleMockEntity()
+          val entity1 = GameEntity()
+          val entity2 = GameEntity()
 
           val updatable1 = mockk<Updatable> { every { update(any()) } just Runs }
           val updatable2 = mockk<Updatable> { every { update(any()) } just Runs }
@@ -27,7 +28,8 @@ class UpdatablesSystemTest :
           entity1.addComponent(updatablesComponent1)
           entity2.addComponent(updatablesComponent2)
 
-          updatablesSystem.addAll(entity1, entity2)
+          val rejected = updatablesSystem.addAll(entity1, entity2)
+          rejected.isEmpty shouldBe true
 
           checkAll(Arb.int(0, 100)) { delta ->
             updatablesSystem.update(delta.toFloat())
@@ -40,7 +42,7 @@ class UpdatablesSystemTest :
           val updatablesSystem = UpdatablesSystem()
           updatablesSystem.on = false
 
-          val entity = SimpleMockEntity()
+          val entity = GameEntity()
 
           val updatable = mockk<Updatable> { every { update(any()) } just Runs }
           val updatablesComponent = UpdatablesComponent(gdxArrayOf(updatable))

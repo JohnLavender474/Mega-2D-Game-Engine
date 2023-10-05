@@ -28,7 +28,7 @@ interface IGameEntity : Propertizable {
   fun spawn(spawnProps: Properties)
 
   /** Logic to run when this entity dies. */
-  fun destroy()
+  fun onDestroy()
 
   /**
    * Adds a [IGameComponent] to this [IGameEntity].

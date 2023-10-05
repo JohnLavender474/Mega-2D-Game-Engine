@@ -1,8 +1,8 @@
 package com.engine.points
 
 import com.engine.GameEngine
-import com.engine.SimpleMockEntity
 import com.engine.common.objects.props
+import com.engine.entities.GameEntity
 import com.engine.entities.IGameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -27,8 +27,8 @@ class PointsSystemTest :
         beforeEach {
           pointsSystem = PointsSystem()
 
-          entity1 = SimpleMockEntity()
-          entity2 = SimpleMockEntity()
+          entity1 = GameEntity()
+          entity2 = GameEntity()
 
           points1 = Points(0, 100, 50)
           points2 = Points(10, 90, 30)
@@ -63,7 +63,7 @@ class PointsSystemTest :
         }
 
         it("should reset the points component") {
-          val engine = GameEngine(true, pointsSystem)
+          val engine = GameEngine(pointsSystem)
           engine.spawn(entity1, props())
           engine.spawn(entity2, props())
 

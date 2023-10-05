@@ -24,7 +24,7 @@ class AnimationsSystemTest :
 
                 override fun spawn(spawnProps: Properties) {}
 
-                override fun destroy() {}
+                override fun onDestroy() {}
               }
           entity.dead = false
 

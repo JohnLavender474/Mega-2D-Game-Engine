@@ -6,12 +6,22 @@ import com.engine.components.IGameComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
-/** Abstract implementation for [IGameEntity]. */
-abstract class GameEntity : IGameEntity {
+/** Basic implementation for [IGameEntity]. */
+open class GameEntity : IGameEntity {
 
   val componentMap = ObjectMap<KClass<out IGameComponent>, IGameComponent>()
   override val properties = Properties()
-  override var dead = true
+  override var dead = false
+
+  override fun onDestroy() {
+    dead = true
+    getComponents().forEach { it.reset() }
+  }
+
+  override fun spawn(spawnProps: Properties) {
+    dead = false
+    properties.putAll(spawnProps)
+  }
 
   override fun addComponent(c: IGameComponent) {
     componentMap.put(c::class, c)

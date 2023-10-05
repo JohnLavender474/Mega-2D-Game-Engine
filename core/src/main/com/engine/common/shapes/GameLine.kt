@@ -1,5 +1,6 @@
 package com.engine.common.shapes
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.max
@@ -51,6 +52,10 @@ class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
   override fun contains(point: Vector2) = Intersector.pointLineSide(point1, point2, point) == 0
 
   override fun contains(x: Float, y: Float) = contains(Vector2(x, y))
+
+  override fun draw(renderer: ShapeRenderer) {
+    renderer.line(point1, point2)
+  }
 
   override fun getCenter() = Vector2((point1.x + point2.x) / 2f, (point1.y + point2.y) / 2f)
 

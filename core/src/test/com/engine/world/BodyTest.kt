@@ -1,7 +1,7 @@
 package com.engine.world
 
-import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.extensions.objectMapOf
+import com.engine.common.extensions.orderedMapOf
 import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -13,13 +13,13 @@ class BodyTest :
       describe("Body") {
         val bodyType = BodyType.ABSTRACT
         val physicsData = PhysicsData()
-        val fixtures = gdxArrayOf<Fixture>()
+        val fixtures = orderedMapOf<String, Fixture>()
         val userData = objectMapOf<String, Any?>()
         val body = Body(bodyType, physicsData, fixtures, userData)
 
         it("should have the correct initial properties") {
           body.bodyType shouldBe bodyType
-          body.physicsData shouldBe physicsData
+          body.physics shouldBe physicsData
           body.fixtures shouldBe fixtures
           body.userData shouldBe userData
           body.preProcess shouldBe null
@@ -55,9 +55,9 @@ class BodyTest :
         it("should reset correctly") {
           val mockPhysicsData = spyk<PhysicsData>()
           every { mockPhysicsData.reset() } just Runs
-          body.physicsData = mockPhysicsData
+          body.physics = mockPhysicsData
           body.reset()
-          verify { body.physicsData.reset() }
+          verify { body.physics.reset() }
         }
 
         it("should have proper equals and hashCode implementations") {

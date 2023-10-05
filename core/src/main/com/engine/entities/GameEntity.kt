@@ -14,29 +14,11 @@ import kotlin.reflect.cast
  * @see Resettable
  * @see Propertizable
  */
-abstract class GameEntity() : Resettable, Propertizable {
+abstract class GameEntity : Propertizable {
 
   val components = ObjectMap<KClass<out IGameComponent>, IGameComponent>()
   override val properties = Properties()
   var dead = true
-
-  /**
-   * Creates a [GameEntity] with the given [IGameComponent]s.
-   *
-   * @param components The [IGameComponent]s to add to this [GameEntity].
-   */
-  constructor(vararg components: IGameComponent) : this() {
-    components.forEach { addComponent(it) }
-  }
-
-  /**
-   * Creates a [GameEntity] with the given [Collection] of [IGameComponent]s.
-   *
-   * @param components The [Collection] of [IGameComponent]s to add to this [GameEntity].
-   */
-  constructor(components: Collection<IGameComponent>) : this() {
-    components.forEach { addComponent(it) }
-  }
 
   /**
    * Initializes this [GameEntity] with the given [HashMap] of data.

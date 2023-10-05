@@ -19,10 +19,10 @@ class ControllerSystemTest :
 
           val actuator =
               mockk<ButtonActuator> {
-                every { onJustPressed() } just Runs
-                every { onPressContinued(any()) } just Runs
-                every { onJustReleased() } just Runs
-                every { onReleaseContinued(any()) } just Runs
+                every { onJustPressed(any()) } just Runs
+                every { onPressContinued(any(), any()) } just Runs
+                every { onJustReleased(any()) } just Runs
+                every { onReleaseContinued(any(), any()) } just Runs
               }
 
           val map = ObjectMap<String, ButtonActuator>()
@@ -51,10 +51,10 @@ class ControllerSystemTest :
             controllerSystem.update(0.1f)
 
             when (buttonStatus) {
-              0 -> verify(exactly = 1) { actuator.onJustPressed() }
-              1 -> verify { actuator.onPressContinued(0.1f) }
-              2 -> verify { actuator.onJustReleased() }
-              3 -> verify { actuator.onReleaseContinued(0.1f) }
+              0 -> verify(exactly = 1) { actuator.onJustPressed(mockControllerPoller) }
+              1 -> verify { actuator.onPressContinued(mockControllerPoller, 0.1f) }
+              2 -> verify { actuator.onJustReleased(mockControllerPoller) }
+              3 -> verify { actuator.onReleaseContinued(mockControllerPoller, 0.1f) }
             }
           }
         }

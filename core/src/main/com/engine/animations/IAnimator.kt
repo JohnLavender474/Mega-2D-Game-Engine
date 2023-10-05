@@ -1,9 +1,10 @@
 package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.engine.common.interfaces.Resettable
 
 /** An animator that can be used to animate a sprite. */
-fun interface IAnimator {
+interface IAnimator : Resettable {
 
   /**
    * Animates the specified sprite.

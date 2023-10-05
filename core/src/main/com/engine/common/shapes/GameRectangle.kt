@@ -1,5 +1,6 @@
 package com.engine.common.shapes
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
@@ -151,6 +152,10 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
     x += translateX
     y += translateY
     return this
+  }
+
+  override fun draw(renderer: ShapeRenderer) {
+    renderer.rect(x, y, width, height)
   }
 
   override fun positionOnPoint(point: Vector2, position: Position): GameRectangle {

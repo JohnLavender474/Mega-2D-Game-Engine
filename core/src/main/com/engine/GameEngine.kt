@@ -24,6 +24,20 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
   private var purge = false
   private var updating = false
 
+  /**
+   * Creates a [GameEngine] with the given [IGameSystem]s.
+   *
+   * @param autoSetAlive whether to automatically set [GameEntity]s to alive ([GameEntity.dead] set
+   *   to false) every time they are spawned. If this is false, then the [spawn] method of the
+   *   [GameEntity] should set [GameEntity.dead] to false (in case successful spawning is
+   *   conditional).
+   * @param systems the [IGameSystem]s to add to this [GameEngine]
+   */
+  constructor(
+      autoSetAlive: Boolean = true,
+      vararg systems: IGameSystem
+  ) : this(systems.asIterable(), autoSetAlive)
+
   override fun spawn(entity: GameEntity, spawnProps: Properties): Boolean {
     entitiesToAdd.add(entity to spawnProps)
     return true
@@ -37,6 +51,7 @@ class GameEngine(override val systems: Iterable<IGameSystem>, var autoSetAlive: 
       val (entity, spawnProps) = it
       entities.add(entity)
       entity.spawn(spawnProps)
+      entity.components.values().forEach { c -> c.reset() }
       systems.forEach { s -> s.add(entity) }
 
       // set alive if necessary

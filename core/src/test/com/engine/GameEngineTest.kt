@@ -42,8 +42,6 @@ class GameEngineTest :
                     override fun spawn(spawnProps: Properties) {}
 
                     override fun destroy() {}
-
-                    override fun reset() {}
                   })
           mockEntity2 =
               spyk(
@@ -51,8 +49,6 @@ class GameEngineTest :
                     override fun spawn(spawnProps: Properties) {}
 
                     override fun destroy() {}
-
-                    override fun reset() {}
                   })
 
           mockComponent1 = MockComponent1()

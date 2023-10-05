@@ -117,7 +117,7 @@ class WorldSystem(
       updatePhysics(b, delta)
       updateFixturePositions(b)
       worldGraph.add(b)
-      b.fixtures.forEach { f -> worldGraph.add(f) }
+      b.fixtures.values().forEach { f -> worldGraph.add(f) }
     }
   }
 
@@ -171,7 +171,7 @@ class WorldSystem(
    * @param delta the time in seconds since the last frame
    */
   internal fun updatePhysics(body: Body, delta: Float) {
-    body.physicsData.let {
+    body.physics.let {
       if (it.takeFrictionFromOthers) {
         if (it.frictionOnSelf.x > 0f) {
           it.velocity.x /= it.frictionOnSelf.x
@@ -202,7 +202,7 @@ class WorldSystem(
    * @param body the [Body] to update the positions of the fixtures of
    */
   internal fun updateFixturePositions(body: Body) {
-    body.fixtures.forEach { f ->
+    body.fixtures.values().forEach { f ->
       if (!f.attachedToBody) {
         return
       }
@@ -231,7 +231,7 @@ class WorldSystem(
    * @param body the [Body] to check for contacts
    */
   internal fun checkForContacts(body: Body) {
-    body.fixtures.forEach { f ->
+    body.fixtures.values().forEach { f ->
       if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
         val overlapping = ObjectSet<Fixture>()
 

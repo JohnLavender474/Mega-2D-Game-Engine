@@ -8,7 +8,7 @@ import com.engine.controller.polling.IControllerPoller
 
 /**
  * System for controllers. This system will call the appropriate methods on the actuators of the
- * controller buttons. This system requires a [ControllerPoller] to poll the controller buttons.
+ * controller buttons. This system requires a [IControllerPoller] to poll the controller buttons.
  */
 class ControllerSystem(private val poller: IControllerPoller) :
     GameSystem(ControllerComponent::class) {
@@ -23,10 +23,10 @@ class ControllerSystem(private val poller: IControllerPoller) :
         val name = e.key
         val actuator = e.value
         when (poller.getButtonStatus(name)) {
-          ButtonStatus.JUST_PRESSED -> actuator.onJustPressed()
-          ButtonStatus.PRESSED -> actuator.onPressContinued(delta)
-          ButtonStatus.JUST_RELEASED -> actuator.onJustReleased()
-          ButtonStatus.RELEASED -> actuator.onReleaseContinued(delta)
+          ButtonStatus.JUST_PRESSED -> actuator.onJustPressed(poller)
+          ButtonStatus.PRESSED -> actuator.onPressContinued(poller, delta)
+          ButtonStatus.JUST_RELEASED -> actuator.onJustReleased(poller)
+          ButtonStatus.RELEASED -> actuator.onReleaseContinued(poller, delta)
           else -> {}
         }
       }

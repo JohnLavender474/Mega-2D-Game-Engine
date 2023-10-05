@@ -39,13 +39,12 @@ class SpriteSystemTest :
           mockSpriteComponent = mockk { every { sprites } returns array }
 
           entity =
-              object : GameEntity(mockSpriteComponent) {
+              object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
                 override fun destroy() {}
-
-                override fun reset() {}
               }
+          entity.addComponent(mockSpriteComponent)
           entity.dead = false
 
           spriteSystem = SpriteSystem(mockBatch)

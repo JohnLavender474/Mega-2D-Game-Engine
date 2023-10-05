@@ -3,11 +3,8 @@ package com.engine.world
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectSet
-import com.engine.common.extensions.gdxArrayOf
-import com.engine.common.extensions.objectMapOf
-import com.engine.common.extensions.objectSetOf
+import com.engine.common.extensions.*
 import com.engine.entities.GameEntity
-import com.engine.common.extensions.round
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2D
@@ -34,9 +31,7 @@ class WorldSystemTest :
                     putAllProperties(spawnProps)
                   }
 
-                  override fun destroy() {}
-
-                  override fun reset() {
+                  override fun destroy() {
                     clearComponents()
                     clearProperties()
                   }
@@ -59,7 +54,7 @@ class WorldSystemTest :
 
           physicsData.resetToDefault()
 
-          entity.reset()
+          entity.destroy()
           entity.addComponent(bodyComponent)
 
           every { mockWorldGraph.reset() } just Runs
@@ -103,7 +98,7 @@ class WorldSystemTest :
           every { worldSystem.postProcess(any(), any()) } just Runs
 
           val fixture = Fixture(mockk(), "Type")
-          body.fixtures.add(fixture)
+          body.fixtures.put("fixture", fixture)
 
           val objs = ArrayList<GameShape2DSupplier>()
 
@@ -117,7 +112,7 @@ class WorldSystemTest :
 
         describe("cycle") {
           it("should cycle correctly - test 1") {
-            body.fixtures.add(Fixture(GameRectangle(), "Test"))
+            body.fixtures.put("fixture", Fixture(GameRectangle(), "Test"))
 
             val objs = ArrayList<GameShape2DSupplier>()
 
@@ -144,11 +139,11 @@ class WorldSystemTest :
 
             objs.size shouldBe 2
             objs shouldContain body
-            objs shouldContain body.fixtures[0]
+            objs shouldContain body.fixtures.get("fixture")
           }
 
           it("should cycle correctly - test 2") {
-            body.fixtures.add(Fixture(GameRectangle(), "Test"))
+            body.fixtures.put("fixture", Fixture(GameRectangle(), "Test"))
 
             val objs = ArrayList<GameShape2DSupplier>()
 
@@ -175,7 +170,7 @@ class WorldSystemTest :
 
             objs.size shouldBe 4
             objs.filter { it == body }.size shouldBe 2
-            objs.filter { it == body.fixtures[0] }.size shouldBe 2
+            objs.filter { it == body.fixtures.get("fixture") }.size shouldBe 2
           }
         }
 
@@ -195,27 +190,23 @@ class WorldSystemTest :
 
         describe("process contacts") {
           val fixture1 = Fixture(GameRectangle(0f, 0f, 10f, 10f), "Type1")
-          val body1 = Body(BodyType.DYNAMIC, fixtures = gdxArrayOf(fixture1))
+          val body1 = Body(BodyType.DYNAMIC, fixtures = orderedMapOf("fixture1" to fixture1))
           val entity1 =
               object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
                 override fun destroy() {}
-
-                override fun reset() {}
               }
           entity1.dead = false
           entity1.addComponent(BodyComponent(body1))
 
           val fixture2 = Fixture(GameRectangle(5f, 5f, 15f, 15f), "Type2")
-          val body2 = Body(BodyType.DYNAMIC, fixtures = gdxArrayOf(fixture2))
+          val body2 = Body(BodyType.DYNAMIC, fixtures = orderedMapOf("fixture2" to fixture2))
           val entity2 =
               object : GameEntity() {
                 override fun spawn(spawnProps: Properties) {}
 
                 override fun destroy() {}
-
-                override fun reset() {}
               }
           entity2.dead = false
           entity2.addComponent(BodyComponent(body2))
@@ -351,7 +342,7 @@ class WorldSystemTest :
 
           val fixture = Fixture(GameRectangle(), "Type")
           fixture.offsetFromBodyCenter = Vector2(5f, 5f)
-          body.fixtures.add(fixture)
+          body.fixtures.put("fixture", fixture)
 
           worldSystem.update(fixedStep)
 

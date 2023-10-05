@@ -2,6 +2,7 @@ package com.engine.common.shapes
 
 import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
+import com.engine.drawables.shapes.DrawableShape
 
 /**
  * A 2D shape that can be used in a game. This shape is a [Shape2D]. For convenience reasons, this
@@ -9,7 +10,7 @@ import com.badlogic.gdx.math.Vector2
  *
  * @see Shape2D
  */
-interface GameShape2D : Shape2D {
+interface GameShape2D : Shape2D, DrawableShape {
 
   /**
    * Returns a copy of this shape.

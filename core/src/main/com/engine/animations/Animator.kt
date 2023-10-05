@@ -36,4 +36,8 @@ class Animator(
       sprite.setRegion(it.getCurrentRegion())
     }
   }
+
+  override fun reset() {
+    currentKey = null
+  }
 }

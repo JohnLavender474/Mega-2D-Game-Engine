@@ -21,7 +21,7 @@ import com.engine.common.interfaces.Resettable
 open class PhysicsData(
     var gravity: Vector2 = Vector2(),
     var velocity: Vector2 = Vector2(),
-    var velocityClamp: Vector2 = Vector2(),
+    var velocityClamp: Vector2 = Vector2(Float.MAX_VALUE, Float.MAX_VALUE),
     var frictionToApply: Vector2 = Vector2(),
     var frictionOnSelf: Vector2 = Vector2(1f, 1f),
     var defaultFrictionOnSelf: Vector2 = Vector2(1f, 1f),

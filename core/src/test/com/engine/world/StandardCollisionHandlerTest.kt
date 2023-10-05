@@ -13,16 +13,16 @@ class StandardCollisionHandlerTest :
         beforeEach {
           dynamicBody.reset()
           dynamicBody.setPosition(0f, 0f)
-          dynamicBody.physicsData.collisionOn = true
+          dynamicBody.physics.collisionOn = true
 
           staticBody.reset()
           staticBody.setPosition(0f, 0f)
-          staticBody.physicsData.frictionToApply = Vector2(1f, 1f)
-          staticBody.physicsData.collisionOn = true
+          staticBody.physics.frictionToApply = Vector2(1f, 1f)
+          staticBody.physics.collisionOn = true
         }
 
         it("should exit out of collision handling due to [collisionOn] being false") {
-          dynamicBody.physicsData.collisionOn = false
+          dynamicBody.physics.collisionOn = false
           StandardCollisionHandler.handleCollision(dynamicBody, staticBody) shouldBe false
         }
 
@@ -40,11 +40,11 @@ class StandardCollisionHandlerTest :
 
           dynamicBody.x shouldBe 0f
           dynamicBody.y shouldBe -3f
-          dynamicBody.physicsData.frictionOnSelf shouldBe Vector2(2f, 1f)
+          dynamicBody.physics.frictionOnSelf shouldBe Vector2(2f, 1f)
 
           staticBody.x shouldBe 0f
           staticBody.y shouldBe 2f
-          staticBody.physicsData.frictionOnSelf shouldBe Vector2(1f, 1f)
+          staticBody.physics.frictionOnSelf shouldBe Vector2(1f, 1f)
         }
 
         it("should handle collision by pushing dynamic body left") {
@@ -55,11 +55,11 @@ class StandardCollisionHandlerTest :
 
           dynamicBody.x shouldBe -2f
           dynamicBody.y shouldBe 0f
-          dynamicBody.physicsData.frictionOnSelf shouldBe Vector2(1f, 2f)
+          dynamicBody.physics.frictionOnSelf shouldBe Vector2(1f, 2f)
 
           staticBody.x shouldBe 3f
           staticBody.y shouldBe 0f
-          staticBody.physicsData.frictionOnSelf shouldBe Vector2(1f, 1f)
+          staticBody.physics.frictionOnSelf shouldBe Vector2(1f, 1f)
         }
       }
     })

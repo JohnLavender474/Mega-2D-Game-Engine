@@ -12,7 +12,7 @@ class PhysicsDataTest :
         it("should have the correct initial properties") {
           physicsData.gravity shouldBe Vector2()
           physicsData.velocity shouldBe Vector2()
-          physicsData.velocityClamp shouldBe Vector2()
+          physicsData.velocityClamp shouldBe Vector2(Float.MAX_VALUE, Float.MAX_VALUE)
           physicsData.frictionToApply shouldBe Vector2()
           physicsData.frictionOnSelf shouldBe Vector2(1f, 1f)
           physicsData.defaultFrictionOnSelf shouldBe Vector2(1f, 1f)

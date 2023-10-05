@@ -17,6 +17,4 @@ class SimpleMockEntity : GameEntity() {
   override fun spawn(spawnProps: Properties) {}
 
   override fun destroy() {}
-
-  override fun reset() {}
 }

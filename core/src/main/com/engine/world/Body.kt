@@ -1,7 +1,7 @@
 package com.engine.world
 
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.shapes.GameRectangle
@@ -23,9 +23,9 @@ import kotlin.reflect.cast
  * @param y the second position of the body
  * @param width the width of the body
  * @param height the height of the body
- * @param physicsData the [PhysicsData] of the body
- * @param fixtures the [ArrayList] of [Fixture]s of the body
- * @param userData the [HashMap] of user data of the body
+ * @param physics the [PhysicsData] of the body
+ * @param fixtures the [OrderedMap] of [Fixture]s of the body
+ * @param userData the [ObjectMap] of user data of the body
  * @param preProcess the [Updatable] to run before the body is processed
  * @param postProcess the [Updatable] to run after the body is processed
  * @see GameRectangle
@@ -42,8 +42,8 @@ class Body(
     y: Float = 0f,
     width: Float = 0f,
     height: Float = 0f,
-    var physicsData: PhysicsData = PhysicsData(),
-    var fixtures: Array<Fixture> = Array(),
+    var physics: PhysicsData = PhysicsData(),
+    var fixtures: OrderedMap<String, Fixture> = OrderedMap(),
     var userData: ObjectMap<String, Any?> = ObjectMap(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
@@ -55,15 +55,15 @@ class Body(
    *
    * @param bodyType the [BodyType] of the body
    * @param physicsData the [PhysicsData] of the body
-   * @param fixtures the [ArrayList] of [Fixture]s of the body
-   * @param userData the [HashMap] of user data of the body
+   * @param fixtures the [OrderedMap] of [Fixture]s of the body
+   * @param userData the [ObjectMap] of user data of the body
    * @param preProcess the [Updatable] to run before the body is processed
    * @param postProcess the [Updatable] to run after the body is processed
    */
   constructor(
       bodyType: BodyType,
       physicsData: PhysicsData,
-      fixtures: Array<Fixture> = Array(),
+      fixtures: OrderedMap<String, Fixture> = OrderedMap(),
       userData: ObjectMap<String, Any?> = ObjectMap(),
       preProcess: Updatable? = null,
       postProcess: Updatable? = null
@@ -123,8 +123,8 @@ class Body(
    */
   override fun reset() {
     previousBounds.set(this)
-    physicsData.reset()
-    fixtures.forEach { f ->
+    physics.reset()
+    fixtures.values().forEach { f ->
       val p = getCenterPoint().add(f.offsetFromBodyCenter)
       f.shape.setCenter(p)
     }
@@ -138,6 +138,6 @@ class Body(
 
   override fun toString() =
       "Body(first=$x second=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
-          "physicsData=$physicsData, fixtures=$fixtures, userData=$userData, 9preProcess=$preProcess, " +
+          "physics=$physics, fixtures=$fixtures, userData=$userData, 9preProcess=$preProcess, " +
           "postProcess=$postProcess, previousBounds=$previousBounds)"
 }

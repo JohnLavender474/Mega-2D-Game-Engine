@@ -1,5 +1,6 @@
 package com.engine.drawables.sprites
 
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -39,6 +40,14 @@ class GameSprite(
     if (!hidden && texture != null) {
       super<Sprite>.draw(batch)
     }
+  }
+
+  override fun setRegion(region: TextureRegion?) {
+    super<Sprite>.setRegion(region)
+  }
+
+  override fun setTexture(texture: Texture?) {
+    super<Sprite>.setTexture(texture)
   }
 
   override fun translate(x: Float, y: Float) {

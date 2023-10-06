@@ -1,7 +1,7 @@
 package com.engine.animations
 
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.engine.common.interfaces.Resettable
+import com.engine.drawables.sprites.IGameSprite
 
 /** An animator that can be used to animate a sprite. */
 interface IAnimator : Resettable {
@@ -12,5 +12,5 @@ interface IAnimator : Resettable {
    * @param sprite the sprite to animate
    * @param delta the time in seconds since the last update
    */
-  fun animate(sprite: Sprite, delta: Float)
+  fun animate(sprite: IGameSprite, delta: Float)
 }

@@ -17,4 +17,15 @@ interface IControllerPoller : Activatable, Runnable {
    * @return The status of the button mapped to the key.
    */
   fun getButtonStatus(name: String): ButtonStatus?
+
+  /**
+   * Returns if the button mapped to the given [name] is pressed.
+   *
+   * @param name The name of the button to check.
+   * @return If the button mapped to the given [name] is pressed.
+   */
+  fun isButtonPressed(name: String): Boolean {
+    val status = getButtonStatus(name)
+    return status == ButtonStatus.PRESSED || status == ButtonStatus.JUST_PRESSED
+  }
 }

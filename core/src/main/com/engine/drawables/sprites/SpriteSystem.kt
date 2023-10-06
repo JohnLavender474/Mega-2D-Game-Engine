@@ -23,7 +23,7 @@ class SpriteSystem(private val batch: Batch) : GameSystem(SpriteComponent::class
 
     entities.forEach { entity ->
       val spriteComponent = entity.getComponent(SpriteComponent::class)
-      spriteComponent?.sprites?.forEach { sprite -> sortedSprites.add(sprite) }
+      spriteComponent?.sprites?.values()?.forEach { sprite -> sortedSprites.add(sprite) }
     }
 
     while (!sortedSprites.isEmpty()) {

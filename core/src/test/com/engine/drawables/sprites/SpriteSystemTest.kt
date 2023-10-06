@@ -1,7 +1,7 @@
 package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.objects.Properties
 import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
@@ -32,11 +32,11 @@ class SpriteSystemTest :
           mockSprite2 = createMockSprite(-1)
           mockSprite3 = createMockSprite(0)
 
-          val array = Array<IGameSprite>()
-          array.add(mockSprite1)
-          array.add(mockSprite2)
-          array.add(mockSprite3)
-          mockSpriteComponent = mockk { every { sprites } returns array }
+          val map = OrderedMap<String, IGameSprite>()
+          map.put("1", mockSprite1)
+          map.put("2", mockSprite2)
+          map.put("3", mockSprite3)
+          mockSpriteComponent = mockk { every { sprites } returns map }
 
           entity =
               object : GameEntity() {

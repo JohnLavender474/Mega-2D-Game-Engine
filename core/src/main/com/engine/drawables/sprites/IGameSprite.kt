@@ -1,5 +1,7 @@
 package com.engine.drawables.sprites
 
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.interfaces.Positional
 import com.engine.common.interfaces.Sizable
 
@@ -15,4 +17,20 @@ import com.engine.common.interfaces.Sizable
 interface IGameSprite : IDrawableSprite, Positional, Sizable, Comparable<IGameSprite> {
 
   var priority: Int
+
+  /**
+   * Sets the region of this sprite.
+   *
+   * @param region the region to set
+   * @see TextureRegion
+   */
+  fun setRegion(region: TextureRegion?)
+
+  /**
+   * Sets the texture of this sprite.
+   *
+   * @param texture the texture to set
+   * @see Texture
+   */
+  fun setTexture(texture: Texture?)
 }

@@ -15,14 +15,13 @@ import java.util.*
 class SpriteSystem(private val batch: Batch) : GameSystem(SpriteComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    if (!on) {
-      return
-    }
+    if (!on) return
 
     val sortedSprites = PriorityQueue<IGameSprite>()
 
     entities.forEach { entity ->
       val spriteComponent = entity.getComponent(SpriteComponent::class)
+      spriteComponent?.update(delta)
       spriteComponent?.sprites?.values()?.forEach { sprite -> sortedSprites.add(sprite) }
     }
 

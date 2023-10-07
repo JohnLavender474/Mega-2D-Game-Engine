@@ -25,7 +25,7 @@ class WorldSystemTest :
 
         val entity =
             spyk(
-                object : GameEntity() {
+                object : GameEntity(mockk()) {
 
                   override fun spawn(spawnProps: Properties) {
                     putAllProperties(spawnProps)
@@ -40,7 +40,7 @@ class WorldSystemTest :
 
         val physicsData = spyk(PhysicsData())
         val body = spyk(Body(BodyType.DYNAMIC, physicsData))
-        val bodyComponent = spyk(BodyComponent(body))
+        val bodyComponent = spyk(BodyComponent(entity, body))
 
         val fixedStep = 0.02f
         val worldSystem =
@@ -191,25 +191,15 @@ class WorldSystemTest :
         describe("process contacts") {
           val fixture1 = Fixture(GameRectangle(0f, 0f, 10f, 10f), "Type1")
           val body1 = Body(BodyType.DYNAMIC, fixtures = orderedMapOf("fixture1" to fixture1))
-          val entity1 =
-              object : GameEntity() {
-                override fun spawn(spawnProps: Properties) {}
-
-                override fun onDestroy() {}
-              }
+          val entity1 = GameEntity(mockk())
           entity1.dead = false
-          entity1.addComponent(BodyComponent(body1))
+          entity1.addComponent(BodyComponent(entity1, body1))
 
           val fixture2 = Fixture(GameRectangle(5f, 5f, 15f, 15f), "Type2")
           val body2 = Body(BodyType.DYNAMIC, fixtures = orderedMapOf("fixture2" to fixture2))
-          val entity2 =
-              object : GameEntity() {
-                override fun spawn(spawnProps: Properties) {}
-
-                override fun onDestroy() {}
-              }
+          val entity2 = GameEntity(mockk())
           entity2.dead = false
-          entity2.addComponent(BodyComponent(body2))
+          entity2.addComponent(BodyComponent(entity2, body2))
 
           it("should process contacts correctly - test 1") {
             every { mockWorldGraph.reset() } just Runs

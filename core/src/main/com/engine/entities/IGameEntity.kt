@@ -1,5 +1,6 @@
 package com.engine.entities
 
+import com.engine.IGame2D
 import com.engine.common.interfaces.Propertizable
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
@@ -13,6 +14,9 @@ import kotlin.reflect.KClass
  * @see IGameComponent
  */
 interface IGameEntity : Propertizable {
+
+  /** The [IGame2D] this [GameEntity] belongs to. */
+  val game: IGame2D
 
   /**
    * True if this [GameEntity] is dead, otherwise false. A dead [GameEntity] should be removed from

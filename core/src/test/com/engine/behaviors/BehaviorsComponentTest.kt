@@ -2,6 +2,7 @@ package com.engine.behaviors
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.mockk
 
 class BehaviorsComponentTest :
     DescribeSpec({
@@ -32,7 +33,7 @@ class BehaviorsComponentTest :
               override fun end() {}
             }
 
-        val behaviorsComponent = BehaviorsComponent()
+        val behaviorsComponent = BehaviorsComponent(mockk())
 
         it("should add and check behaviors") {
           behaviorsComponent.addBehavior("behavior1", behavior1)

@@ -9,6 +9,7 @@ import com.engine.systems.GameSystem
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
+import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 
@@ -20,8 +21,8 @@ class GameEngineTest :
         lateinit var mockEntity1: GameEntity
         lateinit var mockEntity2: GameEntity
 
-        class MockComponent1 : IGameComponent
-        class MockComponent2 : IGameComponent
+        class MockComponent1(override val entity: IGameEntity) : IGameComponent
+        class MockComponent2(override val entity: IGameEntity) : IGameComponent
         lateinit var mockComponent1: MockComponent1
         lateinit var mockComponent2: MockComponent2
 
@@ -37,11 +38,11 @@ class GameEngineTest :
           props1 = Properties()
           props2 = Properties()
 
-          mockEntity1 = spyk(GameEntity())
-          mockEntity2 = spyk(GameEntity())
+          mockEntity1 = spyk(GameEntity(mockk()))
+          mockEntity2 = spyk(GameEntity(mockk()))
 
-          mockComponent1 = MockComponent1()
-          mockComponent2 = MockComponent2()
+          mockComponent1 = MockComponent1(mockEntity1)
+          mockComponent2 = MockComponent2(mockEntity2)
 
           mockEntity1.addComponent(mockComponent1)
           mockEntity2.addComponent(mockComponent2)

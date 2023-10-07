@@ -5,24 +5,30 @@ import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.interfaces.Updatable
 import com.engine.common.interfaces.UpdateFunction
 import com.engine.components.IGameComponent
+import com.engine.entities.IGameEntity
 
 /**
  * A component that can be used to store sprites.
  *
  * @param sprites The sprites.
  */
-class SpriteComponent(var sprites: OrderedMap<String, IGameSprite>) : IGameComponent, Updatable {
+class SpriteComponent(
+    override val entity: IGameEntity,
+    var sprites: OrderedMap<String, IGameSprite>
+) : IGameComponent, Updatable {
 
   internal val updatables = ObjectMap<String, UpdateFunction<IGameSprite>>()
 
-   /**
+  /**
    * Creates a [SpriteComponent] with the given [sprites].
    *
    * @param _sprites The sprites to add to this [SpriteComponent].
    */
   constructor(
+      entity: IGameEntity,
       vararg _sprites: Pair<String, IGameSprite>
   ) : this(
+      entity,
       OrderedMap<String, IGameSprite>().apply { _sprites.forEach { put(it.first, it.second) } })
 
   /**

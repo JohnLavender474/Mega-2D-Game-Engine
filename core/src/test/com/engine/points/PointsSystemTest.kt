@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
+import io.mockk.mockk
 
 class PointsSystemTest :
     DescribeSpec({
@@ -27,14 +28,15 @@ class PointsSystemTest :
         beforeEach {
           pointsSystem = PointsSystem()
 
-          entity1 = GameEntity()
-          entity2 = GameEntity()
+          entity1 = GameEntity(mockk())
+          entity2 = GameEntity(mockk())
 
           points1 = Points(0, 100, 50)
           points2 = Points(10, 90, 30)
 
           pointsComponent1 =
               PointsComponent(
+                  entity1,
                   "points1" to
                       PointsHandle(
                           points1,
@@ -42,6 +44,7 @@ class PointsSystemTest :
                           onReset = { handle -> handle.points.setToMax() }))
           pointsComponent2 =
               PointsComponent(
+                  entity2,
                   "points2" to
                       PointsHandle(
                           points2,

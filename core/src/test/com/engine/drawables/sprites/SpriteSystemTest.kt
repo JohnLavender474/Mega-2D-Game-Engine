@@ -2,7 +2,6 @@ package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.OrderedMap
-import com.engine.common.objects.Properties
 import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
@@ -36,14 +35,12 @@ class SpriteSystemTest :
           map.put("1", mockSprite1)
           map.put("2", mockSprite2)
           map.put("3", mockSprite3)
-          mockSpriteComponent = mockk { every { sprites } returns map }
+          mockSpriteComponent = mockk {
+            every { sprites } returns map
+            every { update(any()) } just Runs
+          }
 
-          entity =
-              object : GameEntity() {
-                override fun spawn(spawnProps: Properties) {}
-
-                override fun onDestroy() {}
-              }
+          entity = GameEntity(mockk())
           entity.addComponent(mockSpriteComponent)
           entity.dead = false
 

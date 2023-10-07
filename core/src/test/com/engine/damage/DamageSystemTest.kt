@@ -20,14 +20,14 @@ class DamageSystemTest :
         beforeEach {
           clearAllMocks()
           damageSystem = DamageSystem()
-          entity = GameEntity()
+          entity = GameEntity(mockk())
           damageable = mockk { every { takeDamageFrom(any()) } answers { takeDamageFrom } }
           damager = mockk {
             every { canDamage(any()) } answers { canDamage }
             every { onDamageInflictedTo(any()) } just Runs
           }
-          damagerComponent = DamagerComponent(damager)
-          damageableComponent = DamageableComponent(damageable)
+          damagerComponent = DamagerComponent(entity, damager)
+          damageableComponent = DamageableComponent(entity, damageable)
           damageableComponent.damagers.add(damagerComponent)
           entity.addComponent(damageableComponent)
           damageSystem.add(entity)

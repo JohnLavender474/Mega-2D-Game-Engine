@@ -4,24 +4,18 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
 import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
+import io.mockk.mockk
 
 class GameEntityTest :
     DescribeSpec({
       describe("Entity class") {
-        val entity =
-            object : GameEntity() {
-
-              override fun spawn(spawnProps: Properties) {}
-
-              override fun onDestroy() {}
-            }
-
-        class MockComponent : IGameComponent
-
-        val mockComponent = MockComponent()
+        val entity = GameEntity(mockk())
+        class MockComponent(override val entity: IGameEntity) : IGameComponent
+        val mockComponent = MockComponent(entity)
 
         beforeEach {
           clearAllMocks()

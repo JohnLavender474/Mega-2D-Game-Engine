@@ -1,9 +1,6 @@
 package com.engine.pathfinding
 
 import com.engine.components.IGameComponent
+import com.engine.entities.IGameEntity
 
-class PathfindingComponent : IGameComponent {
-
-
-
-}
+class PathfindingComponent(override val entity: IGameEntity) : IGameComponent {}

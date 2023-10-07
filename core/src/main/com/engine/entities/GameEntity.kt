@@ -1,13 +1,14 @@
 package com.engine.entities
 
 import com.badlogic.gdx.utils.ObjectMap
+import com.engine.IGame2D
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
 /** Basic implementation for [IGameEntity]. */
-open class GameEntity : IGameEntity {
+open class GameEntity(override val game: IGame2D) : IGameEntity {
 
   val componentMap = ObjectMap<KClass<out IGameComponent>, IGameComponent>()
   override val properties = Properties()

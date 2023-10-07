@@ -30,8 +30,9 @@ class DrawableShapeSystemTest :
           mockDrawableShapeHandle = spyk(DrawableShapeHandle(mockDrawableShape, ShapeType.Line))
           val array = Array<DrawableShapeHandle>()
           array.add(mockDrawableShapeHandle)
-          mockDrawableShapeComponent = DrawableShapeComponent(array)
-          mockEntity = GameEntity().apply { addComponent(mockDrawableShapeComponent) }
+          mockEntity = GameEntity(mockk())
+          mockDrawableShapeComponent = DrawableShapeComponent(mockEntity, array)
+          mockEntity.addComponent(mockDrawableShapeComponent)
           drawableShapeSystem = DrawableShapeSystem(shapeRenderer)
         }
 
@@ -71,9 +72,9 @@ class DrawableShapeSystemTest :
               spyk(DrawableShapeHandle(mockDrawableShape, ShapeType.Point))
           val array = Array<DrawableShapeHandle>()
           array.add(otherMockDrawableShapeHandle)
-          val otherMockDrawableShapeComponent = DrawableShapeComponent(array)
-          val otherMockEntity =
-              GameEntity().apply { addComponent(otherMockDrawableShapeComponent) }
+          val otherMockEntity = GameEntity(mockk())
+          val otherMockDrawableShapeComponent = DrawableShapeComponent(otherMockEntity, array)
+          otherMockEntity.addComponent(otherMockDrawableShapeComponent)
           val entities = ImmutableCollection(listOf(mockEntity, otherMockEntity))
 
           // when

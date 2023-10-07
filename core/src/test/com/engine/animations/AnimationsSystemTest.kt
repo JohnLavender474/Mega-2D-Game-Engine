@@ -20,7 +20,7 @@ class AnimationsSystemTest :
         beforeEach {
           clearAllMocks()
           entity =
-              object : GameEntity() {
+              object : GameEntity(mockk()) {
 
                 override fun spawn(spawnProps: Properties) {}
 
@@ -40,7 +40,7 @@ class AnimationsSystemTest :
 
           val map = ObjectMap<IGameSprite, IAnimator>()
           map.put(mockSprite, mockAnimator)
-          animationsComponent = spyk(AnimationsComponent(map))
+          animationsComponent = spyk(AnimationsComponent(entity, map))
           animationsSystem = spyk(AnimationsSystem())
 
           entity.addComponent(animationsComponent)

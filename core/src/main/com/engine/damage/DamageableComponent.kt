@@ -3,6 +3,7 @@ package com.engine.damage
 import com.badlogic.gdx.utils.Array
 import com.engine.common.time.Timer
 import com.engine.components.IGameComponent
+import com.engine.entities.IGameEntity
 
 /**
  * A [DamageableComponent] is a [IGameComponent] that contains a [IDamageable] and an array of
@@ -14,6 +15,7 @@ import com.engine.components.IGameComponent
  * @property damagers the [DamagerComponent]s that can deal damage to the [IDamageable]
  */
 class DamageableComponent(
+    override val entity: IGameEntity,
     internal var damageable: IDamageable,
     val damageTimer: Timer = Timer(1f),
     val damageRecoveryTimer: Timer = Timer(1f),

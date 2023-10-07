@@ -3,9 +3,10 @@ package com.engine.behaviors
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.components.IGameComponent
+import com.engine.entities.IGameEntity
 
 /** A [IGameComponent] that manages a collection of [IBehavior]s. */
-class BehaviorsComponent : IGameComponent {
+class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
 
   internal val behaviors = OrderedMap<String, IBehavior>()
   private val activeBehaviors = ObjectSet<String>()
@@ -15,7 +16,7 @@ class BehaviorsComponent : IGameComponent {
    *
    * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
    */
-  constructor(vararg _behaviors: Pair<String, IBehavior>) {
+  constructor(entity: IGameEntity, vararg _behaviors: Pair<String, IBehavior>) : this(entity) {
     _behaviors.forEach { addBehavior(it.first, it.second) }
   }
 
@@ -24,7 +25,7 @@ class BehaviorsComponent : IGameComponent {
    *
    * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
    */
-  constructor(_behaviors: Iterable<Pair<String, IBehavior>>) {
+  constructor(entity: IGameEntity, _behaviors: Iterable<Pair<String, IBehavior>>) : this(entity) {
     _behaviors.forEach { addBehavior(it.first, it.second) }
   }
 
@@ -33,7 +34,7 @@ class BehaviorsComponent : IGameComponent {
    *
    * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
    */
-  constructor(_behaviors: OrderedMap<String, IBehavior>) {
+  constructor(entity: IGameEntity, _behaviors: OrderedMap<String, IBehavior>) : this(entity) {
     _behaviors.forEach { addBehavior(it.key, it.value) }
   }
 
@@ -57,6 +58,9 @@ class BehaviorsComponent : IGameComponent {
    */
   fun isBehaviorActive(key: String) = activeBehaviors.contains(key)
 
+  /** @see [isBehaviorActive(Iterable<String>)] */
+  fun isAnyBehaviorActive(vararg keys: String) = isAnyBehaviorActive(keys.asIterable())
+
   /**
    * Returns if any of the [IBehavior]s with the given [keys] are active.
    *
@@ -64,6 +68,9 @@ class BehaviorsComponent : IGameComponent {
    * @return If any of the [IBehavior]s with the given [keys] are active.
    */
   fun isAnyBehaviorActive(keys: Iterable<String>) = keys.any { isBehaviorActive(it) }
+
+  /** @see [areAllBehaviorsActive(Iterable<String>)] */
+  fun areAllBehaviorsActive(vararg keys: String) = areAllBehaviorsActive(keys.asIterable())
 
   /**
    * Returns if all of the [IBehavior]s with the given [keys] are active.

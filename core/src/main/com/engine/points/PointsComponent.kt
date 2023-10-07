@@ -2,20 +2,17 @@ package com.engine.points
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.components.IGameComponent
+import com.engine.entities.IGameEntity
 
 /**
  * The pointss component. Contains all the pointsMap for an entity.
  *
  * @param pointsMap The pointsMap.
  */
-class PointsComponent(val pointsMap: ObjectMap<String, PointsHandle>) : IGameComponent {
-
-  /**
-   * The pointsMap component. Contains all the pointsMap for an entity.
-   *
-   * @param _points The pointsMap.
-   */
-  constructor(vararg _points: Pair<String, PointsHandle>) : this(_points.asIterable())
+class PointsComponent(
+    override val entity: IGameEntity,
+    val pointsMap: ObjectMap<String, PointsHandle>
+) : IGameComponent {
 
   /**
    * The pointsMap component. Contains all the pointsMap for an entity.
@@ -23,8 +20,21 @@ class PointsComponent(val pointsMap: ObjectMap<String, PointsHandle>) : IGameCom
    * @param _points The pointsMap.
    */
   constructor(
+      entity: IGameEntity,
+      vararg _points: Pair<String, PointsHandle>
+  ) : this(entity, _points.asIterable())
+
+  /**
+   * The pointsMap component. Contains all the pointsMap for an entity.
+   *
+   * @param _points The pointsMap.
+   */
+  constructor(
+      entity: IGameEntity,
       _points: Iterable<Pair<String, PointsHandle>>
-  ) : this(ObjectMap<String, PointsHandle>().apply { _points.forEach { put(it.first, it.second) } })
+  ) : this(
+      entity,
+      ObjectMap<String, PointsHandle>().apply { _points.forEach { put(it.first, it.second) } })
 
   override fun reset() {
     pointsMap.values().forEach { it.reset() }

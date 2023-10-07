@@ -1,56 +1,31 @@
 package com.engine.behaviors
 
-import com.engine.common.interfaces.Resettable
-import com.engine.common.interfaces.Updatable
+/**
+ * Implements an [IBehavior] that can be used to create a behavior.
+ *
+ * @param evaluate The function that evaluates this [IBehavior].
+ * @param init The function that initializes this [IBehavior].
+ * @param act The function that performs the action of this [IBehavior].
+ * @param end The function that ends this [IBehavior].
+ */
+class Behavior(
+    private val evaluate: (delta: Float) -> Boolean,
+    private val init: (() -> Unit)? = null,
+    private val act: ((delta: Float) -> Unit)? = null,
+    private val end: (() -> Unit)? = null
+) : IBehavior() {
 
-/** An abstract class that represents a behavior. */
-abstract class Behavior : Updatable, Resettable {
+  override fun evaluate(delta: Float) = evaluate.invoke(delta)
 
-  private var runningNow = false
-
-  /**
-   * Returns whether this [Behavior] is active.
-   *
-   * @return Whether this [Behavior] is active.
-   */
-  fun isActive() = runningNow
-
-  /**
-   * Evaluates this [Behavior] and returns whether it should be active.
-   *
-   * @param delta The time in seconds since the last frame.
-   * @return Whether this [Behavior] should be active.
-   */
-  protected abstract fun evaluate(delta: Float): Boolean
-
-  /** Initializes this [Behavior]. This is called when this [Behavior] becomes active. */
-  protected abstract fun init()
-
-  /**
-   * Performs the action of this [Behavior].
-   *
-   * @param delta The time in seconds since the last frame.
-   */
-  protected abstract fun act(delta: Float)
-
-  /** Ends this [Behavior]. This is called when this [Behavior] becomes inactive. */
-  protected abstract fun end()
-
-  override fun update(delta: Float) {
-    val runningPrior = runningNow
-    runningNow = evaluate(delta)
-    if (runningNow && !runningPrior) {
-      init()
-    }
-    if (runningNow) {
-      act(delta)
-    }
-    if (!runningNow && runningPrior) {
-      end()
-    }
+  override fun init() {
+    init?.invoke()
   }
 
-  override fun reset() {
-    runningNow = false
+  override fun act(delta: Float) {
+    act?.invoke(delta)
+  }
+
+  override fun end() {
+    end?.invoke()
   }
 }

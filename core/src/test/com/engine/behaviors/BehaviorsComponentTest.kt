@@ -7,7 +7,7 @@ class BehaviorsComponentTest :
     DescribeSpec({
       describe("BehaviorComponent") {
         val behavior1 =
-            object : Behavior() {
+            object : IBehavior() {
               override fun evaluate(delta: Float): Boolean {
                 return delta > 0.0f
               }
@@ -20,7 +20,7 @@ class BehaviorsComponentTest :
             }
 
         val behavior2 =
-            object : Behavior() {
+            object : IBehavior() {
               override fun evaluate(delta: Float): Boolean {
                 return delta < 0.0f
               }

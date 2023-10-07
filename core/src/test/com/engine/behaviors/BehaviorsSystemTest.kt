@@ -11,7 +11,7 @@ class BehaviorsSystemTest :
       describe("BehaviorSystem") {
         lateinit var behaviorsComponent: BehaviorsComponent
         lateinit var behaviorsSystem: BehaviorsSystem
-        lateinit var behavior: Behavior
+        lateinit var behavior: IBehavior
         lateinit var entity: GameEntity
 
         beforeEach {

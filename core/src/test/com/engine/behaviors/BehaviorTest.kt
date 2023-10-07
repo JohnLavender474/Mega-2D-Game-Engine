@@ -7,8 +7,8 @@ import io.mockk.spyk
 
 class BehaviorTest :
     DescribeSpec({
-      describe("Behavior") {
-        class MockBehavior : Behavior() {
+      describe("IBehavior") {
+        class MockBehavior : IBehavior() {
 
           var evaluate = false
 

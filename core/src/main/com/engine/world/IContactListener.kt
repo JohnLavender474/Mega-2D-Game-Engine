@@ -9,27 +9,24 @@ interface IContactListener {
   /**
    * Called when a [Fixture] begins contact with another [Fixture].
    *
-   * @param f1 the first [Fixture]
-   * @param f2 the second [Fixture]
+   * @param contact the [Contact]
    * @param delta the delta time
    */
-  fun beginContact(f1: Fixture, f2: Fixture, delta: Float)
+  fun beginContact(contact: Contact, delta: Float)
 
   /**
    * Called when a [Fixture] continues contact with another [Fixture].
    *
-   * @param f1 the first [Fixture]
-   * @param f2 the second [Fixture]
+   * @param contact the [Contact]
    * @param delta the delta time
    */
-  fun continueContact(f1: Fixture, f2: Fixture, delta: Float)
+  fun continueContact(contact: Contact, delta: Float)
 
   /**
    * Called when a [Fixture] ends contact with another [Fixture].
    *
-   * @param f1 the first [Fixture]
-   * @param f2 the second [Fixture]
+   * @param contact the [Contact]
    * @param delta the delta time
    */
-  fun endContact(f1: Fixture, f2: Fixture, delta: Float)
+  fun endContact(contact: Contact, delta: Float)
 }

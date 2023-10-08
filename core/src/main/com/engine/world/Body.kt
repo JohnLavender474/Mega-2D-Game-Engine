@@ -1,13 +1,12 @@
 package com.engine.world
 
-import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedMap
+import com.engine.common.interfaces.Propertizable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
+import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.GameShape2DSupplier
-import kotlin.reflect.KClass
-import kotlin.reflect.cast
 
 /**
  * A [Body] is a [GameRectangle] representing the body of an object in the game world. It contains a
@@ -25,7 +24,7 @@ import kotlin.reflect.cast
  * @param height the height of the body
  * @param physics the [PhysicsData] of the body
  * @param fixtures the [OrderedMap] of [Fixture]s of the body
- * @param userData the [ObjectMap] of user data of the body
+ * @param properties the [Properties] of the body
  * @param preProcess the [Updatable] to run before the body is processed
  * @param postProcess the [Updatable] to run after the body is processed
  * @see GameRectangle
@@ -44,10 +43,10 @@ class Body(
     height: Float = 0f,
     var physics: PhysicsData = PhysicsData(),
     var fixtures: OrderedMap<String, Fixture> = OrderedMap(),
-    var userData: ObjectMap<String, Any?> = ObjectMap(),
+    override var properties: Properties = Properties(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
-) : GameRectangle(x, y, width, height), GameShape2DSupplier, Resettable {
+) : GameRectangle(x, y, width, height), GameShape2DSupplier, Resettable, Propertizable {
 
   /**
    * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and
@@ -56,7 +55,7 @@ class Body(
    * @param bodyType the [BodyType] of the body
    * @param physicsData the [PhysicsData] of the body
    * @param fixtures the [OrderedMap] of [Fixture]s of the body
-   * @param userData the [ObjectMap] of user data of the body
+   * @param properties the [Properties] of the body
    * @param preProcess the [Updatable] to run before the body is processed
    * @param postProcess the [Updatable] to run after the body is processed
    */
@@ -64,10 +63,10 @@ class Body(
       bodyType: BodyType,
       physicsData: PhysicsData,
       fixtures: OrderedMap<String, Fixture> = OrderedMap(),
-      userData: ObjectMap<String, Any?> = ObjectMap(),
+      properties: Properties = Properties(),
       preProcess: Updatable? = null,
       postProcess: Updatable? = null
-  ) : this(bodyType, 0f, 0f, 0f, 0f, physicsData, fixtures, userData, preProcess, postProcess)
+  ) : this(bodyType, 0f, 0f, 0f, 0f, physicsData, fixtures, properties, preProcess, postProcess)
 
   // the bounds of this body before the current world update cycle
   internal var previousBounds = GameRectangle()
@@ -88,32 +87,6 @@ class Body(
    * @return if the body is the given [BodyType]
    */
   fun isBodyType(bodyType: BodyType) = this.bodyType == bodyType
-
-  /**
-   * Returns the user data associated with the given key.
-   *
-   * @param key the key of the user data
-   * @return the user data associated with the given key
-   */
-  fun getUserData(key: String) = userData[key]
-
-  /**
-   * Returns the user data associated with the given key.
-   *
-   * @param key the key of the user data
-   * @param c the class of the user data
-   * @return the user data associated with the given key
-   */
-  fun <T : Any> getUserData(key: String, c: KClass<T>) = c.cast(userData[key])
-
-  /**
-   * Sets the user data associated with the given key to the given data.
-   *
-   * @param key the key of the user data
-   * @param data the data to set the user data to
-   * @return the value associated with the given key
-   */
-  fun setUserData(key: String, data: Any?) = userData.put(key, data)
 
   /**
    * Resets the body to its default state by resetting its [PhysicsData] and resetting the positions
@@ -138,6 +111,6 @@ class Body(
 
   override fun toString() =
       "Body(first=$x second=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
-          "physics=$physics, fixtures=$fixtures, userData=$userData, 9preProcess=$preProcess, " +
+          "physics=$physics, fixtures=$fixtures, properties=$properties, 9preProcess=$preProcess, " +
           "postProcess=$postProcess, previousBounds=$previousBounds)"
 }

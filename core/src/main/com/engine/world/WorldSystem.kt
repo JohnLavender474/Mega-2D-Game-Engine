@@ -150,14 +150,14 @@ class WorldSystem(
   internal fun processContacts() {
     currentContactSet.forEach {
       if (priorContactSet.contains(it)) {
-        contactListener.continueContact(it.fixture1, it.fixture2, fixedStep)
+        contactListener.continueContact(it, fixedStep)
       } else {
-        contactListener.beginContact(it.fixture1, it.fixture2, fixedStep)
+        contactListener.beginContact(it, fixedStep)
       }
     }
     priorContactSet.forEach {
       if (!currentContactSet.contains(it)) {
-        contactListener.endContact(it.fixture1, it.fixture2, fixedStep)
+        contactListener.endContact(it, fixedStep)
       }
     }
     priorContactSet = currentContactSet

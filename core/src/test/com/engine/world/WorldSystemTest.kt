@@ -208,9 +208,9 @@ class WorldSystemTest :
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
 
-            every { mockContactListener.beginContact(any(), any(), any()) } just Runs
-            every { mockContactListener.continueContact(any(), any(), any()) } just Runs
-            every { mockContactListener.endContact(any(), any(), any()) } just Runs
+            every { mockContactListener.beginContact(any(), any()) } just Runs
+            every { mockContactListener.continueContact(any(), any()) } just Runs
+            every { mockContactListener.endContact(any(), any()) } just Runs
 
             worldSystem.reset()
             worldSystem.add(entity1)
@@ -227,15 +227,15 @@ class WorldSystemTest :
                 }
 
             worldSystem.update(fixedStep)
-            verify(exactly = 1) { mockContactListener.beginContact(any(), any(), any()) }
+            verify(exactly = 1) { mockContactListener.beginContact(any(), any()) }
 
             worldSystem.update(fixedStep)
-            verify(exactly = 1) { mockContactListener.continueContact(any(), any(), any()) }
+            verify(exactly = 1) { mockContactListener.continueContact(any(), any()) }
 
             every { mockWorldGraph.get(any<GameShape2D>()) } returns ObjectSet()
 
             worldSystem.update(fixedStep)
-            verify(exactly = 1) { mockContactListener.endContact(any(), any(), any()) }
+            verify(exactly = 1) { mockContactListener.endContact(any(), any()) }
           }
 
           it("should process contacts correctly - test 2") {
@@ -245,9 +245,9 @@ class WorldSystemTest :
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
 
-            every { mockContactListener.beginContact(any(), any(), any()) } just Runs
-            every { mockContactListener.continueContact(any(), any(), any()) } just Runs
-            every { mockContactListener.endContact(any(), any(), any()) } just Runs
+            every { mockContactListener.beginContact(any(), any()) } just Runs
+            every { mockContactListener.continueContact(any(), any()) } just Runs
+            every { mockContactListener.endContact(any(), any()) } just Runs
 
             worldSystem.reset()
             worldSystem.add(entity1)
@@ -264,13 +264,13 @@ class WorldSystemTest :
                 }
 
             worldSystem.update(fixedStep * 2)
-            verify(exactly = 1) { mockContactListener.beginContact(any(), any(), any()) }
-            verify(exactly = 1) { mockContactListener.continueContact(any(), any(), any()) }
+            verify(exactly = 1) { mockContactListener.beginContact(any(), any()) }
+            verify(exactly = 1) { mockContactListener.continueContact(any(), any()) }
 
             every { mockWorldGraph.get(any<GameShape2D>()) } returns ObjectSet()
 
             worldSystem.update(fixedStep)
-            verify(exactly = 1) { mockContactListener.endContact(any(), any(), any()) }
+            verify(exactly = 1) { mockContactListener.endContact(any(), any()) }
           }
         }
 

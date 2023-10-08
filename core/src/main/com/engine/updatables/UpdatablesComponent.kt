@@ -13,4 +13,10 @@ import com.engine.entities.IGameEntity
 class UpdatablesComponent(
     override val entity: IGameEntity,
     val updatables: Array<Updatable> = Array()
-) : IGameComponent
+) : IGameComponent {
+
+  constructor(
+      entity: IGameEntity,
+      vararg updatables: Updatable
+  ) : this(entity, Array<Updatable>().apply { updatables.forEach { add(it) } })
+}

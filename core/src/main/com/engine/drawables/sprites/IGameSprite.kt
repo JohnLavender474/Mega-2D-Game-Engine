@@ -33,4 +33,12 @@ interface IGameSprite : IDrawableSprite, Positional, Sizable, Comparable<IGameSp
    * @see Texture
    */
   fun setTexture(texture: Texture?)
+
+  /**
+   * Sets the flip of this sprite.
+   *
+   * @param x Whether to flip this sprite horizontally.
+   * @param y Whether to flip this sprite vertically.
+   */
+  fun setFlip(x: Boolean, y: Boolean)
 }

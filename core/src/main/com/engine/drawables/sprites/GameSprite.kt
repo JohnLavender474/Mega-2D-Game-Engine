@@ -42,28 +42,32 @@ class GameSprite(
     }
   }
 
-  override fun setRegion(region: TextureRegion?) {
-    super<Sprite>.setRegion(region)
+  override fun setRegion(_region: TextureRegion?) {
+    super<Sprite>.setRegion(_region)
   }
 
-  override fun setTexture(texture: Texture?) {
-    super<Sprite>.setTexture(texture)
+  override fun setTexture(_texture: Texture?) {
+    super<Sprite>.setTexture(_texture)
   }
 
-  override fun translate(x: Float, y: Float) {
-    super<Sprite>.translate(x, y)
+  override fun translate(_x: Float, _y: Float) {
+    super<Sprite>.translate(_x, _y)
   }
 
-  override fun setSize(width: Float, height: Float) {
-    super<Sprite>.setSize(width, height)
+  override fun setSize(_width: Float, _height: Float) {
+    super<Sprite>.setSize(_width, _height)
   }
 
-  override fun setWidth(width: Float) {
-    super<Sprite>.setSize(width, height)
+  override fun setWidth(_width: Float) {
+    super<Sprite>.setSize(_width, height)
   }
 
-  override fun setHeight(height: Float) {
-    super<Sprite>.setSize(width, height)
+  override fun setHeight(_height: Float) {
+    super<Sprite>.setSize(width, _height)
+  }
+
+  override fun setFlip(_x: Boolean, _y: Boolean) {
+    super<Sprite>.setFlip(_x, _y)
   }
 
   override fun compareTo(other: IGameSprite) = priority.compareTo(other.priority)

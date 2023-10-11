@@ -16,7 +16,7 @@ import kotlin.math.min
  * @param height the tile height of the world
  * @param ppm the pixels per meter (tile) of the world
  */
-@Deprecated("Use instances of GraphMap instead")
+@Deprecated("Use instances of IGraphMap instead")
 class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
 
   private val bodies: HashMap<Pair<Int, Int>, ArrayList<Body>> = HashMap()

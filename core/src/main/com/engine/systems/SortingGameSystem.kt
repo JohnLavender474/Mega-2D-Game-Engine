@@ -14,6 +14,7 @@ import kotlin.reflect.KClass
  * @param comparator the [Comparator] to sort the [GameEntity]s with
  * @param componentMask the [Collection] of [KClass]es of [IGameComponent]s that this
  */
+/*
 abstract class SortingGameSystem(
     comparator: Comparator<IGameEntity>,
     componentMask: Iterable<KClass<out IGameComponent>>
@@ -27,3 +28,4 @@ abstract class SortingGameSystem(
       vararg componentMask: KClass<out IGameComponent>
   ) : this(comparator, componentMask.toList())
 }
+ */

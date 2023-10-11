@@ -1,7 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.shapes.GameShape2D
+import com.engine.common.shapes.IGameShape2D
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -11,7 +11,7 @@ import io.mockk.verify
 class FixtureTest :
     DescribeSpec({
       describe("Fixture class") {
-        val mockShape = mockk<GameShape2D>()
+        val mockShape = mockk<IGameShape2D>()
         val fixtureType = "type"
         val offset = Vector2(5f, 5f)
 
@@ -34,7 +34,7 @@ class FixtureTest :
         }
 
         it("should overlap with a shape") {
-          val otherShape = mockk<GameShape2D>()
+          val otherShape = mockk<IGameShape2D>()
           every { mockShape.overlaps(any()) } returns true
           fixture.overlaps(otherShape) shouldBe true
           verify { mockShape.overlaps(fixture.shape) }

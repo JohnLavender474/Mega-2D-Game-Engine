@@ -4,10 +4,10 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.objects.IntPair
-import com.engine.common.shapes.GameShape2D
+import com.engine.common.shapes.IGameShape2D
 
 /**
- * A simple implementation of [GraphMap] that stores objects in a map. This implementation is not
+ * A simple implementation of [IGraphMap] that stores objects in a map. This implementation is not
  * very efficient, but it is useful for testing. It is not recommended to use this implementation.
  *
  * @param width the width of the graph
@@ -20,11 +20,11 @@ class SimpleMockGraphMap(
     override val width: Int,
     override val height: Int,
     override val ppm: Int
-) : GraphMap {
+) : IGraphMap {
 
   private val objs = ObjectMap<IntPair, Array<Any>>()
 
-  override fun add(obj: Any, shape: GameShape2D): Boolean {
+  override fun add(obj: Any, shape: IGameShape2D): Boolean {
     val bounds = shape.getBoundingRectangle()
 
     val x = (bounds.x / ppm).toInt()

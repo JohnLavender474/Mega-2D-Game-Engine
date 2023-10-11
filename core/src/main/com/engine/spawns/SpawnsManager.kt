@@ -14,8 +14,8 @@ import com.engine.common.interfaces.Updatable
  */
 class SpawnsManager : Updatable, Resettable {
 
-  private val spawns = Array<Spawn>()
-  private val spawners = Array<ISpawner>()
+  internal val spawns = Array<Spawn>()
+  internal val spawners = Array<ISpawner>()
 
   /**
    * Returns a list of the [Spawn]s that were spawned since the last update, and then clears the

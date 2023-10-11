@@ -1,8 +1,7 @@
 package com.engine.graph
 
-import com.engine.common.objects.Array2D
 import com.engine.common.shapes.GameRectangle
-import com.engine.common.shapes.GameShape2D
+import com.engine.common.shapes.IGameShape2D
 import com.engine.world.Body
 import com.engine.world.BodyType
 import io.kotest.core.spec.style.DescribeSpec
@@ -53,7 +52,7 @@ class QuadTreeGraphMapTest :
               val cellObjects = quadTreeGraphMap.get(x, y)
 
               bodies
-                  .filter { it.overlaps(rectangle as GameShape2D) }
+                  .filter { it.overlaps(rectangle as IGameShape2D) }
                   .forEach { cellObjects shouldContain it }
             }
           }
@@ -89,7 +88,7 @@ class QuadTreeGraphMapTest :
               .filter {
                 it.overlaps(
                     GameRectangle(minX.toFloat(), minY.toFloat(), maxX.toFloat(), maxY.toFloat())
-                        as GameShape2D)
+                        as IGameShape2D)
               }
               .forEach { retrievedObjects shouldContain it }
         }

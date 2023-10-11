@@ -7,7 +7,7 @@ import com.engine.screens.levels.ILevelScreen
 
 /**
  * A [TiledMapLevelScreen] is a [ILevelScreen] that loads a tiled map and builds the layers using a
- * map of [TiledMapLayerBuilder]s.
+ * map of [ITiledMapLayerBuilder]s.
  *
  * @param batch the sprite batch
  * @param tmxSrc the path to the tmx file
@@ -19,11 +19,11 @@ abstract class TiledMapLevelScreen(protected val batch: SpriteBatch, protected v
   protected lateinit var tiledMapLevelRenderer: TiledMapLevelRenderer
 
   /**
-   * The map of layer names to [TiledMapLayerBuilder]s.
+   * The map of layer names to [ITiledMapLayerBuilder]s.
    *
-   * @see TiledMapLayerBuilder
+   * @see ITiledMapLayerBuilder
    */
-  protected abstract fun getLayerBuilders(): ObjectMap<String, TiledMapLayerBuilder>
+  protected abstract fun getLayerBuilders(): ObjectMap<String, ITiledMapLayerBuilder>
 
   /**
    * Calls the [TiledMapLevelRenderer] using the specified [OrthographicCamera].

@@ -4,14 +4,14 @@ import com.badlogic.gdx.maps.MapObjects
 import com.badlogic.gdx.utils.ObjectMap
 
 /**
- * A [TiledMapLayerBuilder] is used to build a [MapObjects] layer. It is used in conjunction with
+ * A [ITiledMapLayerBuilder] is used to build a [MapObjects] layer. It is used in conjunction with
  * [TiledMapLevelBuilder]. The [TiledMapLevelBuilder] will iterate over each layer and call the
- * [TiledMapLayerBuilder.build] method. The [TiledMapLayerBuilder.build] method will be passed the
+ * [ITiledMapLayerBuilder.build] method. The [ITiledMapLayerBuilder.build] method will be passed the
  * [MapObjects] for that layer.
  *
  * @see TiledMapLevelBuilder
  */
-fun interface TiledMapLayerBuilder {
+fun interface ITiledMapLayerBuilder {
 
   /**
    * Builds the [MapObjects] for a layer.
@@ -23,8 +23,8 @@ fun interface TiledMapLayerBuilder {
 
 /**
  * A [TiledMapLevelBuilder] is used to build a level from a [Map] of [MapObjects] layers. It is used
- * in conjunction with [TiledMapLayerBuilder]. The [TiledMapLevelBuilder] will iterate over each
- * layer and call the [TiledMapLayerBuilder.build] method. The [TiledMapLayerBuilder.build] method
+ * in conjunction with [ITiledMapLayerBuilder]. The [TiledMapLevelBuilder] will iterate over each
+ * layer and call the [ITiledMapLayerBuilder.build] method. The [ITiledMapLayerBuilder.build] method
  * will be passed the [MapObjects] for that layer.
  */
 object TiledMapLevelBuilder {
@@ -33,10 +33,10 @@ object TiledMapLevelBuilder {
    * Builds from a map containing [MapObjects] layers.
    *
    * @param map the map of layer names to [MapObjects]
-   * @param layerBuilders the map of layer names to [TiledMapLayerBuilder]
-   * @see TiledMapLayerBuilder
+   * @param layerBuilders the map of layer names to [ITiledMapLayerBuilder]
+   * @see ITiledMapLayerBuilder
    */
-  fun build(map: ObjectMap<String, MapObjects>, layerBuilders: ObjectMap<String, TiledMapLayerBuilder>) {
+  fun build(map: ObjectMap<String, MapObjects>, layerBuilders: ObjectMap<String, ITiledMapLayerBuilder>) {
     map.forEach { e ->
       val layerName = e.key
       val objects = e.value

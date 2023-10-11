@@ -5,7 +5,7 @@ import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.Matrix
 import com.engine.common.objects.pairTo
-import com.engine.graph.GraphMap
+import com.engine.graph.IGraphMap
 import com.engine.graph.SimpleMockGraphMap
 import com.engine.graph.convertToWorldCoordinate
 import io.kotest.core.spec.style.DescribeSpec
@@ -14,7 +14,7 @@ import io.kotest.matchers.shouldNotBe
 
 class PathfinderTest :
     DescribeSpec({
-      lateinit var graph: GraphMap
+      lateinit var graph: IGraphMap
 
       fun createPathfinderParams(matrix: Matrix<String>, allowDiagonal: Boolean): PathfinderParams {
         lateinit var startSupplier: () -> Vector2

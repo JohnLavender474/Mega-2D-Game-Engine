@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
-import com.engine.graph.GraphMap
+import com.engine.graph.IGraphMap
 import com.engine.systems.GameSystem
 import kotlin.math.abs
 
@@ -14,7 +14,7 @@ import kotlin.math.abs
  * A system that handles the physics of the game. This system is responsible for updating the
  * positions of all bodies, resolving collisions, and notifying the [IContactListener] of any
  * contacts that occur. This system is stateful. This system processes entities that have a
- * [BodyComponent]. This system uses a [GraphMap] to determine which bodies are overlapping.
+ * [BodyComponent]. This system uses a [IGraphMap] to determine which bodies are overlapping.
  *
  * This system uses a [IContactListener] to notify of contacts.
  *
@@ -42,7 +42,7 @@ import kotlin.math.abs
  */
 class WorldSystem(
   private val contactListener: IContactListener,
-  private val worldGraph: GraphMap,
+  private val worldGraphSupplier: () -> IGraphMap,
   private val fixedStep: Float,
   private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
   private val contactFilterMap: ObjectMap<String, Set<String>>? = null,
@@ -69,7 +69,7 @@ class WorldSystem(
     accumulator = 0f
     priorContactSet.clear()
     currentContactSet.clear()
-    worldGraph.reset()
+    worldGraphSupplier().reset()
   }
 
   /**
@@ -82,7 +82,7 @@ class WorldSystem(
    */
   internal fun cycle(entities: ImmutableCollection<IGameEntity>, delta: Float) {
     preProcess(entities, delta)
-    worldGraph.reset()
+    worldGraphSupplier().reset()
     entities.forEach { processPhysicsAndGraph(it, delta) }
     entities.forEach { processContactsAndCollisions(it) }
     processContacts()
@@ -91,7 +91,7 @@ class WorldSystem(
 
   /**
    * Pre-processes the entities. This method is called by the [cycle] method. This method is
-   * responsible for resetting the [GraphMap] and the [PhysicsData] of all bodies, and updating the
+   * responsible for resetting the [IGraphMap] and the [PhysicsData] of all bodies, and updating the
    * [Updatable]s of all bodies.
    *
    * @param entities the [Collection] of [IGameEntity]s to process
@@ -116,8 +116,8 @@ class WorldSystem(
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       updatePhysics(b, delta)
       updateFixturePositions(b)
-      worldGraph.add(b)
-      b.fixtures.values().forEach { f -> worldGraph.add(f) }
+      worldGraphSupplier().add(b)
+      b.fixtures.values().forEach { f -> worldGraphSupplier().add(f) }
     }
   }
 
@@ -235,7 +235,7 @@ class WorldSystem(
       if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
         val overlapping = ObjectSet<Fixture>()
 
-        worldGraph.get(f.getGameShape2D()).forEach {
+        worldGraphSupplier().get(f.getGameShape2D()).forEach {
           if (it is Fixture && it.active && filterContact(f, it)) {
             overlapping.add(it)
           }
@@ -253,7 +253,7 @@ class WorldSystem(
    * @param body the [Body] to resolve the collisions of
    */
   internal fun resolveCollisions(body: Body) {
-    worldGraph.get(body).filterIsInstance<Body>().forEach {
+    worldGraphSupplier().get(body).filterIsInstance<Body>().forEach {
       collisionHandler.handleCollision(body, it)
     }
   }

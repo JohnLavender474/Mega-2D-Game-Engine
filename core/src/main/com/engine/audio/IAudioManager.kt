@@ -17,7 +17,7 @@ interface IAudioManager : Updatable {
   /**
    * Sets the volume of music.
    *
-   * @param volume The volume of musicSuppliers.
+   * @param volume The volume of music.
    */
   fun setMusicVolume(volume: Int)
 
@@ -60,23 +60,23 @@ interface IAudioManager : Updatable {
   /**
    * Stops a music.
    *
-   * @param source The source of the musicSuppliers.
+   * @param source The source of the music.
    */
   fun stopMusic(source: String)
 
   /**
    * Pauses a music.
    *
-   * @param source The source of the musicSuppliers.
+   * @param source The source of the music.
    */
   fun pauseMusic(source: String)
 
   /**
-   * Resumes a music.
+   * Plays a music.
    *
-   * @param source The source of the musicSuppliers.
+   * @param source The source of the music.
    */
-  fun playMusic(source: String, onCompletionListener: ((Music) -> Unit)? = null)
+  fun playMusic(source: String, loop: Boolean, onCompletionListener: ((Music) -> Unit)? = null)
 
   /** Stops all music. */
   fun stopAllMusic()

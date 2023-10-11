@@ -4,10 +4,9 @@ import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.engine.audio.AudioManager
@@ -32,8 +31,6 @@ abstract class Game2D : IGame2D, Game() {
   override lateinit var eventsMan: IEventsManager
 
   override lateinit var gameEngine: IGameEngine
-
-  override val disposables = Array<Disposable>()
 
   override val screens = ObjectMap<String, Screen>()
   override val viewports = ObjectMap<String, Viewport>()
@@ -86,6 +83,9 @@ abstract class Game2D : IGame2D, Game() {
   }
 
   override fun render() {
+    Gdx.gl20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+    Gdx.graphics.gL20.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
     val delta = Gdx.graphics.deltaTime
 
     audioMan.update(delta)
@@ -115,9 +115,8 @@ abstract class Game2D : IGame2D, Game() {
   }
 
   override fun dispose() {
+    batch.dispose()
+    shapeRenderer.dispose()
     screens.values().forEach { it.dispose() }
-    screens.clear()
-    disposables.forEach { it.dispose() }
-    disposables.clear()
   }
 }

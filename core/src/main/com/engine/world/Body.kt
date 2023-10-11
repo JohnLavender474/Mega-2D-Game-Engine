@@ -6,7 +6,7 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
-import com.engine.common.shapes.GameShape2DSupplier
+import com.engine.common.shapes.IGameShape2DSupplier
 
 /**
  * A [Body] is a [GameRectangle] representing the body of an object in the game world. It contains a
@@ -46,7 +46,7 @@ class Body(
     override var properties: Properties = Properties(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
-) : GameRectangle(x, y, width, height), GameShape2DSupplier, Resettable, Propertizable {
+) : GameRectangle(x, y, width, height), IGameShape2DSupplier, Resettable, Propertizable {
 
   /**
    * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and

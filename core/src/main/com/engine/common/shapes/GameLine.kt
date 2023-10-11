@@ -12,21 +12,21 @@ import kotlin.math.min
  * @param point1 The first point of this line.
  * @param point2 The second point of this line.
  */
-class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
+class GameLine(val point1: Vector2, val point2: Vector2) : IGameShape2D {
 
   companion object {
-    private var OVERLAP_EXTENSION: ((GameLine, GameShape2D) -> Boolean)? = null
+    private var OVERLAP_EXTENSION: ((GameLine, IGameShape2D) -> Boolean)? = null
 
     /**
      * Sets the overlap extension function to the given function. This function will be called when
-     * [GameLine.overlaps] is called with a [GameShape2D] that is not a [GameRectangle] or
-     * [GameLine]. This function should return true if the given [GameShape2D] overlaps this
+     * [GameLine.overlaps] is called with a [IGameShape2D] that is not a [GameRectangle] or
+     * [GameLine]. This function should return true if the given [IGameShape2D] overlaps this
      * [GameLine] and false otherwise.
      *
      * @param overlapExtension The function to call when [GameLine.overlaps] is called with a
-     *   [GameShape2D] that is not a [GameRectangle] or [GameLine].
+     *   [IGameShape2D] that is not a [GameRectangle] or [GameLine].
      */
-    fun setOverlapExtension(overlapExtension: (GameLine, GameShape2D) -> Boolean) {
+    fun setOverlapExtension(overlapExtension: (GameLine, IGameShape2D) -> Boolean) {
       OVERLAP_EXTENSION = overlapExtension
     }
   }
@@ -79,13 +79,13 @@ class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
     return this
   }
 
-  override fun setX(x: Float): GameShape2D {
+  override fun setX(x: Float): IGameShape2D {
     val pointToMove = if (point1.x < point2.x) point1 else point2
     val translateX = x - pointToMove.x
     return translation(translateX, 0f)
   }
 
-  override fun setY(y: Float): GameShape2D {
+  override fun setY(y: Float): IGameShape2D {
     val pointToMove = if (point1.y < point2.y) point1 else point2
     val translateY = y - pointToMove.y
     return translation(0f, translateY)
@@ -113,7 +113,7 @@ class GameLine(val point1: Vector2, val point2: Vector2) : GameShape2D {
 
   override fun copy(): GameLine = GameLine(this)
 
-  override fun overlaps(other: GameShape2D) =
+  override fun overlaps(other: IGameShape2D) =
       when (other) {
         is GameRectangle -> Intersector.intersectSegmentRectangle(point1, point2, other)
         is GameLine ->

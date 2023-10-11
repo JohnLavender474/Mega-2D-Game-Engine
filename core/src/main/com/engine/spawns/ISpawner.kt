@@ -19,5 +19,13 @@ interface ISpawner : UpdatePredicate, ICullable {
    *
    * @return the [Spawn] if the [test] method returns true.
    */
-  fun get(): Spawn
+  fun get(): Spawn?
+
+  /**
+   * Returns true if the [Spawn] should be culled. If this method returns true, then this [Spawn].
+   * By default, returns false always
+   *
+   * @return true if the [Spawn] should be culled.
+   */
+  override fun shouldBeCulled() = false
 }

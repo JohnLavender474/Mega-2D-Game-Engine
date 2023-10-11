@@ -145,9 +145,10 @@ class AudioManager(private val assetManager: AssetManager) : IAudioManager {
 
   override fun pauseMusic(source: String) = assetManager.get(source, Music::class.java).pause()
 
-  override fun playMusic(source: String, onCompletionListener: ((Music) -> Unit)?) {
+  override fun playMusic(source: String, loop: Boolean, onCompletionListener: ((Music) -> Unit)?) {
     val music = assetManager.get(source, Music::class.java)
     music.volume = musicVolume.toFloat()
+    music.isLooping = loop
     music.play()
     onCompletionListener?.let { music.setOnCompletionListener(it) }
     playingMusic.add(source)

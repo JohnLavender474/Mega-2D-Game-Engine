@@ -30,8 +30,6 @@ interface IGame2D : ApplicationListener {
 
   var gameEngine: IGameEngine
 
-  val disposables: Array<Disposable>
-
   val screens: ObjectMap<String, Screen>
   val viewports: ObjectMap<String, Viewport>
   val currentScreen: Screen?

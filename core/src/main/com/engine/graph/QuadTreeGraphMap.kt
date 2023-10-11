@@ -5,10 +5,10 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameRectangle
-import com.engine.common.shapes.GameShape2D
+import com.engine.common.shapes.IGameShape2D
 
 /**
- * A [GraphMap] that uses a quad tree to store and retrieve objects.
+ * A [IGraphMap] that uses a quad tree to store and retrieve objects.
  *
  * @param width The width of the graph.
  * @param height The height of the graph.
@@ -22,7 +22,7 @@ open class QuadTreeGraphMap(
     override val height: Int,
     override val ppm: Int,
     val depth: Int
-) : GraphMap {
+) : IGraphMap {
 
   protected val objects = ObjectMap<IntPair, Array<Any>>()
 
@@ -64,7 +64,7 @@ open class QuadTreeGraphMap(
    */
   protected fun add(
       obj: Any,
-      shape: GameShape2D,
+      shape: IGameShape2D,
       currentDepth: Int,
       minX: Int,
       minY: Int,
@@ -105,7 +105,7 @@ open class QuadTreeGraphMap(
     return false
   }
 
-  override fun add(obj: Any, shape: GameShape2D) = add(obj, shape, 0, 0, 0, width, height)
+  override fun add(obj: Any, shape: IGameShape2D) = add(obj, shape, 0, 0, 0, width, height)
 
   override fun reset() = objects.clear()
 }

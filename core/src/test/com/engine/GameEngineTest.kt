@@ -94,7 +94,7 @@ class GameEngineTest :
           mockSystem2.contains(mockEntity2) shouldBe true
 
           verify(exactly = 1) { mockEntity1.spawn(props1) }
-          verify(exactly = 1) { mockEntity2.spawn(props1) }
+          verify(exactly = 1) { mockEntity2.spawn(props2) }
         }
 
         it("should purge entities when reset is called") {

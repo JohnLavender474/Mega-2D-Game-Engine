@@ -9,8 +9,8 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
 import com.engine.common.shapes.GameRectangle
-import com.engine.common.shapes.GameShape2D
-import com.engine.common.shapes.GameShape2DSupplier
+import com.engine.common.shapes.IGameShape2D
+import com.engine.common.shapes.IGameShape2DSupplier
 
 /** The minimum and maximum first and second coordinates of an object. */
 data class MinsAndMaxes(val minX: Int, val minY: Int, val maxX: Int, val maxY: Int)
@@ -21,7 +21,7 @@ data class MinsAndMaxes(val minX: Int, val minY: Int, val maxX: Int, val maxY: I
  * @param obj the object to get the minimum and maximum first and second coordinates of
  * @return the minimum and maximum first and second coordinates of the given object
  */
-fun GraphMap.convertToMinsAndMaxes(obj: GameShape2D): MinsAndMaxes {
+fun IGraphMap.convertToMinsAndMaxes(obj: IGameShape2D): MinsAndMaxes {
   val minX = floor(obj.getX() / ppm) - 1
   val minY = floor(obj.getY() / ppm) - 1
   val maxX = ceil(obj.getMaxX() / ppm) + 1
@@ -37,7 +37,7 @@ fun GraphMap.convertToMinsAndMaxes(obj: GameShape2D): MinsAndMaxes {
  * @param worldY the second coordinate
  * @return the graph coordinates
  */
-fun GraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
+fun IGraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
   var graphX = (worldX / ppm).toInt()
   var graphY = (worldY / ppm).toInt()
 
@@ -57,7 +57,7 @@ fun GraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
 }
 
 /** @see [convertToGraphCoordinate] */
-fun GraphMap.convertToGraphCoordinate(v: Vector2) = convertToGraphCoordinate(v.x, v.y)
+fun IGraphMap.convertToGraphCoordinate(v: Vector2) = convertToGraphCoordinate(v.x, v.y)
 
 /**
  * Converts the given first and second coordinates to world coordinates.
@@ -66,11 +66,11 @@ fun GraphMap.convertToGraphCoordinate(v: Vector2) = convertToGraphCoordinate(v.x
  * @param y the second coordinate
  * @return the world coordinates
  */
-fun GraphMap.convertToWorldCoordinate(x: Int, y: Int) =
+fun IGraphMap.convertToWorldCoordinate(x: Int, y: Int) =
     Vector2(x * ppm.toFloat(), y * ppm.toFloat())
 
 /** @see [convertToWorldCoordinate] */
-fun GraphMap.convertToWorldCoordinate(coordinate: IntPair) =
+fun IGraphMap.convertToWorldCoordinate(coordinate: IntPair) =
     convertToWorldCoordinate(coordinate.first, coordinate.second)
 
 /**
@@ -80,7 +80,7 @@ fun GraphMap.convertToWorldCoordinate(coordinate: IntPair) =
  * @param _y the second coordinate
  * @return true if the given coordinates are out of bounds, false otherwise
  */
-fun GraphMap.isOutOfBounds(_x: Int, _y: Int) =
+fun IGraphMap.isOutOfBounds(_x: Int, _y: Int) =
     _x < x || _y < y || _x >= x + width || _y >= y + height
 
 /**
@@ -89,10 +89,10 @@ fun GraphMap.isOutOfBounds(_x: Int, _y: Int) =
  * @param coordinate the coordinate
  * @return true if the given coordinate is out of bounds, false otherwise
  */
-fun GraphMap.isOutOfBounds(coordinate: IntPair) = isOutOfBounds(coordinate.first, coordinate.second)
+fun IGraphMap.isOutOfBounds(coordinate: IntPair) = isOutOfBounds(coordinate.first, coordinate.second)
 
 /** A graph that can be used to store and retrieve objects. */
-interface GraphMap : Resettable {
+interface IGraphMap : Resettable {
 
   val x: Int
   val y: Int
@@ -106,21 +106,21 @@ interface GraphMap : Resettable {
    * @param obj the object to add
    * @param shape the shape of the object
    */
-  fun add(obj: Any, shape: GameShape2D): Boolean
+  fun add(obj: Any, shape: IGameShape2D): Boolean
 
   /**
    * Adds the given object to this graph.
    *
    * @param obj the object to add
    */
-  fun add(obj: GameShape2DSupplier) = add(obj, obj.getGameShape2D())
+  fun add(obj: IGameShape2DSupplier) = add(obj, obj.getGameShape2D())
 
   /**
    * Adds the given objects to this graph.
    *
    * @param objs the objects to add
    */
-  fun addAll(objs: Collection<GameShape2DSupplier>) = objs.forEach { add(it) }
+  fun addAll(objs: Collection<IGameShape2DSupplier>) = objs.forEach { add(it) }
 
   /** @see [get(Int, Int)] */
   fun get(coordinate: IntPair) = get(coordinate.first, coordinate.second)
@@ -160,5 +160,5 @@ interface GraphMap : Resettable {
    * @param shape the shape to get the area from
    * @return the objects in the specified area
    */
-  fun get(shape: GameShape2D) = get(convertToMinsAndMaxes(shape))
+  fun get(shape: IGameShape2D) = get(convertToMinsAndMaxes(shape))
 }

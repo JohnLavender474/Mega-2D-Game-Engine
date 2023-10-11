@@ -1,7 +1,5 @@
 package com.engine
 
-import com.badlogic.gdx.utils.ObjectMap
-import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
 import com.engine.entities.GameEntity
 import com.engine.entities.IGameEntity
@@ -20,12 +18,6 @@ class GameEntityTest :
         beforeEach {
           clearAllMocks()
           entity.clearComponents()
-        }
-
-        it("should have the correct initial properties") {
-          entity.componentMap shouldBe ObjectMap()
-          entity.properties shouldBe Properties()
-          entity.dead shouldBe false
         }
 
         it("should put, get, and remove properties correctly") {

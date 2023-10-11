@@ -1,6 +1,8 @@
 package com.engine.drawables.sprites
 
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
@@ -9,6 +11,7 @@ import io.mockk.*
 class SpriteSystemTest :
     DescribeSpec({
       describe("SpriteSystem") {
+        lateinit var mockCam: Camera
         lateinit var mockBatch: Batch
         lateinit var mockSprite1: IGameSprite
         lateinit var mockSprite2: IGameSprite
@@ -25,7 +28,12 @@ class SpriteSystemTest :
         beforeEach {
           clearAllMocks()
 
-          mockBatch = mockk()
+          mockCam = mockk()
+          mockBatch = mockk {
+            every { projectionMatrix = any<Matrix4>() } just Runs
+            every { begin() } just Runs
+            every { end() } just Runs
+          }
 
           mockSprite1 = createMockSprite(1)
           mockSprite2 = createMockSprite(-1)
@@ -44,7 +52,7 @@ class SpriteSystemTest :
           entity.addComponent(mockSpriteComponent)
           entity.dead = false
 
-          spriteSystem = SpriteSystem(mockBatch)
+          spriteSystem = SpriteSystem(mockCam, mockBatch)
           spriteSystem.on = true
           spriteSystem.add(entity)
         }

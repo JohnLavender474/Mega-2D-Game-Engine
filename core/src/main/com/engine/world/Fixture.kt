@@ -3,8 +3,8 @@ package com.engine.world
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.interfaces.Propertizable
 import com.engine.common.objects.Properties
-import com.engine.common.shapes.GameShape2D
-import com.engine.common.shapes.GameShape2DSupplier
+import com.engine.common.shapes.IGameShape2D
+import com.engine.common.shapes.IGameShape2DSupplier
 
 /**
  * A fixture for a [Body]. A fixture is a shape that is attached to a body. It can be used to detect
@@ -22,13 +22,13 @@ import com.engine.common.shapes.GameShape2DSupplier
  * @param properties The properties of this fixture.
  */
 class Fixture(
-    var shape: GameShape2D,
+    var shape: IGameShape2D,
     var fixtureType: String,
     var active: Boolean = true,
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),
     override var properties: Properties = Properties(),
-) : GameShape2DSupplier, Propertizable {
+) : IGameShape2DSupplier, Propertizable {
 
   override fun getGameShape2D() = shape
 
@@ -36,9 +36,9 @@ class Fixture(
    * Returns if this fixture's shape overlaps the given shape.
    *
    * @return Whether this fixture's shape overlaps the given shape.
-   * @see GameShape2D.overlaps
+   * @see IGameShape2D.overlaps
    */
-  fun overlaps(other: GameShape2D) = shape.overlaps(other)
+  fun overlaps(other: IGameShape2D) = shape.overlaps(other)
 
   /**
    * Returns if this fixture overlaps the given fixture. Specifically, this method returns if this

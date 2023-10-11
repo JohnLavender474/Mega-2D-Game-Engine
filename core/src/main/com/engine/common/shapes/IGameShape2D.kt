@@ -6,18 +6,18 @@ import com.engine.drawables.shapes.IDrawableShape
 
 /**
  * A 2D shape that can be used in a game. This shape is a [Shape2D]. For convenience reasons, this
- * also extends [GameShape2DSupplier].
+ * also extends [IGameShape2DSupplier].
  *
  * @see Shape2D
  */
-interface GameShape2D : Shape2D, IDrawableShape {
+interface IGameShape2D : Shape2D, IDrawableShape {
 
   /**
    * Returns a copy of this shape.
    *
    * @return A copy of this shape.
    */
-  fun copy(): GameShape2D
+  fun copy(): IGameShape2D
 
   /**
    * Returns whether this shape overlaps the given shape.
@@ -25,7 +25,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param other The shape to check if this shape overlaps.
    * @return Whether this shape overlaps the given shape.
    */
-  fun overlaps(other: GameShape2D): Boolean
+  fun overlaps(other: IGameShape2D): Boolean
 
   /**
    * Returns the bounding rectangle of this shape.
@@ -49,7 +49,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param second The second position to set this shape's second to.
    * @return This shape.
    */
-  fun setPosition(x: Float, y: Float): GameShape2D {
+  fun setPosition(x: Float, y: Float): IGameShape2D {
     setX(x)
     setY(y)
     return this
@@ -61,7 +61,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param x The first position to set this shape's first position to.
    * @return This shape.
    */
-  fun setX(x: Float): GameShape2D
+  fun setX(x: Float): IGameShape2D
 
   /**
    * Sets the second position of this shape to the given second position.
@@ -69,7 +69,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param y The second position to set this shape's second position to.
    * @return This shape.
    */
-  fun setY(y: Float): GameShape2D
+  fun setY(y: Float): IGameShape2D
 
   /**
    * Returns the first position of this shape.
@@ -98,7 +98,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param maxX The value to set the max first coordinate of this shape to.
    * @return This shape.
    */
-  fun setMaxX(maxX: Float): GameShape2D
+  fun setMaxX(maxX: Float): IGameShape2D
 
   /**
    * Sets the max second coordinate of this shape to the given value.
@@ -106,7 +106,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param maxY The value to set the max second coordinate of this shape to.
    * @return This shape.
    */
-  fun setMaxY(maxY: Float): GameShape2D
+  fun setMaxY(maxY: Float): IGameShape2D
 
   /**
    * Returns the max first coordinate of this shape.
@@ -144,7 +144,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param centerY The second coordinate of the center to set this shape's center to.
    * @return This shape.
    */
-  fun setCenter(centerX: Float, centerY: Float): GameShape2D
+  fun setCenter(centerX: Float, centerY: Float): IGameShape2D
 
   /**
    * Sets the first coordinate of this shape's center to the given first coordinate.
@@ -152,7 +152,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param centerX The first coordinate to set this shape's center to.
    * @return This shape.
    */
-  fun setCenterX(centerX: Float): GameShape2D
+  fun setCenterX(centerX: Float): IGameShape2D
 
   /**
    * Sets the second coordinate of this shape's center to the given second coordinate.
@@ -160,7 +160,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param centerY The second coordinate to set this shape's center to.
    * @return This shape.
    */
-  fun setCenterY(centerY: Float): GameShape2D
+  fun setCenterY(centerY: Float): IGameShape2D
 
   /**
    * Translates this shape by the given translation.
@@ -169,7 +169,7 @@ interface GameShape2D : Shape2D, IDrawableShape {
    * @param translateY The second value of the translation.
    * @return This shape.
    */
-  fun translation(translateX: Float, translateY: Float): GameShape2D
+  fun translation(translateX: Float, translateY: Float): IGameShape2D
 
   /**
    * Translates this shape by the given translation.

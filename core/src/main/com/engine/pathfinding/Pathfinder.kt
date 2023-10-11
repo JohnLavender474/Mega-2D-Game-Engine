@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
-import com.engine.graph.GraphMap
+import com.engine.graph.IGraphMap
 import com.engine.graph.convertToGraphCoordinate
 import com.engine.graph.convertToWorldCoordinate
 import com.engine.graph.isOutOfBounds
@@ -26,7 +26,7 @@ import kotlin.math.abs
  * @param params the parameters used to create this pathfinder
  * @see [IPathfinder]
  */
-class Pathfinder(private val graph: GraphMap, private val params: PathfinderParams) : IPathfinder {
+class Pathfinder(private val graph: IGraphMap, private val params: PathfinderParams) : IPathfinder {
 
   /**
    * A node in the graph. A node is a point in the graph that has a position and a list of edges

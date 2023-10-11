@@ -16,18 +16,18 @@ import com.engine.common.enums.Position
 open class GameRectangle : Rectangle, PositionalGameShape2D {
 
   companion object {
-    private var OVERLAP_EXTENSION: ((GameRectangle, GameShape2D) -> Boolean)? = null
+    private var OVERLAP_EXTENSION: ((GameRectangle, IGameShape2D) -> Boolean)? = null
 
     /**
      * Sets the overlap extension function to the given function. This function will be called when
-     * [GameRectangle.overlaps] is called with a [GameShape2D] that is not a [GameRectangle] or
-     * [GameLine]. This function should return true if the given [GameShape2D] overlaps this
+     * [GameRectangle.overlaps] is called with a [IGameShape2D] that is not a [GameRectangle] or
+     * [GameLine]. This function should return true if the given [IGameShape2D] overlaps this
      * [GameRectangle] and false otherwise.
      *
      * @param overlapExtension The function to call when [GameRectangle.overlaps] is called with a
-     *   [GameShape2D] that is not a [GameRectangle] or [GameLine].
+     *   [IGameShape2D] that is not a [GameRectangle] or [GameLine].
      */
-    fun setOverlapExtension(overlapExtension: (GameRectangle, GameShape2D) -> Boolean) {
+    fun setOverlapExtension(overlapExtension: (GameRectangle, IGameShape2D) -> Boolean) {
       OVERLAP_EXTENSION = overlapExtension
     }
   }
@@ -119,7 +119,7 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
 
   override fun getMaxY() = y + height
 
-  override fun overlaps(other: GameShape2D) =
+  override fun overlaps(other: IGameShape2D) =
       when (other) {
         is GameRectangle -> Intersector.overlaps(this, other)
         is GameLine -> Intersector.intersectSegmentRectangle(other.point1, other.point2, this)

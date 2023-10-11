@@ -1,7 +1,7 @@
 package com.engine.world
 
-import com.engine.common.extensions.objectMapOf
 import com.engine.common.extensions.orderedMapOf
+import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -14,14 +14,14 @@ class BodyTest :
         val bodyType = BodyType.ABSTRACT
         val physicsData = PhysicsData()
         val fixtures = orderedMapOf<String, Fixture>()
-        val userData = objectMapOf<String, Any?>()
-        val body = Body(bodyType, physicsData, fixtures, userData)
+        val props = Properties()
+        val body = Body(bodyType, physicsData, fixtures, properties = props)
 
         it("should have the correct initial properties") {
           body.bodyType shouldBe bodyType
           body.physics shouldBe physicsData
           body.fixtures shouldBe fixtures
-          body.userData shouldBe userData
+          body.properties shouldBe props
           body.preProcess shouldBe null
           body.postProcess shouldBe null
         }
@@ -47,9 +47,9 @@ class BodyTest :
         it("should get user data correctly") {
           val key = "key"
           val value = "value"
-          body.setUserData(key, value)
-          val userDataValue = body.getUserData(key, String::class)
-          userDataValue shouldBe value
+          body.putProperty(key, value)
+          val propsValue = body.getProperty(key, String::class)
+          propsValue shouldBe value
         }
 
         it("should reset correctly") {
@@ -61,8 +61,8 @@ class BodyTest :
         }
 
         it("should have proper equals and hashCode implementations") {
-          val body1 = Body(bodyType, physicsData, fixtures, userData)
-          val body2 = Body(bodyType, physicsData, fixtures, userData)
+          val body1 = Body(bodyType, physicsData, fixtures, props)
+          val body2 = Body(bodyType, physicsData, fixtures, props)
           (body1 == body2) shouldBe false
           body1.hashCode() shouldBe System.identityHashCode(body1)
           body2.hashCode() shouldBe System.identityHashCode(body2)

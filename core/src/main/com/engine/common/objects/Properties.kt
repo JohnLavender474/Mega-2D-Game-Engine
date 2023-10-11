@@ -10,8 +10,8 @@ import kotlin.reflect.cast
  * @param pairs The key-value pairs.
  * @return A [Properties] instance with the given key-value pairs.
  */
-fun props(vararg pairs: Pair<String, Any?>) =
-    Properties().apply { pairs.forEach { put(it.first, it.second) } }
+fun props(vararg pairs: Pair<Any, Any?>) =
+    Properties().apply { pairs.forEach { put(it.first.toString(), it.second) } }
 
 /** A [HashMap] that stores [String] keys and [Any] type values. */
 class Properties : ObjectMap<String, Any?> {
@@ -47,11 +47,21 @@ class Properties : ObjectMap<String, Any?> {
   constructor(m: ObjectMap<String, Any?>) : super(m)
 
   /**
+   * Constructs a new [Properties] instance with the same mappings as the specified map. The keys
+   * are converted to [String]s via the objects' [Any.toString] method.
+   *
+   * @param m the map whose mappings are to be placed in this map.
+   */
+  constructor(m: ObjectMap<Any, Any?>) : this() {
+    m.forEach { put(it.key.toString(), it.value) }
+  }
+
+  /**
    * Gets a property and casts it.
    *
    * @param key The key of the property.
    * @param type The type to cast the property to.
    * @return The property cast to the given type.
    */
-  fun <T : Any> get(key: String, type: KClass<T>) = get(key)?.let { type.cast(it) }
+  fun <T : Any> get(key: Any, type: KClass<T>) = get(key.toString())?.let { type.cast(it) }
 }

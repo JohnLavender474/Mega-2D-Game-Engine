@@ -1,6 +1,7 @@
 package com.engine.common.objects
 
 import com.badlogic.gdx.utils.ObjectMap
+import com.engine.common.extensions.putIfAbsentAndGet
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -75,6 +76,18 @@ class Properties {
    */
   fun put(key: Any, value: Any?) = props.put(key, value)
 
+  /**
+   * Puts a property into this [Properties] instance if it does not already have a value. If the
+   * property does have a value then the value is returned.
+   *
+   * @param key The key of the property.
+   * @param mappingFunction The function to compute a value.
+   * @return The current (existing or computed) value associated with the specified key, or null if
+   *   the computed value is null.
+   */
+  fun putIfAbsentAndGet(key: Any, mappingFunction: (Any) -> Any?) =
+      props.putIfAbsentAndGet(key, mappingFunction)
+
   /** Clears this [Properties] instance. */
   fun clear() = props.clear()
 
@@ -114,6 +127,15 @@ class Properties {
    * @return The property.
    */
   fun get(key: Any) = props.get(key)
+
+  /**
+   * Gets a property from this [Properties] instance. If the property is null then an exception is
+   * thrown.
+   *
+   * @param key The key of the property.
+   * @return The property.
+   */
+  fun getNotNull(key: Any) = props.get(key)!!
 
   /**
    * Returns if this [Properties] instance contains the given key.

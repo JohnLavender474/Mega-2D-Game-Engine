@@ -3,6 +3,7 @@ package com.engine.screens.levels.tiledmap
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.ObjectMap
+import com.engine.common.objects.Properties
 import com.engine.screens.levels.ILevelScreen
 
 /**
@@ -26,16 +27,24 @@ abstract class TiledMapLevelScreen(protected val batch: SpriteBatch, protected v
   protected abstract fun getLayerBuilders(): ObjectMap<String, ITiledMapLayerBuilder>
 
   /**
+   * Builds the level using the specified [Properties].
+   *
+   * @param result the [Properties] that were built
+   */
+  protected abstract fun buildLevel(result: Properties)
+
+  /**
    * Calls the [TiledMapLevelRenderer] using the specified [OrthographicCamera].
    *
    * @param camera the [OrthographicCamera] to use for rendering
    */
-  protected fun render(camera: OrthographicCamera) = tiledMapLevelRenderer.render(camera)
+  protected fun renderLevelMap(camera: OrthographicCamera) = tiledMapLevelRenderer.render(camera)
 
   override fun show() {
     tiledMapLoadResult = TiledMapLevelLoader.load(tmxSrc)
-    TiledMapLevelBuilder.build(tiledMapLoadResult.layers, getLayerBuilders())
-
+    val builder = TiledMapLevelBuilder(getLayerBuilders())
+    val result = builder.build(tiledMapLoadResult.map.layers)
+    buildLevel(result)
     tiledMapLevelRenderer = TiledMapLevelRenderer(tiledMapLoadResult.map, batch)
   }
 

@@ -79,8 +79,8 @@ class MenuScreenTest :
           menuScreen.currentButtonKey shouldBe firstButtonKey
         }
 
-        describe("render") {
-          it("should render the menu screen correctly") {
+        describe("renderLevelMap") {
+          it("should renderLevelMap the menu screen correctly") {
             // when
             menuScreen.render(0.0f)
 

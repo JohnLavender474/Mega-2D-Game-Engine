@@ -1,36 +1,116 @@
 package com.engine.drawables.sprites
 
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.objects.Matrix
 
 /**
- * A matrix of sprites. The sprites are positioned in a grid. The number of rows and columns are
- * specified in the constructor.
+ * Convenience class for creating a [SpriteMatrix] with the specified parameters.
  *
  * @param model The model sprite that the sprites are copied on.
- * @param priority The priority of the sprites.
+ * @param modelWidth The width of the model sprite.
+ * @param modelHeight The height of the model sprite.
  * @param rows The number of rows.
  * @param columns The number of columns.
+ * @param x The x coordinate of the first sprite.
+ * @param y The y coordinate of the first sprite.
+ * @param priority The priority of the sprites.
  */
-class SpriteMatrix(
+data class SpriteMatrixParams(
+    val model: TextureRegion,
+    val modelWidth: Float,
+    val modelHeight: Float,
+    val rows: Int,
+    val columns: Int,
+    val x: Float,
+    val y: Float,
+    val priority: Int = 0
+)
+
+/**
+ * A matrix of sprites. The sprites are positioned in a grid. The number of rows and columns are
+ * specified in the constructor. The sprites are copied from the model sprite. The sprites are
+ * positioned in the grid starting from the top left corner.
+ *
+ * @param model The model sprite that the sprites are copied on.
+ * @param modelWidth The width of the model sprite.
+ * @param modelHeight The height of the model sprite.
+ * @param rows The number of rows.
+ * @param columns The number of columns.
+ * @param startX The x coordinate of the first sprite.
+ * @param startY The y coordinate of the first sprite.
+ * @param priority The priority of the sprites.
+ */
+open class SpriteMatrix(
     model: TextureRegion,
-    priority: Int,
+    modelWidth: Float,
+    modelHeight: Float,
     rows: Int,
     columns: Int,
-    _x: Float,
-    _y: Float
-) : IDrawableSprite, Matrix<IGameSprite>(rows, columns) {
+    private val startX: Float,
+    private val startY: Float,
+    override var priority: Int = 0
+) : IGameSprite, Matrix<IGameSprite>(rows, columns) {
 
   init {
     for (x in 0 until columns) {
       for (y in 0 until rows) {
-        this[x, y] = GameSprite(model, priority)
+        val sprite = GameSprite(model, priority)
+        sprite.setSize(modelWidth, modelHeight)
+        this[x, y] = sprite
       }
     }
-    setPosition(_x, _y)
+    setPosition(startX, startY)
   }
 
+  private var x = startX
+  private var y = startY
+
+  /**
+   * Creates a [SpriteMatrix] with the specified parameters.
+   *
+   * @param params The parameters to use.
+   */
+  constructor(
+      params: SpriteMatrixParams
+  ) : this(
+      params.model,
+      params.modelWidth,
+      params.modelHeight,
+      params.rows,
+      params.columns,
+      params.x,
+      params.y,
+      params.priority)
+
+  /**
+   * Sets the region of each sprite in the matrix.
+   *
+   * @param region The region to set.
+   */
+  override fun setRegion(region: TextureRegion?) = forEach { it.setRegion(region) }
+
+  /**
+   * Sets the texture of each sprite in the matrix.
+   *
+   * @param texture The texture to set.
+   */
+  override fun setTexture(texture: Texture?) = forEach { it.setTexture(texture) }
+
+  /**
+   * Sets the flip of each sprite in the matrix.
+   *
+   * @param x Whether to flip the sprites horizontally.
+   * @param y Whether to flip the sprites vertically.
+   */
+  override fun setFlip(x: Boolean, y: Boolean) = forEach { it.setFlip(x, y) }
+
+  /**
+   * Draws each sprite in the matrix.
+   *
+   * @param batch The batch to draw the sprites with.
+   */
   override fun draw(batch: Batch) = forEach { it.draw(batch) }
 
   /**
@@ -49,24 +129,90 @@ class SpriteMatrix(
   /**
    * Sets the position of the sprites in the array.
    *
-   * @param startX The first coordinate of the first sprite.
-   * @param startY The second coordinate of the first sprite.
+   * @param x The first coordinate of the first sprite.
+   * @param y The second coordinate of the first sprite.
    */
-  fun setPosition(startX: Float, startY: Float) {
-    var x = startX
-    var y = startY
+  override fun setPosition(x: Float, y: Float) {
+    this.x = x
+    this.y = y
+    var _x = x
+    var _y = y
     forEach {
-      it.setPosition(x, y)
-      x += it.getWidth()
-      y += it.getHeight()
+      it.setPosition(_x, _y)
+      _x += it.getWidth()
+      _y += it.getHeight()
     }
   }
 
   /**
-   * Translates the sprites in the array by the specified delta.
+   * Translates the sprites in the matrix.
    *
-   * @param x The first delta.
-   * @param y The second delta.
+   * @param x The x to translate by.
+   * @param y The y to translate by.
    */
-  fun translate(x: Float, y: Float) = forEach { it.translate(x, y) }
+  override fun translate(x: Float, y: Float) = forEach { it.translate(x, y) }
+
+  /**
+   * Returns the x coordinate of the first sprite in the matrix.
+   *
+   * @return The x coordinate of the first sprite in the matrix.
+   */
+  override fun getX() = x
+
+  /**
+   * Returns the y coordinate of the first sprite in the matrix.
+   *
+   * @return The y coordinate of the first sprite in the matrix.
+   */
+  override fun getY() = y
+
+  /**
+   * Returns the width of the first row in the matrix.
+   *
+   * @return The width of the first row in the matrix.
+   */
+  override fun getWidth(): Float {
+    var width = 0f
+    for (x in 0 until columns) {
+      width += this[x, 0]?.getWidth()?.toInt() ?: 0
+    }
+    return width
+  }
+
+  /**
+   * Returns the height of the first column in the matrix.
+   *
+   * @return The height of the first column in the matrix.
+   */
+  override fun getHeight(): Float {
+    var height = 0f
+    for (y in 0 until rows) {
+      height += this[0, y]?.getHeight()?.toInt() ?: 0
+    }
+    return height
+  }
+
+  /**
+   * Sets the width of each sprite in the matrix.
+   *
+   * @param width The width to set.
+   */
+  override fun setWidth(width: Float) = forEach { it.setWidth(width) }
+
+  /**
+   * Sets the height of each sprite in the matrix.
+   *
+   * @param height The height to set.
+   */
+  override fun setHeight(height: Float) = forEach { it.setHeight(height) }
+
+  /**
+   * Returns the priority of this matrix.
+   *
+   * @return The priority of this matrix.
+   */
+  override fun compareTo(other: IGameSprite) = priority - other.priority
+
+  /** Resets the position of the sprites in the array to the start position. */
+  fun resetToStart() = setPosition(startX, startY)
 }

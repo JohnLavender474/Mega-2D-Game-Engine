@@ -26,3 +26,20 @@ fun <T, U> orderedMapOf(vararg pairs: Pair<T, U>): OrderedMap<T, U> {
   pairs.forEach { map.put(it.first, it.second) }
   return map
 }
+
+/**
+ * Put the value in the map if the key does not already have a value. If the key does have a value
+ * then the value is returned.
+ *
+ * @param key the key whose value is to be computed
+ * @param mappingFunction the function to compute a value
+ * @return the current (existing or computed) value associated with the specified key, or null if
+ *   the computed value is null
+ */
+fun <K, V> ObjectMap<K, V>.putIfAbsentAndGet(key: K, mappingFunction: (K) -> V?): V? {
+  if (!containsKey(key)) {
+    val value = mappingFunction(key)
+    put(key, value)
+  }
+  return get(key)
+}

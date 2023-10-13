@@ -46,7 +46,7 @@ abstract class Game2D : IGame2D, Game() {
 
   protected abstract fun loadAssets(assMan: AssetManager)
 
-  protected abstract fun createGameEngine(): GameEngine
+  protected abstract fun createGameEngine(): IGameEngine
 
   override fun setCurrentScreen(key: String) {
     currentScreenKey?.let { screens[it] }?.hide()
@@ -83,7 +83,7 @@ abstract class Game2D : IGame2D, Game() {
   }
 
   override fun render() {
-    Gdx.gl20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+    Gdx.gl20.glClearColor(0f, 0f, 0f, 1f)
     Gdx.graphics.gL20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
     val delta = Gdx.graphics.deltaTime

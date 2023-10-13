@@ -71,6 +71,9 @@ interface IAudioManager : Updatable {
    */
   fun pauseMusic(source: String)
 
+  /** Resumes all music that was playing before [pauseAllMusic] was called. */
+  fun resumeAllMusic()
+
   /**
    * Plays a music.
    *

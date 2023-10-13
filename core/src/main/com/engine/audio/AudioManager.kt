@@ -6,7 +6,8 @@ import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
-import com.badlogic.gdx.utils.ObjectSet
+import com.badlogic.gdx.utils.OrderedSet
+import com.engine.common.extensions.getSound
 import org.jaudiotagger.audio.AudioFileIO
 
 /** A class that contains utilities for audio. */
@@ -50,9 +51,10 @@ class AudioManager(private val assetManager: AssetManager) : IAudioManager {
   }
 
   private val durations = ObjectMap<String, Int>()
-  private val loopingSounds = Array<SoundEntry>()
-  private val playingSounds = Array<SoundEntry>()
-  private val playingMusic = ObjectSet<String>()
+
+  private val loopingSounds = OrderedSet<SoundEntry>()
+  private val playingSounds = OrderedSet<SoundEntry>()
+  private val playingMusic = OrderedSet<String>()
 
   private var soundVolume = DEFAULT_VOLUME
   private var musicVolume = DEFAULT_VOLUME
@@ -90,9 +92,15 @@ class AudioManager(private val assetManager: AssetManager) : IAudioManager {
     return volume
   }
 
-  override fun stopSound(source: String) = assetManager.get(source, Sound::class.java).stop()
+  override fun stopSound(source: String) {
+    val sound = assetManager.getSound(source)
+    sound.stop()
+  }
 
-  override fun pauseSound(source: String) = assetManager.get(source, Sound::class.java).pause()
+  override fun pauseSound(source: String) {
+    val sound = assetManager.getSound(source)
+    sound.pause()
+  }
 
   override fun playSound(source: String, loop: Boolean) {
     try {
@@ -135,6 +143,10 @@ class AudioManager(private val assetManager: AssetManager) : IAudioManager {
 
   override fun resumeAllSounds() =
       assetManager.getAll(Sound::class.java, Array()).forEach { it.resume() }
+
+  override fun resumeAllMusic() {
+    playingMusic.forEach { assetManager.get(it, Music::class.java).play() }
+  }
 
   override fun stopMusic(source: String) {
     val music = assetManager.get(source, Music::class.java)

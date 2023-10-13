@@ -1,2 +1,5 @@
 rootProject.name = '2D Game Engine'
 include 'core'
+include 'test'
+include 'desktop'
+

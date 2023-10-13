@@ -18,9 +18,8 @@ class SpawnsManager : Updatable, Resettable {
   internal val spawners = Array<ISpawner>()
 
   /**
-   * Returns a list of the [Spawn]s that were spawned since the last update, and then clears the
-   * list of spawns in this [SpawnsManager] instance. This method should be called once per frame.
-   * This method should be called after the [update] method.
+   * Returns an array of the [Spawn]s that were spawned since the last update, and then clears the
+   * array. This method should be called once per frame.
    *
    * @return the [Spawn]s that were spawned since the last update.
    */

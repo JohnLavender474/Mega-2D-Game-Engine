@@ -3,7 +3,7 @@ package com.engine.events
 interface IEventsManager : Runnable {
 
   /** Submits an [Event] to this [IEventsManager]. */
-  fun queueEvent(event: Event)
+  fun submitEvent(event: Event)
 
   /**
    * Adds an [IEventListener] to this [IEventsManager].

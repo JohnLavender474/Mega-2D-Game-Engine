@@ -2,6 +2,7 @@ package com.engine.utils
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.extensions.objectMapOf
 import com.engine.common.objects.Properties
 import com.engine.events.Event
@@ -13,6 +14,8 @@ class StandardTiledMapScreen(
     tmxSrc: String,
     private val layerBuilders: ObjectMap<String, ITiledMapLayerBuilder> = objectMapOf()
 ) : TiledMapLevelScreen(batch, tmxSrc) {
+
+  override val eventKeyMask = ObjectSet<Any>()
 
   override fun getLayerBuilders() = layerBuilders
 

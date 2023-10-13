@@ -21,7 +21,7 @@ object UtilMethods {
     return RAND.nextInt(max + 1 - min) + min
   }
 
-  fun doIfRandMatch(min: Int, max: Int, matches: Iterable<Int>, runOnMatch: Consumer<Int?>) {
+  fun doIfRandomMatches(min: Int, max: Int, matches: Iterable<Int>, runOnMatch: Consumer<Int?>) {
     val r = getRandom(min, max)
     for (i in matches) {
       if (r == i) {

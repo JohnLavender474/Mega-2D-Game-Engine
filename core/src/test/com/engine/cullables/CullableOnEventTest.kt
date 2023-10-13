@@ -14,7 +14,7 @@ class CullableOnEventTest :
           val event = Event(eventKey, eventProperties)
 
           // Create a CullableOnEvent that should be culled on the specified event
-          val cullableOnEvent = CullableOnEvent { it.eventKey == eventKey }
+          val cullableOnEvent = CullableOnEvent { it.key == eventKey }
 
           cullableOnEvent.shouldBeCulled() shouldBe false
           cullableOnEvent.onEvent(event)
@@ -34,7 +34,7 @@ class CullableOnEventTest :
           val event = Event(eventKey, eventProperties)
 
           // Create a CullableOnEvent that should not be culled on a different event
-          val cullableOnEvent = CullableOnEvent { it.eventKey == "differentEvent" }
+          val cullableOnEvent = CullableOnEvent { it.key == "differentEvent" }
 
           cullableOnEvent.shouldBeCulled() shouldBe false
           cullableOnEvent.onEvent(event)
@@ -46,7 +46,7 @@ class CullableOnEventTest :
           val eventProperties = props("property1" to 42, "property2" to "test")
           val event = Event(eventKey, eventProperties)
 
-          val cullableOnEvent = CullableOnEvent { it.eventKey == eventKey }
+          val cullableOnEvent = CullableOnEvent { it.key == eventKey }
 
           cullableOnEvent.onEvent(event)
           cullableOnEvent.shouldBeCulled() shouldBe true

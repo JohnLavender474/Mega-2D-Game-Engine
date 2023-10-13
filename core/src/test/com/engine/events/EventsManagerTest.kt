@@ -23,7 +23,7 @@ class EventsManagerTest :
           val event = Event("testEvent", Properties())
 
           // when
-          eventsManager.queueEvent(event)
+          eventsManager.submitEvent(event)
 
           // then
           eventsManager.eventQueue shouldContain event
@@ -67,7 +67,7 @@ class EventsManagerTest :
 
           // when
           eventsManager.addListener(listener)
-          eventsManager.queueEvent(event)
+          eventsManager.submitEvent(event)
           eventsManager.run()
 
           // then
@@ -84,7 +84,7 @@ class EventsManagerTest :
           eventsManager.addListener(listener1)
           eventsManager.addListener(listener2)
           val event = Event("testEvent", Properties())
-          eventsManager.queueEvent(event)
+          eventsManager.submitEvent(event)
           eventsManager.run()
 
           // then

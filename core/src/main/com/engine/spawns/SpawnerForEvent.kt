@@ -1,13 +1,15 @@
 package com.engine.spawns
 
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectSet
 import com.engine.events.Event
 import com.engine.events.IEventListener
 
 class SpawnerForEvent(
     private val predicate: (Event) -> Boolean,
     private val spawnSupplier: () -> Spawn,
-    shouldBeCulled: () -> Boolean = { false }
+    shouldBeCulled: () -> Boolean = { false },
+    override val eventKeyMask: ObjectSet<Any> = ObjectSet()
 ) : Spawner(shouldBeCulled), IEventListener {
 
   private val events = Array<Event>()

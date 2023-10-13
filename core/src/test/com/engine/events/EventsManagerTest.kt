@@ -1,9 +1,9 @@
 package com.engine.events
 
+import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.objects.Properties
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.mockk.*
 
@@ -26,12 +26,19 @@ class EventsManagerTest :
           eventsManager.submitEvent(event)
 
           // then
-          eventsManager.eventQueue shouldContain event
+          eventsManager.events.containsKey(event.key) shouldBe true
         }
 
         it("should add and remove a listener") {
           // if
-          val listener = IEventListener { eventHandled = true }
+          val listener =
+              object : IEventListener {
+                override val eventKeyMask = ObjectSet<Any>()
+
+                override fun onEvent(event: Event) {
+                  eventHandled = true
+                }
+              }
 
           // when
           eventsManager.addListener(listener)
@@ -48,8 +55,22 @@ class EventsManagerTest :
 
         it("should clear all listeners") {
           // if
-          val listener1 = IEventListener {}
-          val listener2 = IEventListener {}
+          val listener1 =
+              object : IEventListener {
+                override val eventKeyMask = ObjectSet<Any>()
+
+                override fun onEvent(event: Event) {
+                  eventHandled = true
+                }
+              }
+          val listener2 =
+              object : IEventListener {
+                override val eventKeyMask = ObjectSet<Any>()
+
+                override fun onEvent(event: Event) {
+                  eventHandled = true
+                }
+              }
 
           // when
           eventsManager.addListener(listener1)
@@ -62,7 +83,14 @@ class EventsManagerTest :
 
         it("should run and handle an event") {
           // if
-          val listener = IEventListener { eventHandled = true }
+          val listener =
+              object : IEventListener {
+                override val eventKeyMask = ObjectSet<Any>()
+
+                override fun onEvent(event: Event) {
+                  eventHandled = true
+                }
+              }
           val event = Event("testEvent", Properties())
 
           // when
@@ -72,13 +100,21 @@ class EventsManagerTest :
 
           // then
           eventHandled shouldBe true
-          eventsManager.eventQueue.shouldBeEmpty()
+          eventsManager.events.shouldBeEmpty()
         }
 
         it("should handle multiple listeners") {
           // if
-          val listener1 = mockk<IEventListener> { every { onEvent(any()) } just Runs }
-          val listener2 = mockk<IEventListener> { every { onEvent(any()) } just Runs }
+          val listener1 =
+              mockk<IEventListener> {
+                every { eventKeyMask } returns ObjectSet<Any>()
+                every { onEvent(any()) } just Runs
+              }
+          val listener2 =
+              mockk<IEventListener> {
+                every { eventKeyMask } returns ObjectSet<Any>()
+                every { onEvent(any()) } just Runs
+              }
 
           // when
           eventsManager.addListener(listener1)

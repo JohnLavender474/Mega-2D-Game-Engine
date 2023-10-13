@@ -144,10 +144,4 @@ class Properties {
    * @return if this [Properties] instance contains the given key
    */
   fun containsKey(key: Any) = props.containsKey(key)
-
-  override fun hashCode() = props.hashCode()
-
-  override fun equals(other: Any?) = props == other
-
-  override fun toString() = props.toString()
 }

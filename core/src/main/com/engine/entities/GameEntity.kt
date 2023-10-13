@@ -11,8 +11,12 @@ import kotlin.reflect.cast
 open class GameEntity(override val game: IGame2D) : IGameEntity {
 
   val componentMap = ObjectMap<KClass<out IGameComponent>, IGameComponent>()
+
   override val properties = Properties()
   override var dead = false
+
+  var initialized = false
+    protected set
 
   override fun onDestroy() {
     dead = true
@@ -20,8 +24,12 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
   }
 
   override fun spawn(spawnProps: Properties) {
-    dead = false
     properties.putAll(spawnProps)
+    if (!initialized) {
+      init()
+      initialized = true
+    }
+    dead = false
   }
 
   override fun addComponent(c: IGameComponent) {

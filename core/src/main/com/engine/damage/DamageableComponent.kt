@@ -51,13 +51,6 @@ class DamageableComponent(
   fun isUnderDamage() = !damageTimer.isFinished()
 
   /**
-   * Updates the [damageTimer] by the given delta time.
-   *
-   * @param delta the delta time
-   */
-  fun updateDamageTimer(delta: Float) = damageTimer.update(delta)
-
-  /**
    * Returns if the [DamageableComponent] is invincible. The [DamageableComponent] is invincible if
    * the [damageRecoveryTimer] is not finished.
    *
@@ -66,11 +59,18 @@ class DamageableComponent(
   fun isRecoveringFromDamage() = !damageRecoveryTimer.isFinished()
 
   /**
+   * Updates the [damageTimer] by the given delta time.
+   *
+   * @param delta the delta time
+   */
+  internal fun updateDamageTimer(delta: Float) = damageTimer.update(delta)
+
+  /**
    * Updates the [damageRecoveryTimer] by the given delta time.
    *
    * @param delta the delta time
    */
-  fun updateDamageRecoveryTimer(delta: Float) = damageRecoveryTimer.update(delta)
+  internal fun updateDamageRecoveryTimer(delta: Float) = damageRecoveryTimer.update(delta)
 
   /**
    * Resets the [DamageableComponent] by resetting the [damageTimer], [damageRecoveryTimer],

@@ -1,5 +1,6 @@
 package com.engine
 
+import com.engine.common.extensions.has
 import com.engine.common.objects.ImmutableCollection
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
@@ -73,16 +74,16 @@ class GameEngineTest :
           gameEngine.spawn(mockEntity1, props1)
           gameEngine.spawn(mockEntity2, props2)
 
-          gameEngine.entitiesToAdd.contains(mockEntity1 to props1) shouldBe true
-          gameEngine.entitiesToAdd.contains(mockEntity2 to props2) shouldBe true
+          gameEngine.entitiesToAdd.has(mockEntity1 to props1) shouldBe true
+          gameEngine.entitiesToAdd.has(mockEntity2 to props2) shouldBe true
 
           mockSystem1.contains(mockEntity1) shouldBe false
           mockSystem2.contains(mockEntity2) shouldBe false
 
           gameEngine.update(1f)
 
-          gameEngine.entitiesToAdd.contains(mockEntity1 to props1) shouldBe false
-          gameEngine.entitiesToAdd.contains(mockEntity2 to props2) shouldBe false
+          gameEngine.entitiesToAdd.has(mockEntity1 to props1) shouldBe false
+          gameEngine.entitiesToAdd.has(mockEntity2 to props2) shouldBe false
 
           mockEntity1.dead shouldBe false
           mockEntity2.dead shouldBe false

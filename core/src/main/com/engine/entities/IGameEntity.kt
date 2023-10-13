@@ -1,6 +1,7 @@
 package com.engine.entities
 
 import com.engine.IGame2D
+import com.engine.common.interfaces.Initializable
 import com.engine.common.interfaces.Propertizable
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
@@ -13,7 +14,7 @@ import kotlin.reflect.KClass
  * @see Propertizable
  * @see IGameComponent
  */
-interface IGameEntity : Propertizable {
+interface IGameEntity : Propertizable, Initializable {
 
   /** The [IGame2D] this [GameEntity] belongs to. */
   val game: IGame2D
@@ -23,6 +24,16 @@ interface IGameEntity : Propertizable {
    * the game.
    */
   var dead: Boolean
+
+  /**
+   * Optional method to initialize this [IGameEntity]. It is advisable that components and data not
+   * be initialized in the constructor but rather in this method.
+   *
+   * One potential design idea is to have a boolean variable named "initialized" that is set to true
+   * in this method. Then, in the [spawn] method, if "initialized" is false, then this method will
+   * be called before the logic in the [spawn] method is called.
+   */
+  override fun init() {}
 
   /**
    * Initializes this [GameEntity] with the given [HashMap] of data.

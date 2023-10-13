@@ -12,7 +12,8 @@ import com.engine.screens.levels.tiledmap.TiledMapLevelScreen
 class StandardTiledMapScreen(
     batch: SpriteBatch,
     tmxSrc: String,
-    private val layerBuilders: ObjectMap<String, ITiledMapLayerBuilder> = objectMapOf()
+    private val layerBuilders: ObjectMap<String, ITiledMapLayerBuilder> = objectMapOf(),
+    override val properties: Properties = Properties()
 ) : TiledMapLevelScreen(batch, tmxSrc) {
 
   override val eventKeyMask = ObjectSet<Any>()

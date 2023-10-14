@@ -13,5 +13,5 @@ interface IFactory<T> {
    * @param key the key to fetch the object from
    * @return the object fetched from the key
    */
-  fun fetch(key: String): T
+  fun fetch(key: Any): T?
 }

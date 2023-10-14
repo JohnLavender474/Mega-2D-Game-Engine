@@ -1,6 +1,7 @@
 package com.engine.entities
 
 import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.OrderedSet
 import com.engine.IGame2D
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
@@ -13,12 +14,14 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
   val componentMap = ObjectMap<KClass<out IGameComponent>, IGameComponent>()
 
   override val properties = Properties()
+  override val runnablesOnDestroy = OrderedSet<Runnable>()
   override var dead = false
 
   var initialized = false
     protected set
 
   override fun onDestroy() {
+    super.onDestroy()
     dead = true
     getComponents().forEach { it.reset() }
   }

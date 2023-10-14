@@ -1,8 +1,9 @@
 package com.engine.entities
 
+import com.badlogic.gdx.utils.OrderedSet
 import com.engine.IGame2D
-import com.engine.common.interfaces.Initializable
 import com.engine.common.interfaces.IPropertizable
+import com.engine.common.interfaces.Initializable
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
 import kotlin.reflect.KClass
@@ -18,6 +19,9 @@ interface IGameEntity : IPropertizable, Initializable {
 
   /** The [IGame2D] this [GameEntity] belongs to. */
   val game: IGame2D
+
+  /** Runnable objects to run when this [GameEntity] is destroyed. */
+  val runnablesOnDestroy: OrderedSet<Runnable>
 
   /**
    * True if this [GameEntity] is dead, otherwise false. A dead [GameEntity] should be removed from
@@ -43,7 +47,7 @@ interface IGameEntity : IPropertizable, Initializable {
   fun spawn(spawnProps: Properties)
 
   /** Logic to run when this entity dies. */
-  fun onDestroy()
+  fun onDestroy() = runnablesOnDestroy.forEach { it.run() }
 
   /**
    * Adds a [IGameComponent] to this [IGameEntity].

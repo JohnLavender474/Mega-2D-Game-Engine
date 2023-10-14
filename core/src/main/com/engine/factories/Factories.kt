@@ -7,9 +7,9 @@ import com.badlogic.gdx.utils.ObjectMap
  *
  * @param T the type of object to fetch
  */
-class Factories<T> {
+open class Factories<T> {
 
-  val factories = ObjectMap<String, IFactory<T>>()
+  val factories = ObjectMap<Any, IFactory<T>>()
 
   /**
    * Add a factory to the collection.
@@ -17,19 +17,20 @@ class Factories<T> {
    * @param factoryKey the key of the factory
    * @param factory the factory to add
    */
-  fun add(factoryKey: String, factory: IFactory<T>): IFactory<T> = factories.put(factoryKey, factory)
+  fun add(factoryKey: Any, factory: IFactory<T>): IFactory<T> =
+      factories.put(factoryKey, factory)
 
   /**
    * Remove a factory from the collection.
    *
    * @param factoryKey the key of the factory to remove
    */
-  fun remove(factoryKey: String): IFactory<T> = factories.remove(factoryKey)
+  fun remove(factoryKey: Any): IFactory<T> = factories.remove(factoryKey)
 
   /**
    * Fetch an object from the given factory and key.
    *
    * @param factoryKey the key of the factory to fetch the object from
    */
-  fun fetch(factoryKey: String, objKey: String) = factories[factoryKey]?.fetch(objKey)
+  fun fetch(factoryKey: Any, objKey: String) = factories[factoryKey]?.fetch(objKey)
 }

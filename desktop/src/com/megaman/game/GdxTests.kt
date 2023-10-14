@@ -7,7 +7,5 @@ object GdxTests {
 
   private val tests = ObjectMap<String, GdxTest>()
 
-  init {}
-
   fun get(name: String): GdxTest? = tests[name]
 }

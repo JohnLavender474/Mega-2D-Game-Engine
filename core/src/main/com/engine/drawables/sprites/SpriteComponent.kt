@@ -1,10 +1,12 @@
 package com.engine.drawables.sprites
 
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.interfaces.Updatable
 import com.engine.common.interfaces.UpdateFunction
 import com.engine.components.IGameComponent
+import com.engine.drawables.IDrawable
 import com.engine.entities.IGameEntity
 
 /**
@@ -14,10 +16,10 @@ import com.engine.entities.IGameEntity
  */
 class SpriteComponent(
     override val entity: IGameEntity,
-    var sprites: OrderedMap<String, IGameSprite>
+    var sprites: OrderedMap<String, IDrawable<Batch>>
 ) : IGameComponent, Updatable {
 
-  internal val updatables = ObjectMap<String, UpdateFunction<IGameSprite>>()
+  internal val updatables = ObjectMap<String, UpdateFunction<IDrawable<Batch>>>()
 
   /**
    * Creates a [SpriteComponent] with the given [sprites].
@@ -26,10 +28,12 @@ class SpriteComponent(
    */
   constructor(
       entity: IGameEntity,
-      vararg _sprites: Pair<String, IGameSprite>
+      vararg _sprites: Pair<String, IDrawable<Batch>>
   ) : this(
       entity,
-      OrderedMap<String, IGameSprite>().apply { _sprites.forEach { put(it.first, it.second) } })
+      OrderedMap<String, IDrawable<Batch>>().apply {
+        _sprites.forEach { put(it.first, it.second) }
+      })
 
   /**
    * Updates the sprites in this [SpriteComponent] using the corresponding update functions. If no
@@ -51,7 +55,7 @@ class SpriteComponent(
    * @param key The key.
    * @param function The function.
    */
-  fun putUpdateFunction(key: String, function: UpdateFunction<IGameSprite>) {
+  fun putUpdateFunction(key: String, function: UpdateFunction<IDrawable<Batch>>) {
     updatables.put(key, function)
   }
 

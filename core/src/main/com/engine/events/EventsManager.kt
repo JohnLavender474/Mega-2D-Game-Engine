@@ -23,7 +23,7 @@ class EventsManager : IEventsManager {
    */
   override fun submitEvent(event: Event) {
     val eventKey = event.key
-    events.putIfAbsentAndGet(eventKey) { gdxArrayOf() }.add(event)
+    events.putIfAbsentAndGet(eventKey, gdxArrayOf()).add(event)
   }
 
   /**

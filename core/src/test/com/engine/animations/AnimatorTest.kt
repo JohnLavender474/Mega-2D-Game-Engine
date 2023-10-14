@@ -2,7 +2,7 @@ package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.drawables.sprites.IGameSprite
+import com.engine.drawables.sprites.ISprite
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -39,7 +39,7 @@ class AnimatorTest :
         val keySupplier: () -> String? = { key }
         val animations = ObjectMap<String, IAnimation>()
 
-        lateinit var mockSprite: IGameSprite
+        lateinit var mockSprite: ISprite
         lateinit var animator: Animator
 
         beforeEach {

@@ -2,38 +2,34 @@ package com.engine.drawables.shapes
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.objects.ImmutableCollection
+import com.engine.drawables.IDrawable
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /**
- * A system that can be used to draw shapes. This system requires a [ShapeRenderer].
+ * A system that can be used to collect shapes to be drawn. The map of shapes is NOT cleared in each
+ * update cycle.
  *
- * @param shapeRenderer the shape renderer to use
- * @see ShapeRenderer
+ * @param shapes the map to hold the shapes to be rendered
  */
-class DrawableShapeSystem(private val shapeRenderer: ShapeRenderer) :
-    GameSystem(DrawableShapeComponent::class) {
+class DrawableShapeSystem(
+    private val shapes: OrderedMap<ShapeRenderer.ShapeType, Array<IDrawable<ShapeRenderer>>>
+) : GameSystem(DrawableShapeComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
 
-    val map = ObjectMap<ShapeRenderer.ShapeType, Array<DrawableShapeHandle>>()
+    // collect the shapes
     entities.forEach {
       it.getComponent(DrawableShapeComponent::class)?.shapes?.forEach { shape ->
-        if (!map.containsKey(shape.shapeType)) {
-          map.put(shape.shapeType, Array())
+        if (!shapes.containsKey(shape.shapeType)) {
+          shapes.put(shape.shapeType, Array())
         }
-        val list = map[shape.shapeType]
+        val list = shapes[shape.shapeType]
         list.add(shape)
       }
-    }
-
-    map.forEach {
-      shapeRenderer.begin(it.key)
-      it.value.forEach { shape -> shape.draw(shapeRenderer) }
-      shapeRenderer.end()
     }
   }
 }

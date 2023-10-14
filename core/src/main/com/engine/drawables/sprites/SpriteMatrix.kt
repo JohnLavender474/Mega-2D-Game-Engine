@@ -38,34 +38,24 @@ data class SpriteMatrixParams(
  * @param modelHeight The height of the model sprite.
  * @param rows The number of rows.
  * @param columns The number of columns.
- * @param startX The x coordinate of the first sprite.
- * @param startY The y coordinate of the first sprite.
- * @param priority The priority of the sprites.
  */
-open class SpriteMatrix(
+class SpriteMatrix(
     model: TextureRegion,
     modelWidth: Float,
     modelHeight: Float,
     rows: Int,
-    columns: Int,
-    private val startX: Float,
-    private val startY: Float,
-    override var priority: Int = 0
-) : IGameSprite, Matrix<IGameSprite>(rows, columns) {
+    columns: Int
+) : ISprite, Matrix<ISprite>(rows, columns) {
 
   init {
     for (x in 0 until columns) {
       for (y in 0 until rows) {
-        val sprite = GameSprite(model, priority)
+        val sprite = GameSprite(model)
         sprite.setSize(modelWidth, modelHeight)
         this[x, y] = sprite
       }
     }
-    setPosition(startX, startY)
   }
-
-  private var x = startX
-  private var y = startY
 
   /**
    * Creates a [SpriteMatrix] with the specified parameters.
@@ -74,51 +64,35 @@ open class SpriteMatrix(
    */
   constructor(
       params: SpriteMatrixParams
-  ) : this(
-      params.model,
-      params.modelWidth,
-      params.modelHeight,
-      params.rows,
-      params.columns,
-      params.x,
-      params.y,
-      params.priority)
-
-  /**
-   * Sets the region of each sprite in the matrix.
-   *
-   * @param region The region to set.
-   */
-  override fun setRegion(region: TextureRegion?) = forEach { it.setRegion(region) }
-
-  /**
-   * Sets the texture of each sprite in the matrix.
-   *
-   * @param texture The texture to set.
-   */
-  override fun setTexture(texture: Texture?) = forEach { it.setTexture(texture) }
-
-  /**
-   * Sets the flip of each sprite in the matrix.
-   *
-   * @param x Whether to flip the sprites horizontally.
-   * @param y Whether to flip the sprites vertically.
-   */
-  override fun setFlip(x: Boolean, y: Boolean) = forEach { it.setFlip(x, y) }
+  ) : this(params.model, params.modelWidth, params.modelHeight, params.rows, params.columns)
 
   /**
    * Draws each sprite in the matrix.
    *
-   * @param batch The batch to draw the sprites with.
+   * @param drawer The batch to draw the sprites with.
    */
-  override fun draw(batch: Batch) = forEach { it.draw(batch) }
+  override fun draw(drawer: Batch) = forEach { it.draw(drawer) }
+
+  /**
+   * Sets the region of each sprite in the matrix.
+   *
+   * @param _region The region to set.
+   */
+  override fun setRegion(_region: TextureRegion) = forEach { it.setRegion(_region) }
+
+  /**
+   * Sets the texture of each sprite in the matrix.
+   *
+   * @param _texture The texture to set.
+   */
+  override fun setTexture(_texture: Texture) = forEach { it.setTexture(_texture) }
 
   /**
    * Applies the specified action to each sprite in the matrix.
    *
    * @param action The action to apply to each sprite.
    */
-  fun forEach(action: (IGameSprite) -> Unit) {
+  fun forEach(action: (ISprite) -> Unit) {
     for (x in 0 until columns) {
       for (y in 0 until rows) {
         this[x, y]?.let { action(it) }
@@ -133,8 +107,6 @@ open class SpriteMatrix(
    * @param y The second coordinate of the first sprite.
    */
   override fun setPosition(x: Float, y: Float) {
-    this.x = x
-    this.y = y
     var _x = x
     var _y = y
     forEach {
@@ -145,26 +117,22 @@ open class SpriteMatrix(
   }
 
   /**
+   * Gets the x coordinate of the first sprite in the matrix.
+   *
+   * @return The x coordinate of the first sprite in the matrix.
+   */
+  override fun getX() = this[0, 0]?.getX() ?: 0f
+
+  /** Gets the y coordinate of the first sprite in the matrix. */
+  override fun getY() = this[0, 0]?.getY() ?: 0f
+
+  /**
    * Translates the sprites in the matrix.
    *
    * @param x The x to translate by.
    * @param y The y to translate by.
    */
   override fun translate(x: Float, y: Float) = forEach { it.translate(x, y) }
-
-  /**
-   * Returns the x coordinate of the first sprite in the matrix.
-   *
-   * @return The x coordinate of the first sprite in the matrix.
-   */
-  override fun getX() = x
-
-  /**
-   * Returns the y coordinate of the first sprite in the matrix.
-   *
-   * @return The y coordinate of the first sprite in the matrix.
-   */
-  override fun getY() = y
 
   /**
    * Returns the width of the first row in the matrix.
@@ -205,14 +173,4 @@ open class SpriteMatrix(
    * @param height The height to set.
    */
   override fun setHeight(height: Float) = forEach { it.setHeight(height) }
-
-  /**
-   * Returns the priority of this matrix.
-   *
-   * @return The priority of this matrix.
-   */
-  override fun compareTo(other: IGameSprite) = priority - other.priority
-
-  /** Resets the position of the sprites in the array to the start position. */
-  fun resetToStart() = setPosition(startX, startY)
 }

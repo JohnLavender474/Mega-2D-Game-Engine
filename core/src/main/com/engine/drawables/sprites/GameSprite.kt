@@ -6,34 +6,47 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 
 /**
- * A sprite that can be drawn. This class extends the [Sprite] class and implements the
- * [IGameSprite] interface.
+ * A sprite that can be drawn. This class extends the [Sprite] class and implements the [ISprite]
+ * interface.
  *
- * @param priority the priority of this sprite
  * @param hidden whether this sprite is hidden
  */
 class GameSprite(
-    override var priority: Int = 0,
     var hidden: Boolean = false,
-) : IGameSprite, Sprite() {
+) : ISprite, Sprite() {
 
-  constructor(
-      textureRegion: TextureRegion,
-      priority: Int = 0,
-      hidden: Boolean = false
-  ) : this(priority, hidden) {
+  constructor(texture: Texture, hidden: Boolean = false) : this(hidden) {
+    setTexture(texture)
+  }
+
+  constructor(textureRegion: TextureRegion, hidden: Boolean = false) : this(hidden) {
     setRegion(textureRegion)
   }
 
   constructor(
       textureRegion: TextureRegion,
-      priority: Int = 0,
-      hidden: Boolean = false,
       x: Float,
-      y: Float
-  ) : this(priority, hidden) {
+      y: Float,
+      width: Float,
+      height: Float,
+      hidden: Boolean = false
+  ) : this(hidden) {
     setRegion(textureRegion)
     setPosition(x, y)
+    setSize(width, height)
+  }
+
+  constructor(
+      texture: Texture,
+      x: Float,
+      y: Float,
+      width: Float,
+      height: Float,
+      hidden: Boolean = false
+  ) : this(hidden) {
+    setTexture(texture)
+    setPosition(x, y)
+    setSize(width, height)
   }
 
   override fun draw(batch: Batch) {
@@ -42,33 +55,31 @@ class GameSprite(
     }
   }
 
-  override fun setRegion(_region: TextureRegion?) {
+  override fun setRegion(_region: TextureRegion) {
     super<Sprite>.setRegion(_region)
   }
 
-  override fun setTexture(_texture: Texture?) {
+  override fun setTexture(_texture: Texture) {
     super<Sprite>.setTexture(_texture)
   }
 
-  override fun translate(_x: Float, _y: Float) {
-    super<Sprite>.translate(_x, _y)
+  override fun translate(x: Float, y: Float) {
+    super<Sprite>.translate(x, y)
   }
 
-  override fun setSize(_width: Float, _height: Float) {
-    super<Sprite>.setSize(_width, _height)
+  override fun setSize(width: Float, height: Float) {
+    super<Sprite>.setSize(width, height)
   }
 
-  override fun setWidth(_width: Float) {
-    super<Sprite>.setSize(_width, height)
+  override fun setWidth(width: Float) {
+    super<Sprite>.setSize(width, height)
   }
 
-  override fun setHeight(_height: Float) {
-    super<Sprite>.setSize(width, _height)
+  override fun setHeight(height: Float) {
+    super<Sprite>.setSize(width, height)
   }
 
-  override fun setFlip(_x: Boolean, _y: Boolean) {
-    super<Sprite>.setFlip(_x, _y)
+  override fun setFlip(x: Boolean, y: Boolean) {
+    super<Sprite>.setFlip(x, y)
   }
-
-  override fun compareTo(other: IGameSprite) = priority.compareTo(other.priority)
 }

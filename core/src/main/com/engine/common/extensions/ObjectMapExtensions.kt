@@ -32,14 +32,11 @@ fun <T, U> orderedMapOf(vararg pairs: Pair<T, U>): OrderedMap<T, U> {
  * then the value is returned.
  *
  * @param key the key whose value is to be computed
- * @param mappingFunction the function to compute a value
+ * @param defaultValue the default mapping of the key
  * @return the current (existing or computed) value associated with the specified key, or null if
  *   the computed value is null
  */
-fun <K, V> ObjectMap<K, V>.putIfAbsentAndGet(key: K, mappingFunction: (K) -> V): V {
-  if (!containsKey(key)) {
-    val value = mappingFunction(key)
-    put(key, value)
-  }
+fun <K, V> ObjectMap<K, V>.putIfAbsentAndGet(key: K, defaultValue: V): V {
+  if (!containsKey(key)) put(key, defaultValue)
   return get(key)
 }

@@ -12,7 +12,7 @@ import kotlin.reflect.cast
  * @return A [Properties] instance with the given key-value pairs.
  */
 fun props(vararg pairs: Pair<Any, Any?>) =
-    Properties().apply { pairs.forEach { put(it.first.toString(), it.second) } }
+    Properties().apply { pairs.forEach { put(it.first, it.second) } }
 
 /** A [HashMap] that stores [String] keys and [Any] type values. */
 class Properties {
@@ -55,7 +55,7 @@ class Properties {
    * @param m the map whose mappings are to be placed in this map.
    */
   constructor(m: ObjectMap<Any, Any?>) : this() {
-    m.forEach { put(it.key.toString(), it.value) }
+    m.forEach { put(it.key, it.value) }
   }
 
   /**
@@ -65,7 +65,7 @@ class Properties {
    * @param type The type to cast the property to.
    * @return The property cast to the given type.
    */
-  fun <T : Any> get(key: Any, type: KClass<T>) = props.get(key.toString())?.let { type.cast(it) }
+  fun <T : Any> get(key: Any, type: KClass<T>) = props.get(key)?.let { type.cast(it) }
 
   /**
    * Puts a property into this [Properties] instance.
@@ -81,12 +81,11 @@ class Properties {
    * property does have a value then the value is returned.
    *
    * @param key The key of the property.
-   * @param mappingFunction The function to compute a value.
+   * @param defaultValue The default value of the property.
    * @return The current (existing or computed) value associated with the specified key, or null if
    *   the computed value is null.
    */
-  fun putIfAbsentAndGet(key: Any, mappingFunction: (Any) -> Any?) =
-      props.putIfAbsentAndGet(key, mappingFunction)
+  fun putIfAbsentAndGet(key: Any, defaultValue: Any?) = props.putIfAbsentAndGet(key, defaultValue)
 
   /** Clears this [Properties] instance. */
   fun clear() = props.clear()
@@ -111,14 +110,14 @@ class Properties {
    *
    * @param from The [ObjectMap] of properties.
    */
-  fun putAll(from: ObjectMap<out Any, Any?>) = props.putAll(from)
+  fun putAll(from: ObjectMap<Any, Any?>) = props.putAll(from)
 
   /**
    * Puts all the properties from the given [Properties] into this [Properties] instance.
    *
-   * @param props The [Properties] of properties.
+   * @param _props The [Properties] of properties.
    */
-  fun putAll(props: Properties) = props.putAll(props.props)
+  fun putAll(_props: Properties) = _props.forEach { key, value -> put(key, value) }
 
   /**
    * Gets a property from this [Properties] instance.
@@ -144,4 +143,13 @@ class Properties {
    * @return if this [Properties] instance contains the given key
    */
   fun containsKey(key: Any) = props.containsKey(key)
+
+  /**
+   * Performs the given action for each property in this [Properties] instance.
+   *
+   * @param action The action to perform.
+   */
+  fun forEach(action: (key: Any, value: Any?) -> Unit) {
+    for (entry in props.entries()) action(entry.key, entry.value)
+  }
 }

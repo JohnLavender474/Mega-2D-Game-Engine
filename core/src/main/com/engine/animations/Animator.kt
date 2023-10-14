@@ -1,7 +1,7 @@
 package com.engine.animations
 
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.drawables.sprites.IGameSprite
+import com.engine.drawables.sprites.ISprite
 
 /**
  * An animator that can be used to animate a sprite. The animator is created with a key supplier
@@ -24,7 +24,7 @@ class Animator(
   var currentKey: String? = null
     private set
 
-  override fun animate(sprite: IGameSprite, delta: Float) {
+  override fun animate(sprite: ISprite, delta: Float) {
     val priorKey = currentKey
     val nextKey = keySupplier()
     if (priorKey != nextKey) {

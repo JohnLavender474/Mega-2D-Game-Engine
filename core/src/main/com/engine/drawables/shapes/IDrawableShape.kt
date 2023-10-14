@@ -1,18 +1,11 @@
 package com.engine.drawables.shapes
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.engine.drawables.IDrawable
 
 /**
  * A shape that can be drawn. This interface is used to draw shapes using the [ShapeRenderer].
  *
  * @see ShapeRenderer
  */
-fun interface IDrawableShape {
-
-  /**
-   * Draws this shape.
-   *
-   * @param renderer the shape renderer to use
-   */
-  fun draw(renderer: ShapeRenderer)
-}
+fun interface IDrawableShape : IDrawable<ShapeRenderer>

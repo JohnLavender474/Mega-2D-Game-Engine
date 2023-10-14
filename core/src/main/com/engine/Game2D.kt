@@ -2,7 +2,6 @@ package com.engine
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -17,7 +16,14 @@ import com.engine.controller.polling.ControllerPoller
 import com.engine.controller.polling.IControllerPoller
 import com.engine.events.EventsManager
 import com.engine.events.IEventsManager
+import com.engine.screens.IScreen
 
+/**
+ * Implementation of [IGame2D] that also derives [Game].
+ *
+ * @see IGame2D
+ * @see Game
+ */
 abstract class Game2D : IGame2D, Game() {
 
   override lateinit var batch: SpriteBatch
@@ -32,14 +38,15 @@ abstract class Game2D : IGame2D, Game() {
 
   override lateinit var gameEngine: IGameEngine
 
-  override val screens = ObjectMap<String, Screen>()
+  override var paused = false
+
+  override val screens = ObjectMap<String, IScreen>()
   override val viewports = ObjectMap<String, Viewport>()
-  override val currentScreen: Screen?
+  override val currentScreen: IScreen?
     get() = currentScreenKey?.let { screens[it] }
 
   override val properties = Properties()
 
-  var paused = false
   var currentScreenKey: String? = null
 
   protected abstract fun createButtons(): Buttons
@@ -48,13 +55,32 @@ abstract class Game2D : IGame2D, Game() {
 
   protected abstract fun createGameEngine(): IGameEngine
 
+  /**
+   * Hides the old screen and removes it from the events manager. After that, if there is a screen
+   * mapped to the specified key, then that screen is shown, resize, and added as a listener to the
+   * events manager.
+   *
+   * @param key the key
+   */
   override fun setCurrentScreen(key: String) {
-    currentScreenKey?.let { screens[it] }?.hide()
+    // hide old screen and remove it from events manager
+    currentScreenKey
+        ?.let { screens[it] }
+        ?.let {
+          it.hide()
+          eventsMan.removeListener(it)
+        }
+
+    // set next screen key
     currentScreenKey = key
 
+    // get next screen, and if present show it, resize it, add it as an events listener, and pause
+    // it if necessary
     screens[key]?.let { nextScreen ->
       nextScreen.show()
       nextScreen.resize(Gdx.graphics.width, Gdx.graphics.height)
+
+      eventsMan.addListener(nextScreen)
 
       if (paused) {
         nextScreen.pause()
@@ -62,6 +88,11 @@ abstract class Game2D : IGame2D, Game() {
     }
   }
 
+  /**
+   * Initializes the sprite batch, the shape renderer, the buttons, the controller poller, the asset
+   * manager, the audio manager, the events manager, and the game engine. Also calls [loadAssets] to
+   * load assets into the asset manager.
+   */
   override fun create() {
     batch = SpriteBatch()
     shapeRenderer = ShapeRenderer()
@@ -77,11 +108,21 @@ abstract class Game2D : IGame2D, Game() {
     gameEngine = createGameEngine()
   }
 
+  /**
+   * Resizes the viewports and current screen.
+   *
+   * @param width the width
+   * @param height the height
+   */
   override fun resize(width: Int, height: Int) {
     viewports.values().forEach { it.update(width, height) }
     currentScreen?.resize(width, height)
   }
 
+  /**
+   * Clears the screen; updates the audio manager, controller poller, and events manager; renders
+   * the current screen; and updates all the viewports contained in [viewports]
+   */
   override fun render() {
     Gdx.gl20.glClearColor(0f, 0f, 0f, 1f)
     Gdx.graphics.gL20.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -96,24 +137,23 @@ abstract class Game2D : IGame2D, Game() {
     viewports.values().forEach { it.apply() }
   }
 
+  /** Pauses the current screen and sets [paused] to true. */
   override fun pause() {
-    if (paused) {
-      return
-    }
+    if (paused) return
 
     paused = true
     currentScreen?.pause()
   }
 
+  /** Resumes the current screen and sets [paused] to false. */
   override fun resume() {
-    if (!paused) {
-      return
-    }
+    if (!paused) return
 
     paused = false
     currentScreen?.resume()
   }
 
+  /** Disposes of the [batch], [shapeRenderer], and [IScreen]s. */
   override fun dispose() {
     batch.dispose()
     shapeRenderer.dispose()

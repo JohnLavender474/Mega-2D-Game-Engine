@@ -1,11 +1,9 @@
 package com.engine.drawables.sprites
 
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.utils.Array
 import com.engine.common.objects.ImmutableCollection
-import com.engine.drawables.IDrawable
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
+import java.util.*
 
 /**
  * A system that can be used to gather the sprites to be rendered. The array is NOT cleared on each
@@ -13,8 +11,7 @@ import com.engine.systems.GameSystem
  *
  * @param sprites the array to hold the sprites to be rendered
  */
-class SpriteSystem(private val sprites: Array<IDrawable<Batch>>) :
-    GameSystem(SpriteComponent::class) {
+class SpriteSystem(private val sprites: SortedSet<ISprite>) : GameSystem(SpriteComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return

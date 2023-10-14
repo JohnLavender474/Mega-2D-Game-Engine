@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Position
+import com.engine.common.objects.Properties
 
 /**
  * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to
@@ -13,7 +14,8 @@ import com.engine.common.enums.Position
  * @see Rectangle
  * @see PositionalGameShape2D
  */
-open class GameRectangle : Rectangle, PositionalGameShape2D {
+open class GameRectangle(override val properties: Properties = Properties()) :
+    Rectangle(), PositionalGameShape2D {
 
   companion object {
     private var OVERLAP_EXTENSION: ((GameRectangle, IGameShape2D) -> Boolean)? = null
@@ -33,13 +35,6 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
   }
 
   /**
-   * Creates a new [GameRectangle] with all values set to 0.
-   *
-   * @see Rectangle
-   */
-  constructor() : super()
-
-  /**
    * Creates a new [GameRectangle] with the given first, second, width, and height.
    *
    * @param x The first coordinate of the bottom left corner of this rectangle.
@@ -48,12 +43,9 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
    * @param height The height of this rectangle.
    * @see Rectangle
    */
-  constructor(
-      x: Number,
-      y: Number,
-      width: Number,
-      height: Number
-  ) : super(x.toFloat(), y.toFloat(), width.toFloat(), height.toFloat())
+  constructor(x: Number, y: Number, width: Number, height: Number) : this() {
+    set(x.toFloat(), y.toFloat(), width.toFloat(), height.toFloat())
+  }
 
   /**
    * Creates a new [GameRectangle] with the given [Rectangle].
@@ -61,7 +53,9 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
    * @param rect The [Rectangle] to create this [GameRectangle] from.
    * @see Rectangle
    */
-  constructor(rect: Rectangle) : super(rect)
+  constructor(rect: Rectangle) : this() {
+    set(rect)
+  }
 
   /**
    * Returns a list of [GameLine]s that make up this [GameRectangle].
@@ -77,10 +71,10 @@ open class GameRectangle : Rectangle, PositionalGameShape2D {
 
   override fun setSize(sizeXY: Float) = super.setSize(sizeXY) as GameRectangle
 
-  override fun set(x: Float, y: Float, width: Float, height: Float) =
+  final override fun set(x: Float, y: Float, width: Float, height: Float) =
       super.set(x, y, width, height) as GameRectangle
 
-  override fun set(rect: Rectangle) = super.set(rect) as GameRectangle
+  final override fun set(rect: Rectangle) = super.set(rect) as GameRectangle
 
   override fun setX(x: Float) = super<Rectangle>.setX(x) as GameRectangle
 

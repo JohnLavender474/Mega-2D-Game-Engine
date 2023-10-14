@@ -4,33 +4,47 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.engine.common.objects.Properties
+import com.engine.drawables.DrawingPriority
+import com.engine.drawables.DrawingSection
 
 /**
- * A sprite that can be drawn. This class extends the [Sprite] class and implements the [ISprite]
- * interface.
+ * A sprite that can be drawn. This class also extends the [Sprite].
  *
+ * @param priority the priority of this sprite
  * @param hidden whether this sprite is hidden
  */
 class GameSprite(
+    override val priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
     var hidden: Boolean = false,
+    override val properties: Properties = Properties()
 ) : ISprite, Sprite() {
 
-  constructor(texture: Texture, hidden: Boolean = false) : this(hidden) {
+  constructor(
+      texture: Texture,
+      priority: DrawingPriority,
+      hidden: Boolean = false
+  ) : this(priority, hidden) {
     setTexture(texture)
   }
 
-  constructor(textureRegion: TextureRegion, hidden: Boolean = false) : this(hidden) {
+  constructor(
+      textureRegion: TextureRegion,
+      priority: DrawingPriority,
+      hidden: Boolean = false
+  ) : this(priority, hidden) {
     setRegion(textureRegion)
   }
 
   constructor(
       textureRegion: TextureRegion,
+      priority: DrawingPriority,
       x: Float,
       y: Float,
       width: Float,
       height: Float,
       hidden: Boolean = false
-  ) : this(hidden) {
+  ) : this(priority, hidden) {
     setRegion(textureRegion)
     setPosition(x, y)
     setSize(width, height)
@@ -38,20 +52,21 @@ class GameSprite(
 
   constructor(
       texture: Texture,
+      priority: DrawingPriority,
       x: Float,
       y: Float,
       width: Float,
       height: Float,
       hidden: Boolean = false
-  ) : this(hidden) {
+  ) : this(priority, hidden) {
     setTexture(texture)
     setPosition(x, y)
     setSize(width, height)
   }
 
-  override fun draw(batch: Batch) {
+  override fun draw(drawer: Batch) {
     if (!hidden && texture != null) {
-      super<Sprite>.draw(batch)
+      super<Sprite>.draw(drawer)
     }
   }
 

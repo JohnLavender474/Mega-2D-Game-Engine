@@ -8,4 +8,4 @@ import com.engine.drawables.IDrawable
  *
  * @see ShapeRenderer
  */
-fun interface IDrawableShape : IDrawable<ShapeRenderer>
+interface IDrawableShape : IDrawable<ShapeRenderer>

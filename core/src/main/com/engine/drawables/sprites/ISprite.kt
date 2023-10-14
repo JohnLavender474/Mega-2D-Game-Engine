@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.interfaces.Positional
 import com.engine.common.interfaces.Sizable
-import com.engine.drawables.IDrawable
+import com.engine.drawables.IComparableDrawable
 
-/** An interface for objects that can be drawn. */
-interface ISprite : IDrawable<Batch>, Positional, Sizable {
+/** An interface for objects that can be sorted, positioned, sized, and drawn. */
+interface ISprite : IComparableDrawable<Batch>, Positional, Sizable {
 
   /**
    * Sets the region of this sprite.

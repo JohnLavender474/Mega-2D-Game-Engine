@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.objects.Properties
 import com.engine.drawables.IDrawable
 
 /**
@@ -24,7 +25,8 @@ class BitmapFontHandle(
     fontSource: String,
     fontSize: Int,
     var centerX: Boolean = true,
-    var centerY: Boolean = true
+    var centerY: Boolean = true,
+    override val properties: Properties = Properties()
 ) : IDrawable<Batch> {
 
   private var font: BitmapFont = BitmapFont()

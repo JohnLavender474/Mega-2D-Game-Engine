@@ -1,7 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.utils.OrderedMap
-import com.engine.common.interfaces.Propertizable
+import com.engine.common.interfaces.IPropertizable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
@@ -46,7 +46,7 @@ class Body(
     override var properties: Properties = Properties(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
-) : GameRectangle(x, y, width, height), IGameShape2DSupplier, Resettable, Propertizable {
+) : GameRectangle(x, y, width, height), IGameShape2DSupplier, Resettable, IPropertizable {
 
   /**
    * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and

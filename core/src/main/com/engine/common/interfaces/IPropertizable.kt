@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  *
  * @see Properties
  */
-interface Propertizable {
+interface IPropertizable {
 
   /** The [Properties] of this object. */
   val properties: Properties

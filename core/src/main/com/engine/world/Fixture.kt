@@ -1,7 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.interfaces.Propertizable
+import com.engine.common.interfaces.IPropertizable
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.IGameShape2D
 import com.engine.common.shapes.IGameShape2DSupplier
@@ -28,7 +28,7 @@ class Fixture(
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),
     override var properties: Properties = Properties(),
-) : IGameShape2DSupplier, Propertizable {
+) : IGameShape2DSupplier, IPropertizable {
 
   override fun getGameShape2D() = shape
 

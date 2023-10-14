@@ -2,19 +2,19 @@ package com.engine.entities
 
 import com.engine.IGame2D
 import com.engine.common.interfaces.Initializable
-import com.engine.common.interfaces.Propertizable
+import com.engine.common.interfaces.IPropertizable
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
 import kotlin.reflect.KClass
 
 /**
  * An [IGameEntity] is a container for [IGameComponent]s. It is the base class for all entities in
- * the game. It is also a [Propertizable] object, so it can have properties added to it.
+ * the game. It is also a [IPropertizable] object, so it can have properties added to it.
  *
- * @see Propertizable
+ * @see IPropertizable
  * @see IGameComponent
  */
-interface IGameEntity : Propertizable, Initializable {
+interface IGameEntity : IPropertizable, Initializable {
 
   /** The [IGame2D] this [GameEntity] belongs to. */
   val game: IGame2D

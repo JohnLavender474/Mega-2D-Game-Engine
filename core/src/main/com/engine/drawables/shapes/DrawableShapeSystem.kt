@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.objects.ImmutableCollection
-import com.engine.drawables.IDrawable
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
@@ -15,7 +14,7 @@ import com.engine.systems.GameSystem
  * @param shapes the map to hold the shapes to be rendered
  */
 class DrawableShapeSystem(
-    private val shapes: OrderedMap<ShapeRenderer.ShapeType, Array<IDrawable<ShapeRenderer>>>
+    private val shapes: OrderedMap<ShapeRenderer.ShapeType, Array<IDrawableShape>>
 ) : GameSystem(DrawableShapeComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {

@@ -1,32 +1,32 @@
 package com.engine.drawables.sprites
 
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
-import com.engine.drawables.IDrawable
 import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldNotContain
 import io.mockk.*
+import java.util.*
 
 class SpriteSystemTest :
     DescribeSpec({
       describe("SpriteSystem") {
-        lateinit var mockSprite1: ISprite
-        lateinit var mockSprite2: ISprite
-        lateinit var mockSprite3: ISprite
+        lateinit var mockSprite1: GameSprite
+        lateinit var mockSprite2: GameSprite
+        lateinit var mockSprite3: GameSprite
         lateinit var mockSpriteComponent: SpriteComponent
         lateinit var entity: GameEntity
-        lateinit var spritesQueue: Array<IDrawable<Batch>>
+        lateinit var spritesQueue: TreeSet<ISprite>
         lateinit var spriteSystem: SpriteSystem
 
         beforeEach {
           clearAllMocks()
 
-          mockSprite1 = mockk()
-          mockSprite2 = mockk()
-          mockSprite3 = mockk()
+          mockSprite1 = spyk(GameSprite())
+          mockSprite2 = spyk(GameSprite())
+          mockSprite3 = spyk(GameSprite())
 
-          val map = OrderedMap<String, IDrawable<Batch>>()
+          val map = OrderedMap<String, ISprite>()
           map.put("1", mockSprite1)
           map.put("2", mockSprite2)
           map.put("3", mockSprite3)
@@ -39,7 +39,7 @@ class SpriteSystemTest :
           entity.addComponent(mockSpriteComponent)
           entity.dead = false
 
-          spritesQueue = spyk(Array())
+          spritesQueue = TreeSet()
           spriteSystem = SpriteSystem(spritesQueue)
           spriteSystem.on = true
           spriteSystem.add(entity)
@@ -47,17 +47,17 @@ class SpriteSystemTest :
 
         it("should collect the sprites") {
           spriteSystem.update(1f)
-          verify(exactly = 1) { spritesQueue.add(mockSprite1) }
-          verify(exactly = 1) { spritesQueue.add(mockSprite2) }
-          verify(exactly = 1) { spritesQueue.add(mockSprite3) }
+          spritesQueue shouldContain mockSprite1
+          spritesQueue shouldContain mockSprite2
+          spritesQueue shouldContain mockSprite3
         }
 
         it("should not collect the sprites") {
           spriteSystem.on = false
           spriteSystem.update(1f)
-          verify(exactly = 0) { spritesQueue.add(mockSprite1) }
-          verify(exactly = 0) { spritesQueue.add(mockSprite2) }
-          verify(exactly = 0) { spritesQueue.add(mockSprite3) }
+          spritesQueue shouldNotContain mockSprite1
+          spritesQueue shouldNotContain mockSprite2
+          spritesQueue shouldNotContain mockSprite3
         }
       }
     })

@@ -42,7 +42,7 @@ class Body(
     width: Float = 0f,
     height: Float = 0f,
     var physics: PhysicsData = PhysicsData(),
-    var fixtures: OrderedMap<String, Fixture> = OrderedMap(),
+    var fixtures: OrderedMap<Any, Fixture> = OrderedMap(),
     override var properties: Properties = Properties(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
@@ -62,7 +62,7 @@ class Body(
   constructor(
       bodyType: BodyType,
       physicsData: PhysicsData,
-      fixtures: OrderedMap<String, Fixture> = OrderedMap(),
+      fixtures: OrderedMap<Any, Fixture> = OrderedMap(),
       properties: Properties = Properties(),
       preProcess: Updatable? = null,
       postProcess: Updatable? = null

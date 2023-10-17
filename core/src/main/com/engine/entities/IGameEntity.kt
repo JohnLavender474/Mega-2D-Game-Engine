@@ -40,7 +40,7 @@ interface IGameEntity : IPropertizable, Initializable {
   override fun init() {}
 
   /**
-   * Initializes this [GameEntity] with the given [HashMap] of data.
+   * Initializes this [GameEntity] with the given [Properties].
    *
    * @param spawnProps The [HashMap] of data to initialize this [GameEntity] with.
    */

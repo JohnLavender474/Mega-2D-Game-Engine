@@ -11,8 +11,9 @@ import com.engine.common.shapes.IGameShape2DSupplier
  * collisions with other fixtures.
  *
  * @param shape The shape of this fixture.
- * @param fixtureType The type of this fixture. Used to determine how this fixture interacts with
- *   other fixtures.
+ * @param fixtureLabel The label for this fixture. Used to determine how this fixture interacts with
+ *   other fixtures. It can be anything (String, Int, Enum, etc.) so long as it properly implements
+ *   [Any.equals] and [Any.hashCode].
  * @param active Whether this fixture is active. If not active, this fixture will not be used to
  *   detect collisions.
  * @param attachedToBody Whether this fixture is attached to a body. If not attached to a body, this
@@ -23,7 +24,7 @@ import com.engine.common.shapes.IGameShape2DSupplier
  */
 class Fixture(
     var shape: IGameShape2D,
-    var fixtureType: String,
+    var fixtureLabel: Any,
     var active: Boolean = true,
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.objects.Matrix
 import com.engine.common.objects.Properties
-import com.engine.drawables.DrawingPriority
+import com.engine.drawables.sorting.DrawingPriority
 import com.engine.drawables.IDrawable
 
 /**

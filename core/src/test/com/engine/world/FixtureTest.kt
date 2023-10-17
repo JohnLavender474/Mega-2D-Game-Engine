@@ -12,15 +12,15 @@ class FixtureTest :
     DescribeSpec({
       describe("Fixture class") {
         val mockShape = mockk<IGameShape2D>()
-        val fixtureType = "type"
+        val fixtureLabel = "type"
         val offset = Vector2(5f, 5f)
 
         val fixture =
-            Fixture(mockShape, fixtureType, offsetFromBodyCenter = offset)
+            Fixture(mockShape, fixtureLabel, offsetFromBodyCenter = offset)
 
         it("should have the correct initial properties") {
           fixture.shape shouldBe mockShape
-          fixture.fixtureType shouldBe fixtureType
+          fixture.fixtureLabel shouldBe fixtureLabel
           fixture.active shouldBe true
           fixture.attachedToBody shouldBe true
           fixture.offsetFromBodyCenter shouldBe offset

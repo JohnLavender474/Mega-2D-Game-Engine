@@ -1,11 +1,13 @@
 package com.engine.screens.levels.tiledmap
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.ObjectMap
 import com.engine.IGame2D
 import com.engine.common.objects.Properties
 import com.engine.screens.BaseScreen
 import com.engine.screens.IScreen
+import com.engine.screens.levels.tiledmap.builders.ITiledMapLayerBuilder
+import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
+import com.engine.screens.levels.tiledmap.builders.TiledMapLevelBuilder
 
 /**
  * A [TiledMapLevelScreen] is a [IScreen] that loads a tiled map and builds the layers using a map
@@ -35,12 +37,12 @@ abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties) :
    *
    * @see ITiledMapLayerBuilder
    */
-  protected abstract fun getLayerBuilders(): ObjectMap<String, ITiledMapLayerBuilder>
+  protected abstract fun getLayerBuilders(): TiledMapLayerBuilders
 
   /**
-   * Builds the level using the specified [Properties].
+   * Builds the level using the specified [Properties] returned from [TiledMapLayerBuilders.build].
    *
-   * @param result the [Properties] that were built
+   * @param result the [Properties] that were built from the layers
    */
   protected abstract fun buildLevel(result: Properties)
 

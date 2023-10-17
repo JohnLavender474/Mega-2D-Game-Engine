@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.objects.Properties
-import com.engine.drawables.DrawingPriority
-import com.engine.drawables.DrawingSection
+import com.engine.drawables.sorting.DrawingPriority
+import com.engine.drawables.sorting.DrawingSection
 
 /**
  * A sprite that can be drawn. This class also extends the [Sprite].
@@ -94,7 +94,7 @@ class GameSprite(
     super<Sprite>.setSize(width, height)
   }
 
-  override fun setFlip(x: Boolean, y: Boolean) {
-    super<Sprite>.setFlip(x, y)
+  override fun setFlip(flipX: Boolean, flipY: Boolean) {
+    super<Sprite>.setFlip(flipX, flipY)
   }
 }

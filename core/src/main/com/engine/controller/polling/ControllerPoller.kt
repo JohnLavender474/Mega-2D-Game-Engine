@@ -2,21 +2,21 @@ package com.engine.controller.polling
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.controller.ControllerUtils
-import com.engine.controller.buttons.Buttons
 import com.engine.controller.buttons.ButtonStatus
+import com.engine.controller.buttons.Buttons
 
 /**
  * Polls the controller buttons and updates the status of each button.
  *
- * @param buttonMap The map of buttons to poll.
+ * @param buttons The map of buttons to poll.
  */
-class ControllerPoller(val buttonMap: Buttons) : IControllerPoller {
+class ControllerPoller(private val buttons: Buttons) : IControllerPoller {
 
   internal val statusMap = ObjectMap<String, ButtonStatus>()
   override var on = true
 
   init {
-    buttonMap.keys().forEach { statusMap.put(it, ButtonStatus.RELEASED) }
+    buttons.keys().forEach { statusMap.put(it, ButtonStatus.RELEASED) }
   }
 
   override fun getButtonStatus(name: String): ButtonStatus? = statusMap[name]
@@ -24,7 +24,7 @@ class ControllerPoller(val buttonMap: Buttons) : IControllerPoller {
   override fun run() {
     if (!on) return
 
-    buttonMap.forEach { e ->
+    buttons.forEach { e ->
       val key = e.key
       val button = e.value
 
@@ -34,13 +34,9 @@ class ControllerPoller(val buttonMap: Buttons) : IControllerPoller {
       val status = statusMap.get(key)
 
       var pressed: Boolean
-      button.keyboardCode.let {
-        pressed = ControllerUtils.isKeyboardKeyPressed(it)
-      }
+      button.keyboardCode.let { pressed = ControllerUtils.isKeyboardKeyPressed(it) }
       if (!pressed) {
-        button.controllerCode?.let {
-          pressed = ControllerUtils.isControllerKeyPressed(it)
-        }
+        button.controllerCode?.let { pressed = ControllerUtils.isControllerKeyPressed(it) }
       }
 
       val newStatus =
@@ -48,11 +44,8 @@ class ControllerPoller(val buttonMap: Buttons) : IControllerPoller {
             when (status) {
               ButtonStatus.RELEASED,
               ButtonStatus.JUST_RELEASED ->
-                  if (pressed) ButtonStatus.JUST_PRESSED
-                  else ButtonStatus.RELEASED
-              else ->
-                  if (pressed) ButtonStatus.PRESSED
-                  else ButtonStatus.JUST_RELEASED
+                  if (pressed) ButtonStatus.JUST_PRESSED else ButtonStatus.RELEASED
+              else -> if (pressed) ButtonStatus.PRESSED else ButtonStatus.JUST_RELEASED
             }
           } else {
             if (status == ButtonStatus.JUST_RELEASED) {

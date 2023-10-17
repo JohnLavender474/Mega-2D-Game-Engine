@@ -71,6 +71,8 @@ open class GameRectangle(override val properties: Properties = Properties()) :
 
   override fun setSize(sizeXY: Float) = super.setSize(sizeXY) as GameRectangle
 
+  override fun setSize(width: Float, height: Float) = super.setSize(width, height) as GameRectangle
+
   final override fun set(x: Float, y: Float, width: Float, height: Float) =
       super.set(x, y, width, height) as GameRectangle
 

@@ -45,7 +45,7 @@ class WorldSystem(
   private val worldGraphSupplier: () -> IGraphMap,
   private val fixedStep: Float,
   private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
-  private val contactFilterMap: ObjectMap<String, Set<String>>? = null,
+  private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
 ) : GameSystem(BodyComponent::class) {
 
   internal var priorContactSet = OrderedSet<Contact>()
@@ -222,8 +222,8 @@ class WorldSystem(
    */
   internal fun filterContact(fixture1: Fixture, fixture2: Fixture) =
       (fixture1 != fixture2) &&
-          (contactFilterMap?.get(fixture1.fixtureType)?.contains(fixture2.fixtureType) != false ||
-              contactFilterMap[fixture2.fixtureType]?.contains(fixture1.fixtureType) != false)
+          (contactFilterMap?.get(fixture1.fixtureLabel)?.contains(fixture2.fixtureLabel) != false ||
+              contactFilterMap[fixture2.fixtureLabel]?.contains(fixture1.fixtureLabel) != false)
 
   /**
    * Checks for contacts with the given body.
@@ -232,7 +232,7 @@ class WorldSystem(
    */
   internal fun checkForContacts(body: Body) {
     body.fixtures.values().forEach { f ->
-      if (f.active && contactFilterMap?.containsKey(f.fixtureType) != false) {
+      if (f.active && contactFilterMap?.containsKey(f.fixtureLabel) != false) {
         val overlapping = ObjectSet<Fixture>()
 
         worldGraphSupplier().get(f.getGameShape2D()).forEach {

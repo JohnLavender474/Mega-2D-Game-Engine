@@ -4,6 +4,7 @@ import com.engine.controller.buttons.Button
 import com.engine.controller.buttons.ButtonStatus
 import com.engine.controller.buttons.Buttons
 import com.engine.controller.polling.ControllerPoller
+import com.engine.controller.polling.IControllerPoller
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -12,7 +13,7 @@ import io.mockk.spyk
 
 class ControllerPollerTest :
     DescribeSpec({
-      describe("ControllerPoller") {
+      describe("IControllerPoller") {
         var pressed = true
 
         it("should initialize with the provided buttons") {

@@ -4,30 +4,30 @@ package com.engine.world
 data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
 
   /**
-   * Gets the fixtures in order of [fixtureType1] and [fixtureType2]. If the fixtures are not of the
+   * Gets the fixtures in order of [fixtureLabel1] and [fixtureLabel2]. If the fixtures are not of the
    * given types, then null is returned.
    *
-   * @param fixtureType1 the type of the first fixture
-   * @param fixtureType2 the type of the second fixture
-   * @return the fixtures in order of [fixtureType1] and [fixtureType2], or null if the fixtures
+   * @param fixtureLabel1 the type of the first fixture
+   * @param fixtureLabel2 the type of the second fixture
+   * @return the fixtures in order of [fixtureLabel1] and [fixtureLabel2], or null if the fixtures
    */
-  fun getFixturesInOrder(fixtureType1: String, fixtureType2: String) =
-      if (fixture1.fixtureType == fixtureType1 && fixture2.fixtureType == fixtureType2) {
+  fun getFixturesInOrder(fixtureLabel1: Any, fixtureLabel2: Any) =
+      if (fixture1.fixtureLabel == fixtureLabel1 && fixture2.fixtureLabel == fixtureLabel2) {
         Pair(fixture1, fixture2)
-      } else if (fixture2.fixtureType == fixtureType1 && fixture1.fixtureType == fixtureType2) {
+      } else if (fixture2.fixtureLabel == fixtureLabel1 && fixture1.fixtureLabel == fixtureLabel2) {
         Pair(fixture2, fixture1)
       } else null
 
   /**
    * Returns if the fixtures are of the given types.
    *
-   * @param fixtureType1 the type of the first fixture
-   * @param fixtureType2 the type of the second fixture
+   * @param fixtureLabel1 the type of the first fixture
+   * @param fixtureLabel2 the type of the second fixture
    * @return if the fixtures are of the given types
    */
-  fun fixturesAreOfTypes(fixtureType1: String, fixtureType2: String) =
-      (fixture1.fixtureType == fixtureType1 && fixture2.fixtureType == fixtureType2) ||
-          (fixture2.fixtureType == fixtureType1 && fixture1.fixtureType == fixtureType2)
+  fun fixturesAreOfTypes(fixtureLabel1: Any, fixtureLabel2: Any) =
+      (fixture1.fixtureLabel == fixtureLabel1 && fixture2.fixtureLabel == fixtureLabel2) ||
+          (fixture2.fixtureLabel == fixtureLabel1 && fixture1.fixtureLabel == fixtureLabel2)
 
   override fun equals(other: Any?) =
       other is Contact &&

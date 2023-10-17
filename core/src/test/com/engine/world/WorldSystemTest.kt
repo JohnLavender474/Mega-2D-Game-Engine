@@ -2,8 +2,8 @@ package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
-import com.engine.common.extensions.objectMapOf
 import com.engine.common.extensions.objectSetOf
 import com.engine.common.extensions.orderedMapOf
 import com.engine.common.extensions.round
@@ -183,7 +183,8 @@ class WorldSystemTest :
         it("should filter contacts correctly") {
           val fixture1 = Fixture(mockk(), "Type1")
           val fixture2 = Fixture(mockk(), "Type2")
-          val filterMap = objectMapOf("Type1" to setOf("Type2"))
+          val filterMap = ObjectMap<Any, ObjectSet<Any>>()
+          filterMap.put("Type1", objectSetOf("Type2"))
 
           val filteredSystem =
               WorldSystem(

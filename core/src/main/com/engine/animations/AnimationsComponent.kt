@@ -1,6 +1,6 @@
 package com.engine.animations
 
-import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.Array
 import com.engine.components.IGameComponent
 import com.engine.drawables.sprites.ISprite
 import com.engine.entities.IGameEntity
@@ -13,7 +13,7 @@ import com.engine.entities.IGameEntity
  */
 class AnimationsComponent(
     override val entity: IGameEntity,
-    val animations: ObjectMap<ISprite, IAnimator> = ObjectMap(),
+    val animations: Array<Pair<ISprite, IAnimator>> = Array()
 ) : IGameComponent {
 
   /** Animates the specified sprite. */
@@ -21,9 +21,9 @@ class AnimationsComponent(
       entity: IGameEntity,
       sprite: ISprite,
       animator: IAnimator
-  ) : this(entity, ObjectMap<ISprite, IAnimator>().apply { put(sprite, animator) })
+  ) : this(entity, Array<Pair<ISprite, IAnimator>>().apply { add(Pair(sprite, animator)) })
 
   override fun reset() {
-    animations.values().forEach { it.reset() }
+    animations.forEach { it.second.reset() }
   }
 }

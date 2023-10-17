@@ -8,5 +8,6 @@ import com.engine.common.enums.Facing
  * @see Facing
  */
 interface Faceable {
+
   var facing: Facing
 }

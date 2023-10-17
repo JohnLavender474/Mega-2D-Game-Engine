@@ -1,14 +1,5 @@
 package com.engine.utils
 
-import com.badlogic.gdx.utils.ObjectMap
-import com.badlogic.gdx.utils.ObjectSet
-import com.engine.IGame2D
-import com.engine.common.extensions.objectMapOf
-import com.engine.common.objects.Properties
-import com.engine.events.Event
-import com.engine.screens.levels.tiledmap.ITiledMapLayerBuilder
-import com.engine.screens.levels.tiledmap.TiledMapLevelScreen
-
 /*
 class StandardTiledMapScreen(
     game: IGame2D,

@@ -13,7 +13,7 @@ class BodyTest :
       describe("Body") {
         val bodyType = BodyType.ABSTRACT
         val physicsData = PhysicsData()
-        val fixtures = orderedMapOf<String, Fixture>()
+        val fixtures = orderedMapOf<Any, Fixture>()
         val props = Properties()
         val body = Body(bodyType, physicsData, fixtures, properties = props)
 

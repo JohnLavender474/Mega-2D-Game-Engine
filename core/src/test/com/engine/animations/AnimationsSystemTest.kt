@@ -1,7 +1,7 @@
 package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.utils.ObjectMap
+import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.objects.Properties
 import com.engine.drawables.sprites.ISprite
 import com.engine.entities.GameEntity
@@ -38,9 +38,8 @@ class AnimationsSystemTest :
                 }
           }
 
-          val map = ObjectMap<ISprite, IAnimator>()
-          map.put(mockSprite, mockAnimator)
-          animationsComponent = spyk(AnimationsComponent(entity, map))
+          val anims = gdxArrayOf(mockSprite to mockAnimator)
+          animationsComponent = spyk(AnimationsComponent(entity, anims))
           animationsSystem = spyk(AnimationsSystem())
 
           entity.addComponent(animationsComponent)

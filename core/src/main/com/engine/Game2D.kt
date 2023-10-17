@@ -49,10 +49,25 @@ abstract class Game2D : IGame2D, Game() {
 
   var currentScreenKey: String? = null
 
+  /**
+   * Creates the [Buttons] instance used for creating the [IControllerPoller].
+   *
+   * @return the buttons
+   */
   protected abstract fun createButtons(): Buttons
 
+  /**
+   * Loads the assets into the [AssetManager].
+   *
+   * @param assMan the asset manager to load assets into.
+   */
   protected abstract fun loadAssets(assMan: AssetManager)
 
+  /**
+   * Creates the [IGameEngine].
+   *
+   * @return the game engine
+   */
   protected abstract fun createGameEngine(): IGameEngine
 
   /**

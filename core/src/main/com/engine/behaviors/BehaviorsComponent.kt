@@ -8,15 +8,15 @@ import com.engine.entities.IGameEntity
 /** A [IGameComponent] that manages a collection of [IBehavior]s. */
 class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
 
-  internal val behaviors = OrderedMap<String, IBehavior>()
-  private val activeBehaviors = ObjectSet<String>()
+  internal val behaviors = OrderedMap<Any, IBehavior>()
+  private val activeBehaviors = ObjectSet<Any>()
 
   /**
    * Creates a [BehaviorsComponent] with the given [behaviors].
    *
    * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
    */
-  constructor(entity: IGameEntity, vararg _behaviors: Pair<String, IBehavior>) : this(entity) {
+  constructor(entity: IGameEntity, vararg _behaviors: Pair<Any, IBehavior>) : this(entity) {
     _behaviors.forEach { addBehavior(it.first, it.second) }
   }
 
@@ -25,7 +25,7 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    *
    * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
    */
-  constructor(entity: IGameEntity, _behaviors: Iterable<Pair<String, IBehavior>>) : this(entity) {
+  constructor(entity: IGameEntity, _behaviors: Iterable<Pair<Any, IBehavior>>) : this(entity) {
     _behaviors.forEach { addBehavior(it.first, it.second) }
   }
 
@@ -34,7 +34,7 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    *
    * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
    */
-  constructor(entity: IGameEntity, _behaviors: OrderedMap<String, IBehavior>) : this(entity) {
+  constructor(entity: IGameEntity, _behaviors: OrderedMap<Any, IBehavior>) : this(entity) {
     _behaviors.forEach { addBehavior(it.key, it.value) }
   }
 
@@ -46,7 +46,7 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    * @param key The key to associate with the [IBehavior].
    * @param behavior The [IBehavior] to add.
    */
-  fun addBehavior(key: String, behavior: IBehavior) {
+  fun addBehavior(key: Any, behavior: IBehavior) {
     behaviors.put(key, behavior)
   }
 
@@ -56,10 +56,10 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    * @param key The key of the [IBehavior] to check.
    * @return If the [IBehavior] with the given [key] is active.
    */
-  fun isBehaviorActive(key: String) = activeBehaviors.contains(key)
+  fun isBehaviorActive(key: Any) = activeBehaviors.contains(key)
 
-  /** @see [isBehaviorActive(Iterable<String>)] */
-  fun isAnyBehaviorActive(vararg keys: String) = isAnyBehaviorActive(keys.asIterable())
+  /** @see [isBehaviorActive(Iterable<Any>)] */
+  fun isAnyBehaviorActive(vararg keys: Any) = isAnyBehaviorActive(keys.asIterable())
 
   /**
    * Returns if any of the [IBehavior]s with the given [keys] are active.
@@ -67,10 +67,10 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    * @param keys The keys of the [IBehavior]s to check.
    * @return If any of the [IBehavior]s with the given [keys] are active.
    */
-  fun isAnyBehaviorActive(keys: Iterable<String>) = keys.any { isBehaviorActive(it) }
+  fun isAnyBehaviorActive(keys: Iterable<Any>) = keys.any { isBehaviorActive(it) }
 
-  /** @see [areAllBehaviorsActive(Iterable<String>)] */
-  fun areAllBehaviorsActive(vararg keys: String) = areAllBehaviorsActive(keys.asIterable())
+  /** @see [areAllBehaviorsActive(Iterable<Any>)] */
+  fun areAllBehaviorsActive(vararg keys: Any) = areAllBehaviorsActive(keys.asIterable())
 
   /**
    * Returns if all of the [IBehavior]s with the given [keys] are active.
@@ -78,7 +78,7 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    * @param keys The keys of the [IBehavior]s to check.
    * @return If all of the [IBehavior]s with the given [keys] are active.
    */
-  fun areAllBehaviorsActive(keys: Iterable<String>) = keys.all { isBehaviorActive(it) }
+  fun areAllBehaviorsActive(keys: Iterable<Any>) = keys.all { isBehaviorActive(it) }
 
   /**
    * Sets the [IBehavior] with the given [key] to be active or inactive.
@@ -86,7 +86,7 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    * @param key The key of the [IBehavior] to set.
    * @param active If the [IBehavior] should be active.
    */
-  internal fun setActive(key: String, active: Boolean) {
+  internal fun setActive(key: Any, active: Boolean) {
     if (active) {
       activeBehaviors.add(key)
     } else {

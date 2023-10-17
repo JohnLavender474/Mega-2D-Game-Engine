@@ -5,10 +5,18 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.interfaces.Positional
 import com.engine.common.interfaces.Sizable
-import com.engine.drawables.IComparableDrawable
+import com.engine.drawables.sorting.IComparableDrawable
 
 /** An interface for objects that can be sorted, positioned, sized, and drawn. */
 interface ISprite : IComparableDrawable<Batch>, Positional, Sizable {
+
+  /**
+   * Sets the flip of this sprite.
+   *
+   * @param flipX the flip x value to set
+   * @param flipY the flip y value to set
+   */
+  fun setFlip(flipX: Boolean, flipY: Boolean)
 
   /**
    * Sets the region of this sprite.

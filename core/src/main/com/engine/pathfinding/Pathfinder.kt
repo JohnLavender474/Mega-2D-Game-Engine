@@ -39,6 +39,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
 
     val x: Int
       get() = coordinate.first
+
     val y: Int
       get() = coordinate.second
 
@@ -75,14 +76,11 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
     val startCoordinate = graph.convertToGraphCoordinate(params.startSupplier())
 
     // If the start or target pointsMap are out of bounds, return null
-    if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate)) {
-      return PathfinderResult(null, null, false)
-    }
+    if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate))
+        return PathfinderResult(null, null, false)
 
     // If the start and target pointsMap are the same, return an empty graphPath
-    if (startCoordinate == targetCoordinate) {
-      return PathfinderResult(null, null, true)
-    }
+    if (startCoordinate == targetCoordinate) return PathfinderResult(null, null, true)
 
     // Add the start node to the map
     val startNode = Node(startCoordinate, graph.ppm)
@@ -176,5 +174,14 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
     return PathfinderResult(null, null, false)
   }
 
+  /**
+   * Calculates the cost between two points.
+   *
+   * @param x1 the x coordinate of the first point
+   * @param y1 the y coordinate of the first point
+   * @param x2 the x coordinate of the second point
+   * @param y2 the y coordinate of the second point
+   * @return the cost between the two points
+   */
   internal fun cost(x1: Int, y1: Int, x2: Int, y2: Int) = abs(x1 - x2) + abs(y1 - y2)
 }

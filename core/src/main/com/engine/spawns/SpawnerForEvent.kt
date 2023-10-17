@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.engine.events.Event
 import com.engine.events.IEventListener
 
+/** Spawns an entity when an event is fired. */
 class SpawnerForEvent(
     private val predicate: (Event) -> Boolean,
     private val spawnSupplier: () -> Spawn,

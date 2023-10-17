@@ -3,6 +3,15 @@ package com.engine.motion
 import com.badlogic.gdx.math.MathUtils.*
 import com.badlogic.gdx.math.Vector2
 
+/**
+ * A class representing a pendulum motion.
+ *
+ * @param length The length of the pendulum.
+ * @param gravity The acceleration due to gravity.
+ * @param anchor The anchor point for the pendulum.
+ * @param targetFPS The target frames per second for updates.
+ * @param scalar A scaling factor for motion calculations (default is 1.0).
+ */
 class Pendulum(
     var length: Float,
     var gravity: Float,
@@ -18,6 +27,12 @@ class Pendulum(
 
   private val endPoint = Vector2()
 
+  /**
+   * Computes a point at a specified distance from the anchor point on the pendulum.
+   *
+   * @param distance The distance from the anchor point.
+   * @return The point at the specified distance from the anchor point.
+   */
   fun getPointFromAnchor(distance: Float): Vector2 {
     val point = Vector2()
     point.x = (anchor.x + sin(angle) * distance)
@@ -25,8 +40,18 @@ class Pendulum(
     return point
   }
 
+  /**
+   * Gets the current motion value represented as a 2D vector.
+   *
+   * @return The current position of the pendulum's endpoint.
+   */
   override fun getMotionValue() = Vector2(endPoint)
 
+  /**
+   * Updates the pendulum's motion.
+   *
+   * @param delta The time elapsed since the last update.
+   */
   override fun update(delta: Float) {
     accumulator += delta
     while (accumulator >= targetFPS) {
@@ -38,6 +63,7 @@ class Pendulum(
     endPoint.set(getPointFromAnchor(length))
   }
 
+  /** Resets the pendulum to its initial state. */
   override fun reset() {
     angleVel = 0f
     angleAccel = 0f

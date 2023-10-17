@@ -3,6 +3,7 @@ package com.engine.spawns
 import com.badlogic.gdx.math.Rectangle
 import com.engine.common.shapes.GameRectangle
 
+/** Spawns an entity when the bounds of this spawner and the bounds of another object overlap. */
 class SpawnerForBoundsEntered(
     private val spawnSupplier: () -> Spawn,
     private val thisBounds: Array<GameRectangle>,

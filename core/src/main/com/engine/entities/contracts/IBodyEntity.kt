@@ -6,6 +6,7 @@ import com.engine.entities.IGameEntity
 import com.engine.world.Body
 import com.engine.world.BodyComponent
 
+/** An entity that has a [Body]. */
 interface IBodyEntity : IGameEntity, Positional, Sizable {
 
   val body: Body

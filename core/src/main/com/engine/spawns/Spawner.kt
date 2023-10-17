@@ -1,5 +1,6 @@
 package com.engine.spawns
 
+/** A [Spawner] is used to spawn an entity. */
 abstract class Spawner(protected val shouldBeCulled: () -> Boolean = { false }) : ISpawner {
 
   protected var spawned = false

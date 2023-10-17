@@ -27,7 +27,7 @@ class MusicRequest(val source: String, val onCompletionListener: ((Music) -> Uni
  * @property playSoundRequests a list of sounds to play
  * @property stopSoundRequests a list of sounds to stop
  */
-class SoundComponent(override val entity: IGameEntity) : IGameComponent {
+class AudioComponent(override val entity: IGameEntity) : IGameComponent {
 
   val playSoundRequests = Array<SoundRequest>()
   val stopSoundRequests = Array<String>()

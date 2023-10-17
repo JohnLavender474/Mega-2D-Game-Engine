@@ -147,18 +147,20 @@ class Timer(val duration: Float) : Updatable, Resettable {
   }
 
   /** Clears the [runnables]. */
-  fun clearRunnables() {
+  fun clearRunnables(): Timer {
     runnables.clear()
     runnableQueue.clear()
+    return this
   }
 
   /**
    * Sets the [time] to the [duration]. This will set [justFinished] to true if the [time] was not
    * equal to the [duration] and is now equal to the [duration].
    */
-  fun setToEnd() {
+  fun setToEnd(): Timer {
     val oldTime = time
     time = duration
     justFinished = oldTime != time
+    return this
   }
 }

@@ -8,7 +8,7 @@ import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /**
- * A [GameSystem] that processes [SoundComponent]s. It plays and stops sounds and music.
+ * A [GameSystem] that processes [AudioComponent]s. It plays and stops sounds and music.
  *
  * @property assetManager the [AssetManager]
  * @property playSoundsWhenOff whether to play sounds when the system is off
@@ -22,15 +22,15 @@ class AudioSystem(
     var playMusicWhenOff: Boolean = false,
     var stopSoundsWhenOff: Boolean = true,
     var stopMusicWhenOff: Boolean = true
-) : GameSystem(SoundComponent::class) {
+) : GameSystem(AudioComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     entities.forEach { entity ->
-      val soundComponent = entity.getComponent(SoundComponent::class)
+      val audioComponent = entity.getComponent(AudioComponent::class)
 
       // play sounds
       if (on || playSoundsWhenOff) {
-        soundComponent?.playSoundRequests?.forEach {
+        audioComponent?.playSoundRequests?.forEach {
           val sound = assetManager.get(it.source, Sound::class.java)
           if (it.loop) {
             sound.loop()
@@ -42,7 +42,7 @@ class AudioSystem(
 
       // play music
       if (on || playMusicWhenOff) {
-        soundComponent?.playMusicRequests?.forEach {
+        audioComponent?.playMusicRequests?.forEach {
           val music = assetManager.get(it.source, Music::class.java)
           it.onCompletionListener?.let { listener -> music.setOnCompletionListener(listener) }
           music.play()
@@ -51,14 +51,14 @@ class AudioSystem(
 
       // stop sounds
       if (on || stopSoundsWhenOff) {
-        soundComponent?.stopSoundRequests?.forEach {
+        audioComponent?.stopSoundRequests?.forEach {
           assetManager.get(it, Sound::class.java).stop()
         }
       }
 
       // stop music
       if (on || stopMusicWhenOff) {
-        soundComponent?.stopMusicRequests?.forEach {
+        audioComponent?.stopMusicRequests?.forEach {
           assetManager.get(it, Music::class.java).stop()
         }
       }

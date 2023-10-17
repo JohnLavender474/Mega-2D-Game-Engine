@@ -1,6 +1,10 @@
 package com.engine.common.time
 
-abstract class TimeMarkedRunnable(val time: Float) : Runnable, Comparable<TimeMarkedRunnable> {
+/** A runnable that is marked with a time. */
+class TimeMarkedRunnable(val time: Float, val runnable: () -> Unit) :
+    Runnable, Comparable<TimeMarkedRunnable> {
+
+  override fun run() = runnable()
 
   override fun compareTo(other: TimeMarkedRunnable) = time.compareTo(other.time)
 

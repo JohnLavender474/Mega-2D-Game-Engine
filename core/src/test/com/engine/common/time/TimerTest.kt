@@ -8,10 +8,7 @@ class TimerTest :
     DescribeSpec({
       describe("Timer") {
         val timer = Timer(5f)
-        val mockRunnable =
-            object : TimeMarkedRunnable(1f) {
-              override fun run() {}
-            }
+        val mockRunnable = TimeMarkedRunnable(1f) {}
 
         beforeEach {
           timer.clearRunnables()

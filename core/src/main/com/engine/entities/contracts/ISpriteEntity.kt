@@ -5,6 +5,7 @@ import com.engine.drawables.sprites.ISprite
 import com.engine.drawables.sprites.SpriteComponent
 import com.engine.entities.IGameEntity
 
+/** An entity containing sprites. */
 interface ISpriteEntity : IGameEntity {
 
   val sprites: OrderedMap<String, ISprite>

@@ -27,10 +27,11 @@ class Animator(
   override fun animate(sprite: ISprite, delta: Float) {
     val priorKey = currentKey
     val nextKey = keySupplier()
-    if (priorKey != nextKey) {
-      currentAnimation?.reset()
-    }
+
+    if (priorKey != nextKey) currentAnimation?.reset()
+
     currentKey = nextKey
+
     currentAnimation?.let {
       it.update(delta)
       it.getCurrentRegion()?.let { region -> sprite.setRegion(region) }

@@ -13,15 +13,15 @@ import com.engine.entities.IGameEntity
  */
 class AnimationsComponent(
     override val entity: IGameEntity,
-    val animations: Array<Pair<ISprite, IAnimator>> = Array()
+    val animations: Array<Pair<() -> ISprite, IAnimator>> = Array()
 ) : IGameComponent {
 
   /** Animates the specified sprite. */
   constructor(
       entity: IGameEntity,
-      sprite: ISprite,
+      spriteSupplier: () -> ISprite,
       animator: IAnimator
-  ) : this(entity, Array<Pair<ISprite, IAnimator>>().apply { add(Pair(sprite, animator)) })
+  ) : this(entity, Array<Pair<() -> ISprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
 
   override fun reset() {
     animations.forEach { it.second.reset() }

@@ -1,6 +1,7 @@
 package com.engine.entities.contracts
 
 import com.engine.damage.DamageableComponent
+import com.engine.damage.IDamageable
 import com.engine.entities.IGameEntity
 
 /** An entity that can be damaged. */
@@ -21,26 +22,37 @@ interface IDamageableEntity : IGameEntity {
   fun getDamageableComponent() = getComponent(DamageableComponent::class)!!
 
   /**
-   * Returns if the [DamageableComponent] can be damaged. The [DamageableComponent] can be damaged
-   * if it is not invincible, not under damage, and not recovering from damage.
+   * Returns the [IDamageable] of this entity.
    *
-   * @return true if the [DamageableComponent] can be damaged, otherwise false
+   * @return the [IDamageable] of this entity
    */
-  fun canBeDamaged() = getDamageableComponent().canBeDamaged()
+  fun getDamageable() = getDamageableComponent().damageable
 
   /**
-   * Returns if the [DamageableComponent] is under damage. The [DamageableComponent] is under damage
-   * if the [DamageableComponent.damageTimer] is not finished.
+   * Returns if this entity is under damage.
    *
-   * @return true if the [DamageableComponent] is under damage, otherwise false
+   * @return true if this entity is under damage, otherwise false
    */
   fun isUnderDamage() = getDamageableComponent().isUnderDamage()
 
   /**
-   * Returns if the [DamageableComponent] is recovering from damage. The [DamageableComponent] is
-   * recovering from damage if the [DamageableComponent.damageRecoveryTimer] is not finished.
+   * Returns if this entity is invincible.
    *
-   * @return true if the [DamageableComponent] is recovering from damage, otherwise false
+   * @return true if this entity is invincible, otherwise false
+   */
+  fun isInvincible() = getDamageableComponent().invincible
+
+  /**
+   * Returns if this entity can be damaged.
+   *
+   * @return true if this entity can be damaged, otherwise false
+   */
+  fun canBeDamaged() = getDamageableComponent().canBeDamaged()
+
+  /**
+   * Returns if this entity is recovering from damage.
+   *
+   * @return true if this entity is recovering from damage, otherwise false
    */
   fun isRecoveringFromDamage() = getDamageableComponent().isRecoveringFromDamage()
 }

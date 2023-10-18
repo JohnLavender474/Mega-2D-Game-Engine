@@ -39,15 +39,12 @@ abstract class IBehavior : Updatable, Resettable {
   override fun update(delta: Float) {
     val runningPrior = runningNow
     runningNow = evaluate(delta)
-    if (runningNow && !runningPrior) {
-      init()
-    }
-    if (runningNow) {
-      act(delta)
-    }
-    if (!runningNow && runningPrior) {
-      end()
-    }
+
+    if (runningNow && !runningPrior) init()
+
+    if (runningNow) act(delta)
+
+    if (!runningNow && runningPrior) end()
   }
 
   override fun reset() {

@@ -1,5 +1,6 @@
 package com.engine.pathfinding
 
+import com.badlogic.gdx.Gdx
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
@@ -12,10 +13,8 @@ import java.util.concurrent.Executors
  * @param pathfinderFactory The factory that creates the pathfinder for the pathfinding component.
  * @see [IPathfinder]
  */
-class PathfindingSystem(
-    private val pathfinderFactory: (PathfindingComponent) -> IPathfinder,
-    var executionExceptionHandler: (Exception) -> Unit = { it.printStackTrace() }
-) : GameSystem(PathfindingComponent::class) {
+class PathfindingSystem(private val pathfinderFactory: (PathfindingComponent) -> IPathfinder) :
+    GameSystem(PathfindingComponent::class) {
 
   // pathfinders are run in separate threads
   internal var execServ = Executors.newCachedThreadPool()
@@ -54,7 +53,7 @@ class PathfindingSystem(
         pathfindingComponents[i].consumer(result)
       }
     } catch (e: Exception) {
-      executionExceptionHandler(e)
+      Gdx.app.error("PathfindingSystem", "Error in pathfinding system", e)
     }
   }
 }

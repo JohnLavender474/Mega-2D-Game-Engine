@@ -77,8 +77,8 @@ class DamageableComponent(
    * clearing the [damagers], and setting [invincible] to false.
    */
   override fun reset() {
-    damageTimer.reset()
-    damageRecoveryTimer.reset()
+    damageTimer.setToEnd()
+    damageRecoveryTimer.setToEnd()
     invincible = false
     damagers.clear()
   }

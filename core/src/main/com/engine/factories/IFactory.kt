@@ -1,5 +1,7 @@
 package com.engine.factories
 
+import com.engine.common.objects.Properties
+
 /**
  * A factory that fetches objects from a key.
  *
@@ -8,10 +10,11 @@ package com.engine.factories
 interface IFactory<T> {
 
   /**
-   * Fetches an object from the given key.
+   * Fetches an object using the given key.
    *
-   * @param key the key to fetch the object from
+   * @param key the key of the object to fetch
+   * @param props the properties to pass to the factory
    * @return the object fetched from the key
    */
-  fun fetch(key: Any): T?
+  fun fetch(key: Any, props: Properties): T?
 }

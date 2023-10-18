@@ -14,5 +14,8 @@ class CullablesComponent(
     val cullables: Array<ICullable> = Array()
 ) : IGameComponent {
 
+  /** @see [CullablesComponent(entity: IGameEntity, cullables: Array<ICullable>)] */
+  constructor(entity: IGameEntity, vararg cullables: ICullable) : this(entity, Array(cullables))
+
   override fun reset() = cullables.forEach { it.reset() }
 }

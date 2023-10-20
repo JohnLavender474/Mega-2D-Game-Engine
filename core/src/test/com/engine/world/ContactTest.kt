@@ -33,7 +33,7 @@ class ContactDescribeSpec :
           val badFixtureType = "type3"
 
           val test: (String, String, Boolean) -> Unit = { f1, f2, expected ->
-            contact.fixturesAreOfTypes(f1, f2) shouldBe expected
+            contact.fixturesMatch(f1, f2) shouldBe expected
           }
 
           test(fixtureType1, fixtureType2, true)

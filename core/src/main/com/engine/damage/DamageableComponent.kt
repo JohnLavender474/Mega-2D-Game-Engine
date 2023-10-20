@@ -7,32 +7,32 @@ import com.engine.entities.IGameEntity
 
 /**
  * A [DamageableComponent] is a [IGameComponent] that contains a [IDamageable] and an array of
- * [IDamager]s. The [IDamageable] is the object that can take damage from the [DamagerComponent]s.
- * The [DamagerComponent]s are the objects that can deal damage to the [IDamageable]. The list of
- * [IDamager]s should be cleared at the end of each update cycle.
+ * [IDamager]s. The [IDamageable] is the object that can take damage from the [IDamager]s. The
+ * [IDamager]s are the objects that can deal damage to the [IDamageable]. The list of [IDamager]s
+ * should be cleared at the end of each update cycle.
  *
  * @param entity the [IGameEntity] this [DamageableComponent] belongs to
- * @param damageable the [IDamageable] that can take damage from the [DamagerComponent]s
+ * @param damageable the [IDamageable] that can take damage from the [IDamager]s
  * @param damageTimer the [Timer] that keeps track of how long the [DamageableComponent] has been
  *   under damage. If the [DamageableComponent] is under damage, it cannot take damage from another
- *   [DamagerComponent]. The [DamageableComponent] is under damage until the [Timer] is finished.
+ *   [IDamager]. The [DamageableComponent] is under damage until the [Timer] is finished.
  * @param damageRecoveryTimer the [Timer] that keeps track of how long the [DamageableComponent] has
  *   been recovering from damage. If the [DamageableComponent] is recovering from damage, it cannot
- *   take damage from another [DamagerComponent]. The [DamageableComponent] is recovering from
- *   damage until the [Timer] is finished. The [DamageableComponent] is invincible while it is
- *   recovering from damage. This timer is not started until the damage timer is finished.
+ *   take damage from another [IDamager]. The [DamageableComponent] is recovering from damage until
+ *   the [Timer] is finished. The [DamageableComponent] is invincible while it is recovering from
+ *   damage. This timer is not started until the damage timer is finished.
  * @param invincible true if the [DamageableComponent] is invincible, otherwise false
- * @property damagers the [DamagerComponent]s that can deal damage to the [IDamageable]
+ * @property damagers the [IDamager]s that can deal damage to the [IDamageable]
  */
-class DamageableComponent(
+open class DamageableComponent(
     override val entity: IGameEntity,
-    var damageable: IDamageable,
-    val damageTimer: Timer = Timer(1f),
-    val damageRecoveryTimer: Timer = Timer(1f),
+    internal var damageable: IDamageable,
+    internal val damageTimer: Timer = Timer(1f),
+    internal val damageRecoveryTimer: Timer = Timer(1f),
     var invincible: Boolean = false
 ) : IGameComponent {
 
-  var damagers: Array<DamagerComponent> = Array()
+  open var damagers: Array<IDamager> = Array()
 
   /**
    * Returns if the [DamageableComponent] can be damaged. The [DamageableComponent] can be damaged

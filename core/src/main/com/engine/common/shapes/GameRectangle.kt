@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Position
-import com.engine.common.objects.Properties
 
 /**
  * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to
@@ -14,8 +13,7 @@ import com.engine.common.objects.Properties
  * @see Rectangle
  * @see PositionalGameShape2D
  */
-open class GameRectangle(override val properties: Properties = Properties()) :
-    Rectangle(), PositionalGameShape2D {
+open class GameRectangle() : Rectangle(), PositionalGameShape2D {
 
   companion object {
     private var OVERLAP_EXTENSION: ((GameRectangle, IGameShape2D) -> Boolean)? = null

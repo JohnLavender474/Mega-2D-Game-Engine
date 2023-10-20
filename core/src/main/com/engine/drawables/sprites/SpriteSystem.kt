@@ -6,17 +6,28 @@ import com.engine.systems.GameSystem
 import java.util.*
 
 /**
- * A system that can be used to gather the sprites to be rendered. The array is NOT cleared on each
- * update, so it is up to the developer to clear the array before the update.
+ * A system that can be used to gather the sprites to be rendered. The set is NOT cleared on each
+ * update, so it is up to the developer to clear the set before the update.
  *
- * @param sprites the array to hold the sprites to be rendered
+ * @param spritesCollectionSupplier the supplier that supplies the collection of sprites
  */
-class SpriteSystem(private val sprites: SortedSet<ISprite>) : GameSystem(SpriteComponent::class) {
+open class SpriteSystem(private val spritesCollectionSupplier: () -> SortedSet<ISprite>) :
+    GameSystem(SpriteComponent::class) {
+
+  /**
+   * Creates a [SpriteSystem] where the provided [SortedSet] is used to store the sprites to be
+   * rendered.
+   *
+   * @param sprites the [SortedSet] to store the sprites to be rendered
+   * @see [SpriteSystem]
+   */
+  constructor(sprites: SortedSet<ISprite>) : this({ sprites })
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
 
-    // collect the sprites
+    // collect the sprites into the supplied set
+    val sprites = spritesCollectionSupplier()
     entities.forEach { entity ->
       val spriteComponent = entity.getComponent(SpriteComponent::class)
       spriteComponent?.update(delta)

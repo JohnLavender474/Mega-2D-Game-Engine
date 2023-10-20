@@ -25,8 +25,7 @@ class BitmapFontHandle(
     fontSource: String,
     fontSize: Int,
     var centerX: Boolean = true,
-    var centerY: Boolean = true,
-    override val properties: Properties = Properties()
+    var centerY: Boolean = true
 ) : IDrawable<Batch> {
 
   private var font: BitmapFont = BitmapFont()

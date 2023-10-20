@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
  * @param pathfinderFactory The factory that creates the pathfinder for the pathfinding component.
  * @see [IPathfinder]
  */
-class PathfindingSystem(private val pathfinderFactory: (PathfindingComponent) -> IPathfinder) :
+open class PathfindingSystem(private val pathfinderFactory: (PathfindingComponent) -> IPathfinder) :
     GameSystem(PathfindingComponent::class) {
 
   // pathfinders are run in separate threads

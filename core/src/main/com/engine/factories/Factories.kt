@@ -10,7 +10,7 @@ import com.engine.common.objects.Properties
  */
 open class Factories<T> {
 
-  val factories = ObjectMap<Any, IFactory<T>>()
+  open val factories = ObjectMap<Any, IFactory<T>>()
 
   /**
    * Add a factory to the collection.
@@ -18,14 +18,15 @@ open class Factories<T> {
    * @param factoryKey the key of the factory
    * @param factory the factory to add
    */
-  fun add(factoryKey: Any, factory: IFactory<T>): IFactory<T> = factories.put(factoryKey, factory)
+  open fun add(factoryKey: Any, factory: IFactory<T>): IFactory<T> =
+      factories.put(factoryKey, factory)
 
   /**
    * Remove a factory from the collection.
    *
    * @param factoryKey the key of the factory to remove
    */
-  fun remove(factoryKey: Any): IFactory<T> = factories.remove(factoryKey)
+  open fun remove(factoryKey: Any): IFactory<T> = factories.remove(factoryKey)
 
   /**
    * Fetch an object from the given factory and key.
@@ -35,6 +36,6 @@ open class Factories<T> {
    * @param props the properties to pass to the factory
    * @return the object fetched from the key
    */
-  fun fetch(factoryKey: Any, objKey: String, props: Properties) =
+  open fun fetch(factoryKey: Any, objKey: String, props: Properties) =
       factories[factoryKey]?.fetch(objKey, props)
 }

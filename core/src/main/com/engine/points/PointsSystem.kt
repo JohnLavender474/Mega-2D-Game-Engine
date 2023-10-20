@@ -16,7 +16,7 @@ class PointsSystem : GameSystem(PointsComponent::class) {
 
       pointsComponent?.pointsMap?.values()?.forEach {
         val (points, pointsListener) = it
-        pointsListener(points)
+        pointsListener?.invoke(points)
       }
     }
   }

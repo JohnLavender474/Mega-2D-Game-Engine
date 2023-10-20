@@ -36,6 +36,11 @@ class PointsComponent(
       entity,
       ObjectMap<String, PointsHandle>().apply { _points.forEach { put(it.first, it.second) } })
 
+  /**
+   * Calls reset on each [PointsHandle].
+   *
+   * @see PointsHandle
+   */
   override fun reset() = pointsMap.values().forEach { it.reset() }
 
   /**
@@ -52,7 +57,7 @@ class PointsComponent(
    * @param name The name of the pointsHandle.
    * @return The pointsHandle.
    */
-  fun getPointsHandle(name: String): PointsHandle = pointsMap[name]
+  internal fun getPointsHandle(name: String): PointsHandle = pointsMap[name]
 
   /**
    * Gets the listener [(Points) -> Unit] mapped to the given name.
@@ -60,7 +65,7 @@ class PointsComponent(
    * @param name The name of the [PointsHandle] containing the listener.
    * @return The listener
    */
-  fun getPointsListener(name: String) = pointsMap[name].listener
+  internal fun getPointsListener(name: String) = pointsMap[name].listener
 
   /**
    * Puts the [PointsHandle] into the mpa.

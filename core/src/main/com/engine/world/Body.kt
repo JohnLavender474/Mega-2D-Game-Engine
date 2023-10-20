@@ -1,5 +1,6 @@
 package com.engine.world
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.interfaces.Resettable
@@ -35,7 +36,7 @@ import com.engine.common.shapes.IGameShape2DSupplier
  * @see WorldSystem
  * @see Resettable
  */
-class Body(
+open class Body(
     var bodyType: BodyType,
     x: Float = 0f,
     y: Float = 0f,
@@ -70,6 +71,10 @@ class Body(
 
   // the bounds of this body before the current world update cycle
   internal var previousBounds = GameRectangle()
+
+  /** The difference between the current center point and the previous center point. */
+  val positionDelta: Vector2
+    get() = getCenterPoint().sub(previousBounds.getCenterPoint())
 
   /**
    * Returns a copy of the previous bounds of this body. The previous bounds are the bounds of this

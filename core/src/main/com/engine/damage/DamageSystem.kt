@@ -12,25 +12,32 @@ class DamageSystem : GameSystem(DamageableComponent::class) {
 
     entities.forEach { entity ->
       entity.getComponent(DamageableComponent::class)?.let { damageComponent ->
+        // update the damage timer
         damageComponent.updateDamageTimer(delta)
-        if (damageComponent.damageTimer.isFinished()) {
-          damageComponent.updateDamageRecoveryTimer(delta)
-        }
 
-        if (!damageComponent.canBeDamaged()) {
-          return
-        }
+        // if the damage timer is finished, then update the damage recovery timer
+        if (damageComponent.damageTimer.isFinished())
+            damageComponent.updateDamageRecoveryTimer(delta)
 
+        // fetch the damagers added to the damage component
         val damagers = damageComponent.damagers
-        val damageable = damageComponent.damageable
 
-        damagers
-            .map { it.damager }
-            .forEach { damager ->
-              if (damager.canDamage(damageable) && damageable.takeDamageFrom(damager)) {
-                damager.onDamageInflictedTo(damageable)
-              }
-            }
+        // if the damageable can be damaged, then apply damage from the first damager
+        if (damageComponent.canBeDamaged()) {
+          val damageable = damageComponent.damageable
+
+          for (damager in damagers) if (damager.canDamage(damageable) &&
+              damageable.takeDamageFrom(damager)) {
+            // if damage is inflicted, then reset the damage and recovery timers and break
+            // out of the loop because the damageable can only be damaged once per frame
+            damager.onDamageInflictedTo(damageable)
+            damageComponent.damageTimer.reset()
+            damageComponent.damageRecoveryTimer.reset()
+            break
+          }
+        }
+
+        // clear the damagers
         damagers.clear()
       }
     }

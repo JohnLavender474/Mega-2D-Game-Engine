@@ -36,9 +36,7 @@ class Points(var min: Int, var max: Int, current: Int) {
    *
    * @param delta The delta.
    */
-  fun translate(delta: Int) {
-    set(current + delta)
-  }
+  fun translate(delta: Int) = set(current + delta)
 
   /** Sets the current stat to the max stat. */
   fun setToMax() = set(max)

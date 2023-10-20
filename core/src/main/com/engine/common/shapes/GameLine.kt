@@ -3,7 +3,6 @@ package com.engine.common.shapes
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.objects.Properties
 import kotlin.math.max
 import kotlin.math.min
 
@@ -13,11 +12,7 @@ import kotlin.math.min
  * @param point1 The first point of this line.
  * @param point2 The second point of this line.
  */
-class GameLine(
-    val point1: Vector2,
-    val point2: Vector2,
-    override val properties: Properties = Properties()
-) : IGameShape2D {
+open class GameLine(val point1: Vector2, val point2: Vector2) : IGameShape2D {
 
   companion object {
     private var OVERLAP_EXTENSION: ((GameLine, IGameShape2D) -> Boolean)? = null

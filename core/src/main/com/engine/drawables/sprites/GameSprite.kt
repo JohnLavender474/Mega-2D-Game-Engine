@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.engine.common.objects.Properties
 import com.engine.drawables.sorting.DrawingPriority
 import com.engine.drawables.sorting.DrawingSection
 
@@ -16,8 +15,7 @@ import com.engine.drawables.sorting.DrawingSection
  */
 class GameSprite(
     override val priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
-    var hidden: Boolean = false,
-    override val properties: Properties = Properties()
+    var hidden: Boolean = false
 ) : ISprite, Sprite() {
 
   constructor(

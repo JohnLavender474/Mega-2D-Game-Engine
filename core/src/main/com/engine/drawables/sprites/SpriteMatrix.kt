@@ -47,8 +47,7 @@ class SpriteMatrix(
     modelWidth: Float,
     modelHeight: Float,
     rows: Int,
-    columns: Int,
-    override val properties: Properties = Properties()
+    columns: Int
 ) : IDrawable<Batch>, Matrix<ISprite>(rows, columns) {
 
   init {

@@ -11,7 +11,7 @@ import com.engine.common.interfaces.Resettable
  */
 data class PointsHandle(
     val points: Points,
-    val listener: (Points) -> Unit,
+    val listener: ((Points) -> Unit)? = null,
     val onReset: ((PointsHandle) -> Unit)? = null
 ) : Resettable {
 

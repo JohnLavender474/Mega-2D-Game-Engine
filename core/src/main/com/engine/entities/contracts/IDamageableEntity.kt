@@ -2,6 +2,7 @@ package com.engine.entities.contracts
 
 import com.engine.damage.DamageableComponent
 import com.engine.damage.IDamageable
+import com.engine.damage.IDamager
 import com.engine.entities.IGameEntity
 
 /** An entity that can be damaged. */
@@ -55,4 +56,11 @@ interface IDamageableEntity : IGameEntity {
    * @return true if this entity is recovering from damage, otherwise false
    */
   fun isRecoveringFromDamage() = getDamageableComponent().isRecoveringFromDamage()
+
+  /**
+   * Adds the given [damager] to this entity's [DamageableComponent].
+   *
+   * @param damager the damager
+   */
+  fun addDamager(damager: IDamager) = getDamageableComponent().damagers.add(damager)
 }

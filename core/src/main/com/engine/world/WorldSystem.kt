@@ -14,7 +14,11 @@ import kotlin.math.abs
  * A system that handles the physics of the game. This system is responsible for updating the
  * positions of all bodies, resolving collisions, and notifying the [IContactListener] of any
  * contacts that occur. This system is stateful. This system processes entities that have a
- * [BodyComponent]. This system uses a [IGraphMap] to determine which bodies are overlapping.
+ * [BodyComponent].
+ *
+ * This system uses a [IGraphMap] to determine which bodies are overlapping. The [IGraphMap] is
+ * nullable but must not be null when the system is run. The [IGraphMap] is nullable simply to not
+ * throw a null pointer exception if [reset] is called and the [IGraphMap] is null.
  *
  * This system uses a [IContactListener] to notify of contacts.
  *
@@ -31,21 +35,21 @@ import kotlin.math.abs
  * more accurate and reliable physics, but will also result in more processing time.
  *
  * This system uses an optional [contactFilterMap] to optimize the determination of which contacts
- * to notify the [IContactListener] of. The [contactFilterMap] can be used to filter only cases where
- * the user has an implementation for two fixtures. For example, let's say there's a contact between
- * one fixture with type "Type1" and another fixture with type "Type2". If there's no implementation
- * in the provided [IContactListener] for the case of "Type1" touching "Type2", then by not providing
- * the entry in the [contactFilterMap], the [IContactListener] will NOT be notified. The order of the
- * entry is not important, so using "Type1" as the key with "Type2" inside the value [Set<String>],
- * or else vice versa, will NOT change the result. If the [contactFilterMap] is null, then the
- * [IContactListener] will be notified of ALL contacts.
+ * to notify the [IContactListener] of. The [contactFilterMap] can be used to filter only cases
+ * where the user has an implementation for two fixtures. For example, let's say there's a contact
+ * between one fixture with type "Type1" and another fixture with type "Type2". If there's no
+ * implementation in the provided [IContactListener] for the case of "Type1" touching "Type2", then
+ * by not providing the entry in the [contactFilterMap], the [IContactListener] will NOT be
+ * notified. The order of the entry is not important, so using "Type1" as the key with "Type2"
+ * inside the value [Set<String>], or else vice versa, will NOT change the result. If the
+ * [contactFilterMap] is null, then the [IContactListener] will be notified of ALL contacts.
  */
 class WorldSystem(
-  private val contactListener: IContactListener,
-  private val worldGraphSupplier: () -> IGraphMap,
-  private val fixedStep: Float,
-  private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
-  private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
+    private val contactListener: IContactListener,
+    private val worldGraphSupplier: () -> IGraphMap?,
+    private val fixedStep: Float,
+    private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
+    private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
 ) : GameSystem(BodyComponent::class) {
 
   internal var priorContactSet = OrderedSet<Contact>()
@@ -54,9 +58,8 @@ class WorldSystem(
   internal var accumulator = 0f
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    if (!on) {
-      return
-    }
+    if (!on) return
+
     accumulator += delta
     while (accumulator >= fixedStep) {
       accumulator -= fixedStep
@@ -69,7 +72,7 @@ class WorldSystem(
     accumulator = 0f
     priorContactSet.clear()
     currentContactSet.clear()
-    worldGraphSupplier().reset()
+    worldGraphSupplier()?.reset()
   }
 
   /**
@@ -82,7 +85,7 @@ class WorldSystem(
    */
   internal fun cycle(entities: ImmutableCollection<IGameEntity>, delta: Float) {
     preProcess(entities, delta)
-    worldGraphSupplier().reset()
+    worldGraphSupplier()!!.reset()
     entities.forEach { processPhysicsAndGraph(it, delta) }
     entities.forEach { processContactsAndCollisions(it) }
     processContacts()
@@ -116,8 +119,8 @@ class WorldSystem(
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       updatePhysics(b, delta)
       updateFixturePositions(b)
-      worldGraphSupplier().add(b)
-      b.fixtures.values().forEach { f -> worldGraphSupplier().add(f) }
+      worldGraphSupplier()!!.add(b)
+      b.fixtures.values().forEach { f -> worldGraphSupplier()!!.add(f) }
     }
   }
 
@@ -149,17 +152,14 @@ class WorldSystem(
   /** Processes and updates the [Contact] sets. */
   internal fun processContacts() {
     currentContactSet.forEach {
-      if (priorContactSet.contains(it)) {
-        contactListener.continueContact(it, fixedStep)
-      } else {
-        contactListener.beginContact(it, fixedStep)
-      }
+      if (priorContactSet.contains(it)) contactListener.continueContact(it, fixedStep)
+      else contactListener.beginContact(it, fixedStep)
     }
+
     priorContactSet.forEach {
-      if (!currentContactSet.contains(it)) {
-        contactListener.endContact(it, fixedStep)
-      }
+      if (!currentContactSet.contains(it)) contactListener.endContact(it, fixedStep)
     }
+
     priorContactSet = currentContactSet
     currentContactSet = OrderedSet()
   }
@@ -173,23 +173,25 @@ class WorldSystem(
   internal fun updatePhysics(body: Body, delta: Float) {
     body.physics.let {
       if (it.takeFrictionFromOthers) {
-        if (it.frictionOnSelf.x > 0f) {
-          it.velocity.x /= it.frictionOnSelf.x
-        }
-        if (it.frictionOnSelf.y > 0f) {
-          it.velocity.y /= it.frictionOnSelf.y
-        }
-      }
-      it.frictionOnSelf.set(it.defaultFrictionOnSelf)
-      if (it.gravityOn) {
-        it.velocity.add(it.gravity)
+        if (it.frictionOnSelf.x > 0f) it.velocity.x /= it.frictionOnSelf.x
+        if (it.frictionOnSelf.y > 0f) it.velocity.y /= it.frictionOnSelf.y
       }
 
-      if (it.velocity.x > 0f && it.velocity.x > abs(it.velocityClamp.x)) {
-        it.velocity.x = abs(it.velocityClamp.x)
-      } else if (it.velocity.x < 0f && it.velocity.x < -abs(it.velocityClamp.x)) {
-        it.velocity.x = -abs(it.velocityClamp.x)
-      }
+      it.frictionOnSelf.set(it.defaultFrictionOnSelf)
+
+      if (it.gravityOn) it.velocity.add(it.gravity)
+
+      // clamp the x velocity
+      if (it.velocity.x > 0f && it.velocity.x > abs(it.velocityClamp.x))
+          it.velocity.x = abs(it.velocityClamp.x)
+      else if (it.velocity.x < 0f && it.velocity.x < -abs(it.velocityClamp.x))
+          it.velocity.x = -abs(it.velocityClamp.x)
+
+      // clamp the y velocity
+      if (it.velocity.y > 0f && it.velocity.y > abs(it.velocityClamp.y))
+          it.velocity.y = abs(it.velocityClamp.y)
+      else if (it.velocity.y < 0f && it.velocity.y < -abs(it.velocityClamp.y))
+          it.velocity.y = -abs(it.velocityClamp.y)
 
       body.x += it.velocity.x * delta
       body.y += it.velocity.y * delta
@@ -203,9 +205,7 @@ class WorldSystem(
    */
   internal fun updateFixturePositions(body: Body) {
     body.fixtures.values().forEach { f ->
-      if (!f.attachedToBody) {
-        return
-      }
+      if (!f.attachedToBody) return
       f.shape.setCenter(body.getCenterPoint().add(f.offsetFromBodyCenter))
     }
   }
@@ -235,10 +235,8 @@ class WorldSystem(
       if (f.active && contactFilterMap?.containsKey(f.fixtureLabel) != false) {
         val overlapping = ObjectSet<Fixture>()
 
-        worldGraphSupplier().get(f.getGameShape2D()).forEach {
-          if (it is Fixture && it.active && filterContact(f, it)) {
-            overlapping.add(it)
-          }
+        worldGraphSupplier()!!.get(f.getGameShape2D()).filterIsInstance<Fixture>().forEach {
+          if (it.active && filterContact(f, it)) overlapping.add(it)
         }
 
         overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
@@ -248,12 +246,13 @@ class WorldSystem(
 
   /**
    * Resolves the collisions of the given body. This method is responsible for resolving the
-   * collisions of the given body and notifying the [ICollisionHandler] of any collisions that occur.
+   * collisions of the given body and notifying the [ICollisionHandler] of any collisions that
+   * occur.
    *
    * @param body the [Body] to resolve the collisions of
    */
   internal fun resolveCollisions(body: Body) {
-    worldGraphSupplier().get(body).filterIsInstance<Body>().forEach {
+    worldGraphSupplier()!!.get(body).filterIsInstance<Body>().forEach {
       collisionHandler.handleCollision(body, it)
     }
   }

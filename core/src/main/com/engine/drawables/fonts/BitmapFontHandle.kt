@@ -1,4 +1,4 @@
-package com.engine.screens.utils
+package com.engine.drawables.fonts
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -6,32 +6,40 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.objects.Properties
+import com.engine.common.interfaces.Initializable
 import com.engine.drawables.IDrawable
 
 /**
  * A class that represents a bitmap font. The text is centered by default.
  *
- * @param position the position of the text
  * @param textSupplier a supplier for the text
- * @param fontSource the source of the font
- * @param fontSize the size of the font
- * @param centerX whether the text should be centered on the first-axis
- * @param centerY whether the text should be centered on the second-axis
+ * @param fontSize the size in pixels of the font
+ * @param position the position of the text
+ * @param centerX whether the text should be centered on the x position or instead the x placed at
+ *   the left; default is true
+ * @param centerY whether the text should be centered on the y position or instead placed at the
+ *   bottom; default is true
+ * @param fontSource the source of the font; if this is null, then the standard font for
+ *   [BitmapFont] is used; default is null
  */
 class BitmapFontHandle(
-    val position: Vector2,
     var textSupplier: () -> String,
-    fontSource: String,
-    fontSize: Int,
+    private val fontSize: Int,
+    val position: Vector2,
     var centerX: Boolean = true,
-    var centerY: Boolean = true
-) : IDrawable<Batch> {
+    var centerY: Boolean = true,
+    private val fontSource: String? = null,
+) : Initializable, IDrawable<Batch> {
 
-  private var font: BitmapFont = BitmapFont()
   private val layout: GlyphLayout = GlyphLayout()
 
-  init {
+  private var font: BitmapFont = BitmapFont()
+  private var initialized = false
+
+  override fun init() {
+    initialized = true
+    if (fontSource == null) return
+
     val generator = FreeTypeFontGenerator(Gdx.files.internal(fontSource))
     val parameter: FreeTypeFontGenerator.FreeTypeFontParameter =
         FreeTypeFontGenerator.FreeTypeFontParameter()
@@ -41,6 +49,8 @@ class BitmapFontHandle(
   }
 
   override fun draw(drawer: Batch) {
+    if (!initialized) init()
+
     layout.setText(font, textSupplier())
     val x: Float = if (centerX) position.x - layout.width / 2f else position.x
     val y: Float = if (centerY) position.y - layout.height / 2f else position.y

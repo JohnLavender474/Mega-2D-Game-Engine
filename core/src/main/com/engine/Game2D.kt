@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.engine.audio.AudioManager
-import com.engine.audio.IAudioManager
 import com.engine.common.objects.Properties
 import com.engine.controller.buttons.Buttons
 import com.engine.controller.polling.ControllerPoller
@@ -26,6 +24,10 @@ import com.engine.screens.IScreen
  */
 abstract class Game2D : IGame2D, Game() {
 
+  companion object {
+    const val TAG = "Game2D"
+  }
+
   override lateinit var batch: SpriteBatch
   override lateinit var shapeRenderer: ShapeRenderer
 
@@ -33,7 +35,6 @@ abstract class Game2D : IGame2D, Game() {
   override lateinit var controllerPoller: IControllerPoller
 
   override lateinit var assMan: AssetManager
-  override lateinit var audioMan: IAudioManager
   override lateinit var eventsMan: IEventsManager
 
   override lateinit var gameEngine: IGameEngine
@@ -72,12 +73,14 @@ abstract class Game2D : IGame2D, Game() {
 
   /**
    * Hides the old screen and removes it from the events manager. After that, if there is a screen
-   * mapped to the specified key, then that screen is shown, resize, and added as a listener to the
+   * mapped to the specified key, then that screen is shown, resized, and added as a listener to the
    * events manager.
    *
    * @param key the key
    */
   override fun setCurrentScreen(key: String) {
+    Gdx.app.debug(TAG, "setCurrentScreen: set to screen with key = $key")
+
     // hide old screen and remove it from events manager
     currentScreenKey
         ?.let { screens[it] }
@@ -97,9 +100,7 @@ abstract class Game2D : IGame2D, Game() {
 
       eventsMan.addListener(nextScreen)
 
-      if (paused) {
-        nextScreen.pause()
-      }
+      if (paused) nextScreen.pause()
     }
   }
 
@@ -109,6 +110,8 @@ abstract class Game2D : IGame2D, Game() {
    * load assets into the asset manager.
    */
   override fun create() {
+    Gdx.app.debug(TAG, "create()")
+
     batch = SpriteBatch()
     shapeRenderer = ShapeRenderer()
 
@@ -117,9 +120,9 @@ abstract class Game2D : IGame2D, Game() {
 
     assMan = AssetManager()
     loadAssets(assMan)
-    audioMan = AudioManager(assMan)
-    eventsMan = EventsManager()
+    assMan.finishLoading()
 
+    eventsMan = EventsManager()
     gameEngine = createGameEngine()
   }
 
@@ -135,8 +138,8 @@ abstract class Game2D : IGame2D, Game() {
   }
 
   /**
-   * Clears the screen; updates the audio manager, controller poller, and events manager; renders
-   * the current screen; and updates all the viewports contained in [viewports]
+   * Clears the screen; updates the controller poller, and events manager; renders the current
+   * screen; and updates all the viewports contained in [viewports]
    */
   override fun render() {
     Gdx.gl20.glClearColor(0f, 0f, 0f, 1f)
@@ -144,7 +147,6 @@ abstract class Game2D : IGame2D, Game() {
 
     val delta = Gdx.graphics.deltaTime
 
-    audioMan.update(delta)
     controllerPoller.run()
     eventsMan.run()
 
@@ -154,6 +156,8 @@ abstract class Game2D : IGame2D, Game() {
 
   /** Pauses the current screen and sets [paused] to true. */
   override fun pause() {
+    Gdx.app.debug(TAG, "pause()")
+
     if (paused) return
 
     paused = true
@@ -162,6 +166,8 @@ abstract class Game2D : IGame2D, Game() {
 
   /** Resumes the current screen and sets [paused] to false. */
   override fun resume() {
+    Gdx.app.debug(TAG, "resume()")
+
     if (!paused) return
 
     paused = false
@@ -170,6 +176,8 @@ abstract class Game2D : IGame2D, Game() {
 
   /** Disposes of the [batch], [shapeRenderer], and [IScreen]s. */
   override fun dispose() {
+    Gdx.app.debug(TAG, "dispose()")
+
     batch.dispose()
     shapeRenderer.dispose()
     screens.values().forEach { it.dispose() }

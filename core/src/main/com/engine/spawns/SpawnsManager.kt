@@ -1,18 +1,23 @@
 package com.engine.spawns
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 
 /**
  * Manages the spawning of entities. This class is responsible for updating all of the [ISpawner]s
- * and adding the [Spawn]s to the [spawns] list. This class is also responsible for culling the
- * [ISpawner]s that should no longer be considered for spawning.
+ * and adding the [Spawn]s to the [getSpawnsAndClear] list. This class is also responsible for
+ * culling the [ISpawner]s that should no longer be considered for spawning.
  *
  * @see Updatable
  * @see Resettable
  */
 class SpawnsManager : Updatable, Resettable {
+
+  companion object {
+    const val TAG = "SpawnsManager"
+  }
 
   internal val spawns = Array<Spawn>()
   internal val spawners = Array<ISpawner>()
@@ -23,7 +28,7 @@ class SpawnsManager : Updatable, Resettable {
    *
    * @return the [Spawn]s that were spawned since the last update.
    */
-  fun getSpawns(): Array<Spawn> {
+  fun getSpawnsAndClear(): Array<Spawn> {
     val spawnsToReturn = Array(spawns)
     spawns.clear()
     return spawnsToReturn
@@ -36,14 +41,15 @@ class SpawnsManager : Updatable, Resettable {
    * @see ISpawner
    */
   fun setSpawners(spawners: Array<ISpawner>) {
+    Gdx.app.debug(TAG, "setSpawners(): Setting spawners: $spawners")
     this.spawners.clear()
     this.spawners.addAll(spawners)
   }
 
   /**
-   * Updates the [ISpawner]s and adds the [Spawn]s to the [spawns] list. Also culls the [ISpawner]s
-   * that should no longer be considered for spawning. This method should be called once per frame.
-   * This method should be called before the [getSpawns] method.
+   * Updates the [ISpawner]s and adds the [Spawn]s to the [getSpawnsAndClear] list. Also culls the
+   * [ISpawner]s that should no longer be considered for spawning. This method should be called once
+   * per frame. This method should be called before the [getSpawnsAndClear] method.
    *
    * @param delta the time in seconds since the last update.
    */
@@ -54,18 +60,18 @@ class SpawnsManager : Updatable, Resettable {
       val spawner = iter.next()
 
       if (spawner.shouldBeCulled()) {
+        spawner.reset()
         iter.remove()
         continue
       }
 
-      if (spawner.test(delta)) {
-        spawns.add(spawner.get())
-      }
+      if (spawner.test(delta)) spawns.add(spawner.get())
     }
   }
 
   /** Clears the [ISpawner]s and [Spawn]s. */
   override fun reset() {
+    Gdx.app.debug(TAG, "reset(): Clearing spawners and spawns")
     spawners.clear()
     spawns.clear()
   }

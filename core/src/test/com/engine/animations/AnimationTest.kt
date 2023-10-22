@@ -161,5 +161,10 @@ class AnimationTest :
           animation.elapsedTime shouldBe 0f
           animation.isFinished() shouldBe false
         }
+
+        it("should create an animation filled with single duration value") {
+          val _animation = Animation(mockRegion, rows, columns, 0.5f)
+          _animation.durations.size shouldBe rows * columns
+        }
       }
     })

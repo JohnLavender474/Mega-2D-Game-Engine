@@ -60,7 +60,7 @@ class SpawnsManagerTest :
           verify(exactly = 1) { spawner2.get() }
           verify(exactly = 0) { spawner3.get() }
 
-          val spawned = spawnsManager.getSpawns()
+          val spawned = spawnsManager.getSpawnsAndClear()
           spawned.size shouldBe 2
         }
 
@@ -84,7 +84,7 @@ class SpawnsManagerTest :
           verify(exactly = 0) { spawner2.get() }
           verify(exactly = 0) { spawner3.get() }
 
-          val spawned = spawnsManager.getSpawns()
+          val spawned = spawnsManager.getSpawnsAndClear()
           spawned.size shouldBe 1
         }
 

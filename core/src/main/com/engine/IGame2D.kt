@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.engine.audio.IAudioManager
 import com.engine.common.objects.Properties
 import com.engine.controller.buttons.Buttons
 import com.engine.controller.polling.IControllerPoller
@@ -29,7 +28,6 @@ interface IGame2D : ApplicationListener {
   var controllerPoller: IControllerPoller
 
   var assMan: AssetManager
-  var audioMan: IAudioManager
   var eventsMan: IEventsManager
 
   var gameEngine: IGameEngine

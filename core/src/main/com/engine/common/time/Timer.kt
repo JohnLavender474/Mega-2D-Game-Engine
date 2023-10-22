@@ -61,28 +61,22 @@ class Timer(val duration: Float) : Updatable, Resettable {
       _runnables: Array<TimeMarkedRunnable>
   ) : this(duration) {
     setRunnables(_runnables)
-    time =
-        if (setToEnd) {
-          duration
-        } else {
-          0f
-        }
+    time = if (setToEnd) duration else 0f
   }
 
   override fun update(delta: Float) {
     val finishedBefore = isFinished()
+
     time = min(duration, time + delta)
+
     while (!runnableQueue.isEmpty && runnableQueue.first().time <= time) {
       val runnable = runnableQueue.removeFirst()
-      if (runnable.time <= time) {
-        break
-      }
+      if (runnable.time <= time) break
       runnable.run()
     }
+
     justFinished = !finishedBefore && isFinished()
-    if (justFinished) {
-      runOnFinished?.run()
-    }
+    if (justFinished) runOnFinished?.run()
   }
 
   override fun reset() {

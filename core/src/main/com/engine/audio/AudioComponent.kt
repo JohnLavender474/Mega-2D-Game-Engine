@@ -11,7 +11,7 @@ import com.engine.entities.IGameEntity
  * @property source the source of the sound
  * @property loop whether to loop the sound
  */
-class SoundRequest(val source: String, val loop: Boolean = false)
+class SoundRequest(val source: Any, val loop: Boolean = false)
 
 /**
  * A request to play a music.
@@ -19,7 +19,11 @@ class SoundRequest(val source: String, val loop: Boolean = false)
  * @property source the source of the music
  * @property onCompletionListener the listener to call when the music finishes
  */
-class MusicRequest(val source: String, val onCompletionListener: ((Music) -> Unit)? = null)
+class MusicRequest(
+    val source: Any,
+    val loop: Boolean = true,
+    val onCompletionListener: ((Music) -> Unit)? = null
+)
 
 /**
  * A component that holds a list of sounds to play and stop.
@@ -30,10 +34,10 @@ class MusicRequest(val source: String, val onCompletionListener: ((Music) -> Uni
 class AudioComponent(override val entity: IGameEntity) : IGameComponent {
 
   val playSoundRequests = Array<SoundRequest>()
-  val stopSoundRequests = Array<String>()
+  val stopSoundRequests = Array<Any>()
 
   val playMusicRequests = Array<MusicRequest>()
-  val stopMusicRequests = Array<String>()
+  val stopMusicRequests = Array<Any>()
 
   /**
    * Request to play a sound.
@@ -41,7 +45,7 @@ class AudioComponent(override val entity: IGameEntity) : IGameComponent {
    * @param source the source of the sound
    * @param loop whether to loop the sound
    */
-  fun requestToPlaySound(source: String, loop: Boolean) =
+  fun requestToPlaySound(source: Any, loop: Boolean) =
       playSoundRequests.add(SoundRequest(source, loop))
 
   /**
@@ -50,8 +54,11 @@ class AudioComponent(override val entity: IGameEntity) : IGameComponent {
    * @param source the source of the music
    * @param onCompletionListener the listener to call when the music finishes playing
    */
-  fun requestToPlayMusic(source: String, onCompletionListener: ((Music) -> Unit)? = null) =
-      playMusicRequests.add(MusicRequest(source, onCompletionListener))
+  fun requestToPlayMusic(
+      source: Any,
+      loop: Boolean = true,
+      onCompletionListener: ((Music) -> Unit)? = null
+  ) = playMusicRequests.add(MusicRequest(source, loop, onCompletionListener))
 
   /** Clears the list of sounds to play and stop. */
   override fun reset() {

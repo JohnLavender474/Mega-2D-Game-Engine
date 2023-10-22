@@ -9,27 +9,23 @@ import com.engine.events.IEventListener
 class SpawnerForEvent(
     private val predicate: (Event) -> Boolean,
     private val spawnSupplier: () -> Spawn,
+    override val eventKeyMask: ObjectSet<Any> = ObjectSet(),
     shouldBeCulled: () -> Boolean = { false },
-    override val eventKeyMask: ObjectSet<Any> = ObjectSet()
-) : Spawner(shouldBeCulled), IEventListener {
+    onCull: () -> Unit = {},
+) : Spawner(shouldBeCulled, onCull), IEventListener {
 
   private val events = Array<Event>()
 
   override fun test(delta: Float): Boolean {
     if (!super.test(delta)) return false
 
-    val _events = Array(events)
+    for (event in events) {
+      if (predicate(event)) spawn = spawnSupplier()
+      break
+    }
     events.clear()
 
-    _events.forEach {
-      if (predicate(it)) {
-        spawn = spawnSupplier()
-        spawned = true
-        return true
-      }
-    }
-
-    return false
+    return spawned
   }
 
   override fun onEvent(event: Event) {

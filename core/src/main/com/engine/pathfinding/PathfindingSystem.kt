@@ -53,7 +53,7 @@ open class PathfindingSystem(private val pathfinderFactory: (PathfindingComponen
         pathfindingComponents[i].consumer(result)
       }
     } catch (e: Exception) {
-      Gdx.app.error("PathfindingSystem", "Error in pathfinding system", e)
+      e.printStackTrace()
     }
   }
 }

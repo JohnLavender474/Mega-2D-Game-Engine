@@ -152,4 +152,12 @@ class Properties {
   fun forEach(action: (key: Any, value: Any?) -> Unit) {
     for (entry in props.entries()) action(entry.key, entry.value)
   }
+
+  override fun toString(): String {
+    val sb = StringBuilder()
+    sb.append("Properties({")
+    forEach { key, value -> sb.append("[$key=$value]") }
+    sb.append("})")
+    return sb.toString()
+  }
 }

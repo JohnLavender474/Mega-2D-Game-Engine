@@ -119,7 +119,7 @@ fun normalizedTrajectory(start: Vector2, end: Vector2, speed: Float): Vector2 {
  * @param decimals The number of decimal places to round to.
  * @return The rounded number.
  */
-fun roundedFloat(num: Float, decimals: Int): Float {
+fun roundFloat(num: Float, decimals: Int): Float {
   val scale = 10.0.pow(decimals.toDouble()).toFloat()
   return Math.round(num * scale) / scale
 }
@@ -130,9 +130,9 @@ fun roundedFloat(num: Float, decimals: Int): Float {
  * @param vector2 The Vector2 to be rounded.
  * @param decimals The number of decimal places to round to.
  */
-fun roundedVector2(vector2: Vector2, decimals: Int) {
-  vector2.x = roundedFloat(vector2.x, decimals)
-  vector2.y = roundedFloat(vector2.y, decimals)
+fun roundVector2(vector2: Vector2, decimals: Int) {
+  vector2.x = roundFloat(vector2.x, decimals)
+  vector2.y = roundFloat(vector2.y, decimals)
 }
 
 /**

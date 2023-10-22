@@ -1,5 +1,6 @@
 package com.engine.damage
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
 import com.engine.common.time.Timer
 import com.engine.components.IGameComponent
@@ -31,6 +32,10 @@ open class DamageableComponent(
     internal val damageRecoveryTimer: Timer = Timer(1f),
     var invincible: Boolean = false
 ) : IGameComponent {
+
+  companion object {
+    const val TAG = "DamageableComponent"
+  }
 
   open var damagers: Array<IDamager> = Array()
 
@@ -77,6 +82,7 @@ open class DamageableComponent(
    * clearing the [damagers], and setting [invincible] to false.
    */
   override fun reset() {
+    Gdx.app.debug(TAG, "reset()")
     damageTimer.setToEnd()
     damageRecoveryTimer.setToEnd()
     invincible = false

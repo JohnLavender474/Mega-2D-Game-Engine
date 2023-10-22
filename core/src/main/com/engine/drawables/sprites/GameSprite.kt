@@ -15,7 +15,7 @@ import com.engine.drawables.sorting.DrawingSection
  */
 class GameSprite(
     override val priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
-    var hidden: Boolean = false
+    override var hidden: Boolean = false
 ) : ISprite, Sprite() {
 
   constructor(

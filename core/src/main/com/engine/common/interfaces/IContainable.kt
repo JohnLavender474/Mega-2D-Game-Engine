@@ -5,7 +5,7 @@ package com.engine.common.interfaces
  *
  * @param T The type of the container
  */
-fun interface Containable<T> {
+fun interface IContainable<T> {
 
   /**
    * Checks if this object is contained in the given container.

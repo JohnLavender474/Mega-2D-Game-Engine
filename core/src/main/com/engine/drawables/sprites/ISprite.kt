@@ -10,6 +10,9 @@ import com.engine.drawables.sorting.IComparableDrawable
 /** An interface for objects that can be sorted, positioned, sized, and drawn. */
 interface ISprite : IComparableDrawable<Batch>, Positional, Sizable {
 
+  /** If true, this sprite will not be drawn. */
+  var hidden: Boolean
+
   /**
    * Sets the flip of this sprite.
    *

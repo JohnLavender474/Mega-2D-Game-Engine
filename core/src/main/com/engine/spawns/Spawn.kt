@@ -1,7 +1,7 @@
 package com.engine.spawns
 
-import com.engine.entities.GameEntity
 import com.engine.common.objects.Properties
+import com.engine.entities.IGameEntity
 
 /**
  * A spawn is a combination of an entity and properties.
@@ -9,4 +9,4 @@ import com.engine.common.objects.Properties
  * @param entity the entity to spawn
  * @param properties the properties to apply to the entity
  */
-data class Spawn(val entity: GameEntity, val properties: Properties)
+data class Spawn(val entity: IGameEntity, val properties: Properties)

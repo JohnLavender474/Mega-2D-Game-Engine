@@ -18,16 +18,12 @@ class CullablesSystem : GameSystem(CullablesComponent::class) {
     if (!on) return
 
     entities.forEach { entity ->
-      if (entity.dead) {
-        return
-      }
+      if (entity.dead) return
 
       val cullables = entity.getComponent(CullablesComponent::class)?.cullables
       val shouldBeCulled = cullables?.any { it.shouldBeCulled() }
 
-      if (shouldBeCulled == true) {
-        entity.dead = true
-      }
+      if (shouldBeCulled == true) entity.dead = true
     }
   }
 }

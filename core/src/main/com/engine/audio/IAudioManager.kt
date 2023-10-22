@@ -1,89 +1,51 @@
 package com.engine.audio
 
-import com.badlogic.gdx.audio.Music
-import com.engine.common.interfaces.Updatable
+/** The audio manager. */
+interface IAudioManager {
 
-interface IAudioManager : Updatable {
-
-  override fun update(delta: Float) {}
-
-  /**
-   * Sets the volume of sounds.
-   *
-   * @param volume The volume of sounds.
-   */
-  fun setSoundVolume(volume: Int)
+  var soundVolume: Float
+  var musicVolume: Float
 
   /**
-   * Sets the volume of music.
+   * Plays music with the given [key].
    *
-   * @param volume The volume of music.
+   * @param key the key of the music
    */
-  fun setMusicVolume(volume: Int)
+  fun playMusic(key: Any? = null, loop: Boolean = false)
 
   /**
-   * Stops a sound.
+   * Stops the music with the given [key].
    *
-   * @param source The source of the sound.
+   * @param key the key of the music
    */
-  fun stopSound(source: String)
+  fun stopMusic(key: Any? = null)
 
   /**
-   * Pauses a sound.
+   * Pauses the music with the given [key].
    *
-   * @param source The source of the sound.
+   * @param key the key of the music
    */
-  fun pauseSound(source: String)
+  fun pauseMusic(key: Any? = null)
 
   /**
-   * Plays a sound.
+   * Plays the sound with the given [key] and [loop] value. If [loop] is true, the sound will loop.
    *
-   * @param source The source of the sound.
+   * @param key the key of the sound
+   * @param loop whether to loop the sound
    */
-  fun playSound(source: String, loop: Boolean)
-
-  /** Stops all looping sounds. */
-  fun stopAllLoopingSounds()
-
-  /** Stops all playing sounds but NONE of the looping sounds. */
-  fun stopAllPlayingSounds()
-
-  /** Stops all sounds, both those looping and non-looping. */
-  fun stopAllSounds()
-
-  /** Pauses all sounds. If a sound is not playing, it does nothing. */
-  fun pauseAllSounds()
-
-  /** Resumes all sounds. If a sound is not paused, it does nothing. */
-  fun resumeAllSounds()
+  fun playSound(key: Any? = null, loop: Boolean = false)
 
   /**
-   * Stops a music.
+   * Stops the sound with the given [key].
    *
-   * @param source The source of the music.
+   * @param key the key of the sound
    */
-  fun stopMusic(source: String)
+  fun stopSound(key: Any? = null)
 
   /**
-   * Pauses a music.
+   * Pauses the sound with the given [key].
    *
-   * @param source The source of the music.
+   * @param key the key of the sound
    */
-  fun pauseMusic(source: String)
-
-  /**
-   * Plays a music.
-   *
-   * @param source The source of the music.
-   */
-  fun playMusic(source: String, loop: Boolean, onCompletionListener: ((Music) -> Unit)? = null)
-
-  /** Stops all music. */
-  fun stopAllMusic()
-
-  /** Pauses all music. */
-  fun pauseAllMusic()
-
-  /** Resumes all music that was playing before [pauseAllMusic] was called. */
-  fun resumeAllMusic()
+  fun pauseSound(key: Any? = null)
 }

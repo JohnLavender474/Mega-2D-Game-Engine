@@ -15,15 +15,25 @@ fun <T> gdxArrayOf(vararg elements: T): Array<T> {
 }
 
 /**
- * Fills the elements of the array with the specified [value].
+ * Creates an [Array] of the specified [size] with the given [value].
+ *
+ * @param size the size of the array
+ * @return the [Array] created with the specified [size] and [value]
+ */
+fun <T> gdxFilledArrayOf(size: Int, value: T): Array<T> {
+  val array = gdxArrayOf<T>()
+  for (i in 0 until size) array.add(value)
+  return array
+}
+
+/**
+ * Fills the elements of the array with the specified [value] from 0 to [Array.size].
  *
  * @param value The value to fill the array with.
  * @return The modified array with all elements set to [value].
  */
 fun <T> Array<T>.fill(value: T): Array<T> {
-  for (i in 0 until size) {
-    set(i, value)
-  }
+  for (i in 0 until size) set(i, value)
   return this
 }
 

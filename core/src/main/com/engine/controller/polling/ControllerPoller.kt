@@ -28,31 +28,21 @@ class ControllerPoller(private val buttons: Buttons) : IControllerPoller {
       val key = e.key
       val button = e.value
 
-      if (!statusMap.containsKey(key)) {
-        statusMap.put(key, ButtonStatus.RELEASED)
-      }
+      if (!button.enabled) return@forEach
+
+      if (!statusMap.containsKey(key)) statusMap.put(key, ButtonStatus.RELEASED)
       val status = statusMap.get(key)
 
-      var pressed: Boolean
-      button.keyboardCode.let { pressed = ControllerUtils.isKeyboardKeyPressed(it) }
-      if (!pressed) {
-        button.controllerCode?.let { pressed = ControllerUtils.isControllerKeyPressed(it) }
-      }
+      var pressed = button.keyboardCode.let { ControllerUtils.isKeyboardKeyPressed(it) }
+      if (!pressed)
+          button.controllerCode?.let { pressed = ControllerUtils.isControllerKeyPressed(it) }
 
       val newStatus =
-          if (button.enabled) {
-            when (status) {
-              ButtonStatus.RELEASED,
-              ButtonStatus.JUST_RELEASED ->
-                  if (pressed) ButtonStatus.JUST_PRESSED else ButtonStatus.RELEASED
-              else -> if (pressed) ButtonStatus.PRESSED else ButtonStatus.JUST_RELEASED
-            }
-          } else {
-            if (status == ButtonStatus.JUST_RELEASED) {
-              ButtonStatus.RELEASED
-            } else {
-              ButtonStatus.JUST_RELEASED
-            }
+          when (status) {
+            ButtonStatus.RELEASED,
+            ButtonStatus.JUST_RELEASED ->
+                if (pressed) ButtonStatus.JUST_PRESSED else ButtonStatus.RELEASED
+            else -> if (pressed) ButtonStatus.PRESSED else ButtonStatus.JUST_RELEASED
           }
 
       statusMap.put(key, newStatus)

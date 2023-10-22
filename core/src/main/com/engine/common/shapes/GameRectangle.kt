@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Position
+import com.engine.common.interfaces.IContainable
 
 /**
  * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to

@@ -9,8 +9,7 @@ import com.engine.common.objects.Properties
 /**
  * A [TiledMapLayerBuilders] is used to build a [TiledMap] of [MapLayer]s. It is used in conjunction
  * with [ITiledMapLayerBuilder]. The [TiledMapLayerBuilders] will iterate over each layer and call
- * the [ITiledMapLayerBuilder.build] method. The [ITiledMapLayerBuilder.build] method will be passed
- * the [MapLayer] for that layer and the props that are returned from the build method.
+ * the [ITiledMapLayerBuilder.build] method.
  */
 abstract class TiledMapLayerBuilders {
 
@@ -21,14 +20,11 @@ abstract class TiledMapLayerBuilders {
   abstract val layerBuilders: ObjectMap<String, ITiledMapLayerBuilder>
 
   /**
-   * Builds all layers of the [map] and returns the [Properties] that were built.
+   * Builds all layers of the [map] by building to the provided [Properties].
    *
    * @param layers the [MapLayers] to build.
-   * @return the [Properties] that were built.
+   * @param returnProps the [Properties] to use as a return container.
    */
-  open fun build(layers: MapLayers): Properties {
-    val returnProps = Properties()
-    layers.forEach { layer -> layerBuilders[layer.name]?.build(layer, returnProps) }
-    return returnProps
-  }
+  open fun build(layers: MapLayers, returnProps: Properties) =
+      layers.forEach { layer -> layerBuilders[layer.name]?.build(layer, returnProps) }
 }

@@ -2,7 +2,7 @@ package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
-import com.engine.common.extensions.fill
+import com.engine.common.extensions.gdxFilledArrayOf
 import com.engine.drawables.sprites.splitAndFlatten
 
 /**
@@ -15,13 +15,14 @@ import com.engine.drawables.sprites.splitAndFlatten
  */
 class Animation : IAnimation {
 
-  private val animation: Array<TextureRegion>
-  private val durations: Array<Float>
+  internal val animation: Array<TextureRegion>
+  internal val durations: Array<Float>
 
   private var loop = true
 
-  internal var currentIndex: Int = 0
+  internal var currentIndex = 0
     private set
+
   internal var elapsedTime = 0f
     private set
 
@@ -40,7 +41,7 @@ class Animation : IAnimation {
       columns: Int,
       duration: Float,
       loop: Boolean = true
-  ) : this(region, rows, columns, Array<Float>(rows * columns).fill(duration), loop)
+  ) : this(region, rows, columns, gdxFilledArrayOf(rows * columns, duration), loop)
 
   /**
    * Creates an animation with the specified texture region, rows, columns, and duration. The
@@ -58,16 +59,13 @@ class Animation : IAnimation {
       durations: Array<Float>,
       loop: Boolean = true
   ) {
-    if (rows <= 0) {
-      throw IllegalArgumentException("The number of rows must be greater than 0")
-    }
-    if (columns <= 0) {
-      throw IllegalArgumentException("The number of columns must be greater than 0")
-    }
-    if (durations.size != rows * columns) {
-      throw IllegalArgumentException(
-          "The number of durations must equal the number of rows times the number of columns")
-    }
+    if (rows <= 0) throw IllegalArgumentException("The number of rows must be greater than 0")
+    if (columns <= 0) throw IllegalArgumentException("The number of columns must be greater than 0")
+    if (durations.size != rows * columns)
+        throw IllegalArgumentException(
+            "The number of durations must equal the number of rows times the number of columns. " +
+                "Expected ${rows * columns} durations but found ${durations.size} durations.")
+
     this.durations = durations
     this.animation = region.splitAndFlatten(rows, columns)
     this.loop = loop
@@ -98,10 +96,10 @@ class Animation : IAnimation {
     // If the animation is finished and not looping, then keep the elapsed time
     // at the duration, and set the current region to the last one (instead of the first)
     val duration = getDuration()
-    if (elapsedTime >= duration) {
-      if (loop) {
-        elapsedTime -= duration
-      } else {
+
+    while (elapsedTime >= duration) {
+      if (loop) elapsedTime -= duration
+      else {
         elapsedTime = duration
         currentIndex = animation.size - 1
         return
@@ -112,9 +110,8 @@ class Animation : IAnimation {
     // duration of each region from the elapsed time until the elapsed time is less
     // than the duration of the current region
     var currentLoopDuration = elapsedTime
-    println("currentLoopDuration: $currentLoopDuration")
     var tempIndex = 0
-    while (currentLoopDuration > durations[tempIndex] && tempIndex < animation.size) {
+    while (tempIndex < animation.size && currentLoopDuration > durations[tempIndex]) {
       currentLoopDuration -= durations[tempIndex]
       tempIndex++
     }

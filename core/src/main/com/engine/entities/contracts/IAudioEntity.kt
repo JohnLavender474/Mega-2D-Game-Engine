@@ -20,7 +20,7 @@ interface IAudioEntity : IGameEntity {
    * @param source the source of the sound
    * @param loop whether to loop the sound
    */
-  fun requestToPlaySound(source: String, loop: Boolean) =
+  fun requestToPlaySound(source: Any, loop: Boolean) =
       getAudioComponent().requestToPlaySound(source, loop)
 
   /**
@@ -29,20 +29,23 @@ interface IAudioEntity : IGameEntity {
    * @param source the source of the music
    * @param onCompletionListener the listener to call when the music finishes playing
    */
-  fun requestToPlayMusic(source: String, onCompletionListener: ((Music) -> Unit)? = null) =
-      getAudioComponent().requestToPlayMusic(source, onCompletionListener)
+  fun requestToPlayMusic(
+      source: Any,
+      loop: Boolean = true,
+      onCompletionListener: ((Music) -> Unit)? = null
+  ) = getAudioComponent().requestToPlayMusic(source, loop, onCompletionListener)
 
   /**
    * Stops the sound with the given source.
    *
    * @param source the source of the sound
    */
-  fun stopSound(source: String) = getAudioComponent().stopSoundRequests.add(source)
+  fun stopSound(source: Any) = getAudioComponent().stopSoundRequests.add(source)
 
   /**
    * Stops the music with the given source.
    *
    * @param source the source of the music
    */
-  fun stopMusic(source: String) = getAudioComponent().stopMusicRequests.add(source)
+  fun stopMusic(source: Any) = getAudioComponent().stopMusicRequests.add(source)
 }

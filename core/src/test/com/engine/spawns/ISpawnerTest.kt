@@ -5,7 +5,8 @@ import com.engine.common.shapes.GameRectangle
 import com.engine.events.Event
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.mockk
 
 class SpawnerSpec :
     DescribeSpec({
@@ -44,7 +45,7 @@ class SpawnerSpec :
 
           val spawner =
               SpawnerForBoundsEntered(
-                  spawnSupplier, thisBounds, otherBounds, shouldBeCulledSupplier)
+                  spawnSupplier, { thisBounds }, { otherBounds }, shouldBeCulledSupplier)
 
           spawner.test(0f) shouldBe false
           spawner.get() shouldBe null

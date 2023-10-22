@@ -1,180 +1,115 @@
 package com.engine.audio
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
-import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.utils.ObjectMap
-import com.badlogic.gdx.utils.OrderedSet
-import com.engine.common.extensions.getSound
-import org.jaudiotagger.audio.AudioFileIO
 
-/** A class that contains utilities for audio. */
-object AudioUtils {
+object AudioManager : IAudioManager {
+
+  private const val TAG = "AudioManager"
+  private const val MIN_VOLUME = 0f
+  private const val MAX_VOLUME = 10f
+  private const val DEFAULT_VOLUME = 5f
+
+  override var soundVolume = DEFAULT_VOLUME
+    set(value) {
+      field = restrictVolume(value)
+      Gdx.app.debug(TAG, "setSoundVolume(): Sound volume set to: $soundVolume")
+    }
+    get() = field / MAX_VOLUME
+
+  override var musicVolume = DEFAULT_VOLUME
+    set(value) {
+      field = restrictVolume(value)
+      Gdx.app.debug(TAG, "setMusicVolume(): Music volume set to: $musicVolume")
+    }
+    get() = field / MAX_VOLUME
 
   /**
-   * Gets the length of a sound in seconds.
+   * Plays music with the given key and loop settings.
    *
-   * @param source the source of the sound file
+   * @param key the music to play
+   * @param loop whether to loop the music
    */
-  fun getLengthOfSoundInSeconds(source: String) =
-      AudioFileIO.read(Gdx.files.internal(source).file()).audioHeader.trackLength
-}
-
-/**
- * A class that manages audio. It can play, pause, and stop sounds and musicSuppliers. It can also
- * set the volume of sounds and music.
- */
-class AudioManager(private val assetManager: AssetManager) : IAudioManager {
-
-  /**
-   * The values for volume. The minimum volume is 0, the maximum volume is 10, and the default
-   * volume is 5.
-   */
-  companion object Volume {
-    private const val MIN_VOLUME = 0
-    private const val MAX_VOLUME = 10
-    private const val DEFAULT_VOLUME = 5
+  override fun playMusic(key: Any?, loop: Boolean) {
+    if (key is Music) {
+      key.volume = musicVolume
+      key.isLooping = loop
+      key.play()
+      Gdx.app.debug(TAG, "playMusic(): Playing music with key: $key, loop: $loop")
+    }
   }
 
   /**
-   * A class that represents a sound entry. It contains the id of the sound and the source of the
-   * sound. It also contains the time the sound has been playing.
+   * Stops the music with the given key.
    *
-   * @param id The id of the sound.
-   * @param time The total time the sound should play for
-   * @property delta The time the sound has been playing for
+   * @param key the music to stop
    */
-  internal class SoundEntry(val id: Long, val sound: Sound, val time: Int = 0) {
-    var delta = 0f
+  override fun stopMusic(key: Any?) {
+    if (key is Music) {
+      key.stop()
+      Gdx.app.debug(TAG, "stopMusic(): Stopping music with key: $key")
+    }
   }
 
-  private val durations = ObjectMap<String, Int>()
+  /**
+   * Pauses the music with the given key.
+   *
+   * @param key the music to pause
+   */
+  override fun pauseMusic(key: Any?) {
+    if (key is Music) {
+      key.pause()
+      Gdx.app.debug(TAG, "pauseMusic(): Pausing music with key: $key")
+    }
+  }
 
-  private val loopingSounds = OrderedSet<SoundEntry>()
-  private val playingSounds = OrderedSet<SoundEntry>()
-  private val playingMusic = OrderedSet<String>()
-
-  private var soundVolume = DEFAULT_VOLUME
-  private var musicVolume = DEFAULT_VOLUME
-
-  override fun update(delta: Float) {
-    val iter = playingSounds.iterator()
-
-    while (iter.hasNext()) {
-      val soundEntry = iter.next()
-      soundEntry.delta += delta
-
-      if (soundEntry.time >= soundEntry.delta) {
-        soundEntry.sound.stop(soundEntry.id)
-        iter.remove()
+  /**
+   * Plays the sound with the given key and loop settings.
+   *
+   * @param key the sound to play
+   * @param loop whether to loop the sound
+   */
+  override fun playSound(key: Any?, loop: Boolean) {
+    if (key is Sound) {
+      if (loop) {
+        key.loop(soundVolume)
+        Gdx.app.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
+      } else {
+        key.play(soundVolume)
+        Gdx.app.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
       }
     }
   }
 
-  override fun setSoundVolume(volume: Int) {
-    soundVolume = restrictVolume(volume)
+  /**
+   * Stops the sound with the given key.
+   *
+   * @param key the sound to stop
+   */
+  override fun stopSound(key: Any?) {
+    if (key is Sound) {
+      key.stop()
+      Gdx.app.debug(TAG, "stopSound(): Stopping sound with key: $key")
+    }
   }
 
-  override fun setMusicVolume(volume: Int) {
-    musicVolume = restrictVolume(volume)
+  /**
+   * Pauses the sound with the given key.
+   *
+   * @param key the sound to pause
+   */
+  override fun pauseSound(key: Any?) {
+    if (key is Sound) {
+      key.pause()
+      Gdx.app.debug(TAG, "pauseSound(): Pausing sound with key: $key")
+    }
   }
 
-  private fun restrictVolume(requestedVolume: Int): Int {
+  private fun restrictVolume(requestedVolume: Float): Float {
     var volume = requestedVolume
-    if (volume > MAX_VOLUME) {
-      volume = MAX_VOLUME
-    }
-    if (volume < MIN_VOLUME) {
-      volume = MIN_VOLUME
-    }
+    if (volume > MAX_VOLUME) volume = MAX_VOLUME
+    if (volume < MIN_VOLUME) volume = MIN_VOLUME
     return volume
   }
-
-  override fun stopSound(source: String) {
-    val sound = assetManager.getSound(source)
-    sound.stop()
-  }
-
-  override fun pauseSound(source: String) {
-    val sound = assetManager.getSound(source)
-    sound.pause()
-  }
-
-  override fun playSound(source: String, loop: Boolean) {
-    try {
-      val sound = assetManager.get(source, Sound::class.java)
-
-      if (!durations.containsKey(source)) {
-        val time = AudioUtils.getLengthOfSoundInSeconds(source)
-        durations.put(source, time)
-      }
-      val time = durations.get(source)
-
-      if (loop) {
-        val id = sound.loop(soundVolume.toFloat())
-        loopingSounds.add(SoundEntry(id, sound))
-      } else {
-        val id = sound.play(soundVolume.toFloat())
-        playingSounds.add(SoundEntry(id, sound, time))
-      }
-    } catch (e: Exception) {
-      e.printStackTrace()
-      Gdx.app.log("Audio Manager", "Error playing sound: $source", e)
-    }
-  }
-
-  override fun stopAllLoopingSounds() {
-    loopingSounds.forEach { it.sound.stop(it.id) }
-    loopingSounds.clear()
-  }
-
-  override fun stopAllPlayingSounds() {
-    playingSounds.forEach { it.sound.stop(it.id) }
-    playingSounds.clear()
-  }
-
-  override fun stopAllSounds() =
-      assetManager.getAll(Sound::class.java, Array()).forEach { it.stop() }
-
-  override fun pauseAllSounds() =
-      assetManager.getAll(Sound::class.java, Array()).forEach { it.pause() }
-
-  override fun resumeAllSounds() =
-      assetManager.getAll(Sound::class.java, Array()).forEach { it.resume() }
-
-  override fun resumeAllMusic() {
-    playingMusic.forEach { assetManager.get(it, Music::class.java).play() }
-  }
-
-  override fun stopMusic(source: String) {
-    val music = assetManager.get(source, Music::class.java)
-    music.stop()
-    music.setOnCompletionListener(null)
-    playingMusic.remove(source)
-  }
-
-  override fun pauseMusic(source: String) = assetManager.get(source, Music::class.java).pause()
-
-  override fun playMusic(source: String, loop: Boolean, onCompletionListener: ((Music) -> Unit)?) {
-    val music = assetManager.get(source, Music::class.java)
-    music.volume = musicVolume.toFloat()
-    music.isLooping = loop
-    music.play()
-    onCompletionListener?.let { music.setOnCompletionListener(it) }
-    playingMusic.add(source)
-  }
-
-  override fun stopAllMusic() {
-    assetManager.getAll(Music::class.java, Array()).forEach {
-      val music = it
-      music.stop()
-      music.setOnCompletionListener(null)
-    }
-    playingMusic.clear()
-  }
-
-  override fun pauseAllMusic() =
-      assetManager.getAll(Music::class.java, Array()).forEach { it.pause() }
 }

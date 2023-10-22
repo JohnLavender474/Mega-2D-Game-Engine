@@ -2,6 +2,7 @@ package com.engine.common.shapes
 
 import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.interfaces.IContainable
 import com.engine.drawables.shapes.IDrawableShape
 
 /**

@@ -20,9 +20,7 @@ class CullableOnEvent(
   override fun shouldBeCulled() = cull
 
   override fun onEvent(event: Event) {
-    if (!cull && cullOnEvent(event)) {
-      cull = true
-    }
+    if (!cull && cullOnEvent(event)) cull = true
   }
 
   override fun reset() {

@@ -1,7 +1,7 @@
 package com.engine
 
-import com.engine.common.LogLevel
-import com.engine.common.Logger
+import com.engine.common.GameLogLevel
+import com.engine.common.GameLogger
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -21,55 +21,55 @@ class LoggerTest :
         outputStreamCaptor.reset()
       }
 
-      describe("Logger") {
-        context("Default log level") { it("should be null") { Logger.logLevel shouldBe null } }
+      describe("GameLogger") {
+        context("Default log level") { it("should be null") { GameLogger.logLevel shouldBe null } }
 
         context("Setting log level to INFO") {
-          beforeTest { Logger.set(LogLevel.INFO) }
+          beforeTest { GameLogger.set(GameLogLevel.INFO) }
 
-          it("should set log level to INFO") { Logger.logLevel shouldBe LogLevel.INFO }
+          it("should set log level to INFO") { GameLogger.logLevel shouldBe GameLogLevel.INFO }
 
           it("should log INFO messages") {
-            Logger.info("Info message")
+            GameLogger.info("TEST", "Info message")
             outputStreamCaptor.toString() shouldContain "Info message"
           }
 
           it("should not log DEBUG messages") {
-            Logger.debug("Debug message")
+            GameLogger.debug("TEST", "Debug message")
             outputStreamCaptor.toString() shouldNotBe "Debug message"
           }
         }
 
         context("Setting log level to DEBUG") {
-          beforeTest { Logger.set(LogLevel.DEBUG) }
+          beforeTest { GameLogger.set(GameLogLevel.DEBUG) }
 
-          it("should set log level to DEBUG") { Logger.logLevel shouldBe LogLevel.DEBUG }
+          it("should set log level to DEBUG") { GameLogger.logLevel shouldBe GameLogLevel.DEBUG }
 
           it("should log INFO messages") {
-            Logger.info("Info message")
+            GameLogger.info("TEST", "Info message")
             outputStreamCaptor.toString() shouldContain "Info message"
           }
 
           it("should log DEBUG messages") {
-            Logger.debug("Debug message")
+            GameLogger.debug("TEST", "Debug message")
             outputStreamCaptor.toString() shouldContain "Debug message"
           }
 
           it("should not log ERROR messages") {
-            Logger.error("Error message")
+            GameLogger.error("TEST", "Error message")
             outputStreamCaptor.toString() shouldNotBe "Error message"
           }
         }
 
         context("Turning off the logger") {
-          beforeTest { Logger.turnOff() }
+          beforeTest { GameLogger.turnOff() }
 
-          it("should set log level to null") { Logger.logLevel shouldBe null }
+          it("should set log level to null") { GameLogger.logLevel shouldBe null }
 
           it("should not log any messages") {
-            Logger.info("Info message")
-            Logger.debug("Debug message")
-            Logger.error("Error message")
+            GameLogger.info("TEST", "Info message")
+            GameLogger.debug("TEST", "Debug message")
+            GameLogger.error("TEST", "Error message")
             outputStreamCaptor.toString() shouldBe ""
           }
         }

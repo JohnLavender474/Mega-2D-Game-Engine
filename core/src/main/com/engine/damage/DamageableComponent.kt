@@ -1,7 +1,7 @@
 package com.engine.damage
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
+import com.engine.common.GameLogger
 import com.engine.common.time.Timer
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
@@ -82,7 +82,7 @@ open class DamageableComponent(
    * clearing the [damagers], and setting [invincible] to false.
    */
   override fun reset() {
-    Gdx.app.debug(TAG, "reset()")
+    GameLogger.debug(TAG, "reset()")
     damageTimer.setToEnd()
     damageRecoveryTimer.setToEnd()
     invincible = false

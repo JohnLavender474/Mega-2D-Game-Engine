@@ -86,13 +86,8 @@ class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
    * @param key The key of the [IBehavior] to set.
    * @param active If the [IBehavior] should be active.
    */
-  internal fun setActive(key: Any, active: Boolean) {
-    if (active) {
-      activeBehaviors.add(key)
-    } else {
-      activeBehaviors.remove(key)
-    }
-  }
+  internal fun setActive(key: Any, active: Boolean) =
+      if (active) activeBehaviors.add(key) else activeBehaviors.remove(key)
 
   /** Clears the list of active [IBehavior]s. All behaviors are reset. */
   override fun reset() {

@@ -1,6 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.interfaces.Resettable
@@ -43,7 +44,7 @@ open class Body(
     width: Float = 0f,
     height: Float = 0f,
     var physics: PhysicsData = PhysicsData(),
-    var fixtures: OrderedMap<Any, Fixture> = OrderedMap(),
+    var fixtures: Array<Pair<Any, Fixture>> = Array(),
     override var properties: Properties = Properties(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
@@ -63,7 +64,7 @@ open class Body(
   constructor(
       bodyType: BodyType,
       physicsData: PhysicsData,
-      fixtures: OrderedMap<Any, Fixture> = OrderedMap(),
+      fixtures: Array<Pair<Any, Fixture>> = Array(),
       properties: Properties = Properties(),
       preProcess: Updatable? = null,
       postProcess: Updatable? = null
@@ -94,6 +95,13 @@ open class Body(
   fun isBodyType(bodyType: BodyType) = this.bodyType == bodyType
 
   /**
+   * Adds the given [Fixture] to this body.
+   *
+   * @param fixture the [Fixture] to add
+   */
+  fun addFixture(fixture: Fixture) = fixtures.add(fixture.fixtureLabel to fixture)
+
+  /**
    * Resets the body to its default state by resetting its [PhysicsData] and resetting the positions
    * of its [Fixture]s to their default positions (offset from the center of the body).
    *
@@ -102,9 +110,9 @@ open class Body(
   override fun reset() {
     previousBounds.set(this)
     physics.reset()
-    fixtures.values().forEach { f ->
-      val p = getCenterPoint().add(f.offsetFromBodyCenter)
-      f.shape.setCenter(p)
+    fixtures.forEach { f ->
+      val p = getCenterPoint().add(f.second.offsetFromBodyCenter)
+      f.second.shape.setCenter(p)
     }
   }
 
@@ -115,7 +123,7 @@ open class Body(
   override fun hashCode() = System.identityHashCode(this)
 
   override fun toString() =
-      "Body(first=$x second=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
-          "physics=$physics, fixtures=$fixtures, properties=$properties, 9preProcess=$preProcess, " +
+      "Body(x=$x y=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
+          "physics=$physics, fixtures=$fixtures, properties=$properties, preProcess=$preProcess, " +
           "postProcess=$postProcess, previousBounds=$previousBounds)"
 }

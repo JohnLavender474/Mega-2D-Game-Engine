@@ -49,4 +49,10 @@ class Fixture(
    * @see overlaps
    */
   fun overlaps(other: Fixture) = overlaps(other.shape)
+
+  override fun toString(): String {
+    return "Fixture(shape=$shape, fixtureLabel=$fixtureLabel, active=$active, " +
+        "attachedToBody=$attachedToBody, offsetFromBodyCenter=$offsetFromBodyCenter, " +
+        "properties=$properties)"
+  }
 }

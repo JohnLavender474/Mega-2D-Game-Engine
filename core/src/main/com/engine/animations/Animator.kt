@@ -1,6 +1,7 @@
 package com.engine.animations
 
 import com.badlogic.gdx.utils.ObjectMap
+import com.engine.common.GameLogger
 import com.engine.drawables.sprites.ISprite
 
 /**
@@ -18,6 +19,10 @@ class Animator(
     val animations: ObjectMap<String, IAnimation>,
 ) : IAnimator {
 
+  companion object {
+    const val TAG = "Animator"
+  }
+
   val currentAnimation: IAnimation?
     get() = if (currentKey != null) animations[currentKey] else null
 
@@ -25,11 +30,11 @@ class Animator(
     private set
 
   override fun animate(sprite: ISprite, delta: Float) {
-    val priorKey = currentKey
     val nextKey = keySupplier()
-
-    if (priorKey != nextKey) currentAnimation?.reset()
-
+    if (currentKey != nextKey) {
+      GameLogger.debug(TAG, "animate(): Switching animation from [$currentKey] to [$nextKey]")
+      currentAnimation?.reset()
+    }
     currentKey = nextKey
 
     currentAnimation?.let {

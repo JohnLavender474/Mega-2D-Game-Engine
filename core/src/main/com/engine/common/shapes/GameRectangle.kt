@@ -1,11 +1,11 @@
 package com.engine.common.shapes
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Position
-import com.engine.common.interfaces.IContainable
 
 /**
  * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to
@@ -32,6 +32,8 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
       OVERLAP_EXTENSION = overlapExtension
     }
   }
+
+  override var color: Color = Color.RED
 
   /**
    * Creates a new [GameRectangle] with the given first, second, width, and height.
@@ -149,8 +151,9 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     return this
   }
 
-  override fun draw(renderer: ShapeRenderer) {
-    renderer.rect(x, y, width, height)
+  override fun draw(drawer: ShapeRenderer) {
+    drawer.color = color
+    drawer.rect(x, y, width, height)
   }
 
   override fun positionOnPoint(point: Vector2, position: Position): GameRectangle {

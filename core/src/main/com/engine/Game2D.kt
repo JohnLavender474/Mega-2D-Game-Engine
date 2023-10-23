@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.controller.buttons.Buttons
 import com.engine.controller.polling.ControllerPoller
@@ -79,7 +80,7 @@ abstract class Game2D : IGame2D, Game() {
    * @param key the key
    */
   override fun setCurrentScreen(key: String) {
-    Gdx.app.debug(TAG, "setCurrentScreen: set to screen with key = $key")
+    GameLogger.debug(TAG, "setCurrentScreen: set to screen with key = $key")
 
     // hide old screen and remove it from events manager
     currentScreenKey
@@ -110,7 +111,7 @@ abstract class Game2D : IGame2D, Game() {
    * load assets into the asset manager.
    */
   override fun create() {
-    Gdx.app.debug(TAG, "create()")
+    GameLogger.debug(TAG, "create()")
 
     batch = SpriteBatch()
     shapeRenderer = ShapeRenderer()
@@ -156,7 +157,7 @@ abstract class Game2D : IGame2D, Game() {
 
   /** Pauses the current screen and sets [paused] to true. */
   override fun pause() {
-    Gdx.app.debug(TAG, "pause()")
+    GameLogger.debug(TAG, "pause()")
 
     if (paused) return
 
@@ -166,7 +167,7 @@ abstract class Game2D : IGame2D, Game() {
 
   /** Resumes the current screen and sets [paused] to false. */
   override fun resume() {
-    Gdx.app.debug(TAG, "resume()")
+    GameLogger.debug(TAG, "resume()")
 
     if (!paused) return
 
@@ -176,7 +177,7 @@ abstract class Game2D : IGame2D, Game() {
 
   /** Disposes of the [batch], [shapeRenderer], and [IScreen]s. */
   override fun dispose() {
-    Gdx.app.debug(TAG, "dispose()")
+    GameLogger.debug(TAG, "dispose()")
 
     batch.dispose()
     shapeRenderer.dispose()

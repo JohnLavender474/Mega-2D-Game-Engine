@@ -26,26 +26,13 @@ open class QuadTreeGraphMap(
 
   protected val objects = ObjectMap<IntPair, Array<Any>>()
 
-  override fun get(x: Int, y: Int): Array<Any> {
-    var array = objects.get(IntPair(x, y))
-    if (array == null) {
-      array = Array()
-    }
-    return array
-  }
+  override fun get(x: Int, y: Int) = objects.get(IntPair(x, y)) ?: Array()
 
   override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any> {
     val set = ObjectSet<Any>()
 
-    for (x in minX..maxX) {
-      for (y in minY..maxY) {
-        if (isOutOfBounds(x, y)) {
-          continue
-        }
-
-        set.addAll(get(x, y))
-      }
-    }
+    for (x in minX..maxX) for (y in minY..maxY) if (isOutOfBounds(x, y)) continue
+    set.addAll(get(x, y))
 
     return set
   }
@@ -87,13 +74,10 @@ open class QuadTreeGraphMap(
       } else {
         for (x in minX until maxX) {
           for (y in minY until maxY) {
-            if (isOutOfBounds(x, y)) {
-              continue
-            }
+            if (isOutOfBounds(x, y)) continue
 
-            if (!objects.containsKey(IntPair(x, y))) {
-              objects.put(IntPair(x, y), Array())
-            }
+            if (!objects.containsKey(IntPair(x, y))) objects.put(IntPair(x, y), Array())
+
             val array = objects.get(IntPair(x, y))
             array.add(obj)
             return true

@@ -2,6 +2,7 @@ package com.engine.spawns
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
+import com.engine.common.GameLogger
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 
@@ -41,7 +42,7 @@ class SpawnsManager : Updatable, Resettable {
    * @see ISpawner
    */
   fun setSpawners(spawners: Array<ISpawner>) {
-    Gdx.app.debug(TAG, "setSpawners(): Setting spawners: $spawners")
+    GameLogger.debug(TAG, "setSpawners(): Setting spawners: $spawners")
     this.spawners.clear()
     this.spawners.addAll(spawners)
   }
@@ -71,7 +72,7 @@ class SpawnsManager : Updatable, Resettable {
 
   /** Clears the [ISpawner]s and [Spawn]s. */
   override fun reset() {
-    Gdx.app.debug(TAG, "reset(): Clearing spawners and spawns")
+    GameLogger.debug(TAG, "reset(): Clearing spawners and spawns")
     spawners.clear()
     spawns.clear()
   }

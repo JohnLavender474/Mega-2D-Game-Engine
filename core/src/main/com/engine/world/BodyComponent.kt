@@ -10,7 +10,7 @@ import com.engine.entities.IGameEntity
  */
 class BodyComponent(override val entity: IGameEntity, var body: Body) : IGameComponent {
 
-  override fun reset() {
-    body.reset()
-  }
+  override fun reset() = body.reset()
+
+  override fun print() = body.toString()
 }

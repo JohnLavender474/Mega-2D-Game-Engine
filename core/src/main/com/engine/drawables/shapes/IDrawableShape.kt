@@ -1,5 +1,6 @@
 package com.engine.drawables.shapes
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.engine.drawables.IDrawable
 
@@ -8,4 +9,6 @@ import com.engine.drawables.IDrawable
  *
  * @see ShapeRenderer
  */
-interface IDrawableShape : IDrawable<ShapeRenderer>
+interface IDrawableShape : IDrawable<ShapeRenderer> {
+  var color: Color
+}

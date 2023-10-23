@@ -4,8 +4,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
+import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.extensions.objectSetOf
-import com.engine.common.extensions.orderedMapOf
 import com.engine.common.extensions.round
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
@@ -104,7 +104,7 @@ class WorldSystemTest :
           every { worldSystem.postProcess(any(), any()) } just Runs
 
           val fixture = Fixture(mockk(), "Type")
-          body.fixtures.put("fixture", fixture)
+          body.addFixture(fixture)
 
           val objs = ArrayList<IGameShape2DSupplier>()
 
@@ -118,7 +118,7 @@ class WorldSystemTest :
 
         describe("cycle") {
           it("should cycle correctly - test 1") {
-            body.fixtures.put("fixture", Fixture(GameRectangle(), "Test"))
+            body.addFixture(Fixture(GameRectangle(), "Test"))
 
             val objs = ArrayList<IGameShape2DSupplier>()
 
@@ -145,11 +145,10 @@ class WorldSystemTest :
 
             objs.size shouldBe 2
             objs shouldContain body
-            objs shouldContain body.fixtures.get("fixture")
           }
 
           it("should cycle correctly - test 2") {
-            body.fixtures.put("fixture", Fixture(GameRectangle(), "Test"))
+            body.addFixture(Fixture(GameRectangle(), "Test"))
 
             val objs = ArrayList<IGameShape2DSupplier>()
 
@@ -176,7 +175,6 @@ class WorldSystemTest :
 
             objs.size shouldBe 4
             objs.filter { it == body }.size shouldBe 2
-            objs.filter { it == body.fixtures.get("fixture") }.size shouldBe 2
           }
         }
 
@@ -201,13 +199,13 @@ class WorldSystemTest :
 
         describe("process contacts") {
           val fixture1 = Fixture(GameRectangle(0f, 0f, 10f, 10f), "Type1")
-          val body1 = Body(BodyType.DYNAMIC, fixtures = orderedMapOf("fixture1" to fixture1))
+          val body1 = Body(BodyType.DYNAMIC, fixtures = gdxArrayOf("fixture1" to fixture1))
           val entity1 = GameEntity(mockk())
           entity1.dead = false
           entity1.addComponent(BodyComponent(entity1, body1))
 
           val fixture2 = Fixture(GameRectangle(5f, 5f, 15f, 15f), "Type2")
-          val body2 = Body(BodyType.DYNAMIC, fixtures = orderedMapOf("fixture2" to fixture2))
+          val body2 = Body(BodyType.DYNAMIC, fixtures = gdxArrayOf("fixture2" to fixture2))
           val entity2 = GameEntity(mockk())
           entity2.dead = false
           entity2.addComponent(BodyComponent(entity2, body2))
@@ -343,7 +341,7 @@ class WorldSystemTest :
 
           val fixture = Fixture(GameRectangle(), "Type")
           fixture.offsetFromBodyCenter = Vector2(5f, 5f)
-          body.fixtures.put("fixture", fixture)
+          body.addFixture(fixture)
 
           worldSystem.update(fixedStep)
 

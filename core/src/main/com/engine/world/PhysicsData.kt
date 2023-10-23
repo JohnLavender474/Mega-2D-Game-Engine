@@ -46,4 +46,10 @@ open class PhysicsData(
     velocity.setZero()
     frictionOnSelf.set(defaultFrictionOnSelf)
   }
+
+  override fun toString() =
+      "PhysicsData(gravity=$gravity, velocity=$velocity, velocityClamp=$velocityClamp, " +
+          "frictionToApply=$frictionToApply, frictionOnSelf=$frictionOnSelf, " +
+          "defaultFrictionOnSelf=$defaultFrictionOnSelf, gravityOn=$gravityOn, " +
+          "collisionOn=$collisionOn, takeFrictionFromOthers=$takeFrictionFromOthers)"
 }

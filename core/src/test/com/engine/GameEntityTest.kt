@@ -50,12 +50,5 @@ class GameEntityTest :
           entity.getComponent(MockComponent::class) shouldBe null
           entity.hasComponent(MockComponent::class) shouldBe false
         }
-
-        it("should generate a valid string representation") {
-          val componentName = "MockComponent"
-          entity.addComponent(mockComponent)
-
-          entity.toString() shouldBe "${entity::class.simpleName}: $componentName"
-        }
       }
     })

@@ -8,9 +8,8 @@ import com.engine.systems.GameSystem
 class AnimationsSystem : GameSystem(AnimationsComponent::class) {
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    if (!on) {
-      return
-    }
+    if (!on) return
+
     entities.forEach { entity ->
       val animationsComponent = entity.getComponent(AnimationsComponent::class)
       animationsComponent?.animations?.forEach { e ->

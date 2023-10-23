@@ -1,5 +1,6 @@
 package com.engine.world
 
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
@@ -120,7 +121,7 @@ class WorldSystem(
       updatePhysics(b, delta)
       updateFixturePositions(b)
       worldGraphSupplier()!!.add(b)
-      b.fixtures.values().forEach { f -> worldGraphSupplier()!!.add(f) }
+      b.fixtures.forEach { (_, f) -> worldGraphSupplier()!!.add(f) }
     }
   }
 
@@ -204,7 +205,7 @@ class WorldSystem(
    * @param body the [Body] to update the positions of the fixtures of
    */
   internal fun updateFixturePositions(body: Body) {
-    body.fixtures.values().forEach { f ->
+    body.fixtures.forEach { (_, f) ->
       if (!f.attachedToBody) return
       f.shape.setCenter(body.getCenterPoint().add(f.offsetFromBodyCenter))
     }
@@ -231,12 +232,12 @@ class WorldSystem(
    * @param body the [Body] to check for contacts
    */
   internal fun checkForContacts(body: Body) {
-    body.fixtures.values().forEach { f ->
+    body.fixtures.forEach { (_, f) ->
       if (f.active && contactFilterMap?.containsKey(f.fixtureLabel) != false) {
         val overlapping = ObjectSet<Fixture>()
 
         worldGraphSupplier()!!.get(f.getGameShape2D()).filterIsInstance<Fixture>().forEach {
-          if (it.active && filterContact(f, it)) overlapping.add(it)
+          if (it.active && filterContact(f, it) && f.overlaps(it)) overlapping.add(it)
         }
 
         overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
@@ -253,7 +254,7 @@ class WorldSystem(
    */
   internal fun resolveCollisions(body: Body) {
     worldGraphSupplier()!!.get(body).filterIsInstance<Body>().forEach {
-      collisionHandler.handleCollision(body, it)
+      if (it.overlaps(body as Rectangle)) collisionHandler.handleCollision(body, it)
     }
   }
 }

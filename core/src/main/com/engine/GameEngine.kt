@@ -1,8 +1,8 @@
 package com.engine
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.OrderedSet
 import com.badlogic.gdx.utils.Queue
+import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
@@ -32,8 +32,6 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
   constructor(vararg systems: IGameSystem) : this(systems.asIterable())
 
   /**
-   * @inheritDoc
-   *
    * [IGameEntity]s passed into the [spawn] method will be added to a queue, and will not truly be
    * spawned until the next call to [update].
    *
@@ -41,7 +39,6 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
    * @param spawnProps the [Properties] to spawn the [IGameEntity] with
    */
   override fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean {
-    Gdx.app.debug(TAG, "spawn(): Spawning entity: $entity")
     entitiesToAdd.addLast(entity to spawnProps)
     return true
   }
@@ -60,12 +57,12 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
 
       entities.add(entity)
       entity.spawn(spawnProps)
+      GameLogger.debug(TAG, "spawn(): Spawned entity: ${entity.print()}")
 
       systems.forEach { system ->
         if (system.qualifies(entity)) {
-          Gdx.app.debug(
-              TAG,
-              "update(): Adding entity [$entity] to system[${system::class.simpleName}]")
+          GameLogger.debug(
+              TAG, "update(): Adding entity [${entity.print()}] to system [${system::class.simpleName}]")
           system.add(entity)
         }
       }
@@ -78,11 +75,11 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
       if (!e.dead) continue
 
       systems.forEach { s ->
-        Gdx.app.debug(TAG, "update(): Removing entity [$e] from system [${s::class.simpleName}]")
+        GameLogger.debug(TAG, "update(): Removing entity [${e.print()}] from system [${s::class.simpleName}]")
         s.remove(e)
       }
 
-      Gdx.app.debug(TAG, "update(): Destroying entity: $e")
+      GameLogger.debug(TAG, "update(): Destroying entity: ${e.print()}")
       e.onDestroy()
       eIter.remove()
     }
@@ -98,20 +95,20 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
   /** Resets the [GameEngine]. This will destroy all [IGameEntity]s and reset all [IGameSystem]s. */
   override fun reset() {
     reset =
-        if (updating) {
-          true
-        } else {
+        if (updating) true
+        else {
           entities.forEach { e ->
-            Gdx.app.debug(TAG, "reset(): Destroying entity: $e")
+            GameLogger.debug(TAG, "reset(): Destroying entity: ${e.print()}")
             e.onDestroy()
           }
           entities.clear()
           entitiesToAdd.clear()
 
           systems.forEach {
-            Gdx.app.debug(TAG, "reset(): Resetting system: ${it::class.simpleName}")
+            GameLogger.debug(TAG, "reset(): Resetting system: ${it::class.simpleName}")
             it.reset()
           }
+
           false
         }
   }

@@ -102,4 +102,7 @@ data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
               (fixture1 == other.fixture2 && fixture2 == other.fixture1))
 
   override fun hashCode() = 49 + 7 * fixture1.hashCode() + 7 * fixture2.hashCode()
+    override fun toString(): String {
+        return "Contact(fixture1=$fixture1, fixture2=$fixture2)"
+    }
 }

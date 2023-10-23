@@ -1,8 +1,8 @@
 package com.engine.audio
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
+import com.engine.common.GameLogger
 
 object AudioManager : IAudioManager {
 
@@ -14,14 +14,14 @@ object AudioManager : IAudioManager {
   override var soundVolume = DEFAULT_VOLUME
     set(value) {
       field = restrictVolume(value)
-      Gdx.app.debug(TAG, "setSoundVolume(): Sound volume set to: $soundVolume")
+      GameLogger.debug(TAG, "setSoundVolume(): Sound volume set to: $soundVolume")
     }
     get() = field / MAX_VOLUME
 
   override var musicVolume = DEFAULT_VOLUME
     set(value) {
       field = restrictVolume(value)
-      Gdx.app.debug(TAG, "setMusicVolume(): Music volume set to: $musicVolume")
+      GameLogger.debug(TAG, "setMusicVolume(): Music volume set to: $musicVolume")
     }
     get() = field / MAX_VOLUME
 
@@ -36,7 +36,7 @@ object AudioManager : IAudioManager {
       key.volume = musicVolume
       key.isLooping = loop
       key.play()
-      Gdx.app.debug(TAG, "playMusic(): Playing music with key: $key, loop: $loop")
+      GameLogger.debug(TAG, "playMusic(): Playing music with key: $key, loop: $loop")
     }
   }
 
@@ -48,7 +48,7 @@ object AudioManager : IAudioManager {
   override fun stopMusic(key: Any?) {
     if (key is Music) {
       key.stop()
-      Gdx.app.debug(TAG, "stopMusic(): Stopping music with key: $key")
+      GameLogger.debug(TAG, "stopMusic(): Stopping music with key: $key")
     }
   }
 
@@ -60,7 +60,7 @@ object AudioManager : IAudioManager {
   override fun pauseMusic(key: Any?) {
     if (key is Music) {
       key.pause()
-      Gdx.app.debug(TAG, "pauseMusic(): Pausing music with key: $key")
+      GameLogger.debug(TAG, "pauseMusic(): Pausing music with key: $key")
     }
   }
 
@@ -74,10 +74,10 @@ object AudioManager : IAudioManager {
     if (key is Sound) {
       if (loop) {
         key.loop(soundVolume)
-        Gdx.app.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
+        GameLogger.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
       } else {
         key.play(soundVolume)
-        Gdx.app.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
+        GameLogger.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
       }
     }
   }
@@ -90,7 +90,7 @@ object AudioManager : IAudioManager {
   override fun stopSound(key: Any?) {
     if (key is Sound) {
       key.stop()
-      Gdx.app.debug(TAG, "stopSound(): Stopping sound with key: $key")
+      GameLogger.debug(TAG, "stopSound(): Stopping sound with key: $key")
     }
   }
 
@@ -102,7 +102,7 @@ object AudioManager : IAudioManager {
   override fun pauseSound(key: Any?) {
     if (key is Sound) {
       key.pause()
-      Gdx.app.debug(TAG, "pauseSound(): Pausing sound with key: $key")
+      GameLogger.debug(TAG, "pauseSound(): Pausing sound with key: $key")
     }
   }
 

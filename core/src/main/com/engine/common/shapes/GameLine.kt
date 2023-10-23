@@ -1,5 +1,6 @@
 package com.engine.common.shapes
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
@@ -31,6 +32,8 @@ open class GameLine(val point1: Vector2, val point2: Vector2) : IGameShape2D {
     }
   }
 
+  override var color: Color = Color.RED
+
   /**
    * Creates a line with the given pointsHandles.
    *
@@ -53,8 +56,8 @@ open class GameLine(val point1: Vector2, val point2: Vector2) : IGameShape2D {
 
   override fun contains(x: Float, y: Float) = contains(Vector2(x, y))
 
-  override fun draw(renderer: ShapeRenderer) {
-    renderer.line(point1, point2)
+  override fun draw(drawer: ShapeRenderer) {
+    drawer.line(point1, point2)
   }
 
   override fun getCenter() = Vector2((point1.x + point2.x) / 2f, (point1.y + point2.y) / 2f)

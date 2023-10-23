@@ -41,22 +41,22 @@ object StandardCollisionHandler : ICollisionHandler {
     } else return false
 
     val overlap = Rectangle()
-    Intersector.intersectRectangles(dynamicBody, staticBody, overlap)
+    if (Intersector.intersectRectangles(dynamicBody, staticBody, overlap)) {
+      if (overlap.width > overlap.height) {
+        dynamicBody.physics.frictionOnSelf.x += staticBody.physics.frictionToApply.x
 
-    if (overlap.width == 0f && overlap.height == 0f) return false
+        if (dynamicBody.y > staticBody.y) dynamicBody.y += overlap.height
+        else dynamicBody.y -= overlap.height
+      } else {
+        dynamicBody.physics.frictionOnSelf.y += staticBody.physics.frictionToApply.y
 
-    if (overlap.width > overlap.height) {
-      dynamicBody.physics.frictionOnSelf.x += staticBody.physics.frictionToApply.x
+        if (dynamicBody.x > staticBody.x) dynamicBody.x += overlap.width
+        else dynamicBody.x -= overlap.width
+      }
 
-      if (dynamicBody.y > staticBody.y) dynamicBody.y += overlap.height
-      else dynamicBody.y -= overlap.height
-    } else {
-      dynamicBody.physics.frictionOnSelf.y += staticBody.physics.frictionToApply.y
-
-      if (dynamicBody.x > staticBody.x) dynamicBody.x += overlap.width
-      else dynamicBody.x -= overlap.width
+      return true
     }
 
-    return true
+    return false
   }
 }

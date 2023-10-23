@@ -1,6 +1,6 @@
 package com.engine.world
 
-import com.engine.common.extensions.orderedMapOf
+import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
@@ -13,7 +13,7 @@ class BodyTest :
       describe("Body") {
         val bodyType = BodyType.ABSTRACT
         val physicsData = PhysicsData()
-        val fixtures = orderedMapOf<Any, Fixture>()
+        val fixtures = gdxArrayOf<Pair<Any, Fixture>>()
         val props = Properties()
         val body = Body(bodyType, physicsData, fixtures, properties = props)
 

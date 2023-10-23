@@ -1,6 +1,6 @@
 package com.engine.spawns
 
-import com.badlogic.gdx.Gdx
+import com.engine.common.GameLogger
 
 /** A [Spawner] is used to spawn an entity. */
 abstract class Spawner(
@@ -18,7 +18,7 @@ abstract class Spawner(
   protected var spawn: Spawn? = null
 
   override fun get(): Spawn? {
-    Gdx.app.debug(TAG, "get(): Spawning entity: $spawn")
+    GameLogger.debug(TAG, "get(): Spawning entity: $spawn")
     return spawn
   }
 

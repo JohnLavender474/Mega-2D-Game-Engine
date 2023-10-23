@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedSet
+import com.engine.common.GameLogger
 import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.extensions.putIfAbsentAndGet
 
@@ -27,7 +28,7 @@ class EventsManager : IEventsManager {
    * @param event The [Event] to submit.
    */
   override fun submitEvent(event: Event) {
-    Gdx.app.debug(TAG, "submitEvent(): Submitting event: $event")
+    GameLogger.debug(TAG, "submitEvent(): Submitting event: $event")
     val eventKey = event.key
     events.putIfAbsentAndGet(eventKey, gdxArrayOf()).add(event)
   }
@@ -40,7 +41,7 @@ class EventsManager : IEventsManager {
    * @return If the [IEventListener] was added.
    */
   override fun addListener(listener: IEventListener): Boolean {
-    Gdx.app.debug(TAG, "addListener(): Adding listener: $listener")
+    GameLogger.debug(TAG, "addListener(): Adding listener: $listener")
     return listeners.add(listener)
   }
 
@@ -52,7 +53,7 @@ class EventsManager : IEventsManager {
    * @return If the [IEventListener] was removed.
    */
   override fun removeListener(listener: IEventListener): Boolean {
-    Gdx.app.debug(TAG, "removeListener(): Removing listener: $listener")
+    GameLogger.debug(TAG, "removeListener(): Removing listener: $listener")
     return listeners.remove(listener)
   }
 
@@ -61,7 +62,7 @@ class EventsManager : IEventsManager {
    * be notified of [Event]s when the [run] method is called.
    */
   override fun clearListeners() {
-    Gdx.app.debug(TAG, "clearListeners(): Clearing all listeners")
+    GameLogger.debug(TAG, "clearListeners(): Clearing all listeners")
     listeners.clear()
   }
 

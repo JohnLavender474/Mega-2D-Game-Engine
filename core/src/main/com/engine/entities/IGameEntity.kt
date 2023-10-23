@@ -2,6 +2,7 @@ package com.engine.entities
 
 import com.badlogic.gdx.utils.OrderedSet
 import com.engine.IGame2D
+import com.engine.common.interfaces.IPrintable
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.interfaces.Initializable
 import com.engine.common.objects.Properties
@@ -15,7 +16,7 @@ import kotlin.reflect.KClass
  * @see IPropertizable
  * @see IGameComponent
  */
-interface IGameEntity : IPropertizable, Initializable {
+interface IGameEntity : IPropertizable, Initializable, IPrintable {
 
   /** The [IGame2D] this [GameEntity] belongs to. */
   val game: IGame2D

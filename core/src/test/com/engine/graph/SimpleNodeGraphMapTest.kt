@@ -1,48 +1,50 @@
 package com.engine.graph
 
-import com.badlogic.gdx.math.Rectangle
 import com.engine.common.shapes.GameRectangle
-import com.engine.common.shapes.IGameShape2DSupplier
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
-
-class MockObject(val id: Int, val rectangle: GameRectangle) : IGameShape2DSupplier {
-  override fun getGameShape2D() = rectangle
-
-  fun overlaps(other: Rectangle) = other.overlaps(rectangle)
-
-  override fun equals(other: Any?) = other is MockObject && other.id == id
-
-  override fun hashCode() = id
-}
 
 class SimpleNodeGraphMapTest :
     DescribeSpec({
       describe("SimpleNodeGraphMap") {
         it("should add objects to the correct cells") {
           // if
-          val width = 100
-          val height = 100
+          val width = 10
+          val height = 10
           val ppm = 10
           val graphMap = SimpleNodeGraphMap(0, 0, width, height, ppm)
 
           val objects =
               listOf(
-                  MockObject(1, GameRectangle(10, 10, 10, 10)),
-                  MockObject(2, GameRectangle(40, 40, 20, 20)),
-                  MockObject(3, GameRectangle(500, 500, 5, 5)))
+                  // in cell (0-1, 0-1)
+                  GameRectangle(0, 0, 10, 10),
+                  // in cells (4-5, 4-5)
+                  GameRectangle(42, 42, 15, 15),
+                  // in cells (9, 9)
+                  GameRectangle(92, 92, 5, 5))
 
           // when
           objects.forEach { graphMap.add(it) }
 
           // then
-          for (x in 0 until width) {
-            for (y in 0 until height) {
-              val bounds = GameRectangle(x.toFloat() * ppm, y.toFloat() * ppm, ppm, ppm)
+          for (x in 0..width) {
+            for (y in 0..height) {
               val cellObjects = graphMap.get(x, y)
+              println("x: $x, y: $y, cellObjects: $cellObjects")
 
-              objects.filter { it.overlaps(bounds) }.forEach { cellObjects shouldContain it }
+              if (x in 0..1 && y in 0..1) {
+                cellObjects.size shouldBe 1
+                cellObjects.contains(objects[0]) shouldBe true
+              } else if (x in 4..5 && y in 4..5) {
+                cellObjects.size shouldBe 1
+                cellObjects.contains(objects[1]) shouldBe true
+              } else if (x == 9 && y == 9) {
+                cellObjects.size shouldBe 1
+                cellObjects.contains(objects[2]) shouldBe true
+              } else {
+                cellObjects.size shouldBe 0
+              }
             }
           }
         }
@@ -56,9 +58,9 @@ class SimpleNodeGraphMapTest :
 
           val objects =
               listOf(
-                  MockObject(1, GameRectangle(10, 10, 20, 20)),
-                  MockObject(2, GameRectangle(40, 40, 10, 10)),
-                  MockObject(3, GameRectangle(80, 80, 5, 5)))
+                  GameRectangle(10, 10, 20, 20),
+                  GameRectangle(40, 40, 10, 10),
+                  GameRectangle(80, 80, 5, 5))
 
           objects.forEach { graphMap.add(it) }
 
@@ -83,9 +85,9 @@ class SimpleNodeGraphMapTest :
 
           val objects =
               listOf(
-                  MockObject(1, GameRectangle(10, 10, 20, 20)),
-                  MockObject(2, GameRectangle(40, 40, 10, 10)),
-                  MockObject(3, GameRectangle(80, 80, 5, 5)))
+                  GameRectangle(10, 10, 20, 20),
+                  GameRectangle(40, 40, 10, 10),
+                  GameRectangle(80, 80, 5, 5))
 
           objects.forEach { graphMap.add(it) }
 

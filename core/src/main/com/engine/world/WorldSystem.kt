@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
-import com.engine.common.GameLogger
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity

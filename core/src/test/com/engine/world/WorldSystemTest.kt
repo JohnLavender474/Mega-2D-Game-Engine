@@ -106,9 +106,10 @@ class WorldSystemTest :
           val fixture = Fixture(mockk(), "Type")
           body.addFixture(fixture)
 
-          val objs = ArrayList<IGameShape2DSupplier>()
+          val objs = ArrayList<Any>()
 
-          every { mockWorldGraph.add(any()) } answers { objs.add(firstArg()) }
+          every { mockWorldGraph.add(any<IGameShape2D>()) } answers { objs.add(firstArg()) }
+          every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers { objs.add(firstArg()) }
 
           worldSystem.update(fixedStep)
 
@@ -120,7 +121,7 @@ class WorldSystemTest :
           it("should cycle correctly - test 1") {
             body.addFixture(Fixture(GameRectangle(), "Test"))
 
-            val objs = ArrayList<IGameShape2DSupplier>()
+            val objs = ArrayList<Any>()
 
             every { worldSystem.preProcess(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
@@ -128,7 +129,8 @@ class WorldSystemTest :
             every { worldSystem.updateFixturePositions(any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
 
-            every { mockWorldGraph.add(any()) } answers { objs.add(firstArg()) }
+            every { mockWorldGraph.add(any<IGameShape2D>()) } answers { objs.add(firstArg()) }
+            every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers { objs.add(firstArg()) }
             every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
             every { mockWorldGraph.reset() } just Runs
 
@@ -141,7 +143,8 @@ class WorldSystemTest :
             verify(exactly = 1) { worldSystem.resolveCollisions(any()) }
 
             verify(exactly = 1) { mockWorldGraph.reset() }
-            verify(exactly = 2) { mockWorldGraph.add(any()) }
+            verify(exactly = 1) { mockWorldGraph.add(any<IGameShape2D>()) }
+            verify(exactly = 1) { mockWorldGraph.add(any<IGameShape2DSupplier>()) }
 
             objs.size shouldBe 2
             objs shouldContain body
@@ -150,7 +153,7 @@ class WorldSystemTest :
           it("should cycle correctly - test 2") {
             body.addFixture(Fixture(GameRectangle(), "Test"))
 
-            val objs = ArrayList<IGameShape2DSupplier>()
+            val objs = ArrayList<Any>()
 
             every { worldSystem.preProcess(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
@@ -159,7 +162,11 @@ class WorldSystemTest :
             every { worldSystem.resolveCollisions(any()) } just Runs
 
             every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-            every { mockWorldGraph.add(any()) } answers { objs.add(firstArg()) }
+            every { mockWorldGraph.add(any<IGameShape2D>()) } answers { objs.add(firstArg()) }
+            every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers
+                {
+                  objs.add(firstArg())
+                }
             every { mockWorldGraph.reset() } just Runs
 
             worldSystem.update(fixedStep * 2)
@@ -171,7 +178,8 @@ class WorldSystemTest :
             verify(exactly = 2) { worldSystem.resolveCollisions(any()) }
 
             verify(exactly = 2) { mockWorldGraph.reset() }
-            verify(exactly = 4) { mockWorldGraph.add(any()) }
+            verify(exactly = 2) { mockWorldGraph.add(any<IGameShape2D>()) }
+            verify(exactly = 2) { mockWorldGraph.add(any<IGameShape2DSupplier>()) }
 
             objs.size shouldBe 4
             objs.filter { it == body }.size shouldBe 2
@@ -307,7 +315,8 @@ class WorldSystemTest :
 
             every { mockWorldGraph.reset() } just Runs
 
-            every { mockWorldGraph.add(any()) } returns true
+            every { mockWorldGraph.add(any<IGameShape2D>()) } returns true
+            every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } returns true
 
             physicsData.gravity.x = -0.5f
             physicsData.gravity.y = -1f
@@ -330,7 +339,8 @@ class WorldSystemTest :
           every { worldSystem.updatePhysics(any(), any()) } just Runs
           every { worldSystem.resolveCollisions(any()) } just Runs
 
-          every { mockWorldGraph.add(any()) } returns true
+          every { mockWorldGraph.add(any<IGameShape2D>()) } returns true
+          every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } returns true
 
           every { mockWorldGraph.get(any<MinsAndMaxes>()) } returns ObjectSet()
           every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()

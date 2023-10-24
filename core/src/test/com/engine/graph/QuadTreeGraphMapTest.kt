@@ -44,7 +44,7 @@ class QuadTreeGraphMapTest :
                   Body(BodyType.ABSTRACT, 500f, 500f, 5f, 5f))
 
           // when
-          quadTreeGraphMap.addAll(bodies)
+          bodies.forEach { quadTreeGraphMap.add(it) }
 
           // then
           for (x in 0 until width) {

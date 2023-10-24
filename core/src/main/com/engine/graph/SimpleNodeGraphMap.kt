@@ -1,13 +1,10 @@
 package com.engine.graph
 
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.objects.IntPair
-import com.engine.common.objects.MultiCollectionIterable
 import com.engine.common.objects.pairTo
 import com.engine.common.shapes.IGameShape2D
-import kotlin.math.ceil
 import kotlin.math.floor
 
 /**
@@ -34,10 +31,10 @@ class SimpleNodeGraphMap(
   override fun add(obj: Any, shape: IGameShape2D): Boolean {
     val bounds = shape.getBoundingRectangle()
 
-    val minX = floor(bounds.x / ppm).toInt() - 1
-    val minY = floor(bounds.y / ppm).toInt() - 1
-    val maxX = ceil(bounds.getMaxX() / ppm).toInt() + 1
-    val maxY = ceil(bounds.getMaxY() / ppm).toInt() + 1
+    val minX = floor(bounds.x / ppm).toInt()
+    val minY = floor(bounds.y / ppm).toInt()
+    val maxX = floor(bounds.getMaxX() / ppm).toInt()
+    val maxY = floor(bounds.getMaxY() / ppm).toInt()
 
     for (column in minX..maxX) for (row in minY..maxY) {
       val set = map.get(column pairTo row) ?: OrderedSet()
@@ -50,10 +47,10 @@ class SimpleNodeGraphMap(
 
   override fun get(x: Int, y: Int) = map.get(x pairTo y) ?: OrderedSet()
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Iterable<Any> {
-    val array = Array<Iterable<Any>>()
-    for (column in minX..maxX) for (row in minY..maxY) array.add(get(column, row))
-    return MultiCollectionIterable(array)
+  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): OrderedSet<Any> {
+    val set = OrderedSet<Any>()
+    for (column in minX..maxX) for (row in minY..maxY) set.addAll(get(column, row))
+    return set
   }
 
   override fun reset() = map.clear()

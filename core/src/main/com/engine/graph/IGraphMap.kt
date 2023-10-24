@@ -14,7 +14,8 @@ import com.engine.common.shapes.IGameShape2DSupplier
 data class MinsAndMaxes(val minX: Int, val minY: Int, val maxX: Int, val maxY: Int)
 
 /**
- * Gets the minimum and maximum first and second coordinates of the given object.
+ * Gets the minimum and maximum first and second coordinates of the given object using the values of
+ * [IGameShape2D.getX], [IGameShape2D.getY], [IGameShape2D.getMaxX], and [IGameShape2D.getMaxY].
  *
  * @param obj the object to get the minimum and maximum first and second coordinates of
  * @return the minimum and maximum first and second coordinates of the given object
@@ -91,7 +92,17 @@ interface IGraphMap : Resettable {
   val ppm: Int
 
   /**
-   * Adds the given object to this graph.
+   * Adds the given shape to this graph. By default, it calls [add] with the shape used as both the
+   * object and the shape.
+   *
+   * @param shape the shape to add
+   * @return true if the shape was added, false otherwise
+   */
+  fun add(shape: IGameShape2D) = add(shape, shape)
+
+  /**
+   * Adds the given object to this graph using the provided shape. The shape is NOT added, only the
+   * provided object.
    *
    * @param obj the object to add
    * @param shape the shape of the object
@@ -100,19 +111,12 @@ interface IGraphMap : Resettable {
   fun add(obj: Any, shape: IGameShape2D): Boolean
 
   /**
-   * Adds the given object to this graph.
+   * Adds the given object to this graph. By default, it calls [add] with the shape of the object.
    *
    * @param obj the object to add
    * @return true if the object was added, false otherwise
    */
   fun add(obj: IGameShape2DSupplier) = add(obj, obj.getGameShape2D())
-
-  /**
-   * Adds the given objects to this graph.
-   *
-   * @param objs the objects to add
-   */
-  fun addAll(objs: Iterable<IGameShape2DSupplier>) = objs.forEach { add(it) }
 
   /** @see [get(Int, Int)] */
   fun get(coordinate: IntPair) = get(coordinate.first, coordinate.second)
@@ -138,7 +142,8 @@ interface IGraphMap : Resettable {
   fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Iterable<Any>
 
   /**
-   * Gets the objects in the specified area.
+   * Gets the objects in the specified area. By default, calls [get] with the values of
+   * [MinsAndMaxes].
    *
    * @param m the minimum and maximum first and second coordinates of the area
    * @return the objects in the specified area
@@ -147,7 +152,8 @@ interface IGraphMap : Resettable {
 
   /**
    * Gets the objects in the specified area. The area is specified by using the
-   * [convertToMinsAndMaxes] method on the supplied [GameRectangle].
+   * [convertToMinsAndMaxes] method on the supplied [GameRectangle]. By default, converts the given
+   * [IGameShape2D] to a [MinsAndMaxes] instance using the [convertToMinsAndMaxes] method.
    *
    * @param shape the shape to get the area from
    * @return the objects in the specified area

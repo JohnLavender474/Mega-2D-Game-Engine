@@ -8,7 +8,6 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
-import com.engine.common.shapes.IGameShape2DSupplier
 
 /**
  * A [Body] is a [GameRectangle] representing the body of an object in the game world. It contains a
@@ -48,7 +47,7 @@ open class Body(
     override var properties: Properties = Properties(),
     var preProcess: Updatable? = null,
     var postProcess: Updatable? = null
-) : GameRectangle(x, y, width, height), IGameShape2DSupplier, Resettable, IPropertizable {
+) : GameRectangle(x, y, width, height), Resettable, IPropertizable {
 
   /**
    * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and
@@ -115,8 +114,6 @@ open class Body(
       f.second.shape.setCenter(p)
     }
   }
-
-  override fun getGameShape2D() = this
 
   override fun equals(other: Any?) = this === other
 

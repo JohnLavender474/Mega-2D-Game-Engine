@@ -1,5 +1,6 @@
 package com.engine.graph
 
+import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.IGameShape2D
 import com.engine.world.Body
@@ -37,7 +38,7 @@ class QuadTreeGraphMapTest :
           val quadTreeGraphMap = QuadTreeGraphMap(0, 0, width, height, ppm, depth)
 
           val bodies =
-              listOf(
+              gdxArrayOf(
                   Body(BodyType.ABSTRACT, 10f, 10f, 10f, 10f),
                   Body(BodyType.ABSTRACT, 40f, 40f, 20f, 20f),
                   Body(BodyType.ABSTRACT, 500f, 500f, 5f, 5f))
@@ -68,7 +69,7 @@ class QuadTreeGraphMapTest :
           val quadTreeGraphMap = QuadTreeGraphMap(0, 0, width, height, ppm, depth)
 
           val objects =
-              listOf(
+              gdxArrayOf(
                   Body(BodyType.ABSTRACT, 10f, 10f, 20f, 20f),
                   Body(BodyType.ABSTRACT, 40f, 40f, 10f, 10f),
                   Body(BodyType.ABSTRACT, 80f, 80f, 5f, 5f))
@@ -84,13 +85,8 @@ class QuadTreeGraphMapTest :
           val retrievedObjects = quadTreeGraphMap.get(minX, minY, maxX, maxY)
 
           // then
-          objects
-              .filter {
-                it.overlaps(
-                    GameRectangle(minX.toFloat(), minY.toFloat(), maxX.toFloat(), maxY.toFloat())
-                        as IGameShape2D)
-              }
-              .forEach { retrievedObjects shouldContain it }
+          retrievedObjects.size shouldBe 1
+          retrievedObjects shouldContain objects[0]
         }
 
         it("should reset the graph map") {
@@ -103,7 +99,7 @@ class QuadTreeGraphMapTest :
           val quadTreeGraphMap = QuadTreeGraphMap(0, 0, width, height, ppm, depth)
 
           val objects =
-              listOf(
+              gdxArrayOf(
                   Body(BodyType.ABSTRACT, 10f, 10f, 20f, 20f),
                   Body(BodyType.ABSTRACT, 40f, 40f, 10f, 10f),
                   Body(BodyType.ABSTRACT, 80f, 80f, 5f, 5f))

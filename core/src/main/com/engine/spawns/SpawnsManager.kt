@@ -1,6 +1,5 @@
 package com.engine.spawns
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
 import com.engine.common.GameLogger
 import com.engine.common.interfaces.Resettable
@@ -63,10 +62,15 @@ class SpawnsManager : Updatable, Resettable {
       if (spawner.shouldBeCulled()) {
         spawner.reset()
         iter.remove()
+        GameLogger.debug(TAG, "update(): Culling spawner: $spawner")
         continue
       }
 
-      if (spawner.test(delta)) spawns.add(spawner.get())
+      if (spawner.test(delta)) {
+        val spawn = spawner.get()
+        GameLogger.debug(TAG, "update(): Spawning entity: $spawn")
+        spawns.add(spawn)
+      }
     }
   }
 

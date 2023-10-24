@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter
 import com.badlogic.gdx.utils.GdxRuntimeException
+import com.engine.GdxTests
 import java.util.*
 
 // On macOS your application needs to be started with the -XstartOnFirstThread JVM argument

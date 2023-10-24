@@ -1,6 +1,15 @@
 package com.engine.utils
 
-/*
+import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.ObjectSet
+import com.engine.IGame2D
+import com.engine.common.extensions.objectMapOf
+import com.engine.common.objects.Properties
+import com.engine.events.Event
+import com.engine.screens.levels.tiledmap.TiledMapLevelScreen
+import com.engine.screens.levels.tiledmap.builders.ITiledMapLayerBuilder
+import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
+
 class StandardTiledMapScreen(
     game: IGame2D,
     private val layerBuilders: ObjectMap<String, ITiledMapLayerBuilder> = objectMapOf(),
@@ -9,7 +18,9 @@ class StandardTiledMapScreen(
 
   override val eventKeyMask = ObjectSet<Any>()
 
-  override fun getLayerBuilders() = layerBuilders
+  override fun getLayerBuilders(): TiledMapLayerBuilders {
+    TODO("Not yet implemented")
+  }
 
   override fun buildLevel(result: Properties) {
     TODO("Not yet implemented")
@@ -39,4 +50,3 @@ class StandardTiledMapScreen(
     TODO("Not yet implemented")
   }
 }
- */

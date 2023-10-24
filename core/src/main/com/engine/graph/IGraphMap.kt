@@ -3,8 +3,6 @@ package com.engine.graph
 import com.badlogic.gdx.math.MathUtils.ceil
 import com.badlogic.gdx.math.MathUtils.floor
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.utils.ObjectSet
 import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
@@ -41,17 +39,8 @@ fun IGraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
   var graphX = (worldX / ppm).toInt()
   var graphY = (worldY / ppm).toInt()
 
-  if (graphX < x) {
-    graphX = x
-  } else if (graphX >= x + width) {
-    graphX = x + width - 1
-  }
-
-  if (graphY < y) {
-    graphY = y
-  } else if (graphY >= y + height) {
-    graphY = y + height - 1
-  }
+  if (graphX < x) graphX = x else if (graphX >= x + width) graphX = x + width - 1
+  if (graphY < y) graphY = y else if (graphY >= y + height) graphY = y + height - 1
 
   return graphX pairTo graphY
 }
@@ -89,7 +78,8 @@ fun IGraphMap.isOutOfBounds(_x: Int, _y: Int) =
  * @param coordinate the coordinate
  * @return true if the given coordinate is out of bounds, false otherwise
  */
-fun IGraphMap.isOutOfBounds(coordinate: IntPair) = isOutOfBounds(coordinate.first, coordinate.second)
+fun IGraphMap.isOutOfBounds(coordinate: IntPair) =
+    isOutOfBounds(coordinate.first, coordinate.second)
 
 /** A graph that can be used to store and retrieve objects. */
 interface IGraphMap : Resettable {
@@ -105,6 +95,7 @@ interface IGraphMap : Resettable {
    *
    * @param obj the object to add
    * @param shape the shape of the object
+   * @return true if the object was added, false otherwise
    */
   fun add(obj: Any, shape: IGameShape2D): Boolean
 
@@ -112,6 +103,7 @@ interface IGraphMap : Resettable {
    * Adds the given object to this graph.
    *
    * @param obj the object to add
+   * @return true if the object was added, false otherwise
    */
   fun add(obj: IGameShape2DSupplier) = add(obj, obj.getGameShape2D())
 
@@ -120,7 +112,7 @@ interface IGraphMap : Resettable {
    *
    * @param objs the objects to add
    */
-  fun addAll(objs: Collection<IGameShape2DSupplier>) = objs.forEach { add(it) }
+  fun addAll(objs: Iterable<IGameShape2DSupplier>) = objs.forEach { add(it) }
 
   /** @see [get(Int, Int)] */
   fun get(coordinate: IntPair) = get(coordinate.first, coordinate.second)
@@ -132,7 +124,7 @@ interface IGraphMap : Resettable {
    * @param y the second coordinate
    * @return the objects at the specified coordinate
    */
-  fun get(x: Int, y: Int): Array<Any>
+  fun get(x: Int, y: Int): Iterable<Any>
 
   /**
    * Gets the objects in the specified area.
@@ -143,7 +135,7 @@ interface IGraphMap : Resettable {
    * @param maxY the maximum second coordinate
    * @return the objects in the specified area
    */
-  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any>
+  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Iterable<Any>
 
   /**
    * Gets the objects in the specified area.

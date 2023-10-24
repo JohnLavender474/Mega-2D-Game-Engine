@@ -85,34 +85,28 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
    * [IndexOutOfBoundsException] if the specified row or column is out of bounds. This method
    * returns null if there is no element
    */
-  operator fun get(x: Int, y: Int): T? {
+  operator fun get(column: Int, row: Int): T? {
     // Indexes must be within bounds
-    if (isColumnOutOfBounds(x)) {
-      throw IndexOutOfBoundsException("Column index $x is out of bounds")
-    }
-    if (isRowOutOfBounds(y)) {
-      throw IndexOutOfBoundsException("Row index $y is out of bounds")
-    }
+    if (isColumnOutOfBounds(column)) throw IndexOutOfBoundsException("Column index $column is out of bounds")
+    if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of bounds")
 
-    return matrixMap[x pairTo y]
+    return matrixMap[column pairTo row]
   }
 
   /**
-   * Sets the element at the specified x and y to the specified element. The x is equivalent to the
-   * column, and the y is equivalent to the row. This method returns the old value at the specified
-   * x and y. If the specified element is null, then the element at the x and y is removed.
+   * Sets the element at the specified x and row to the specified element. The x is equivalent to
+   * the column, and the row is equivalent to the row. This method returns the old value at the
+   * specified x and row. If the specified element is null, then the element at the x and row is
+   * removed.
    */
-  operator fun set(x: Int, y: Int, element: T?): T? {
+  operator fun set(column: Int, row: Int, element: T?): T? {
     // Indexes must be within bounds
-    if (isColumnOutOfBounds(x)) {
-      throw IndexOutOfBoundsException("Column index $x is out of bounds")
-    }
-    if (isRowOutOfBounds(y)) {
-      throw IndexOutOfBoundsException("Row index $y is out of bounds")
-    }
+    if (isColumnOutOfBounds(column))
+        throw IndexOutOfBoundsException("Column index $column is out of bounds")
+    if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of bounds")
 
     // Convert row and column index to index pair
-    val indexPair = x pairTo y
+    val indexPair = column pairTo row
 
     // Remove the old value from the elementToIndexMap if it exists
     // This is done so that the elementToIndexMap does not contain any stale values
@@ -122,24 +116,17 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
       oldValueSet?.remove(indexPair)
 
       if (oldValueSet?.isEmpty == true) elementToIndexMap.remove(oldValue)
-    } else {
-      matrixMap.remove(indexPair)
-    }
+    } else matrixMap.remove(indexPair)
 
     // If the new value is null, then simply remove the index pair from the array 2D map,
     // otherwise add the index pair and element to the array 2D map and element to the element to
     // index map respectively
     if (element != null) {
       matrixMap.put(indexPair, element)
-
-      if (!elementToIndexMap.containsKey(element)) {
-        elementToIndexMap.put(element, ObjectSet())
-      }
+      if (!elementToIndexMap.containsKey(element)) elementToIndexMap.put(element, ObjectSet())
       val set = elementToIndexMap.get(element)
       set.add(indexPair)
-    } else {
-      matrixMap.remove(indexPair)
-    }
+    } else matrixMap.remove(indexPair)
 
     // Return the old value
     return oldValue
@@ -171,11 +158,11 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
    * returns true if the specified column is less than 0 or greater than or equal to the number of
    * columns. This method returns false otherwise.
    *
-   * @param rowIndex the row index
    * @param columnIndex the column index
+   * @param rowIndex the row index
    * @return true if the specified row or column are out of bounds, false otherwise
    */
-  fun isOutOfBounds(rowIndex: Int, columnIndex: Int) =
+  fun isOutOfBounds(columnIndex: Int, rowIndex: Int) =
       isRowOutOfBounds(rowIndex) || isColumnOutOfBounds(columnIndex)
 
   /**
@@ -188,19 +175,10 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
   fun getIndexes(element: T?) =
       if (element == null) {
         val nullIndexes = HashSet<IntPair>()
-
-        for (x in 0 until columns) {
-          for (y in 0 until rows) {
-            if (this[x, y] == null) {
-              nullIndexes.add(x pairTo y)
-            }
-          }
-        }
-
+        for (x in 0 until columns) for (y in 0 until rows) if (this[x, y] == null)
+            nullIndexes.add(x pairTo y)
         nullIndexes
-      } else {
-        elementToIndexMap[element] ?: emptySet()
-      }
+      } else elementToIndexMap[element] ?: emptySet()
 
   /**
    * Applies the action to each element of the matrix including null elements. The first integer in
@@ -209,11 +187,7 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
    * @param action the action to apply to each element
    */
   fun forEach(action: ((Int, Int, T?) -> Unit)) {
-    for (x in 0 until columns) {
-      for (y in 0 until rows) {
-        action(x, y, this[x, y])
-      }
-    }
+    for (x in 0 until columns) for (y in 0 until rows) action(x, y, this[x, y])
   }
 
   override fun contains(element: T) = elementToIndexMap.containsKey(element)
@@ -228,14 +202,9 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
   override fun addAll(elements: Collection<T>) = elements.all { add(it) }
 
   override fun add(element: T): Boolean {
-    for (x in 0 until columns) {
-      for (y in 0 until rows) {
-        if (matrixMap[x pairTo y] == null) {
-          set(x, y, element)
-
-          return true
-        }
-      }
+    for (x in 0 until columns) for (y in 0 until rows) if (matrixMap[x pairTo y] == null) {
+      set(x, y, element)
+      return true
     }
 
     return false
@@ -288,15 +257,7 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     if (other !is Matrix<*>) {
       return false
     }
-
-    for (x in 0 until columns) {
-      for (y in 0 until rows) {
-        if (this[x, y] != other[x, y]) {
-          return false
-        }
-      }
-    }
-
+    for (x in 0 until columns) for (y in 0 until rows) if (this[x, y] != other[x, y]) return false
     return true
   }
 
@@ -309,14 +270,10 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
       for (x in 0 until columns) {
         sb.append(this[x, y])
 
-        if (x < columns - 1) {
-          sb.append(", ")
-        }
+        if (x < columns - 1) sb.append(", ")
       }
       sb.append("]")
-      if (y > 0) {
-        sb.append(", ")
-      }
+      if (y > 0) sb.append(", ")
     }
     sb.append("]")
 

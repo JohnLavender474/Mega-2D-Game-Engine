@@ -2,6 +2,7 @@ package com.engine.screens.levels.tiledmap
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.engine.IGame2D
+import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.screens.BaseScreen
 import com.engine.screens.IScreen
@@ -25,6 +26,10 @@ import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
  */
 abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties) :
     BaseScreen(game, properties) {
+
+  companion object {
+    const val TAG = "TiledMapLevelScreen"
+  }
 
   var tmxMapSource: String? = null
 
@@ -56,6 +61,7 @@ abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties) :
   override fun show() =
       tmxMapSource?.let {
         tiledMapLoadResult = TiledMapLevelLoader.load(it)
+        GameLogger.debug(TAG, "show(): tiledMapLoadResult = $tiledMapLoadResult")
         val returnProps = Properties()
         val layerBuilders = getLayerBuilders()
         layerBuilders.build(tiledMapLoadResult!!.map.layers, returnProps)

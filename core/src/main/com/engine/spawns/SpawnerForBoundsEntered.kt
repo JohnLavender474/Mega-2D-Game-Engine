@@ -17,4 +17,6 @@ class SpawnerForBoundsEntered(
     if (thisBounds().overlaps(otherBounds() as Rectangle)) spawn = spawnSupplier()
     return spawned
   }
+
+  override fun toString() = "SpawnerForBoundsEntered"
 }

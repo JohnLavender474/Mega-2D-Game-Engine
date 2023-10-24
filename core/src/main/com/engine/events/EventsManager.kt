@@ -1,6 +1,5 @@
 package com.engine.events
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedSet
@@ -81,7 +80,7 @@ class EventsManager : IEventsManager {
       }
 
       val relevantEvents = Array<Event>()
-      eventKeyMask.forEach { key -> relevantEvents.addAll(events[key]) }
+      eventKeyMask.forEach { key -> events.get(key)?.let { relevantEvents.addAll(it) } }
       relevantEvents.forEach { listener.onEvent(it) }
     }
 

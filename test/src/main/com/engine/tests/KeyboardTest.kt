@@ -1,4 +1,4 @@
-package com.engine
+package com.engine.tests
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -34,8 +34,6 @@ class KeyboardTest : GdxTest() {
     buttons.put("up", Button(Input.Keys.W))
     buttons.put("reset", Button(Input.Keys.SPACE))
     poller = ControllerPoller(buttons)
-
-
   }
 
   override fun render() {

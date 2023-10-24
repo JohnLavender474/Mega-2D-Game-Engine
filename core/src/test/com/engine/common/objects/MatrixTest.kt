@@ -66,34 +66,34 @@ class MatrixTest :
         beforeEach { matrix = Matrix(3, 4) }
 
         it("should have the correct initial properties") {
-          matrix.rows shouldBe 3
           matrix.columns shouldBe 4
+          matrix.rows shouldBe 3
           matrix.size shouldBe 0
         }
 
         describe("out of bounds") {
           it("should return true for row out of bounds") {
-            matrix.isOutOfBounds(3, 0) shouldBe true
+            matrix.isOutOfBounds(0, 3) shouldBe true
           }
 
           it("should return true for column out of bounds") {
-            matrix.isOutOfBounds(0, 4) shouldBe true
+            matrix.isOutOfBounds(4, 0) shouldBe true
           }
 
           it("should return false for row out of bounds") {
-            matrix.isOutOfBounds(2, 0) shouldBe false
+            matrix.isOutOfBounds(0, 2) shouldBe false
           }
 
           it("should return false for column out of bounds") {
-            matrix.isOutOfBounds(0, 3) shouldBe false
+            matrix.isOutOfBounds(3, 0) shouldBe false
           }
 
           it("should throw IndexOutOfBoundsException when getting an element") {
-            shouldThrow<IndexOutOfBoundsException> { matrix[3, 4] }
+            shouldThrow<IndexOutOfBoundsException> { matrix[4, 3] }
           }
 
           it("should throw IndexOutOfBoundsException when setting an element") {
-            shouldThrow<IndexOutOfBoundsException> { matrix.set(3, 4, 1) }
+            shouldThrow<IndexOutOfBoundsException> { matrix.set(4, 3, 1) }
           }
         }
 

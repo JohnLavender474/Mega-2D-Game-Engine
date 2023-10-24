@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 
-class SpawnerSpec :
+class SpawnerTest :
     DescribeSpec({
       lateinit var spawn: Spawn
       lateinit var spawnSupplier: () -> Spawn

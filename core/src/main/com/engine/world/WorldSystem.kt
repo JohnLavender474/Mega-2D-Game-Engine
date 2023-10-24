@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
+import com.engine.common.GameLogger
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
@@ -50,7 +51,7 @@ class WorldSystem(
     private val worldGraphSupplier: () -> IGraphMap?,
     private val fixedStep: Float,
     private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
-    private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
+    private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null
 ) : GameSystem(BodyComponent::class) {
 
   internal var priorContactSet = OrderedSet<Contact>()
@@ -254,7 +255,7 @@ class WorldSystem(
    */
   internal fun resolveCollisions(body: Body) {
     worldGraphSupplier()!!.get(body).filterIsInstance<Body>().forEach {
-      if (it.overlaps(body as Rectangle)) collisionHandler.handleCollision(body, it)
+      if (it != body && it.overlaps(body as Rectangle)) collisionHandler.handleCollision(body, it)
     }
   }
 }

@@ -19,8 +19,8 @@ class SpawnerForEvent(
   override fun test(delta: Float): Boolean {
     if (!super.test(delta)) return false
 
-    for (event in events) {
-      if (predicate(event)) spawn = spawnSupplier()
+    for (event in events) if (predicate(event)) {
+      spawn = spawnSupplier()
       break
     }
     events.clear()
@@ -31,4 +31,6 @@ class SpawnerForEvent(
   override fun onEvent(event: Event) {
     if (!spawned) events.add(event)
   }
+
+  override fun toString() = "SpawnerForEvent[eventKeyMask=$eventKeyMask]"
 }

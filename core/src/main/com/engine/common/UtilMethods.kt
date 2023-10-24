@@ -1,5 +1,6 @@
 package com.engine.common
 
+import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
@@ -57,15 +58,17 @@ fun <T> mask(o1: T, o2: T, p1: Predicate<T>, p2: Predicate<T>): Boolean {
 /**
  * Determines the single most direction from the start to the target based on their positions.
  *
- * @param start The starting rectangle.
- * @param target The target rectangle.
- * @return The direction from start to target.
+ * @param toBePushed The rectangle to be pushed.
+ * @param other The rectangle to be pushed against.
+ * @param overlap The rectangle to store the overlap in.
+ * @return The direction from start to target, or null if the two rectangles do not overlap.
  */
-fun getSingleMostDirectionFromStartToTarget(start: Rectangle, target: Rectangle): Direction {
-  val startCenter = start.getCenter(Vector2())
-  val targetCenter = target.getCenter(Vector2())
-  return getSingleMostDirectionFromStartToTarget(startCenter, targetCenter)
-}
+fun getOverlapPushDirection(toBePushed: Rectangle, other: Rectangle, overlap: Rectangle) =
+    if (Intersector.intersectRectangles(toBePushed, other, overlap)) {
+      if (overlap.width > overlap.height)
+          if (toBePushed.y > other.y) Direction.UP else Direction.DOWN
+      else if (toBePushed.x > other.x) Direction.RIGHT else Direction.LEFT
+    } else null
 
 /**
  * Determines the single most direction from the start to the target based on their positions.

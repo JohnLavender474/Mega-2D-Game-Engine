@@ -1,12 +1,12 @@
 package com.engine.graph
 
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
-import com.badlogic.gdx.utils.ObjectSet
+import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.objects.IntPair
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.IGameShape2D
 
+// TODO: This class DOES NOT WORK as is! It needs to be fixed.
 /**
  * A [IGraphMap] that uses a quad tree to store and retrieve objects.
  *
@@ -24,16 +24,13 @@ open class QuadTreeGraphMap(
     val depth: Int
 ) : IGraphMap {
 
-  protected val objects = ObjectMap<IntPair, Array<Any>>()
+  protected val objects = ObjectMap<IntPair, OrderedSet<Any>>()
 
-  override fun get(x: Int, y: Int) = objects.get(IntPair(x, y)) ?: Array()
+  override fun get(x: Int, y: Int): OrderedSet<Any> = objects.get(IntPair(x, y)) ?: OrderedSet()
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any> {
-    val set = ObjectSet<Any>()
-
-    for (x in minX..maxX) for (y in minY..maxY) if (isOutOfBounds(x, y)) continue
-    set.addAll(get(x, y))
-
+  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): OrderedSet<Any> {
+    val set = OrderedSet<Any>()
+    for (x in minX..maxX) for (y in minY..maxY) set.addAll(get(x, y))
     return set
   }
 
@@ -67,19 +64,19 @@ open class QuadTreeGraphMap(
         val midX = (minX + maxX) / 2
         val midY = (minY + maxY) / 2
 
-        add(obj, shape, currentDepth + 1, minX, minY, midX, midY)
-        add(obj, shape, currentDepth + 1, midX, minY, maxX, midY)
-        add(obj, shape, currentDepth + 1, minX, midY, midX, maxY)
-        add(obj, shape, currentDepth + 1, midX, midY, maxX, maxY)
+        val quad1 = add(obj, shape, currentDepth + 1, minX, minY, midX, midY)
+        val quad2 = add(obj, shape, currentDepth + 1, midX, minY, maxX, midY)
+        val quad3 = add(obj, shape, currentDepth + 1, minX, midY, midX, maxY)
+        val quad4 = add(obj, shape, currentDepth + 1, midX, midY, maxX, maxY)
+
+        return quad1 || quad2 || quad3 || quad4
       } else {
-        for (x in minX until maxX) {
-          for (y in minY until maxY) {
-            if (isOutOfBounds(x, y)) continue
+        for (x in minX..maxX) {
+          for (y in minY..maxY) {
+            if (!objects.containsKey(IntPair(x, y))) objects.put(IntPair(x, y), OrderedSet())
+            val set = objects.get(IntPair(x, y))
+            set.add(obj)
 
-            if (!objects.containsKey(IntPair(x, y))) objects.put(IntPair(x, y), Array())
-
-            val array = objects.get(IntPair(x, y))
-            array.add(obj)
             return true
           }
         }

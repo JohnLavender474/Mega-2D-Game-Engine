@@ -62,7 +62,8 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
       systems.forEach { system ->
         if (system.qualifies(entity)) {
           GameLogger.debug(
-              TAG, "update(): Adding entity [${entity.print()}] to system [${system::class.simpleName}]")
+              TAG,
+              "update(): Adding [${entity::class.simpleName}] to system [${system::class.simpleName}]")
           system.add(entity)
         }
       }
@@ -75,7 +76,8 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
       if (!e.dead) continue
 
       systems.forEach { s ->
-        GameLogger.debug(TAG, "update(): Removing entity [${e.print()}] from system [${s::class.simpleName}]")
+        GameLogger.debug(
+            TAG, "update(): Removing entity [${e.print()}] from system [${s::class.simpleName}]")
         s.remove(e)
       }
 

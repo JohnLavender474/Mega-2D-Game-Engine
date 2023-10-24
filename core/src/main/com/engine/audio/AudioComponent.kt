@@ -64,5 +64,7 @@ class AudioComponent(override val entity: IGameEntity) : IGameComponent {
   override fun reset() {
     playSoundRequests.clear()
     stopSoundRequests.clear()
+    playMusicRequests.clear()
+    stopMusicRequests.clear()
   }
 }

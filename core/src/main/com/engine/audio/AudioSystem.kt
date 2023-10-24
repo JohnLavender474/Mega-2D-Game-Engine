@@ -74,6 +74,8 @@ class AudioSystem(
             audioManager.stopMusic(music)
              */
           }
+
+      audioComponent?.reset()
     }
   }
 }

@@ -26,14 +26,16 @@ class Timer(val duration: Float) : Updatable, Resettable {
   var runOnFinished: Runnable? = null
 
   /**
-   * Creates a [Timer] with the given [duration] and [runOnFinished] [Runnable].
+   * Creates a [Timer] with the given [duration] and [runnables]. The [runnables] will be sorted by
+   * their time and run in that order.
    *
    * @param duration the duration of the timer
-   * @param _runOnFinished the [Runnable] to run when the timer finishes
+   * @param _runnables the [TimeMarkedRunnable]s to run
    */
-  constructor(duration: Float, _runOnFinished: Runnable) : this(duration) {
-    runOnFinished = _runOnFinished
-  }
+  constructor(
+      duration: Float,
+      vararg _runnables: TimeMarkedRunnable
+  ) : this(duration, Array(_runnables))
 
   /**
    * Creates a [Timer] with the given [duration] and [runnables]. The [runnables] will be sorted by

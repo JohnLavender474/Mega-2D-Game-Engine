@@ -12,7 +12,7 @@ class AnimationsSystem : GameSystem(AnimationsComponent::class) {
 
     entities.forEach { entity ->
       val animationsComponent = entity.getComponent(AnimationsComponent::class)
-      animationsComponent?.animations?.forEach { e ->
+      animationsComponent?.animators?.forEach { e ->
         val spriteSupplier = e.first
         val animator = e.second
         animator.animate(spriteSupplier(), delta)

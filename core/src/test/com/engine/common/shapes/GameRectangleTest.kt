@@ -49,5 +49,25 @@ class GameRectangleTest :
           boundingRectangle.width shouldBe 3f
           boundingRectangle.height shouldBe 4f
         }
+
+        it("should overlap circle") {
+          val circle = GameCircle(2f, 3f, 1f)
+          gameRectangle.overlaps(circle) shouldBe true
+        }
+
+        it("should not overlap circle") {
+          val circle = GameCircle(10f, 10f, 1f)
+          gameRectangle.overlaps(circle) shouldBe false
+        }
+
+        it("should overlap line") {
+          val line = GameLine(2f, 3f, 4f, 5f)
+          gameRectangle.overlaps(line) shouldBe true
+        }
+
+        it("should not overlap line") {
+          val line = GameLine(10f, 10f, 12f, 12f)
+          gameRectangle.overlaps(line) shouldBe false
+        }
       }
     })

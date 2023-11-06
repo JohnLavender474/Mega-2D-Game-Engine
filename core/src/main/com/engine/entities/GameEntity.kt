@@ -51,10 +51,5 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
 
   override fun clearComponents() = componentMap.clear()
 
-  override fun print() =
-      "${this::class.simpleName}: " +
-          componentMap
-              .entries()
-              .map { "[${it.key.simpleName}: ${it.value.print()}]" }
-              .joinToString { it }
+  override fun print() = "${this::class.simpleName}"
 }

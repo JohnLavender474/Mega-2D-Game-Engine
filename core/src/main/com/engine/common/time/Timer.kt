@@ -23,7 +23,7 @@ class Timer(val duration: Float) : Updatable, Resettable {
   var justFinished = false
     private set
 
-  var runOnFinished: Runnable? = null
+  var runOnFinished: (() -> Unit)? = null
 
   /**
    * Creates a [Timer] with the given [duration] and [runnables]. The [runnables] will be sorted by
@@ -71,14 +71,12 @@ class Timer(val duration: Float) : Updatable, Resettable {
 
     time = min(duration, time + delta)
 
-    while (!runnableQueue.isEmpty && runnableQueue.first().time <= time) {
-      val runnable = runnableQueue.removeFirst()
-      if (runnable.time <= time) break
-      runnable.run()
-    }
+    while (!runnableQueue.isEmpty && runnableQueue.first().time <= time) runnableQueue
+        .removeFirst()
+        .run()
 
     justFinished = !finishedBefore && isFinished()
-    if (justFinished) runOnFinished?.run()
+    if (justFinished) runOnFinished?.invoke()
   }
 
   override fun reset() {

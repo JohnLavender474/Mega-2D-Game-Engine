@@ -1,7 +1,8 @@
 package com.engine.motion
 
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.OrderedMap
+import com.engine.common.interfaces.Resettable
 import com.engine.common.shapes.IGameShape2D
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
@@ -12,18 +13,29 @@ import com.engine.entities.IGameEntity
  */
 class MotionComponent(override val entity: IGameEntity) : IGameComponent {
 
-  internal val motions = Array<Pair<IMotion, (Vector2) -> Unit>>()
+  /**
+   * A definition of a [IMotion] and function pair. The function is called when the [IMotion] is
+   * updated and a value has been obtained from [IMotion.getMotionValue].
+   *
+   * @param motion the [IMotion]
+   * @param function the function
+   */
+  data class MotionDefinition(val motion: IMotion, val function: (Vector2) -> Unit) : Resettable {
+    override fun reset() = motion.reset()
+  }
+
+  val motions = OrderedMap<Any, MotionDefinition>()
 
   /**
    * Adds a [IMotion] to this component. The function is called when the [IMotion] is updated and a
    * value has been obtained from [IMotion.getMotionValue].
    *
-   * @param motion the [IMotion] to add
-   * @param function the function to call when the [IMotion] is updated
+   * @param key the key to associate with the [IMotion]
+   * @param definition the [IMotion] and function pair
    * @return if the [IMotion] and function pair was added
    */
-  fun add(motion: IMotion, function: (Vector2) -> Unit) = motions.add(motion to function)
+  fun put(key: Any, definition: MotionDefinition): MotionDefinition? = motions.put(key, definition)
 
   /** Resets the motions in this component */
-  override fun reset() = motions.map { it.first }.forEach { it.reset() }
+  override fun reset() = motions.values().forEach { it.reset() }
 }

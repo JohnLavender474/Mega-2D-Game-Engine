@@ -23,5 +23,5 @@ interface IDamager: IPropertizable {
    *
    * @param damageable the [IDamageable] that this [IDamager] dealt damage to
    */
-  fun onDamageInflictedTo(damageable: IDamageable)
+  fun onDamageInflictedTo(damageable: IDamageable) {}
 }

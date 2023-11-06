@@ -2,19 +2,7 @@ package com.engine.motion
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
-
-/**
- * Parses a string containing trajectory definitions into a list of [TrajectoryDefinition] objects.
- *
- * @param trajectoryDefinitionString The string containing trajectory definitions in the format
- *   "xVelocity,yVelocity,time".
- * @return A list of parsed trajectory definitions.
- */
-fun parseTrajectoryDefinitions(trajectoryDefinitionString: String) =
-    trajectoryDefinitionString.split(";".toRegex()).map {
-      val values = it.split(",".toRegex())
-      TrajectoryDefinition(values[0].toFloat(), values[1].toFloat(), values[2].toFloat())
-    }
+import com.engine.common.extensions.toGdxArray
 
 /**
  * A data class representing a single trajectory definition with x and y velocities and time.
@@ -28,18 +16,53 @@ data class TrajectoryDefinition(val xVelocity: Float, val yVelocity: Float, val 
 /**
  * A class that defines a trajectory by interpolating between multiple trajectory definitions.
  *
- * @param ppm The pixels per meter (PPM) conversion factor.
  * @param trajectoryDefinitions An array of trajectory definitions.
+ * @param ppm The pixels per meter (PPM) conversion factor. If none is provided, then a default
+ *   value of 1 is used.
  */
 class Trajectory(
-    private val ppm: Int,
-    private val trajectoryDefinitions: Array<TrajectoryDefinition>
+    private val trajectoryDefinitions: Array<TrajectoryDefinition>,
+    private val ppm: Int = 1
 ) : IMotion {
+
+  companion object {
+
+    /**
+     * Parses a string containing trajectory definitions into am array of [TrajectoryDefinition]
+     * objects.
+     *
+     * @param trajectoryDefinitionString The string containing trajectory definitions in the format
+     *   "xVelocity,yVelocity,time".
+     * @return An array of parsed trajectory definitions.
+     */
+    fun parseTrajectoryDefinitions(trajectoryDefinitionString: String) =
+        trajectoryDefinitionString
+            .split(";".toRegex())
+            .map {
+              val values = it.split(",".toRegex())
+              TrajectoryDefinition(values[0].toFloat(), values[1].toFloat(), values[2].toFloat())
+            }
+            .toGdxArray()
+  }
 
   private var currentDefinition =
       if (!trajectoryDefinitions.isEmpty) trajectoryDefinitions[0] else null
   private var duration = 0f
   private var index = 0
+
+  /**
+   * Creates a trajectory with the specified pixels per meter (PPM) conversion factor and trajectory
+   * definitions.
+   *
+   * @param trajectoryDefinitions The string that should be parsed into an array of trajectory
+   *   definitions.
+   * @param ppm The pixels per meter (PPM) conversion factor. If none is provided, then a default
+   *   value of 1 is used.
+   */
+  constructor(
+      trajectoryDefinitions: String,
+      ppm: Int = 1
+  ) : this(parseTrajectoryDefinitions(trajectoryDefinitions), ppm)
 
   /**
    * Gets the current trajectory values in pixels per second.
@@ -63,10 +86,7 @@ class Trajectory(
         duration = 0f
         index++
 
-        if (index >= trajectoryDefinitions.size) {
-          index = 0
-        }
-
+        if (index >= trajectoryDefinitions.size) index = 0
         currentDefinition = trajectoryDefinitions[index]
       }
     }

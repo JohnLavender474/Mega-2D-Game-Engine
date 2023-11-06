@@ -34,6 +34,8 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
   }
 
   override var color: Color = Color.RED
+  override var thickness: Float = 1f
+  override var shapeType: ShapeRenderer.ShapeType = ShapeRenderer.ShapeType.Filled
 
   /**
    * Creates a new [GameRectangle] with the given first, second, width, and height.
@@ -108,9 +110,9 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
 
   override fun fromString(v: String) = super.fromString(v) as GameRectangle
 
-  override fun setMaxX(maxX: Float) = setX(maxX - width)
+  fun setMaxX(maxX: Float) = setX(maxX - width)
 
-  override fun setMaxY(maxY: Float) = setY(maxY - height)
+  fun setMaxY(maxY: Float) = setY(maxY - height)
 
   override fun getMaxX() = x + width
 
@@ -119,7 +121,11 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
   override fun overlaps(other: IGameShape2D) =
       when (other) {
         is GameRectangle -> Intersector.overlaps(this, other)
-        is GameLine -> Intersector.intersectSegmentRectangle(other.point1, other.point2, this)
+        is GameCircle -> Intersector.overlaps(other.libGdxCircle, this)
+        is GameLine -> {
+          val (worldPoint1, worldPoint2) = other.getWorldPoints()
+          Intersector.intersectSegmentRectangle(worldPoint1, worldPoint2, this)
+        }
         else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
       }
 
@@ -135,12 +141,12 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
 
   override fun setCenter(center: Vector2): GameRectangle = setCenter(center.x, center.y)
 
-  override fun setCenterX(centerX: Float): GameRectangle {
+  fun setCenterX(centerX: Float): GameRectangle {
     super<Rectangle>.setCenter(centerX, getCenter().y)
     return this
   }
 
-  override fun setCenterY(centerY: Float): GameRectangle {
+  fun setCenterY(centerY: Float): GameRectangle {
     super<Rectangle>.setCenter(getCenter().x, centerY)
     return this
   }
@@ -332,4 +338,8 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
    * @return The bottom right of this [GameRectangle].
    */
   fun getBottomRightPoint(): Vector2 = Vector2(this.x + this.width, this.y)
+
+  override fun equals(other: Any?) = other is Rectangle && super<Rectangle>.equals(other)
+
+  override fun hashCode() = super<Rectangle>.hashCode()
 }

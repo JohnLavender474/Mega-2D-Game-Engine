@@ -1,7 +1,7 @@
 package com.engine.common.interfaces
 
 /** An interface for objects that have a position. */
-interface Positional : PositionSupplier {
+interface IPositional : IPositionSupplier {
 
   /**
    * Sets the position of this object.

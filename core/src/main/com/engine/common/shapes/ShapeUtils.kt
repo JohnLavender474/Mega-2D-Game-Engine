@@ -20,12 +20,14 @@ object ShapeUtils {
       line: GameLine,
       intersections: Array<Vector2>
   ): Boolean {
+    val (lineWorldPoint1, lineWorldPoint2) = line.getWorldPoints()
     var intersects = false
     val lines = rectangle.getAsLines()
     for (element in lines) {
       val intersection = Vector2()
+      val (_worldPoint1, _worldPoint2) = element.getWorldPoints()
       if (Intersector.intersectSegments(
-          element.point1, element.point2, line.point1, line.point2, intersection)) {
+          _worldPoint1, _worldPoint2, lineWorldPoint1, lineWorldPoint2, intersection)) {
         intersects = true
         intersections.add(intersection)
       }

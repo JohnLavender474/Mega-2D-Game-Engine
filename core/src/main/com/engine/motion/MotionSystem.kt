@@ -1,9 +1,9 @@
 package com.engine.motion
 
-import com.engine.entities.GameEntity
-import com.engine.systems.GameSystem
 import com.engine.common.objects.ImmutableCollection
+import com.engine.entities.GameEntity
 import com.engine.entities.IGameEntity
+import com.engine.systems.GameSystem
 
 /** A system that updates the [MotionComponent]s of [GameEntity]s. */
 class MotionSystem : GameSystem(MotionComponent::class) {
@@ -13,9 +13,10 @@ class MotionSystem : GameSystem(MotionComponent::class) {
 
     entities.forEach {
       it.getComponent(MotionComponent::class)?.let { motionComponent ->
-        motionComponent.motions.forEach { (motion, function) ->
-          motion.update(delta)
-          motion.getMotionValue()?.let { value -> function(value) }
+        motionComponent.motions.values().forEach { definition ->
+          definition.motion.update(delta)
+          val value = definition.motion.getMotionValue()
+          if (value != null) definition.function(value)
         }
       }
     }

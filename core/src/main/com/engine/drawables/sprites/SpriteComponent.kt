@@ -20,6 +20,7 @@ class SpriteComponent(override val entity: IGameEntity, var sprites: OrderedMap<
   /**
    * Creates a [SpriteComponent] with the given [sprites].
    *
+   * @param entity The entity that this [SpriteComponent] belongs to.
    * @param _sprites The sprites to add to this [SpriteComponent].
    */
   constructor(

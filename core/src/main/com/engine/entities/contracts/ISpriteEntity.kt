@@ -11,6 +11,6 @@ interface ISpriteEntity : IGameEntity {
   val sprites: OrderedMap<String, ISprite>
     get() = getComponent(SpriteComponent::class)!!.sprites
 
-  val firstSprite: ISprite
-    get() = sprites.first().value
+  val firstSprite: ISprite?
+    get() = if (sprites.isEmpty) null else sprites.first().value
 }

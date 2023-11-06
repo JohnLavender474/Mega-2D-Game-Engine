@@ -19,8 +19,9 @@ class RotatingLine(
 ) : IMotion {
 
   private val vertices = FloatArray(4)
-  private val polyline = Polyline()
-  private var degrees = degreesOnReset
+  val polyline = Polyline()
+
+  var degrees = degreesOnReset
 
   init {
     val endPoint = origin.cpy().add(radius, 0f)

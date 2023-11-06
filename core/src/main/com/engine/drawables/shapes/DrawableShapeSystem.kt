@@ -32,8 +32,8 @@ open class DrawableShapeSystem(
     val shapes = shapesArraySupplier()
 
     entities.forEach {
-      it.getComponent(DrawableShapeComponent::class)?.shapes?.forEach { shape ->
-        shapes.add(shape)
+      it.getComponent(DrawableShapeComponent::class)?.shapeSuppliers?.forEach { shape ->
+        shapes.add(shape())
       }
     }
   }

@@ -47,3 +47,10 @@ fun Sprite.setPosition(p: Vector2, pos: Position, xOffset: Float, yOffset: Float
   setPosition(p, pos)
   translate(xOffset, yOffset)
 }
+
+/**
+ * Sets the size of this sprite to the specified size.
+ *
+ * @param size the size to set
+ */
+fun Sprite.setSize(size: Float) = setSize(size, size)

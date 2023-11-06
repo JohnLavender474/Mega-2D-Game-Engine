@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.GameLogger
 import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.extensions.putIfAbsentAndGet
+import com.engine.common.objects.MultiCollectionIterable
 
 /**
  * A manager for [Event]s and [IEventListener]s. [Event]s are submitted to the [EventsManager] and
@@ -79,9 +80,10 @@ class EventsManager : IEventsManager {
         return@forEach
       }
 
-      val relevantEvents = Array<Event>()
-      eventKeyMask.forEach { key -> events.get(key)?.let { relevantEvents.addAll(it) } }
-      relevantEvents.forEach { listener.onEvent(it) }
+      val relevantEvents = Array<Iterable<Event>>()
+      eventKeyMask.forEach { key -> events.get(key)?.let { relevantEvents.add(it) } }
+      val iterable = MultiCollectionIterable(relevantEvents)
+      iterable.forEach { listener.onEvent(it) }
     }
 
     events.clear()

@@ -20,7 +20,7 @@ class GameSprite(
 
   constructor(
       texture: Texture,
-      priority: DrawingPriority,
+      priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
       hidden: Boolean = false
   ) : this(priority, hidden) {
     setTexture(texture)
@@ -28,7 +28,7 @@ class GameSprite(
 
   constructor(
       textureRegion: TextureRegion,
-      priority: DrawingPriority,
+      priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
       hidden: Boolean = false
   ) : this(priority, hidden) {
     setRegion(textureRegion)
@@ -36,11 +36,11 @@ class GameSprite(
 
   constructor(
       textureRegion: TextureRegion,
-      priority: DrawingPriority,
       x: Float,
       y: Float,
       width: Float,
       height: Float,
+      priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
       hidden: Boolean = false
   ) : this(priority, hidden) {
     setRegion(textureRegion)
@@ -50,11 +50,11 @@ class GameSprite(
 
   constructor(
       texture: Texture,
-      priority: DrawingPriority,
       x: Float,
       y: Float,
       width: Float,
       height: Float,
+      priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
       hidden: Boolean = false
   ) : this(priority, hidden) {
     setTexture(texture)

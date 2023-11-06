@@ -1,7 +1,7 @@
 package com.engine.motion
 
-import com.badlogic.gdx.math.Polyline
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.shapes.GameLine
 
 /**
  * A class representing a line segment that can rotate around an origin.
@@ -18,15 +18,15 @@ class RotatingLine(
     var degreesOnReset: Float = 0f
 ) : IMotion {
 
-  private val vertices = FloatArray(4)
-  val polyline = Polyline()
-
+  // TODO: private val vertices = FloatArray(4)
+  // TODO: private val polyline = Polyline()
+  private val line = GameLine()
   var degrees = degreesOnReset
 
   init {
     val endPoint = origin.cpy().add(radius, 0f)
-    polyline.vertices = vertices
-    polyline.rotation = degreesOnReset
+    // TODO: polyline.vertices = vertices
+    // TODO: polyline.rotation = degreesOnReset
     set(origin, endPoint)
   }
 
@@ -44,7 +44,8 @@ class RotatingLine(
    */
   override fun update(delta: Float) {
     degrees += speed * delta
-    polyline.rotation = degreesOnReset
+    line.rotation = degreesOnReset
+    // TODO: polyline.rotation = degreesOnReset
   }
 
   /** Resets the rotation of the line to its initial angle. */
@@ -68,7 +69,8 @@ class RotatingLine(
    *
    * @return The origin point.
    */
-  fun getOrigin() = Vector2(polyline.originX, polyline.originY)
+  fun getOrigin() = Vector2(line.originX, line.originY)
+  // TODO: Vector2(polyline.originX, polyline.originY)
 
   /**
    * Sets the origin point of the rotating line.
@@ -84,8 +86,9 @@ class RotatingLine(
    * @param y The y-coordinate of the new origin point.
    */
   fun setOrigin(x: Float, y: Float) {
-    vertices[0] = x
-    vertices[1] = y
+    // TODO: vertices[0] = x
+    // TODO: vertices[1] = y
+    line.setFirstLocalPoint(x, y)
   }
 
   /**
@@ -93,7 +96,11 @@ class RotatingLine(
    *
    * @return The endpoint of the line.
    */
-  fun getEndPoint() = Vector2(polyline.transformedVertices[2], polyline.transformedVertices[3])
+  fun getEndPoint(): Vector2 {
+    // TODO: return Vector2(polyline.transformedVertices[2], polyline.transformedVertices[3])
+    val (_, secondWorldPoint) = line.getWorldPoints()
+    return secondWorldPoint
+  }
 
   /**
    * Sets the endpoint of the rotating line.
@@ -109,8 +116,9 @@ class RotatingLine(
    * @param y The y-coordinate of the new endpoint point.
    */
   fun setEndPoint(x: Float, y: Float) {
-    vertices[2] = x
-    vertices[3] = y
+    line.setSecondLocalPoint(x, y)
+    // TODO: vertices[2] = x
+    // TODO: vertices[3] = y
   }
 
   /**
@@ -121,8 +129,10 @@ class RotatingLine(
    */
   fun getScaledPosition(scalar: Float): Vector2 {
     val endPoint = getEndPoint()
-    val x = polyline.originX + (endPoint.x - polyline.originX) * scalar
-    val y = polyline.originY + (endPoint.y - polyline.originY) * scalar
+    val x = line.originX + (endPoint.x - line.originX) * scalar
+    val y = line.originY + (endPoint.y - line.originY) * scalar
+    // TODO: val x = polyline.originX + (endPoint.x - polyline.originX) * scalar
+    // TODO: val y = polyline.originY + (endPoint.y - polyline.originY) * scalar
     return Vector2(x, y)
   }
 
@@ -133,6 +143,8 @@ class RotatingLine(
    * @param y The amount to translate along the y-axis.
    */
   fun translate(x: Float, y: Float) {
-    polyline.setOrigin(polyline.originX + x, polyline.originY + y)
+    line.originX += x
+    line.originY += y
+    // TODO: polyline.setOrigin(polyline.originX + x, polyline.originY + y)
   }
 }

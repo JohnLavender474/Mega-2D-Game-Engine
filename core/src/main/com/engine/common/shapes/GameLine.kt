@@ -167,6 +167,48 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
   }
 
   /**
+   * Sets the first local point (unscaled, unrotated, etc.) of this line.
+   *
+   * @param point The first point of this line.
+   * @return This shape for chaining
+   */
+  fun setFirstLocalPoint(point: Vector2) = setFirstLocalPoint(point.x, point.y)
+
+  /**
+   * Sets the first local point (unscaled, unrotated, etc.) of this line.
+   *
+   * @param x1 The x-coordinate of the first point of this line.
+   * @param y1 The y-coordinate of the first point of this line.
+   * @return This shape for chaining
+   */
+  fun setFirstLocalPoint(x1: Float, y1: Float): GameLine {
+    val secondLocalPoint = getSecondLocalPoint()
+    setLocalPoints(x1, y1, secondLocalPoint.x, secondLocalPoint.y)
+    return this
+  }
+
+  /**
+   * Sets the second local point (unscaled, unrotated, etc.) of this line.
+   *
+   * @param point The second point of this line.
+   * @return This shape for chaining
+   */
+  fun setSecondLocalPoint(point: Vector2) = setSecondLocalPoint(point.x, point.y)
+
+  /**
+   * Sets the second local point (unscaled, unrotated, etc.) of this line.
+   *
+   * @param x2 The x-coordinate of the second point of this line.
+   * @param y2 The y-coordinate of the second point of this line.
+   * @return This shape for chaining
+   */
+  fun setSecondLocalPoint(x2: Float, y2: Float): GameLine {
+    val firstLocalPoint = getFirstLocalPoint()
+    setLocalPoints(firstLocalPoint.x, firstLocalPoint.y, x2, y2)
+    return this
+  }
+
+  /**
    * Sets the local points (unscaled, unrotated, etc.) of this line.
    *
    * @param x1 The x-coordinate of the first point of this line.
@@ -198,7 +240,21 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
    *
    * @return The local points of this line.
    */
-  fun getLocalPoints() = Pair(Vector2(localPoint1), Vector2(localPoint2))
+  fun getLocalPoints() = Pair(getFirstLocalPoint(), getSecondLocalPoint())
+
+  /**
+   * Gets the first local point (unscaled, unrotated, etc.) of this line.
+   *
+   * @return The first local point of this line.
+   */
+  fun getFirstLocalPoint() = Vector2(localPoint1)
+
+  /**
+   * Gets the second local point (unscaled, unrotated, etc.) of this line.
+   *
+   * @return The second local point of this line.
+   */
+  fun getSecondLocalPoint() = Vector2(localPoint2)
 
   /**
    * Gets the world points (scaled, rotated, etc.) of this line.

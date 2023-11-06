@@ -3,6 +3,7 @@ package com.engine.common.shapes
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
@@ -38,26 +39,28 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
     }
   }
 
-  override var color: Color = Color.RED
   override var thickness: Float = 1f
-  override var shapeType: ShapeType = ShapeType.Filled
+  override var color: Color = Color.RED
+  override var shapeType: ShapeType = Filled
 
+  private val position = Vector2()
   private val localPoint1 = Vector2()
   private val localPoint2 = Vector2()
-  private val position = Vector2()
   private val worldPoint1 = Vector2()
   private val worldPoint2 = Vector2()
 
-  var scale = 0f
+  var scaleX = 1f
     set(value) {
       field = value
       dirty = true
+      calculateScaledLength = true
     }
 
-  var rotation = 0f
+  var scaleY = 1f
     set(value) {
       field = value
       dirty = true
+      calculateScaledLength = true
     }
 
   var originX = 0f
@@ -72,9 +75,19 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
       dirty = true
     }
 
-  private var length = 0f
+  var rotation = 0f
+    set(value) {
+      field = value
+      dirty = true
+    }
+
   private var dirty = true
+
+  private var length = 0f
   private var calculateLength = true
+
+  private var scaledLength = 0f
+  private var calculateScaledLength = true
 
   init {
     localPoint1.x = x1
@@ -90,7 +103,8 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
    * @return A line with the given pointsHandles.
    */
   constructor(line: GameLine) : this(line.localPoint1, line.localPoint2) {
-    scale = line.scale
+    scaleX = line.scaleX
+    scaleY = line.scaleY
     rotation = line.rotation
     originX = line.originX
     originY = line.originY
@@ -107,6 +121,16 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
   /** Creates a line with points at [0,0] and [0,0] */
   constructor() : this(0f, 0f, 0f, 0f)
 
+  /** Sets this line to dirty which means that the world points need to be recalculated. */
+  fun setToDirty() {
+    dirty = true
+  }
+
+  /** Sets to recalculate the length of this line. */
+  fun setToRecalculateLength() {
+    calculateLength = true
+  }
+
   /**
    * Calculates and returns the length of this line.
    *
@@ -120,6 +144,26 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
       length = sqrt((x * x + y * y).toDouble()).toFloat()
     }
     return length
+  }
+
+  /** Sets to recalculate the scaled length of this line. */
+  fun setToRecalculateScaledLength() {
+    calculateScaledLength = true
+  }
+
+  /**
+   * Calculates and returns the scaled length of this line.
+   *
+   * @return The scaled length of this line.
+   */
+  fun getScaledLength(): Float {
+    if (calculateScaledLength) {
+      calculateScaledLength = false
+      val x = (localPoint1.x - localPoint2.x) * scaleX
+      val y = (localPoint1.y - localPoint2.y) * scaleY
+      scaledLength = sqrt((x * x + y * y).toDouble()).toFloat()
+    }
+    return scaledLength
   }
 
   /**
@@ -172,6 +216,9 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
     gdxArrayOf(localPoint1, localPoint2).forEach {
       var x = it.x - originX
       var y = it.y - originY
+
+      x *= scaleX
+      y *= scaleY
 
       if (rotation != 0f) {
         val oldX = x
@@ -330,6 +377,20 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
   }
 
   /**
+   * Translates the position of this line.
+   *
+   * @param translateX The amount to translate the x-coordinate of this line.
+   * @param translateY The amount to translate the y-coordinate of this line.
+   * @return This line.
+   */
+  override fun translation(translateX: Float, translateY: Float): GameLine {
+    position.x += translateX
+    position.y += translateY
+    dirty = true
+    return this
+  }
+
+  /**
    * Sets the origin of this line.
    *
    * @param origin The origin.
@@ -347,21 +408,6 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
   fun setOrigin(originX: Float, originY: Float): GameLine {
     this.originX = originX
     this.originY = originY
-    dirty = true
-    return this
-  }
-
-  /**
-   * Translates the position of this line.
-   *
-   * @param translateX The amount to translate the x-coordinate of this line.
-   * @param translateY The amount to translate the y-coordinate of this line.
-   * @return This line.
-   */
-  override fun translation(translateX: Float, translateY: Float): GameLine {
-    position.x += translateX
-    position.y += translateY
-    dirty = true
     return this
   }
 

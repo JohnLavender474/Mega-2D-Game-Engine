@@ -1,6 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.interfaces.ICopyable
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.IGameShape2D
@@ -29,7 +30,7 @@ class Fixture(
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),
     override var properties: Properties = Properties(),
-) : IGameShape2DSupplier, IPropertizable {
+) : IGameShape2DSupplier, IPropertizable, ICopyable {
 
   override fun getGameShape2D() = shape
 
@@ -49,6 +50,20 @@ class Fixture(
    * @see overlaps
    */
   fun overlaps(other: Fixture) = overlaps(other.shape)
+
+  /**
+   * Creates a copy of this [Fixture].
+   *
+   * @return A copy of this [Fixture].
+   */
+  override fun copy() =
+      Fixture(
+          shape.copy() as IGameShape2D,
+          fixtureLabel,
+          active,
+          attachedToBody,
+          Vector2(offsetFromBodyCenter),
+          properties.copy())
 
   override fun toString(): String {
     return "Fixture(shape=$shape, fixtureLabel=$fixtureLabel, active=$active, " +

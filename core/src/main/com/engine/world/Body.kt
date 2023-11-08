@@ -94,7 +94,7 @@ open class Body(
   fun isBodyType(bodyType: BodyType) = this.bodyType == bodyType
 
   /**
-   * Adds the given [Fixture] to this body.
+   * Adds the given [Fixture] to this body. The fixture is mapped to the fixture's label.
    *
    * @param fixture the [Fixture] to add
    */
@@ -113,6 +113,28 @@ open class Body(
       val p = getCenterPoint().add(f.second.offsetFromBodyCenter)
       f.second.shape.setCenter(p)
     }
+  }
+
+  /**
+   * Creates a copy of this [Body].
+   *
+   * @return A copy of this [Body].
+   */
+  override fun copy(): Body {
+    val body =
+        Body(
+            bodyType,
+            x,
+            y,
+            width,
+            height,
+            physics.copy(),
+            Array(),
+            properties.copy(),
+            preProcess,
+            postProcess)
+    fixtures.forEach { body.addFixture(it.second.copy()) }
+    return body
   }
 
   override fun equals(other: Any?) = this === other

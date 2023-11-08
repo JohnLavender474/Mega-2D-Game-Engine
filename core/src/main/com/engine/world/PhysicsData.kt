@@ -18,7 +18,7 @@ import com.engine.common.interfaces.Resettable
  * @param takeFrictionFromOthers Whether this body takes friction from other bodies.
  * @see Body
  */
-open class PhysicsData(
+class PhysicsData(
     var gravity: Vector2 = Vector2(),
     var velocity: Vector2 = Vector2(),
     var velocityClamp: Vector2 = Vector2(Float.MAX_VALUE, Float.MAX_VALUE),
@@ -30,6 +30,7 @@ open class PhysicsData(
     var takeFrictionFromOthers: Boolean = true
 ) : Resettable {
 
+  /** Resets the [PhysicsData] to its default values. */
   fun resetToDefault() {
     gravity.setZero()
     velocity.setZero()
@@ -42,6 +43,24 @@ open class PhysicsData(
     takeFrictionFromOthers = true
   }
 
+  /**
+   * Creates a copy of this [PhysicsData].
+   *
+   * @return A copy of this [PhysicsData].
+   */
+  fun copy() =
+      PhysicsData(
+          Vector2(gravity),
+          Vector2(velocity),
+          Vector2(velocityClamp),
+          Vector2(frictionToApply),
+          Vector2(frictionOnSelf),
+          Vector2(defaultFrictionOnSelf),
+          gravityOn,
+          collisionOn,
+          takeFrictionFromOthers)
+
+  /** Sets the [velocity] to zero and the [frictionOnSelf] to [defaultFrictionOnSelf]. */
   override fun reset() {
     velocity.setZero()
     frictionOnSelf.set(defaultFrictionOnSelf)

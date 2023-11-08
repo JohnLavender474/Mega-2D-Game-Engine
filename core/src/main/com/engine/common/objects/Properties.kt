@@ -153,6 +153,13 @@ class Properties {
     for (entry in props.entries()) action(entry.key, entry.value)
   }
 
+  /**
+   * Returns a copy of this [Properties] instance.
+   *
+   * @return a copy of this [Properties] instance
+   */
+  fun copy() = Properties(props)
+
   override fun toString(): String {
     val sb = StringBuilder()
     sb.append("Properties({")

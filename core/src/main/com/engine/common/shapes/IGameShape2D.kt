@@ -2,6 +2,7 @@ package com.engine.common.shapes
 
 import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.interfaces.ICopyable
 import com.engine.drawables.shapes.IDrawableShape
 
 /**
@@ -10,14 +11,7 @@ import com.engine.drawables.shapes.IDrawableShape
  *
  * @see Shape2D
  */
-interface IGameShape2D : Shape2D, IDrawableShape {
-
-  /**
-   * Returns a copy of this shape.
-   *
-   * @return A copy of this shape.
-   */
-  fun copy(): IGameShape2D
+interface IGameShape2D : Shape2D, IDrawableShape, ICopyable {
 
   /**
    * Returns whether this shape overlaps the given shape.

@@ -20,7 +20,7 @@ class RotatingLine(
 
   // TODO: private val vertices = FloatArray(4)
   // TODO: private val polyline = Polyline()
-  private val line = GameLine()
+  val line = GameLine()
   var degrees = degreesOnReset
 
   init {

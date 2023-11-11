@@ -1,8 +1,8 @@
 package com.engine.entities.contracts
 
 import com.engine.entities.IGameEntity
+import com.engine.points.Points
 import com.engine.points.PointsComponent
-import com.engine.points.PointsHandle
 
 /** An entity containing points. */
 interface IPointsEntity : IGameEntity {
@@ -15,50 +15,49 @@ interface IPointsEntity : IGameEntity {
   fun getPointsComponent() = getComponent(PointsComponent::class)!!
 
   /**
-   * Gets the points mapped to the given name.
+   * Gets the points mapped to the given key.
    *
-   * @param name The name of the points.
+   * @param key The key of the points.
    * @return The points.
    */
-  fun getPoints(name: String) = getPointsComponent().getPoints(name)
+  fun getPoints(key: Any) = getPointsComponent().getPoints(key)
 
   /**
-   * Gets the [PointsHandle] mapped to the given name.
+   * Puts the points into the map.
    *
-   * @param name The name of the pointsHandle.
-   * @return The pointsHandle.
+   * @param key The key of the points.
+   * @param points The points.
+   * @return The previous points mapped to the given key if any
    */
-  fun getPointsHandle(name: String) = getPointsComponent().getPointsHandle(name)
+  fun putPoints(key: Any, points: Points) = getPointsComponent().putPoints(key, points)
 
   /**
-   * Gets the listener [(Points) -> Unit] mapped to the given name.
+   * Puts the points into the map.
    *
-   * @param name The name of the [PointsHandle] containing the listener.
-   * @return The listener
+   * @param key The key of the points.
+   * @param min The minimum value.
+   * @param max The maximum value.
+   * @param current The current value.
+   * @return The previous points mapped to the given key if any
    */
-  fun getPointsListener(name: String) = getPointsComponent().getPointsListener(name)
+  fun putPoints(key: Any, min: Int, max: Int, current: Int) =
+      getPointsComponent().putPoints(key, Points(min, max, current))
 
   /**
-   * Resets all the points.
+   * Puts the points into the map. The min value will be zero. The current and max values will be
+   * equals to [value].
    *
-   * @see PointsComponent.reset
+   * @param key The key of the points.
+   * @param value The value.
+   * @return The previous points mapped to the given key if any
    */
-  fun resetPoints() = getPointsComponent().reset()
+  fun putPoints(key: Any, value: Int) = getPointsComponent().putPoints(key, Points(0, value, value))
 
   /**
-   * Resets the points mapped to the given name.
+   * Removes the points mapped to the given key.
    *
-   * @param name The name of the points.
-   * @see PointsComponent.reset
-   */
-  fun putPointsHandle(name: String, pointsHandle: PointsHandle) =
-      getPointsComponent().putPointsHandle(name, pointsHandle)
-
-  /**
-   * Removes the points mapped to the given name.
-   *
-   * @param name The name of the points.
+   * @param key The key of the points.
    * @return The removed points.
    */
-  fun removePointsHandle(name: String) = getPointsComponent().removePointsHandle(name)
+  fun removePoints(key: Any) = getPointsComponent().removePoints(key)
 }

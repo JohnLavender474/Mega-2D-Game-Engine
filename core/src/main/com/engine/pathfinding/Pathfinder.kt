@@ -106,6 +106,9 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
           node = node.previous
         }
 
+        // reverse the graph path
+        graphPath.reverse()
+
         // Convert the graphPath to world coordinates
         val worldPath = Array<Vector2>()
         graphPath.forEach { worldPath.add(graph.convertToWorldCoordinate(it)) }

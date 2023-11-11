@@ -6,7 +6,7 @@ import com.engine.damage.IDamager
 import com.engine.entities.IGameEntity
 
 /** An entity that can be damaged. */
-interface IDamageableEntity : IGameEntity {
+interface IDamageableEntity : IGameEntity, IDamageable {
 
   /** Sets the [DamageableComponent.invincible] of this entity. */
   var invincible: Boolean
@@ -21,13 +21,6 @@ interface IDamageableEntity : IGameEntity {
    * @return the [DamageableComponent] of this entity
    */
   fun getDamageableComponent() = getComponent(DamageableComponent::class)!!
-
-  /**
-   * Returns the [IDamageable] of this entity.
-   *
-   * @return the [IDamageable] of this entity
-   */
-  fun getDamageable() = getDamageableComponent().damageable
 
   /**
    * Returns if this entity is under damage.

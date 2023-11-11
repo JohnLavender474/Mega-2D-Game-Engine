@@ -27,6 +27,15 @@ class Animation : IAnimation {
     private set
 
   /**
+   * Creates an animation with the specified texture region. The rows and columns values are each
+   * set to 1 with this constructor.
+   *
+   * @param region the texture region to animate
+   * @param loop whether the animation should loop
+   */
+  constructor(region: TextureRegion, loop: Boolean) : this(region, 1, 1, 1f, loop)
+
+  /**
    * Creates an animation with the specified texture region, rows, columns, and duration. The
    * animation will loop by default.
    *

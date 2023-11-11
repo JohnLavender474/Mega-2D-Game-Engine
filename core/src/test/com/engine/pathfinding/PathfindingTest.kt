@@ -107,10 +107,10 @@ class PathfinderTest :
           graphPath!!.size shouldBe 4
           worldPath!!.size shouldBe 4
 
-          graphPath[3] shouldBe IntPair(0, 3)
-          graphPath[2] shouldBe IntPair(1, 2)
-          graphPath[1] shouldBe IntPair(2, 1)
-          graphPath[0] shouldBe IntPair(3, 0)
+          graphPath[0] shouldBe IntPair(0, 3)
+          graphPath[1] shouldBe IntPair(1, 2)
+          graphPath[2] shouldBe IntPair(2, 1)
+          graphPath[3] shouldBe IntPair(3, 0)
 
           for (i in 0..3) {
             val graphPoint = graphPath[i]
@@ -142,13 +142,13 @@ class PathfinderTest :
           graphPath shouldNotBe null
           graphPath!!.size shouldBe 7
 
-          graphPath[6] shouldBe IntPair(0, 3)
-          graphPath[5] shouldBe IntPair(1, 2)
-          graphPath[4] shouldBe IntPair(1, 1)
+          graphPath[0] shouldBe IntPair(0, 3)
+          graphPath[1] shouldBe IntPair(1, 2)
+          graphPath[2] shouldBe IntPair(1, 1)
           graphPath[3] shouldBe IntPair(2, 0)
-          graphPath[2] shouldBe IntPair(3, 1)
-          graphPath[1] shouldBe IntPair(3, 2)
-          graphPath[0] shouldBe IntPair(3, 3)
+          graphPath[4] shouldBe IntPair(3, 1)
+          graphPath[5] shouldBe IntPair(3, 2)
+          graphPath[6] shouldBe IntPair(3, 3)
 
           result.targetReached shouldBe false
         }
@@ -176,16 +176,16 @@ class PathfinderTest :
           graphPath shouldNotBe null
           graphPath!!.size shouldBe 10
 
-          graphPath[9] shouldBe IntPair(0, 3)
-          graphPath[8] shouldBe IntPair(1, 3)
-          graphPath[7] shouldBe IntPair(1, 2)
-          graphPath[6] shouldBe IntPair(1, 1)
-          graphPath[5] shouldBe IntPair(1, 0)
-          graphPath[4] shouldBe IntPair(2, 0)
-          graphPath[3] shouldBe IntPair(3, 0)
-          graphPath[2] shouldBe IntPair(3, 1)
-          graphPath[1] shouldBe IntPair(3, 2)
-          graphPath[0] shouldBe IntPair(3, 3)
+          graphPath[0] shouldBe IntPair(0, 3)
+          graphPath[1] shouldBe IntPair(1, 3)
+          graphPath[2] shouldBe IntPair(1, 2)
+          graphPath[3] shouldBe IntPair(1, 1)
+          graphPath[4] shouldBe IntPair(1, 0)
+          graphPath[5] shouldBe IntPair(2, 0)
+          graphPath[6] shouldBe IntPair(3, 0)
+          graphPath[7] shouldBe IntPair(3, 1)
+          graphPath[8] shouldBe IntPair(3, 2)
+          graphPath[9] shouldBe IntPair(3, 3)
 
           result.targetReached shouldBe false
         }

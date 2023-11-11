@@ -1,6 +1,5 @@
 package com.engine.pathfinding
 
-import com.badlogic.gdx.Gdx
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
@@ -13,7 +12,7 @@ import java.util.concurrent.Executors
  * @param pathfinderFactory The factory that creates the pathfinder for the pathfinding component.
  * @see [IPathfinder]
  */
-open class PathfindingSystem(private val pathfinderFactory: (PathfindingComponent) -> IPathfinder) :
+class PathfindingSystem(private val pathfinderFactory: (PathfindingComponent) -> IPathfinder) :
     GameSystem(PathfindingComponent::class) {
 
   // pathfinders are run in separate threads
@@ -37,6 +36,10 @@ open class PathfindingSystem(private val pathfinderFactory: (PathfindingComponen
 
       // reset the update interval timer
       updateIntervalTimer.reset()
+
+      // if the pathfinding component does not want to update, then do not run a pathfinder for
+      // this pathfinding component
+      if (!pathfindingComponent.doUpdate()) return@forEach
 
       // submit the pathfinding component and pathfinder entry
       val pathfinder = pathfinderFactory(pathfindingComponent)

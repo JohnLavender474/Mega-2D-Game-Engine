@@ -21,12 +21,8 @@ class Points(var min: Int, var max: Int, current: Int) {
    */
   fun set(points: Int) {
     current = points
-    if (current < min) {
-      current = min
-    }
-    if (current > max) {
-      current = max
-    }
+    if (current < min) current = min
+    if (current > max) current = max
   }
 
   /**

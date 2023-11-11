@@ -5,83 +5,77 @@ import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
 
 /**
- * The pointss component. Contains all the pointsMap for an entity.
+ * The points component. Contains all the points for an entity.
  *
  * @param pointsMap The pointsMap.
  */
-class PointsComponent(
-    override val entity: IGameEntity,
-    val pointsMap: ObjectMap<String, PointsHandle>
-) : IGameComponent {
+class PointsComponent(override val entity: IGameEntity, val pointsMap: ObjectMap<Any, Points>) :
+    IGameComponent {
 
   /**
-   * The pointsMap component. Contains all the pointsMap for an entity.
+   * The points component. Contains all the points for an entity.
    *
    * @param _points The pointsMap.
    */
   constructor(
       entity: IGameEntity,
-      vararg _points: Pair<String, PointsHandle>
+      vararg _points: Pair<Any, Points>
   ) : this(entity, _points.asIterable())
 
   /**
-   * The pointsMap component. Contains all the pointsMap for an entity.
+   * The points component. Contains all the points for an entity.
    *
-   * @param _points The pointsMap.
+   * @param _points The points iterable.
    */
   constructor(
       entity: IGameEntity,
-      _points: Iterable<Pair<String, PointsHandle>>
-  ) : this(
-      entity,
-      ObjectMap<String, PointsHandle>().apply { _points.forEach { put(it.first, it.second) } })
+      _points: Iterable<Pair<Any, Points>>
+  ) : this(entity, ObjectMap<Any, Points>().apply { _points.forEach { put(it.first, it.second) } })
 
   /**
-   * Calls reset on each [PointsHandle].
+   * Gets the [Points] mapped to the given key.
    *
-   * @see PointsHandle
-   */
-  override fun reset() = pointsMap.values().forEach { it.reset() }
-
-  /**
-   * Gets the points mapped to the given name.
-   *
-   * @param name The name of the points.
+   * @param key The key of the [Points].
    * @return The points.
    */
-  fun getPoints(name: String) = pointsMap[name].points
+  fun getPoints(key: Any): Points = pointsMap[key]
 
   /**
-   * Gets the [PointsHandle] mapped to the given name.
+   * Puts the [Points] into the mpa.
    *
-   * @param name The name of the pointsHandle.
-   * @return The pointsHandle.
+   * @param key The key of the [Points].
+   * @param Points The [Points]
+   * @return The previous [Points] mapped to the given key.
    */
-  internal fun getPointsHandle(name: String): PointsHandle = pointsMap[name]
+  fun putPoints(key: Any, Points: Points): Points? = pointsMap.put(key, Points)
 
   /**
-   * Gets the listener [(Points) -> Unit] mapped to the given name.
+   * Puts the [Points] into the map.
    *
-   * @param name The name of the [PointsHandle] containing the listener.
-   * @return The listener
+   * @param key The key of the [Points].
+   * @param min The minimum value.
+   * @param max The maximum value.
+   * @param current The current value.
+   * @return The previous [Points] mapped to the given key if any
    */
-  internal fun getPointsListener(name: String) = pointsMap[name].listener
+  fun putPoints(key: Any, min: Int, max: Int, current: Int): Points? =
+      putPoints(key, Points(min, max, current))
 
   /**
-   * Puts the [PointsHandle] into the mpa.
+   * Puts the [Points] into the map. The min value will be zero. The current and max values will be
+   * equal to [value].
    *
-   * @param name The name of the [PointsHandle].
-   * @param pointsHandle The [PointsHandle]
-   * @return The previous [PointsHandle] mapped to the given name.
+   * @param key The key of the [Points].
+   * @param value The value.
+   * @return The previous [Points] mapped to the given key if any
    */
-  fun putPointsHandle(name: String, pointsHandle: PointsHandle): PointsHandle? =
-      pointsMap.put(name, pointsHandle)
+  fun putPoints(key: Any, value: Int): Points? = putPoints(key, Points(0, value, value))
 
   /**
-   * Removes the [PointsHandle] mapped to the given name.
+   * Removes the [Points] mapped to the given key.
    *
-   * @param name The name of the [PointsHandle] to remove.
-   * @return The removed [PointsHandle].
+   * @param key The key of the [Points] to remove.
+   * @return The removed [Points].
    */
-  fun removePointsHandle(name: String): PointsHandle? = pointsMap.remove(name)
+  fun removePoints(key: Any): Points? = pointsMap.remove(key)
 }

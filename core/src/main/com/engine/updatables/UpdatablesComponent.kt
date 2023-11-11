@@ -19,4 +19,11 @@ class UpdatablesComponent(
       entity: IGameEntity,
       vararg updatables: Updatable
   ) : this(entity, Array<Updatable>().apply { updatables.forEach { add(it) } })
+
+  /**
+   * Adds the given updatable to the updatables list.
+   *
+   * @param updatable The updatable to add.
+   */
+  fun add(updatable: Updatable) = updatables.add(updatable)
 }

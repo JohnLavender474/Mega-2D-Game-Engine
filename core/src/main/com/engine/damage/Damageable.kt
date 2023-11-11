@@ -1,12 +1,13 @@
 package com.engine.damage
 
-import com.engine.common.objects.Properties
+/**
+ * Convenience implementation of [IDamageable]. If [_takeDamageFrom] is null, then [takeDamageFrom]
+ * will always do nothing and return false.
+ *
+ * @param _takeDamageFrom the function that determines whether this [Damageable] can take damage
+ *   from the [IDamager
+ */
+class Damageable(private val _takeDamageFrom: ((IDamager) -> Boolean)? = null) : IDamageable {
 
-/** Convenience implementation of [IDamageable]. */
-class Damageable(
-    private val takeDamageFrom: ((IDamager) -> Boolean)? = null,
-    override val properties: Properties = Properties()
-) : IDamageable {
-
-  override fun takeDamageFrom(damager: IDamager) = takeDamageFrom?.invoke(damager) ?: false
+  override fun takeDamageFrom(damager: IDamager) = _takeDamageFrom?.invoke(damager) ?: false
 }

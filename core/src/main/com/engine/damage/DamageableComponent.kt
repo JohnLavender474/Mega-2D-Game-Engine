@@ -5,6 +5,7 @@ import com.engine.common.GameLogger
 import com.engine.common.time.Timer
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
+import com.engine.entities.contracts.IDamageableEntity
 
 /**
  * A [DamageableComponent] is a [IGameComponent] that contains a [IDamageable] and an array of
@@ -25,7 +26,7 @@ import com.engine.entities.IGameEntity
  * @param invincible true if the [DamageableComponent] is invincible, otherwise false
  * @property damagers the [IDamager]s that can deal damage to the [IDamageable]
  */
-open class DamageableComponent(
+class DamageableComponent(
     override val entity: IGameEntity,
     internal var damageable: IDamageable,
     internal val damageTimer: Timer = Timer(1f),
@@ -37,7 +38,32 @@ open class DamageableComponent(
     const val TAG = "DamageableComponent"
   }
 
-  open var damagers: Array<IDamager> = Array()
+  var damagers: Array<IDamager> = Array()
+
+  /**
+   * Creates a [DamageableComponent] with the given [entity], [damageable], [damageTimer],
+   * [damageRecoveryTimer], and [invincible].
+   *
+   * @param entity the [IDamageableEntity] this [DamageableComponent] belongs to that is also the
+   *   [IDamageable].
+   * @param damageTimer the [Timer] that keeps track of how long the [DamageableComponent] has been
+   *   under damage. If the [DamageableComponent] is under damage, it cannot take damage from
+   *   another [IDamager]. The [DamageableComponent] is under damage until the [Timer] is finished.
+   * @param damageRecoveryTimer the [Timer] that keeps track of how long the [DamageableComponent]
+   *   has been recovering from damage. If the [DamageableComponent] is recovering from damage, it
+   *   cannot take damage from another [IDamager]. The [DamageableComponent] is recovering from
+   *   damage until the [Timer] is finished. The [DamageableComponent] is invincible while it is
+   *   recovering from damage. This timer is not started until the damage timer is finished. under
+   *   damage. If the [DamageableComponent] is under damage, it cannot take damage from another
+   *   [IDamager]. The [DamageableComponent] is under damage until the [Timer] is finished.
+   * @param invincible true if the [DamageableComponent] is invincible, otherwise false
+   */
+  constructor(
+      entity: IDamageableEntity,
+      damageTimer: Timer = Timer(1f),
+      damageRecoveryTimer: Timer = Timer(1f),
+      invincible: Boolean = false
+  ) : this(entity, entity, damageTimer, damageRecoveryTimer, invincible)
 
   /**
    * Returns if the [DamageableComponent] can be damaged. The [DamageableComponent] can be damaged

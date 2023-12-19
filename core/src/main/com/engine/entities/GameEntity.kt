@@ -35,7 +35,6 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
   override fun onDestroy() {
     super.onDestroy()
     getComponents().forEach { it.reset() }
-    runnablesOnDestroy.forEach { it.run() }
     dead = true
   }
 

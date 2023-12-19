@@ -1,7 +1,5 @@
 package com.engine.factories
 
-import com.engine.common.objects.Properties
-
 /**
  * A factory that fetches objects from a key.
  *

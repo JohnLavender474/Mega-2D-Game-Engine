@@ -1,13 +1,14 @@
 package com.engine.pathfinding
 
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
+import com.engine.common.GameLogger
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
+import com.engine.common.shapes.GameRectangle
 import com.engine.graph.IGraphMap
 import com.engine.graph.convertToGraphCoordinate
-import com.engine.graph.convertToWorldCoordinate
+import com.engine.graph.convertToWorldNode
 import com.engine.graph.isOutOfBounds
 import java.util.*
 import java.util.concurrent.Callable
@@ -27,6 +28,10 @@ import kotlin.math.abs
  * @see [IPathfinder]
  */
 class Pathfinder(private val graph: IGraphMap, private val params: PathfinderParams) : IPathfinder {
+
+  companion object {
+    const val TAG = "Pathfinder"
+  }
 
   /**
    * A node in the graph. A node is a point in the graph that has a position and a list of edges
@@ -76,11 +81,20 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
     val startCoordinate = graph.convertToGraphCoordinate(params.startSupplier())
 
     // If the start or target pointsMap are out of bounds, return null
-    if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate))
-        return PathfinderResult(null, null, false)
+    if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate)) {
+      GameLogger.debug(
+          TAG,
+          "Target or start point is out of bounds. Target: $targetCoordinate, Start: $startCoordinate")
+      return PathfinderResult(null, null, false)
+    }
 
     // If the start and target pointsMap are the same, return an empty graphPath
-    if (startCoordinate == targetCoordinate) return PathfinderResult(null, null, true)
+    if (startCoordinate == targetCoordinate) {
+      GameLogger.debug(
+          TAG,
+          "Target and start point are the same. Target: $targetCoordinate, Start: $startCoordinate")
+      return PathfinderResult(null, null, true)
+    }
 
     // Add the start node to the map
     val startNode = Node(startCoordinate, graph.ppm)
@@ -110,8 +124,10 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
         graphPath.reverse()
 
         // Convert the graphPath to world coordinates
-        val worldPath = Array<Vector2>()
-        graphPath.forEach { worldPath.add(graph.convertToWorldCoordinate(it)) }
+        val worldPath = Array<GameRectangle>()
+        graphPath.forEach { worldPath.add(graph.convertToWorldNode(it)) }
+
+        GameLogger.debug(TAG, "Found graph path: $graphPath")
         return PathfinderResult(graphPath, worldPath, false)
       }
 
@@ -139,7 +155,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
 
           // Get the adjacent node
           val neighborCoordinate = IntPair(x, y)
-          var neighbor = map[neighborCoordinate]
+          var neighbor = map.get(neighborCoordinate)
 
           // If the adjacent node has already been discovered, skip it
           if (neighbor?.discovered == true) continue

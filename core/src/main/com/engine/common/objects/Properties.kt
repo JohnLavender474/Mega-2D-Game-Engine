@@ -128,6 +128,16 @@ class Properties {
   fun get(key: Any) = props.get(key)
 
   /**
+   * Gets a property from this [Properties] instance. If no property is mapped to the given [key],
+   * then the [defaultValue] is returned instead.
+   *
+   * @param key The key of the property.
+   * @param defaultValue The default value of the property.
+   * @return The property, or the default value if no property is mapped to the given key.
+   */
+  fun getOrDefault(key: Any, defaultValue: Any?) = if (containsKey(key)) get(key) else defaultValue
+
+  /**
    * Gets a property from this [Properties] instance. If the property is null then an exception is
    * thrown.
    *

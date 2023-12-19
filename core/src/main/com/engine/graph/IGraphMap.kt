@@ -50,18 +50,18 @@ fun IGraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
 fun IGraphMap.convertToGraphCoordinate(v: Vector2) = convertToGraphCoordinate(v.x, v.y)
 
 /**
- * Converts the given first and second coordinates to world coordinates.
+ * Converts the given coordinate to its respective world node.
  *
- * @param x the first coordinate
- * @param y the second coordinate
- * @return the world coordinates
+ * @param x the x of the coordinate
+ * @param y the y of the coordinate
+ * @return the world node
  */
-fun IGraphMap.convertToWorldCoordinate(x: Int, y: Int) =
-    Vector2(x * ppm.toFloat(), y * ppm.toFloat())
+fun IGraphMap.convertToWorldNode(x: Int, y: Int) =
+    GameRectangle().setSize(ppm.toFloat()).setPosition(ppm * x.toFloat(), ppm * y.toFloat())
 
-/** @see [convertToWorldCoordinate] */
-fun IGraphMap.convertToWorldCoordinate(coordinate: IntPair) =
-    convertToWorldCoordinate(coordinate.first, coordinate.second)
+/** @see [convertToWorldNode] */
+fun IGraphMap.convertToWorldNode(coordinate: IntPair) =
+    convertToWorldNode(coordinate.first, coordinate.second)
 
 /**
  * Checks if the given coordinates are out of bounds.

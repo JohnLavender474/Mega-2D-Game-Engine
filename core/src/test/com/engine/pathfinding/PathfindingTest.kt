@@ -7,7 +7,7 @@ import com.engine.common.objects.Matrix
 import com.engine.common.objects.pairTo
 import com.engine.graph.IGraphMap
 import com.engine.graph.SimpleMockGraphMap
-import com.engine.graph.convertToWorldCoordinate
+import com.engine.graph.convertToWorldNode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -114,7 +114,7 @@ class PathfinderTest :
 
           for (i in 0..3) {
             val graphPoint = graphPath[i]
-            worldPath[i] shouldBe graph.convertToWorldCoordinate(graphPoint)
+            worldPath[i] shouldBe graph.convertToWorldNode(graphPoint)
           }
         }
 
@@ -135,7 +135,6 @@ class PathfinderTest :
 
           // when
           val result = pathfinder.call()
-
           val graphPath = result.graphPath
 
           // then
@@ -150,7 +149,7 @@ class PathfinderTest :
           graphPath[5] shouldBe IntPair(3, 2)
           graphPath[6] shouldBe IntPair(3, 3)
 
-          result.targetReached shouldBe false
+          result.targetAlreadyReached shouldBe false
         }
 
         it("should find the fastest path - test 3") {
@@ -187,7 +186,7 @@ class PathfinderTest :
           graphPath[8] shouldBe IntPair(3, 2)
           graphPath[9] shouldBe IntPair(3, 3)
 
-          result.targetReached shouldBe false
+          result.targetAlreadyReached shouldBe false
         }
 
         it("should find the fastest path - test 4") {
@@ -212,7 +211,7 @@ class PathfinderTest :
 
           // then
           graphPath shouldBe null
-          result.targetReached shouldBe false
+          result.targetAlreadyReached shouldBe false
         }
 
         it("should find the fastest path - test 5") {
@@ -237,7 +236,7 @@ class PathfinderTest :
           // then
           result.graphPath shouldBe null
           result.worldPath shouldBe null
-          result.targetReached shouldBe true
+          result.targetAlreadyReached shouldBe true
         }
       }
     })

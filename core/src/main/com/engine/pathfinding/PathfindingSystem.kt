@@ -28,6 +28,10 @@ class PathfindingSystem(private val pathfinderFactory: (PathfindingComponent) ->
     entities.forEach { entity ->
       val pathfindingComponent = entity.getComponent(PathfindingComponent::class) ?: return@forEach
 
+      // consume the current path
+      val currentPath = pathfindingComponent.currentPath
+      if (currentPath != null) pathfindingComponent.consumer(currentPath)
+
       // update the update interval timer
       // if the timer is not finished, then do not run a pathfinder for this pathfinding component
       val updateIntervalTimer = pathfindingComponent.updateIntervalTimer
@@ -47,13 +51,13 @@ class PathfindingSystem(private val pathfinderFactory: (PathfindingComponent) ->
       pathfinders.add(pathfinder)
     }
 
-    // invoke all the pathfinders and comsume the results
+    // invoke all the pathfinders and set the results to the respective [currentPath] field
     try {
       val futures = execServ.invokeAll(pathfinders)
 
       for (i in 0 until futures.size) {
         val result = futures[i].get()
-        pathfindingComponents[i].consumer(result)
+        pathfindingComponents[i].currentPath = result
       }
     } catch (e: Exception) {
       e.printStackTrace()

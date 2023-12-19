@@ -94,7 +94,10 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
     if (reset) reset()
   }
 
-  /** Resets the [GameEngine]. This will destroy all [IGameEntity]s and reset all [IGameSystem]s. */
+  /**
+   * Resets the [GameEngine]. This will destroy all [IGameEntity]s and reset all [IGameSystem]s in
+   * the next update cycle.
+   */
   override fun reset() {
     reset =
         if (updating) true

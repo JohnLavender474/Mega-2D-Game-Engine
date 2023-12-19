@@ -17,8 +17,9 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
 
   val componentMap = ObjectMap<KClass<out IGameComponent>, IGameComponent>()
 
-  override val properties = Properties()
+  override val runnablesOnSpawn = OrderedSet<Runnable>()
   override val runnablesOnDestroy = OrderedSet<Runnable>()
+  override val properties = Properties()
   override var dead = false
 
   // if this is false, then the next call to [spawn] will call [init] and set this to true
@@ -34,6 +35,7 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
   override fun onDestroy() {
     super.onDestroy()
     getComponents().forEach { it.reset() }
+    runnablesOnDestroy.forEach { it.run() }
     dead = true
   }
 
@@ -52,6 +54,7 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
       init()
       initialized = true
     }
+    runnablesOnSpawn.forEach { it.run() }
     dead = false
   }
 

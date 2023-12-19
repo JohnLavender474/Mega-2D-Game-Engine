@@ -1,6 +1,7 @@
 package com.engine.cullables
 
 import com.badlogic.gdx.utils.ObjectSet
+import com.engine.common.GameLogger
 import com.engine.events.Event
 import com.engine.events.IEventListener
 
@@ -15,15 +16,24 @@ class CullableOnEvent(
     override val eventKeyMask: ObjectSet<Any> = ObjectSet()
 ) : ICullable, IEventListener {
 
+  companion object {
+    const val TAG = "CullableOnEvent"
+  }
+
   private var cull: Boolean = false
 
   override fun shouldBeCulled() = cull
 
   override fun onEvent(event: Event) {
-    if (!cull && cullOnEvent(event)) cull = true
+    GameLogger.debug(TAG, "onEvent(): event = $event")
+    if (!cull && cullOnEvent(event)) {
+      GameLogger.debug(TAG, "Now culling on event = $event")
+      cull = true
+    }
   }
 
   override fun reset() {
+    GameLogger.debug(TAG, "Resetting CullableOnEvent")
     cull = false
   }
 }

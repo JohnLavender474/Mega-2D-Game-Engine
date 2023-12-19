@@ -18,10 +18,13 @@ import kotlin.reflect.KClass
  */
 interface IGameEntity : IPropertizable, Initializable, IPrintable {
 
-  /** The [IGame2D] this [GameEntity] belongs to. */
+  /** The [IGame2D] this [IGameEntity] belongs to. */
   val game: IGame2D
 
-  /** Runnable objects to run when this [GameEntity] is destroyed. */
+  /** Runnables to run when this [IGameEntity] is spawned. */
+  val runnablesOnSpawn: OrderedSet<Runnable>
+
+  /** Runnable to run when this [IGameEntity] is destroyed. */
   val runnablesOnDestroy: OrderedSet<Runnable>
 
   /**

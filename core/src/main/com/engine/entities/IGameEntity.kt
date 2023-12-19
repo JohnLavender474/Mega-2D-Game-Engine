@@ -50,6 +50,18 @@ interface IGameEntity : IPropertizable, Initializable, IPrintable {
    */
   fun spawn(spawnProps: Properties)
 
+  /**
+   * Kills this [IGameEntity] by setting [dead] to true. This entity should be removed by the game
+   * engine due to [dead] being true. The optional nullable [Properties] parameter can be used to
+   * pass data to the entity when it is killed; for example, the props could contain information
+   * about the cause of death for the entity.
+   *
+   * @param props The [Properties] to pass to the entity when it is killed.
+   */
+  fun kill(props: Properties? = null) {
+    dead = true
+  }
+
   /** Logic to run when this entity dies. */
   fun onDestroy() = runnablesOnDestroy.forEach { it.run() }
 

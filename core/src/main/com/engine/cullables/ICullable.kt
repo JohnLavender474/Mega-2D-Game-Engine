@@ -14,7 +14,7 @@ interface ICullable : Resettable {
    *
    * @return if this object should be culled.
    */
-  fun shouldBeCulled(): Boolean
+  fun shouldBeCulled(delta: Float): Boolean
 
   /** Optional reset method. */
   override fun reset() {}

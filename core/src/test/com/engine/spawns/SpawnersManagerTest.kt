@@ -21,7 +21,7 @@ class SpawnsManagerTest :
 
           override fun test(delta: Float) = test && !spawned
 
-          override fun shouldBeCulled() = cull
+          override fun shouldBeCulled(delta: Float) = cull
         }
 
         lateinit var spawners: Array<ISpawner>

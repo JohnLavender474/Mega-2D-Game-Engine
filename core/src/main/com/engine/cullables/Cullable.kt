@@ -7,11 +7,11 @@ package com.engine.cullables
  * @param resetFunction the function that resets this object
  */
 class Cullable(
-    private val shouldBeCulledFunction: () -> Boolean,
+    private val shouldBeCulledFunction: (Float) -> Boolean,
     private val resetFunction: () -> Unit
 ) : ICullable {
 
-  override fun shouldBeCulled() = shouldBeCulledFunction()
+  override fun shouldBeCulled(delta: Float) = shouldBeCulledFunction(delta)
 
   override fun reset() = resetFunction()
 }

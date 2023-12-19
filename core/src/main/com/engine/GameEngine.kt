@@ -2,8 +2,10 @@ package com.engine
 
 import com.badlogic.gdx.utils.OrderedSet
 import com.badlogic.gdx.utils.Queue
+import com.engine.common.CAUSE_OF_DEATH_MESSAGE
 import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
+import com.engine.common.objects.props
 import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
 
@@ -104,6 +106,7 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
         else {
           entities.forEach { e ->
             GameLogger.debug(TAG, "reset(): Destroying entity: ${e.print()}")
+            e.kill(props(CAUSE_OF_DEATH_MESSAGE to "GameEngine reset"))
             e.onDestroy()
           }
           entities.clear()

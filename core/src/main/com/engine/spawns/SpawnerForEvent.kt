@@ -10,7 +10,7 @@ class SpawnerForEvent(
     private val predicate: (Event) -> Boolean,
     private val spawnSupplier: () -> Spawn,
     override val eventKeyMask: ObjectSet<Any> = ObjectSet(),
-    shouldBeCulled: () -> Boolean = { false },
+    shouldBeCulled: (Float) -> Boolean = { false },
     onCull: () -> Unit = {},
 ) : Spawner(shouldBeCulled, onCull), IEventListener {
 

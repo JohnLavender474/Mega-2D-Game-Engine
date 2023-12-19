@@ -1,7 +1,9 @@
 package com.engine.cullables
 
 import com.engine.GameEngine
+import com.engine.common.CAUSE_OF_DEATH_MESSAGE
 import com.engine.common.objects.ImmutableCollection
+import com.engine.common.objects.props
 import com.engine.entities.GameEntity
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
@@ -21,9 +23,12 @@ class CullablesSystem : GameSystem(CullablesComponent::class) {
       if (entity.dead) return
 
       val cullables = entity.getComponent(CullablesComponent::class)?.cullables
-      val shouldBeCulled = cullables?.any { it.shouldBeCulled() }
-
-      if (shouldBeCulled == true) entity.dead = true
+      for (cullable in cullables ?: return) {
+        if (cullable.shouldBeCulled(delta)) {
+          entity.kill(props(CAUSE_OF_DEATH_MESSAGE to "Culled by cullable: $cullable"))
+          break
+        }
+      }
     }
   }
 }

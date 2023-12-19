@@ -22,7 +22,7 @@ class CullablesSystemTest :
 
             cullablesComponent.cullables.add(
               object : ICullable {
-                override fun shouldBeCulled() = shouldCull
+                override fun shouldBeCulled(delta: Float) = shouldCull
               })
             entity.addComponent(cullablesComponent)
 
@@ -42,7 +42,7 @@ class CullablesSystemTest :
             cullable shouldNotBe null
 
             if (cullable != null) {
-              val shouldCull = cullable.shouldBeCulled()
+              val shouldCull = cullable.shouldBeCulled(1f)
               entity.dead shouldBe shouldCull
             }
           }

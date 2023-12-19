@@ -4,7 +4,7 @@ import com.engine.common.GameLogger
 
 /** A [Spawner] is used to spawn an entity. */
 abstract class Spawner(
-    protected val shouldBeCulled: () -> Boolean = { false },
+    protected val shouldBeCulled: (Float) -> Boolean = { false },
     protected val onCull: () -> Unit = {}
 ) : ISpawner {
 
@@ -27,7 +27,7 @@ abstract class Spawner(
     return !spawned
   }
 
-  override fun shouldBeCulled() = shouldBeCulled.invoke()
+  override fun shouldBeCulled(delta: Float) = shouldBeCulled.invoke(delta)
 
   override fun reset() = onCull()
 }

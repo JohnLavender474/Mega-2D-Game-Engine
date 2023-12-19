@@ -26,7 +26,7 @@ interface ISpawner : UpdatePredicate, ICullable {
    *
    * @return true if the [Spawn] should be culled, otherwise false
    */
-  override fun shouldBeCulled() = false
+  override fun shouldBeCulled(delta: Float) = false
 
   /** Called when this spawner is culled. Optional. */
   override fun reset() {}

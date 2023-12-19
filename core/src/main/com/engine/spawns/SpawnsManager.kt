@@ -59,7 +59,7 @@ class SpawnsManager : Updatable, Resettable {
     while (iter.hasNext()) {
       val spawner = iter.next()
 
-      if (spawner.shouldBeCulled()) {
+      if (spawner.shouldBeCulled(delta)) {
         spawner.reset()
         iter.remove()
         GameLogger.debug(TAG, "update(): Culling spawner: $spawner")

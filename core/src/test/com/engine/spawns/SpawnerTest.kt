@@ -12,7 +12,7 @@ class SpawnerTest :
     DescribeSpec({
       lateinit var spawn: Spawn
       lateinit var spawnSupplier: () -> Spawn
-      lateinit var shouldBeCulledSupplier: () -> Boolean
+      lateinit var shouldBeCulledSupplier: (Float) -> Boolean
 
       beforeEach {
         clearAllMocks()

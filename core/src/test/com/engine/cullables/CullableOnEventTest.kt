@@ -16,16 +16,16 @@ class CullableOnEventTest :
           // Create a CullableOnEvent that should be culled on the specified event
           val cullableOnEvent = CullableOnEvent(cullOnEvent = { _event -> _event.key == eventKey })
 
-          cullableOnEvent.shouldBeCulled() shouldBe false
+          cullableOnEvent.shouldBeCulled(1f) shouldBe false
           cullableOnEvent.onEvent(event)
-          cullableOnEvent.shouldBeCulled() shouldBe true
+          cullableOnEvent.shouldBeCulled(1f) shouldBe true
 
           // Reset the CullableOnEvent and test again
           cullableOnEvent.reset()
 
-          cullableOnEvent.shouldBeCulled() shouldBe false
+          cullableOnEvent.shouldBeCulled(1f) shouldBe false
           cullableOnEvent.onEvent(event)
-          cullableOnEvent.shouldBeCulled() shouldBe true
+          cullableOnEvent.shouldBeCulled(1f) shouldBe true
         }
 
         it("should not be culled on different event") {
@@ -37,9 +37,9 @@ class CullableOnEventTest :
           val cullableOnEvent =
               CullableOnEvent(cullOnEvent = { _event -> _event.key == "differentEvent" })
 
-          cullableOnEvent.shouldBeCulled() shouldBe false
+          cullableOnEvent.shouldBeCulled(1f) shouldBe false
           cullableOnEvent.onEvent(event)
-          cullableOnEvent.shouldBeCulled() shouldBe false
+          cullableOnEvent.shouldBeCulled(1f) shouldBe false
         }
 
         it("should reset cullable state") {
@@ -50,10 +50,10 @@ class CullableOnEventTest :
           val cullableOnEvent = CullableOnEvent(cullOnEvent = { _event -> _event.key == eventKey })
 
           cullableOnEvent.onEvent(event)
-          cullableOnEvent.shouldBeCulled() shouldBe true
+          cullableOnEvent.shouldBeCulled(1f) shouldBe true
 
           cullableOnEvent.reset()
-          cullableOnEvent.shouldBeCulled() shouldBe false
+          cullableOnEvent.shouldBeCulled(1f) shouldBe false
         }
       }
     })

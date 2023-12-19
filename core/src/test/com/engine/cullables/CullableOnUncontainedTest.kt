@@ -11,30 +11,32 @@ class CullableOnUncontainedTest :
           var containable = "in"
 
           val cullableOnUncontained =
-              CullableOnUncontained({ container }) { containable in it }
+              CullableOnUncontained({ container }, { containable in it }, 0f)
 
-          cullableOnUncontained.shouldBeCulled() shouldBe false
+          cullableOnUncontained.shouldBeCulled(1f) shouldBe false
 
           // Update the container to contain the containable
           containable = "out"
-          cullableOnUncontained.shouldBeCulled() shouldBe true
+          cullableOnUncontained.shouldBeCulled(1f) shouldBe true
 
           // Reset the container to not contain the containable
           containable = "in"
-          cullableOnUncontained.shouldBeCulled() shouldBe false
+          cullableOnUncontained.reset()
+          cullableOnUncontained.shouldBeCulled(1f) shouldBe false
         }
 
         it("should not be culled when contained") {
           val container = "within"
           var containable = "in"
 
-          val cullableOnUncontained = CullableOnUncontained({ container }) { containable in it }
+          val cullableOnUncontained =
+              CullableOnUncontained({ container }, { containable in it }, 0f)
 
-          cullableOnUncontained.shouldBeCulled() shouldBe false
+          cullableOnUncontained.shouldBeCulled(1f) shouldBe false
 
           // Set the container to contain the containable
           containable = "within"
-          cullableOnUncontained.shouldBeCulled() shouldBe false
+          cullableOnUncontained.shouldBeCulled(1f) shouldBe false
         }
       }
     })

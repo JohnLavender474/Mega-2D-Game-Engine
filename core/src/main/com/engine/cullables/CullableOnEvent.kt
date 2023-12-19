@@ -22,7 +22,7 @@ class CullableOnEvent(
 
   private var cull: Boolean = false
 
-  override fun shouldBeCulled() = cull
+  override fun shouldBeCulled(delta: Float) = cull
 
   override fun onEvent(event: Event) {
     GameLogger.debug(TAG, "onEvent(): event = $event")
@@ -36,4 +36,6 @@ class CullableOnEvent(
     GameLogger.debug(TAG, "Resetting CullableOnEvent")
     cull = false
   }
+
+  override fun toString() = "CullableOnEvent"
 }

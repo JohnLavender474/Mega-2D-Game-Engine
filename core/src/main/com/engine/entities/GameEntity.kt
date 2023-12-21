@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedSet
 import com.engine.IGame2D
 import com.engine.common.CAUSE_OF_DEATH_MESSAGE
+import com.engine.common.CAUSE_OF_DEATH_TAG
 import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
@@ -28,15 +29,19 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
   override val properties = Properties()
   override var dead = false
 
+  /**
+   * Whether this [GameEntity] has been initialized. If this is false, then [init] will be called
+   * when [spawn] is called.
+   */
   var initialized = false
-    protected set
 
   override fun kill(props: Properties?) {
     super.kill(props)
     props?.let {
       if (it.containsKey(CAUSE_OF_DEATH_MESSAGE)) {
+        val tag = it.getOrDefault(CAUSE_OF_DEATH_TAG, TAG) as String
         GameLogger.debug(
-            TAG,
+            tag,
             "${this::class.simpleName} killed. Cause of death: ${it.get(CAUSE_OF_DEATH_MESSAGE)}")
       }
     }

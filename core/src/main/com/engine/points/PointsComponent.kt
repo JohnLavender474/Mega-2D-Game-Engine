@@ -9,8 +9,11 @@ import com.engine.entities.IGameEntity
  *
  * @param pointsMap The pointsMap.
  */
-class PointsComponent(override val entity: IGameEntity, val pointsMap: ObjectMap<Any, Points>) :
-    IGameComponent {
+class PointsComponent(
+    override val entity: IGameEntity,
+    val pointsMap: ObjectMap<Any, Points> = ObjectMap(),
+    val pointsListeners: ObjectMap<Any, (Points) -> Unit> = ObjectMap()
+) : IGameComponent {
 
   /**
    * The points component. Contains all the points for an entity.
@@ -78,4 +81,21 @@ class PointsComponent(override val entity: IGameEntity, val pointsMap: ObjectMap
    * @return The removed [Points].
    */
   fun removePoints(key: Any): Points? = pointsMap.remove(key)
+
+  /**
+   * Adds the given listener to the [Points] mapped to the given key.
+   *
+   * @param key The key of the [Points].
+   * @param listener the listener.
+   * @return The previous listener mapped to the given key if any.
+   */
+  fun putListener(key: Any, listener: (Points) -> Unit) = pointsListeners.put(key, listener)
+
+  /**
+   * Removes the listener mapped to the given key.
+   *
+   * @param key The key of the listener to remove.
+   * @return The removed listener.
+   */
+  fun removeListener(key: Any) = pointsListeners.remove(key)
 }

@@ -76,22 +76,6 @@ class GameSprite(
     super<Sprite>.setTexture(_texture)
   }
 
-  override fun translate(x: Float, y: Float) {
-    super<Sprite>.translate(x, y)
-  }
-
-  override fun setSize(width: Float, height: Float) {
-    super<Sprite>.setSize(width, height)
-  }
-
-  override fun setWidth(width: Float) {
-    super<Sprite>.setSize(width, height)
-  }
-
-  override fun setHeight(height: Float) {
-    super<Sprite>.setSize(width, height)
-  }
-
   override fun setFlip(flipX: Boolean, flipY: Boolean) {
     super<Sprite>.setFlip(flipX, flipY)
   }

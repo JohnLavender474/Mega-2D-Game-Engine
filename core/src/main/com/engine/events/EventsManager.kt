@@ -72,20 +72,27 @@ class EventsManager : IEventsManager {
    * per game loop.
    */
   override fun run() {
+    val _events = ObjectMap(events)
+    events.clear()
+
     listeners.forEach { listener ->
       val eventKeyMask = listener.eventKeyMask
 
       if (eventKeyMask.isEmpty) {
-        events.values().forEach { _events -> _events.forEach { listener.onEvent(it) } }
+        _events.values().forEach { _events -> _events.forEach {
+          GameLogger.debug(TAG, "run(): Notifying listener $listener of event: $it")
+          listener.onEvent(it) }
+        }
         return@forEach
       }
 
       val relevantEvents = Array<Iterable<Event>>()
-      eventKeyMask.forEach { key -> events.get(key)?.let { relevantEvents.add(it) } }
+      eventKeyMask.forEach { key -> _events.get(key)?.let { relevantEvents.add(it) } }
       val iterable = MultiCollectionIterable(relevantEvents)
-      iterable.forEach { listener.onEvent(it) }
+      iterable.forEach {
+        GameLogger.debug(TAG, "run(): Notifying listener $listener of event: $it")
+        listener.onEvent(it)
+      }
     }
-
-    events.clear()
   }
 }

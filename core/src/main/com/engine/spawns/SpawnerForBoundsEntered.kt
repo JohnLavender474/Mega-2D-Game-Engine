@@ -29,7 +29,7 @@ class SpawnerForBoundsEntered(
     isEntered = thisBounds().overlaps(otherBounds() as Rectangle)
     if (!wasEntered && isEntered) {
       spawn = spawnSupplier()
-      GameLogger.debug(TAG, "test(): Spawning entity: $spawn")
+      GameLogger.debug(TAG, "test(): Spawning: $spawn")
     }
 
     return spawned

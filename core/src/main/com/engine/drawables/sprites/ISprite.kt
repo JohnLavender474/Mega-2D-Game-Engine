@@ -3,12 +3,10 @@ package com.engine.drawables.sprites
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.engine.common.interfaces.IPositional
-import com.engine.common.interfaces.Sizable
 import com.engine.drawables.sorting.IComparableDrawable
 
 /** An interface for objects that can be sorted, positioned, sized, and drawn. */
-interface ISprite : IComparableDrawable<Batch>, IPositional, Sizable {
+interface ISprite : IComparableDrawable<Batch> {
 
   /** If true, this sprite will not be drawn. */
   var hidden: Boolean

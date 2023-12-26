@@ -28,4 +28,37 @@ interface IControllerPoller : Activatable, Runnable {
     val status = getButtonStatus(name)
     return status == ButtonStatus.PRESSED || status == ButtonStatus.JUST_PRESSED
   }
+
+  /**
+   * Returns if the button mapped to the given [name] is just pressed.
+   *
+   * @param name The name of the button to check.
+   * @return If the button mapped to the given [name] is just pressed.
+   */
+  fun isButtonJustPressed(name: String): Boolean {
+    val status = getButtonStatus(name)
+    return status == ButtonStatus.JUST_PRESSED
+  }
+
+  /**
+   * Returns if the button mapped to the given [name] is just released.
+   *
+   * @param name The name of the button to check.
+   * @return If the button mapped to the given [name] is just released.
+   */
+  fun isButtonJustReleased(name: String): Boolean {
+    val status = getButtonStatus(name)
+    return status == ButtonStatus.JUST_RELEASED
+  }
+
+  /**
+   * Returns if the button mapped to the given [name] is released.
+   *
+   * @param name The name of the button to check.
+   * @return If the button mapped to the given [name] is released.
+   */
+  fun isButtonReleased(name: String): Boolean {
+    val status = getButtonStatus(name)
+    return status == ButtonStatus.RELEASED || status == ButtonStatus.JUST_RELEASED
+  }
 }

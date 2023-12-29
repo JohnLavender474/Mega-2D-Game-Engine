@@ -70,6 +70,12 @@ class SpawnsManager : Updatable, Resettable {
         val spawn = spawner.get()
         GameLogger.debug(TAG, "update(): Spawning entity: $spawn")
         spawns.add(spawn)
+
+        if (!spawner.respawnable) {
+          spawner.reset()
+          iter.remove()
+          GameLogger.debug(TAG, "update(): Culling spawner due to not being respawnable: $spawner")
+        }
       }
     }
   }

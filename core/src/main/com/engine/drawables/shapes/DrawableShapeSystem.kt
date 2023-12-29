@@ -11,9 +11,11 @@ import com.engine.systems.GameSystem
  * update cycle.
  *
  * @param shapesArraySupplier The supplier that supplies the map of shapes
+ * @param debug Whether the debug shapes should be drawn when the game is in debug mode
  */
 open class DrawableShapeSystem(
-    private val shapesArraySupplier: () -> Array<IDrawableShape>
+    private val shapesArraySupplier: () -> Array<IDrawableShape>,
+    var debug: Boolean = false
 ) : GameSystem(DrawableShapeComponent::class) {
 
   /**
@@ -28,13 +30,15 @@ open class DrawableShapeSystem(
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
 
-    // collect the shapes
     val shapes = shapesArraySupplier()
 
     entities.forEach {
-      it.getComponent(DrawableShapeComponent::class)?.shapeSuppliers?.forEach { shape ->
-        shapes.add(shape())
-      }
+      val shapeComponent = it.getComponent(DrawableShapeComponent::class)!!
+
+      shapeComponent.prodShapeSuppliers.forEach { shape -> shapes.add(shape()) }
+
+      if (debug && shapeComponent.debug)
+          shapeComponent.debugShapeSuppliers.forEach { shape -> shapes.add(shape()) }
     }
   }
 }

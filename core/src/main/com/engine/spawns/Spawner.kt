@@ -5,7 +5,8 @@ import com.engine.common.GameLogger
 /** A [Spawner] is used to spawn an entity. */
 abstract class Spawner(
     protected val shouldBeCulled: (Float) -> Boolean = { false },
-    protected val onCull: () -> Unit = {}
+    protected val onCull: () -> Unit = {},
+    override var respawnable: Boolean = true
 ) : ISpawner {
 
   companion object {

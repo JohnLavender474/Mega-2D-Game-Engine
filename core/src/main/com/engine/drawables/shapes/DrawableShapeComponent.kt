@@ -10,11 +10,17 @@ import com.engine.entities.IGameEntity
  * [IDrawableShape]s that can be drawn.
  *
  * @param entity the [IGameEntity] that this [DrawableShapeComponent] belongs to
- * @param shapeSuppliers the [IDrawableShape]s that can be drawn
+ * @param prodShapeSuppliers the [IDrawableShape]s that should be drawn in the production release of
+ *   the game
+ * @param debugShapeSuppliers the [IDrawableShape]s that should be drawn in the debug release of the
+ *   game
+ * @param debug whether the debug shapes should be drawn when the game is in debug mode
  */
 class DrawableShapeComponent(
     override val entity: IGameEntity,
-    val shapeSuppliers: Array<() -> IDrawableShape>
+    val prodShapeSuppliers: Array<() -> IDrawableShape> = Array(),
+    val debugShapeSuppliers: Array<() -> IDrawableShape> = Array(),
+    val debug: Boolean = false
 ) : IGameComponent {
 
   /**

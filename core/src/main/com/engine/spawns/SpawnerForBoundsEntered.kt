@@ -13,8 +13,9 @@ class SpawnerForBoundsEntered(
     private val thisBounds: () -> GameRectangle,
     private val otherBounds: () -> GameRectangle,
     shouldBeCulled: (Float) -> Boolean = { false },
-    onCull: () -> Unit = {}
-) : Spawner(shouldBeCulled, onCull) {
+    onCull: () -> Unit = {},
+    respawnable: Boolean = true
+) : Spawner(shouldBeCulled, onCull, respawnable) {
 
   companion object {
     const val TAG = "SpawnerForBoundsEntered"

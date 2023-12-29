@@ -15,6 +15,11 @@ import com.engine.cullables.ICullable
 interface ISpawner : UpdatePredicate, ICullable {
 
   /**
+   * Returns true if this [ISpawner] should be considered again for spawning after the first spawn.
+   */
+  var respawnable: Boolean
+
+  /**
    * Gets the [Spawn] if the [test] method returns true.
    *
    * @return the [Spawn] if the [test] method returns true, or null otherwise.

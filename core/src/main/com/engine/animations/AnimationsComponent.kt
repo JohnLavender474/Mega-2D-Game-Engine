@@ -2,7 +2,6 @@ package com.engine.animations
 
 import com.badlogic.gdx.utils.Array
 import com.engine.common.GameLogger
-import com.engine.common.extensions.map
 import com.engine.components.IGameComponent
 import com.engine.drawables.sprites.ISprite
 import com.engine.entities.IGameEntity
@@ -12,7 +11,7 @@ import com.engine.entities.contracts.ISpriteEntity
  * A component that can be used to animate a sprite. The component is created with a map of
  * animations that are used to animate the sprite.
  *
- * @param animators the animators that are used to animate the sprite
+ * @param animators the animators that are used to animate the respective sprites
  */
 class AnimationsComponent(
     override val entity: IGameEntity,

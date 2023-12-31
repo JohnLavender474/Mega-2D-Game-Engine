@@ -12,6 +12,15 @@ enum class Position(val x: Int, val y: Int) {
   BOTTOM_CENTER(1, 0),
   BOTTOM_RIGHT(2, 0);
 
-  /** Returns the [Position] at the given [x] and [y] coordinates. */
-  fun get(x: Int, y: Int): Position? = Position.values().find { it.x == x && it.y == y }
+  companion object {
+
+    /**
+     * Returns the [Position] at the given [x] and [y] coordinates.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the [Position] at the given [x] and [y] coordinates
+     */
+    fun get(x: Int, y: Int): Position? = Position.values().find { it.x == x && it.y == y }
+  }
 }

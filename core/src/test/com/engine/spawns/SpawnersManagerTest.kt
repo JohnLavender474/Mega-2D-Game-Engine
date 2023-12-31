@@ -16,6 +16,7 @@ class SpawnsManagerTest :
           var test = false
           var cull = false
           var spawned = false
+          override var respawnable = true
 
           override fun get() = mockk<Spawn>()
 

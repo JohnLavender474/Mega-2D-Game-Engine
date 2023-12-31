@@ -3,9 +3,8 @@ package com.engine.drawables.sprites
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.objects.Matrix
-import com.engine.common.objects.Properties
-import com.engine.drawables.sorting.DrawingPriority
 import com.engine.drawables.IDrawable
+import com.engine.drawables.sorting.DrawingPriority
 
 /**
  * Convenience class for creating a [SpriteMatrix] with the specified parameters.
@@ -33,7 +32,7 @@ data class SpriteMatrixParams(
 /**
  * A matrix of sprites. The sprites are positioned in a grid. The number of rows and columns are
  * specified in the constructor. The sprites are copied from the model sprite. The sprites are
- * positioned in the grid starting from the top left corner.
+ * positioned in the grid starting from the bottom left corner.
  *
  * @param model The model sprite that the sprites are copied on.
  * @param modelWidth The width of the model sprite.
@@ -44,8 +43,8 @@ data class SpriteMatrixParams(
 class SpriteMatrix(
     model: TextureRegion,
     priority: DrawingPriority,
-    modelWidth: Float,
-    modelHeight: Float,
+    private val modelWidth: Float,
+    private val modelHeight: Float,
     rows: Int,
     columns: Int
 ) : IDrawable<Batch>, Matrix<ISprite>(rows, columns) {
@@ -55,6 +54,7 @@ class SpriteMatrix(
       for (y in 0 until rows) {
         val sprite = GameSprite(model, priority)
         sprite.setSize(modelWidth, modelHeight)
+        sprite.setPosition(x * modelWidth, y * modelHeight)
         this[x, y] = sprite
       }
     }
@@ -74,6 +74,21 @@ class SpriteMatrix(
       params.modelHeight,
       params.rows,
       params.columns)
+
+  /**
+   * Translates each sprite in the matrix.
+   *
+   * @param x The x coordinate to translate by.
+   * @param y The y coordinate to translate by.
+   */
+  fun translate(x: Float, y: Float) = forEach { _, _, sprite ->
+    (sprite as GameSprite).translate(x, y)
+  }
+
+  /** Resets the position of each sprite in the matrix. */
+  fun resetPositions() {
+    forEach { x, y, sprite -> (sprite as GameSprite).setPosition(x * modelWidth, y * modelHeight) }
+  }
 
   /**
    * Draws each sprite in the matrix.

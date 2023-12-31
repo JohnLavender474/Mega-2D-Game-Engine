@@ -27,8 +27,9 @@ class Animator(
 
   /**
    * Convenience constructor if only one animation is needed. Creates an animator with the specified
-   * animation. The animator is created with a default key supplier that always returns [DEFAULT_KEY].
-   * Also, the [animations] map is created with the [DEFAULT_KEY] and the specified animation.
+   * animation. The animator is created with a default key supplier that always returns
+   * [DEFAULT_KEY]. Also, the [animations] map is created with the [DEFAULT_KEY] and the specified
+   * animation.
    *
    * @param animation the animation to animate the sprite with
    */
@@ -56,5 +57,6 @@ class Animator(
 
   override fun reset() {
     currentKey = null
+    animations.values().forEach { it.reset() }
   }
 }

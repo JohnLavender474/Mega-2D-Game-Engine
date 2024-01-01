@@ -1,10 +1,10 @@
 package com.engine.common.shapes
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Color.*
+import com.badlogic.gdx.graphics.Color.RED
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.*
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.*
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
@@ -37,8 +37,10 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
   }
 
   override var color: Color = RED
-  override var thickness: Float = 1f
-  override var shapeType = Filled
+  override var shapeType = Line
+
+  /** Thickness of the rectangle lines when drawn. This is used only if [shapeType] is [Line]. */
+  var thickness: Float = 1f
 
   /**
    * Creates a new [GameRectangle] with the given first, second, width, and height.
@@ -357,8 +359,15 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
    * @param drawer The [ShapeRenderer] to use for drawing.
    */
   override fun draw(drawer: ShapeRenderer) {
+    drawer.set(shapeType)
     drawer.color = color
-    drawer.rect(x, y, width, height)
+    if (shapeType == Filled) drawer.rect(x, y, width, height)
+    else if (shapeType == Line) {
+      getAsLines().forEach {
+        val worldPoints = it.getWorldPoints()
+        drawer.rectLine(worldPoints.first, worldPoints.second, thickness)
+      }
+    }
   }
 
   /**

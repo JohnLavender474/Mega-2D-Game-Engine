@@ -88,6 +88,23 @@ class Animation : IAnimation {
     this.loop = loop
   }
 
+  /**
+   * Creates a new animation from the provided animation. If [reverse] is true, then the animation
+   * will be reversed.
+   *
+   * @param animation the animation to copy
+   * @param reverse whether to reverse the animation
+   */
+  constructor(animation: Animation, reverse: Boolean = false) {
+    this.animation = Array(animation.animation)
+    this.durations = Array(animation.durations)
+    loop = animation.loop
+    if (reverse) {
+      this.animation.reverse()
+      this.durations.reverse()
+    }
+  }
+
   override fun getCurrentRegion(): TextureRegion = animation[currentIndex]
 
   override fun isFinished() = !loop && elapsedTime >= getDuration()

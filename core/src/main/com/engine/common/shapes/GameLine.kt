@@ -3,7 +3,7 @@ package com.engine.common.shapes
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
@@ -39,9 +39,11 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
     }
   }
 
-  override var thickness: Float = 1f
   override var color: Color = Color.RED
-  override var shapeType: ShapeType = Filled
+  override var shapeType: ShapeType = Line
+
+  /** The thickness of this line when drawn. */
+  var thickness: Float = 1f
 
   private val position = Vector2()
   private val localPoint1 = Vector2()
@@ -324,7 +326,9 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
    */
   override fun draw(drawer: ShapeRenderer) {
     val (_worldPoint1, _worldPoint2) = getWorldPoints()
-    drawer.line(_worldPoint1, _worldPoint2)
+    drawer.color = color
+    drawer.set(shapeType)
+    drawer.rectLine(_worldPoint1, _worldPoint2, thickness)
   }
 
   /**

@@ -4,36 +4,36 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 
 /** An abstract class that represents a behavior. */
-abstract class IBehavior : Updatable, Resettable {
+abstract class AbstractBehavior : Updatable, Resettable {
 
   private var runningNow = false
 
   /**
-   * Returns whether this [IBehavior] is active.
+   * Returns whether this [AbstractBehavior] is active.
    *
-   * @return Whether this [IBehavior] is active.
+   * @return Whether this [AbstractBehavior] is active.
    */
   fun isActive() = runningNow
 
   /**
-   * Evaluates this [IBehavior] and returns whether it should be active.
+   * Evaluates this [AbstractBehavior] and returns whether it should be active.
    *
    * @param delta The time in seconds since the last frame.
-   * @return Whether this [IBehavior] should be active.
+   * @return Whether this [AbstractBehavior] should be active.
    */
   protected abstract fun evaluate(delta: Float): Boolean
 
-  /** Initializes this [IBehavior]. This is called when this [IBehavior] becomes active. */
+  /** Initializes this [AbstractBehavior]. This is called when this [AbstractBehavior] becomes active. */
   protected abstract fun init()
 
   /**
-   * Performs the action of this [IBehavior].
+   * Performs the action of this [AbstractBehavior].
    *
    * @param delta The time in seconds since the last frame.
    */
   protected abstract fun act(delta: Float)
 
-  /** Ends this [IBehavior]. This is called when this [IBehavior] becomes inactive. */
+  /** Ends this [AbstractBehavior]. This is called when this [AbstractBehavior] becomes inactive. */
   protected abstract fun end()
 
   override fun update(delta: Float) {

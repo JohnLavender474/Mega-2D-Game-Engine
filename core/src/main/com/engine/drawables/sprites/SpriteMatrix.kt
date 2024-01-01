@@ -31,8 +31,8 @@ data class SpriteMatrixParams(
 
 /**
  * A matrix of sprites. The sprites are positioned in a grid. The number of rows and columns are
- * specified in the constructor. The sprites are copied from the model sprite. The sprites are
- * positioned in the grid starting from the bottom left corner.
+ * specified in the constructor. The size of each sprite is initialilly defined by [modelWidth] and
+ * [modelHeight]. The sprites are positioned in the grid starting from the bottom left.
  *
  * @param model The model sprite that the sprites are copied on.
  * @param modelWidth The width of the model sprite.
@@ -43,8 +43,8 @@ data class SpriteMatrixParams(
 class SpriteMatrix(
     model: TextureRegion,
     priority: DrawingPriority,
-    private val modelWidth: Float,
-    private val modelHeight: Float,
+    var modelWidth: Float,
+    var modelHeight: Float,
     rows: Int,
     columns: Int
 ) : IDrawable<Batch>, Matrix<ISprite>(rows, columns) {
@@ -85,9 +85,18 @@ class SpriteMatrix(
     (sprite as GameSprite).translate(x, y)
   }
 
-  /** Resets the position of each sprite in the matrix. */
-  fun resetPositions() {
-    forEach { x, y, sprite -> (sprite as GameSprite).setPosition(x * modelWidth, y * modelHeight) }
+  /**
+   * Sets the position of the matrix. The position of the first sprite is set to the specified
+   * position. The position of the other sprites are set relative to the first sprite based on their
+   * x and y coordinates and also the model width and height.
+   *
+   * @param startX The x coordinate of the first sprite.
+   * @param startY The y coordinate of the first sprite.
+   */
+  fun setPosition(startX: Float, startY: Float) {
+    forEach { x, y, sprite ->
+      (sprite as GameSprite).setPosition(startX + (x * modelWidth), startY + (y * modelHeight))
+    }
   }
 
   /**

@@ -14,10 +14,10 @@ class SpriteSystemTest :
         lateinit var mockSprite1: GameSprite
         lateinit var mockSprite2: GameSprite
         lateinit var mockSprite3: GameSprite
-        lateinit var mockSpriteComponent: SpriteComponent
+        lateinit var mockSpritesComponent: SpritesComponent
         lateinit var entity: GameEntity
         lateinit var spritesQueue: TreeSet<ISprite>
-        lateinit var spriteSystem: SpriteSystem
+        lateinit var spritesSystem: SpritesSystem
 
         beforeEach {
           clearAllMocks()
@@ -30,31 +30,31 @@ class SpriteSystemTest :
           map.put("1", mockSprite1)
           map.put("2", mockSprite2)
           map.put("3", mockSprite3)
-          mockSpriteComponent = mockk {
+          mockSpritesComponent = mockk {
             every { sprites } returns map
             every { update(any()) } just Runs
           }
 
           entity = GameEntity(mockk())
-          entity.addComponent(mockSpriteComponent)
+          entity.addComponent(mockSpritesComponent)
           entity.dead = false
 
           spritesQueue = TreeSet()
-          spriteSystem = SpriteSystem(spritesQueue)
-          spriteSystem.on = true
-          spriteSystem.add(entity)
+          spritesSystem = SpritesSystem(spritesQueue)
+          spritesSystem.on = true
+          spritesSystem.add(entity)
         }
 
         it("should collect the sprites") {
-          spriteSystem.update(1f)
+          spritesSystem.update(1f)
           spritesQueue shouldContain mockSprite1
           spritesQueue shouldContain mockSprite2
           spritesQueue shouldContain mockSprite3
         }
 
         it("should not collect the sprites") {
-          spriteSystem.on = false
-          spriteSystem.update(1f)
+          spritesSystem.on = false
+          spritesSystem.update(1f)
           spritesQueue shouldNotContain mockSprite1
           spritesQueue shouldNotContain mockSprite2
           spritesQueue shouldNotContain mockSprite3

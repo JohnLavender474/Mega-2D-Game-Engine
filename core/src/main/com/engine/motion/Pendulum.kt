@@ -35,8 +35,8 @@ class Pendulum(
    */
   fun getPointFromAnchor(distance: Float): Vector2 {
     val point = Vector2()
-    point.x = (anchor.x + sin(angle) * distance)
-    point.y = (anchor.y + cos(angle) * distance)
+    point.x = anchor.x + sin(angle) * distance
+    point.y = anchor.y + cos(angle) * distance
     return point
   }
 

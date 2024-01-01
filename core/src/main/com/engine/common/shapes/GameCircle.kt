@@ -2,6 +2,8 @@ package com.engine.common.shapes
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
@@ -36,8 +38,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
   val libGdxCircle: Circle
 
   override var color: Color = Color.RED
-  override var thickness: Float = 1f
-  override var shapeType: ShapeRenderer.ShapeType = ShapeRenderer.ShapeType.Filled
+  override var shapeType: ShapeType = Line
 
   init {
     libGdxCircle = Circle(x, y, radius)

@@ -6,17 +6,17 @@ import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
 
 /**
- * A [DrawableShapeComponent] is a [IGameComponent] that contains an of suppliers for
+ * A [DrawableShapesComponent] is a [IGameComponent] that contains an of suppliers for
  * [IDrawableShape]s that can be drawn.
  *
- * @param entity the [IGameEntity] that this [DrawableShapeComponent] belongs to
+ * @param entity the [IGameEntity] that this [DrawableShapesComponent] belongs to
  * @param prodShapeSuppliers the [IDrawableShape]s that should be drawn in the production release of
  *   the game
  * @param debugShapeSuppliers the [IDrawableShape]s that should be drawn in the debug release of the
  *   game
  * @param debug whether the debug shapes should be drawn when the game is in debug mode
  */
-class DrawableShapeComponent(
+class DrawableShapesComponent(
     override val entity: IGameEntity,
     val prodShapeSuppliers: Array<() -> IDrawableShape> = Array(),
     val debugShapeSuppliers: Array<() -> IDrawableShape> = Array(),
@@ -24,9 +24,9 @@ class DrawableShapeComponent(
 ) : IGameComponent {
 
   /**
-   * Creates a [DrawableShapeComponent] with the given [IDrawableShape] suppliers.
+   * Creates a [DrawableShapesComponent] with the given [IDrawableShape] suppliers.
    *
-   * @param entity the [IGameEntity] that this [DrawableShapeComponent] belongs to
+   * @param entity the [IGameEntity] that this [DrawableShapesComponent] belongs to
    * @param shapeSuppliers the suppliers for [IDrawableShape]s that can be drawn
    */
   constructor(
@@ -35,9 +35,9 @@ class DrawableShapeComponent(
   ) : this(entity, Array(shapeSuppliers))
 
   /**
-   * Creates a [DrawableShapeComponent] with the given [IDrawableShape]s.
+   * Creates a [DrawableShapesComponent] with the given [IDrawableShape]s.
    *
-   * @param entity the [IGameEntity] that this [DrawableShapeComponent] belongs to
+   * @param entity the [IGameEntity] that this [DrawableShapesComponent] belongs to
    * @param shapes the [IDrawableShape]s that can be drawn
    */
   constructor(

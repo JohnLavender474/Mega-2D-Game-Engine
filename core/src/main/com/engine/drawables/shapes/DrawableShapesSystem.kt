@@ -1,6 +1,5 @@
 package com.engine.drawables.shapes
 
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
@@ -13,19 +12,19 @@ import com.engine.systems.GameSystem
  * @param shapesArraySupplier The supplier that supplies the map of shapes
  * @param debug Whether the debug shapes should be drawn when the game is in debug mode
  */
-open class DrawableShapeSystem(
-    private val shapesArraySupplier: () -> Array<IDrawableShape>,
+open class DrawableShapesSystem(
+    private val shapesArraySupplier: () -> MutableCollection<IDrawableShape>,
     var debug: Boolean = false
-) : GameSystem(DrawableShapeComponent::class) {
+) : GameSystem(DrawableShapesComponent::class) {
 
   /**
-   * Creates a [DrawableShapeSystem] where the provided [OrderedMap] is used to store the shapes to
+   * Creates a [DrawableShapesSystem] where the provided [OrderedMap] is used to store the shapes to
    * be drawn.
    *
    * @param shapesArray The [OrderedMap] to store the shapes to be drawn
-   * @see [DrawableShapeSystem]
+   * @see [DrawableShapesSystem]
    */
-  constructor(shapesArray: Array<IDrawableShape>) : this({ shapesArray })
+  constructor(shapesArray: MutableCollection<IDrawableShape>) : this({ shapesArray })
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
@@ -33,7 +32,7 @@ open class DrawableShapeSystem(
     val shapes = shapesArraySupplier()
 
     entities.forEach {
-      val shapeComponent = it.getComponent(DrawableShapeComponent::class)!!
+      val shapeComponent = it.getComponent(DrawableShapesComponent::class)!!
 
       shapeComponent.prodShapeSuppliers.forEach { shape -> shapes.add(shape()) }
 

@@ -10,11 +10,11 @@ import com.engine.systems.GameSystem
  *
  * @param spritesCollectionSupplier the supplier that supplies the collection of sprites
  */
-open class SpriteSystem(private val spritesCollectionSupplier: () -> MutableCollection<ISprite>) :
-    GameSystem(SpriteComponent::class) {
+open class SpritesSystem(private val spritesCollectionSupplier: () -> MutableCollection<ISprite>) :
+    GameSystem(SpritesComponent::class) {
 
   /**
-   * Creates a [SpriteSystem] where the provided [MutableCollection] is used to store the sprites to
+   * Creates a [SpritesSystem] where the provided [MutableCollection] is used to store the sprites to
    * be rendered.
    *
    * @param sprites the collection to store the sprites to be rendered
@@ -27,9 +27,9 @@ open class SpriteSystem(private val spritesCollectionSupplier: () -> MutableColl
     // collect the sprites into the supplied set
     val sprites = spritesCollectionSupplier()
     entities.forEach { entity ->
-      val spriteComponent = entity.getComponent(SpriteComponent::class)
-      spriteComponent?.update(delta)
-      spriteComponent?.sprites?.values()?.forEach { sprite -> sprites.add(sprite) }
+      val spritesComponent = entity.getComponent(SpritesComponent::class)
+      spritesComponent?.update(delta)
+      spritesComponent?.sprites?.values()?.forEach { sprite -> sprites.add(sprite) }
     }
   }
 }

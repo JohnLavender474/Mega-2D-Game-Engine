@@ -11,6 +11,5 @@ import com.engine.drawables.IDrawable
  */
 interface IDrawableShape : IDrawable<ShapeRenderer> {
   var color: Color
-  var thickness: Float
   var shapeType: ShapeRenderer.ShapeType
 }

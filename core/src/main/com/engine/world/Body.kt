@@ -36,7 +36,7 @@ import com.engine.common.shapes.GameRectangle
  * @see WorldSystem
  * @see Resettable
  */
-open class Body(
+class Body(
     var bodyType: BodyType,
     x: Float = 0f,
     y: Float = 0f,
@@ -115,11 +115,6 @@ open class Body(
     }
   }
 
-  /**
-   * Creates a copy of this [Body].
-   *
-   * @return A copy of this [Body].
-   */
   override fun copy(): Body {
     val body =
         Body(
@@ -140,9 +135,4 @@ open class Body(
   override fun equals(other: Any?) = this === other
 
   override fun hashCode() = System.identityHashCode(this)
-
-  override fun toString() =
-      "Body(x=$x y=$y width=$width height=$height hashCode=${hashCode()} bodyType=$bodyType, " +
-          "physics=$physics, fixtures=$fixtures, properties=$properties, preProcess=$preProcess, " +
-          "postProcess=$postProcess, previousBounds=$previousBounds)"
 }

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.engine.common.GameLogger
@@ -30,14 +29,10 @@ abstract class Game2D : IGame2D, Game() {
   }
 
   override lateinit var batch: SpriteBatch
-  override lateinit var shapeRenderer: ShapeRenderer
-
   override lateinit var buttons: Buttons
   override lateinit var controllerPoller: IControllerPoller
-
   override lateinit var assMan: AssetManager
   override lateinit var eventsMan: IEventsManager
-
   override lateinit var gameEngine: IGameEngine
 
   override var paused = false
@@ -112,17 +107,12 @@ abstract class Game2D : IGame2D, Game() {
    */
   override fun create() {
     GameLogger.debug(TAG, "create()")
-
     batch = SpriteBatch()
-    shapeRenderer = ShapeRenderer()
-
     buttons = createButtons()
     controllerPoller = ControllerPoller(buttons)
-
     assMan = AssetManager()
     loadAssets(assMan)
     assMan.finishLoading()
-
     eventsMan = EventsManager()
     gameEngine = createGameEngine()
   }

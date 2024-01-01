@@ -5,8 +5,8 @@ import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /**
- * A [GameSystem] that processes [BehaviorsComponent]s. Each [IBehavior] is updated, and after each
- * one is updated, then [BehaviorsComponent.setActive] is called for each [IBehavior]. The array of
+ * A [GameSystem] that processes [BehaviorsComponent]s. Each [AbstractBehavior] is updated, and after each
+ * one is updated, then [BehaviorsComponent.setActive] is called for each [AbstractBehavior]. The array of
  * behaviors in the [BehaviorsComponent] should be in the order wished to be updated. For example,
  * let's say you have two behaviors jump and swim, and you want to update jump first and not allow
  * the entity to swim if he/she is jumping. Then you would add jump to the array first and then

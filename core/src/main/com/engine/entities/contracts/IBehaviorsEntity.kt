@@ -1,11 +1,11 @@
 package com.engine.entities.contracts
 
 import com.engine.behaviors.BehaviorsComponent
-import com.engine.behaviors.IBehavior
+import com.engine.behaviors.AbstractBehavior
 import com.engine.entities.IGameEntity
 
 /**
- * An interface for [IGameEntity]s that have [IBehavior]s.
+ * An interface for [IGameEntity]s that have [AbstractBehavior]s.
  *
  * @see [com.engine.behaviors.BehaviorsComponent]
  */
@@ -19,10 +19,10 @@ interface IBehaviorsEntity : IGameEntity {
   fun getBehaviorsComponent() = getComponent(BehaviorsComponent::class)
 
   /**
-   * Returns if the [IBehavior] with the given [key] is active.
+   * Returns if the [AbstractBehavior] with the given [key] is active.
    *
-   * @param key The key of the [IBehavior] to check.
-   * @return If the [IBehavior] with the given [key] is active.
+   * @param key The key of the [AbstractBehavior] to check.
+   * @return If the [AbstractBehavior] with the given [key] is active.
    */
   fun isBehaviorActive(key: Any) = getBehaviorsComponent()?.isBehaviorActive(key) ?: false
 
@@ -30,10 +30,10 @@ interface IBehaviorsEntity : IGameEntity {
   fun isAnyBehaviorActive(vararg keys: Any) = isAnyBehaviorActive(keys.asIterable())
 
   /**
-   * Returns if any of the [IBehavior]s with the given [keys] are active.
+   * Returns if any of the [AbstractBehavior]s with the given [keys] are active.
    *
-   * @param keys The keys of the [IBehavior]s to check.
-   * @return If any of the [IBehavior]s with the given [keys] are active.
+   * @param keys The keys of the [AbstractBehavior]s to check.
+   * @return If any of the [AbstractBehavior]s with the given [keys] are active.
    */
   fun isAnyBehaviorActive(keys: Iterable<Any>) = keys.any { isBehaviorActive(it) }
 
@@ -41,10 +41,10 @@ interface IBehaviorsEntity : IGameEntity {
   fun areAllBehaviorsActive(vararg keys: Any) = areAllBehaviorsActive(keys.asIterable())
 
   /**
-   * Returns if all of the [IBehavior]s with the given [keys] are active.
+   * Returns if all of the [AbstractBehavior]s with the given [keys] are active.
    *
-   * @param keys The keys of the [IBehavior]s to check.
-   * @return If all of the [IBehavior]s with the given [keys] are active.
+   * @param keys The keys of the [AbstractBehavior]s to check.
+   * @return If all of the [AbstractBehavior]s with the given [keys] are active.
    */
   fun areAllBehaviorsActive(keys: Iterable<Any>) = keys.all { isBehaviorActive(it) }
 }

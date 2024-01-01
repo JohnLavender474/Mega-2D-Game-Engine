@@ -12,16 +12,16 @@ import com.engine.entities.IGameEntity
  *
  * @param sprites The sprites.
  */
-class SpriteComponent(override val entity: IGameEntity, var sprites: OrderedMap<String, ISprite>) :
+class SpritesComponent(override val entity: IGameEntity, var sprites: OrderedMap<String, ISprite>) :
     IGameComponent, Updatable {
 
   internal val updatables = ObjectMap<String, UpdateFunction<ISprite>>()
 
   /**
-   * Creates a [SpriteComponent] with the given [sprites].
+   * Creates a [SpritesComponent] with the given [sprites].
    *
-   * @param entity The entity that this [SpriteComponent] belongs to.
-   * @param _sprites The sprites to add to this [SpriteComponent].
+   * @param entity The entity that this [SpritesComponent] belongs to.
+   * @param _sprites The sprites to add to this [SpritesComponent].
    */
   constructor(
       entity: IGameEntity,
@@ -30,7 +30,7 @@ class SpriteComponent(override val entity: IGameEntity, var sprites: OrderedMap<
       entity, OrderedMap<String, ISprite>().apply { _sprites.forEach { put(it.first, it.second) } })
 
   /**
-   * Updates the sprites in this [SpriteComponent] using the corresponding update functions. If no
+   * Updates the sprites in this [SpritesComponent] using the corresponding update functions. If no
    * update function is found for a sprite, it will not be updated.
    *
    * @param delta The time in seconds since the last update.
@@ -44,7 +44,7 @@ class SpriteComponent(override val entity: IGameEntity, var sprites: OrderedMap<
   }
 
   /**
-   * Puts the given [function] into this [SpriteComponent] with the given [key].
+   * Puts the given [function] into this [SpritesComponent] with the given [key].
    *
    * @param key The key.
    * @param function The function.
@@ -54,7 +54,7 @@ class SpriteComponent(override val entity: IGameEntity, var sprites: OrderedMap<
   }
 
   /**
-   * Removes the [UpdateFunction] with the given [key] from this [SpriteComponent].
+   * Removes the [UpdateFunction] with the given [key] from this [SpritesComponent].
    *
    * @param key The key.
    */

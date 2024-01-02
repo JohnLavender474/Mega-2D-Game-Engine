@@ -278,6 +278,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
    * @param drawer The [ShapeRenderer] to use to draw this shape.
    */
   override fun draw(drawer: ShapeRenderer) {
+    drawer.set(shapeType)
     drawer.color = color
     drawer.circle(libGdxCircle.x, libGdxCircle.y, libGdxCircle.radius)
   }

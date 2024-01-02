@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.engine.common.enums.Direction
+import com.engine.common.shapes.ShapeUtils
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.engine.common.GameLogger
@@ -28,6 +29,7 @@ abstract class Game2D : IGame2D, Game() {
     const val TAG = "Game2D"
   }
 
+  override lateinit var shapeRenderer: ShapeRenderer
   override lateinit var batch: SpriteBatch
   override lateinit var buttons: Buttons
   override lateinit var controllerPoller: IControllerPoller
@@ -101,12 +103,14 @@ abstract class Game2D : IGame2D, Game() {
   }
 
   /**
-   * Initializes the sprite batch, the shape renderer, the buttons, the controller poller, the asset
-   * manager, the audio manager, the events manager, and the game engine. Also calls [loadAssets] to
-   * load assets into the asset manager.
+   * Initializes the sprite batch, the shape renderer (with auto shape type set to true), the
+   * buttons, the controller poller, the asset manager, the audio manager, the events manager, and
+   * the game engine. Also calls [loadAssets] to load assets into the asset manager.
    */
   override fun create() {
     GameLogger.debug(TAG, "create()")
+    shapeRenderer = ShapeRenderer()
+    shapeRenderer.setAutoShapeType(true)
     batch = SpriteBatch()
     buttons = createButtons()
     controllerPoller = ControllerPoller(buttons)

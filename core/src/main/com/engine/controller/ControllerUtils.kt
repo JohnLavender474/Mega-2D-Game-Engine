@@ -3,6 +3,9 @@ package com.engine.controller
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.Controllers
+import com.engine.common.GameLogger
+
+const val CONTROLLER_UTILS_TAG = "ControllerUtils"
 
 /** Utility class for controllers. */
 object ControllerUtils {
@@ -38,7 +41,15 @@ object ControllerUtils {
    * @param index The index of the controller.
    * @return The controller with the specified index.
    */
-  fun getController(index: Int): Controller? = Controllers.getControllers().get(index)
+  fun getController(index: Int): Controller? =
+      try {
+        Controllers.getControllers().get(index)
+      } catch (e: Exception) {
+        GameLogger.error(
+            CONTROLLER_UTILS_TAG,
+            "Controller with index $index could not be fetched due to exception: $e")
+        null
+      }
 
   /**
    * Checks if the controller with the specified index is connected.

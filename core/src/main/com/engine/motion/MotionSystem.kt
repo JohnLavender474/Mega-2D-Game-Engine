@@ -16,7 +16,7 @@ class MotionSystem : GameSystem(MotionComponent::class) {
         motionComponent.motions.values().forEach { definition ->
           definition.motion.update(delta)
           val value = definition.motion.getMotionValue()
-          if (value != null) definition.function(value)
+          if (value != null) definition.function(value, delta)
         }
       }
     }

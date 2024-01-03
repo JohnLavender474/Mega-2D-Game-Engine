@@ -73,7 +73,7 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
 
   override fun hasComponent(c: KClass<out IGameComponent>) = componentMap.containsKey(c)
 
-  override fun removeComponent(c: KClass<out IGameComponent>): IGameComponent =
+  override fun removeComponent(c: KClass<out IGameComponent>): IGameComponent? =
       componentMap.remove(c)
 
   override fun clearComponents() = componentMap.clear()

@@ -20,7 +20,8 @@ class MotionComponent(override val entity: IGameEntity) : IGameComponent {
    * @param motion the [IMotion]
    * @param function the function
    */
-  data class MotionDefinition(val motion: IMotion, val function: (Vector2) -> Unit) : Resettable {
+  data class MotionDefinition(val motion: IMotion, val function: (Vector2, Float) -> Unit) :
+      Resettable {
     override fun reset() = motion.reset()
   }
 

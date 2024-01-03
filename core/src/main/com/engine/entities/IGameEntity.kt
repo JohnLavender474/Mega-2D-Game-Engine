@@ -102,7 +102,7 @@ interface IGameEntity : IPropertizable, Initializable, IPrintable {
    * @param c The [KClass] of the [IGameComponent] to remove.
    * @return The [IGameComponent] that was removed.
    */
-  fun removeComponent(c: KClass<out IGameComponent>): IGameComponent
+  fun removeComponent(c: KClass<out IGameComponent>): IGameComponent?
 
   /** Clears all the [IGameComponent]s from this [IGameEntity]. */
   fun clearComponents()

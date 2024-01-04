@@ -18,8 +18,8 @@ import com.engine.common.shapes.GameRectangle
  *   are not null, false otherwise.
  */
 data class PathfinderResult(
-    val graphPath: Array<IntPair>?,
-    val worldPath: Array<GameRectangle>?,
+    val graphPath: ArrayList<IntPair>?,
+    val worldPath: ArrayList<GameRectangle>?,
     val targetAlreadyReached: Boolean,
     override val properties: Properties = Properties()
 ) : IPropertizable

@@ -98,7 +98,7 @@ class SimpleNodeGraphMapTest :
           for (x in 0 until width) {
             for (y in 0 until height) {
               val cellObjects = graphMap.get(x, y)
-              cellObjects.isEmpty shouldBe true
+              cellObjects.isEmpty() shouldBe true
             }
           }
         }

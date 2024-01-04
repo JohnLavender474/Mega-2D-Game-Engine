@@ -1,7 +1,5 @@
 package com.engine.pathfinding
 
-import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.GameLogger
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
@@ -74,7 +72,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
    */
   override fun call(): PathfinderResult {
     // A map that maps coordinates to nodes
-    val map = ObjectMap<IntPair, Node>()
+    val map = HashMap<IntPair, Node>()
 
     // Convert the start and target pointsMap to graph coordinates
     val targetCoordinate = graph.convertToGraphCoordinate(params.targetSupplier())
@@ -98,7 +96,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
 
     // Add the start node to the map
     val startNode = Node(startCoordinate, graph.ppm)
-    map.put(startCoordinate, startNode)
+    map[startCoordinate] = startNode
 
     // When a node is added, it is sorted based on its distance from all others
     val open = PriorityQueue<Node>()
@@ -112,7 +110,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
 
       // If the current node is the target node, return the result
       if (currentNode.coordinate == targetCoordinate) {
-        val graphPath = Array<IntPair>()
+        val graphPath = ArrayList<IntPair>()
 
         var node = currentNode
         while (node != null) {
@@ -124,7 +122,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
         graphPath.reverse()
 
         // Convert the graphPath to world coordinates
-        val worldPath = Array<GameRectangle>()
+        val worldPath = ArrayList<GameRectangle>()
         graphPath.forEach { worldPath.add(graph.convertToWorldNode(it)) }
 
         GameLogger.debug(TAG, "Found graph path: $graphPath")
@@ -133,12 +131,9 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
 
       // Get the coordinates of the current node
       val currentCoordinate = currentNode.coordinate
-      // println("Current coordinate: $currentCoordinate")
 
       val min = currentCoordinate - 1
       val max = currentCoordinate + 1
-      // println("Min: $min")
-      // println("Max: $max")
 
       // For each adjacent node
       for (x in min.first..max.first) {
@@ -155,7 +150,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
 
           // Get the adjacent node
           val neighborCoordinate = IntPair(x, y)
-          var neighbor = map.get(neighborCoordinate)
+          var neighbor = map[neighborCoordinate]
 
           // If the adjacent node has already been discovered, skip it
           if (neighbor?.discovered == true) continue
@@ -173,7 +168,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
           // accordingly
           if (neighbor == null) {
             neighbor = Node(neighborCoordinate, graph.ppm)
-            map.put(neighborCoordinate, neighbor)
+            map[neighborCoordinate] = neighbor
 
             neighbor.distance = totalDistance
             neighbor.previous = currentNode

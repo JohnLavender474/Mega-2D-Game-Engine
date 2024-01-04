@@ -23,9 +23,11 @@ class Pendulum(
   private var angleVel = 0f
   private var angleAccel = 0f
   private var accumulator = 0f
-  private var angle = PI / 2f
 
   private val endPoint = Vector2()
+
+  var angle = PI / 2f
+    private set
 
   /**
    * Computes a point at a specified distance from the anchor point on the pendulum.

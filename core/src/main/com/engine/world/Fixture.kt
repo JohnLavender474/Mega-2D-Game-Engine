@@ -14,7 +14,9 @@ import com.engine.common.shapes.IGameShape2DSupplier
  * @param shape The shape of this fixture.
  * @param fixtureLabel The label for this fixture. Used to determine how this fixture interacts with
  *   other fixtures. It can be anything (String, Int, Enum, etc.) so long as it properly implements
- *   [Any.equals] and [Any.hashCode].
+ *   [Any.equals] and [Any.hashCode] such that any two fixtures with the same label are considered
+ *   equal (in terms of labeling and contact interaction) and any two fixtures with different labels
+ *   are considered not equal (again in terms of labeling and contact interaction).
  * @param active Whether this fixture is active. If not active, this fixture will not be used to
  *   detect collisions.
  * @param attachedToBody Whether this fixture is attached to a body. If not attached to a body, this
@@ -51,11 +53,6 @@ class Fixture(
    */
   fun overlaps(other: Fixture) = overlaps(other.shape)
 
-  /**
-   * Creates a copy of this [Fixture].
-   *
-   * @return A copy of this [Fixture].
-   */
   override fun copy() =
       Fixture(
           shape.copy() as IGameShape2D,

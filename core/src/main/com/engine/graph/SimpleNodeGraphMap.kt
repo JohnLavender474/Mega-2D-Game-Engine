@@ -1,10 +1,9 @@
 package com.engine.graph
 
-import com.badlogic.gdx.utils.ObjectMap
-import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.pairTo
 import com.engine.common.shapes.IGameShape2D
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.floor
 
 /**
@@ -26,7 +25,7 @@ class SimpleNodeGraphMap(
     override val ppm: Int
 ) : IGraphMap {
 
-  private val map = ObjectMap<IntPair, OrderedSet<Any>>()
+  private val map = ConcurrentHashMap<IntPair, HashSet<Any>>()
 
   override fun add(obj: Any, shape: IGameShape2D): Boolean {
     val bounds = shape.getBoundingRectangle()
@@ -37,18 +36,18 @@ class SimpleNodeGraphMap(
     val maxY = floor(bounds.getMaxY() / ppm).toInt()
 
     for (column in minX..maxX) for (row in minY..maxY) {
-      val set = map.get(column pairTo row) ?: OrderedSet()
+      val set = map[column pairTo row] ?: HashSet()
       set.add(obj)
-      map.put(column pairTo row, set)
+      map[column pairTo row] = set
     }
 
     return true
   }
 
-  override fun get(x: Int, y: Int) = map.get(x pairTo y) ?: OrderedSet()
+  override fun get(x: Int, y: Int) = map[x pairTo y] ?: HashSet()
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): OrderedSet<Any> {
-    val set = OrderedSet<Any>()
+  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): HashSet<Any> {
+    val set = HashSet<Any>()
     for (column in minX..maxX) for (row in minY..maxY) set.addAll(get(column, row))
     return set
   }

@@ -34,4 +34,18 @@ interface IMotionEntity : IGameEntity {
    */
   fun putMotion(key: Any, definition: MotionComponent.MotionDefinition) =
       getMotionComponent()!!.put(key, definition)
+
+  /**
+   * Removes a [IMotion] from this entity.
+   *
+   * @param key the key to remove
+   * @return the [IMotion] that was removed, or null
+   */
+  fun removeMotion(key: Any) = getMotionComponent()!!.motions.remove(key)
+
+  /** Clears all motions from this entity. */
+  fun clearMotions() = getMotionComponent()!!.motions.clear()
+
+  /** Resets the motions in this entity. */
+  fun resetMotionComponent() = getMotionComponent()!!.reset()
 }

@@ -306,10 +306,10 @@ class Array2D<T>(val rows: Int, val columns: Int) {
   operator fun set(rowIndex: Int, columnIndex: Int, element: T?): T? {
     // Indexes must be within bounds
     if (isRowOutOfBounds(rowIndex)) {
-      throw IndexOutOfBoundsException("Row index $rowIndex is out of bounds")
+      throw IndexOutOfBoundsException("Row index $rowIndex is out of shape")
     }
     if (isColumnOutOfBounds(columnIndex)) {
-      throw IndexOutOfBoundsException("Column index $columnIndex is out of bounds")
+      throw IndexOutOfBoundsException("Column index $columnIndex is out of shape")
     }
 
     // Convert row and column index to index pair
@@ -349,10 +349,10 @@ class Array2D<T>(val rows: Int, val columns: Int) {
   operator fun get(rowIndex: Int, columnIndex: Int): T? {
     // Indexes must be within bounds
     if (isRowOutOfBounds(rowIndex)) {
-      throw IndexOutOfBoundsException("Row index $rowIndex is out of bounds")
+      throw IndexOutOfBoundsException("Row index $rowIndex is out of shape")
     }
     if (isColumnOutOfBounds(columnIndex)) {
-      throw IndexOutOfBoundsException("Column index $columnIndex is out of bounds")
+      throw IndexOutOfBoundsException("Column index $columnIndex is out of shape")
     }
 
     return array2DMap[rowIndex pairTo columnIndex]

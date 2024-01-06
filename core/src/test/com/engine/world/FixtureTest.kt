@@ -1,25 +1,22 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.shapes.IGameShape2D
+import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 
 class FixtureTest :
     DescribeSpec({
       describe("Fixture class") {
-        val mockShape = mockk<IGameShape2D>()
+        val shape = GameRectangle(0f, 0f, 10f, 10f)
         val fixtureLabel = "type"
         val offset = Vector2(5f, 5f)
+        val body = Body(BodyType.DYNAMIC)
 
-        val fixture =
-            Fixture(mockShape, fixtureLabel, offsetFromBodyCenter = offset)
+        val fixture = Fixture(shape, fixtureLabel, offsetFromBodyCenter = offset)
 
         it("should have the correct initial properties") {
-          fixture.shape shouldBe mockShape
+          fixture.shape shouldBe shape
           fixture.fixtureLabel shouldBe fixtureLabel
           fixture.active shouldBe true
           fixture.attachedToBody shouldBe true
@@ -27,17 +24,15 @@ class FixtureTest :
         }
 
         it("should overlap with another fixture") {
-          every { mockShape.overlaps(any()) } returns true
-          val otherFixture = Fixture(mockShape, "otherType")
+          fixture.setBodyRelativeShape(body)
+          val otherFixture = Fixture(shape, "otherType")
+          otherFixture.setBodyRelativeShape(body)
           fixture.overlaps(otherFixture) shouldBe true
-          verify { mockShape.overlaps(fixture.shape) }
         }
 
         it("should overlap with a shape") {
-          val otherShape = mockk<IGameShape2D>()
-          every { mockShape.overlaps(any()) } returns true
-          fixture.overlaps(otherShape) shouldBe true
-          verify { mockShape.overlaps(fixture.shape) }
+          fixture.setBodyRelativeShape(body)
+          fixture.overlaps(shape) shouldBe true
         }
       }
     })

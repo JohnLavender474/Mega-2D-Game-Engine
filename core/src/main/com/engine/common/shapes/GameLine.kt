@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.enums.Direction
 import com.engine.common.extensions.gdxArrayOf
+import com.engine.common.interfaces.IRotatable
+import com.engine.common.interfaces.IScalable
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -20,7 +23,7 @@ import kotlin.math.sqrt
  * @param x2 The x-coordinate of the second point of this line.
  * @param y2 The y-coordinate of the second point of this line.
  */
-class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
+class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D, IScalable, IRotatable {
 
   companion object {
     private var OVERLAP_EXTENSION: ((GameLine, IGameShape2D) -> Boolean)? = null
@@ -51,36 +54,36 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
   private val worldPoint1 = Vector2()
   private val worldPoint2 = Vector2()
 
-  var scaleX = 1f
+  override var rotation = 0f
+    set(value) {
+      field = value
+      dirty = true
+    }
+
+  override var originX = 0f
+    set(value) {
+      field = value
+      dirty = true
+    }
+
+  override var originY = 0f
+    set(value) {
+      field = value
+      dirty = true
+    }
+
+  override var scaleX = 1f
     set(value) {
       field = value
       dirty = true
       calculateScaledLength = true
     }
 
-  var scaleY = 1f
+  override var scaleY = 1f
     set(value) {
       field = value
       dirty = true
       calculateScaledLength = true
-    }
-
-  var originX = 0f
-    set(value) {
-      field = value
-      dirty = true
-    }
-
-  var originY = 0f
-    set(value) {
-      field = value
-      dirty = true
-    }
-
-  var rotation = 0f
-    set(value) {
-      field = value
-      dirty = true
     }
 
   private var dirty = true
@@ -123,6 +126,40 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
   /** Creates a line with points at [0,0] and [0,0] */
   constructor() : this(0f, 0f, 0f, 0f)
 
+  /**
+   * Sets the points of this line to the points in the given [GameLine].
+   *
+   * @param line The line to copy.
+   * @return This line.
+   */
+  fun set(line: GameLine) = set(line.localPoint1, line.localPoint2)
+
+  /**
+   * Sets the points of this line to the given points.
+   *
+   * @param point1 The first point of this line.
+   * @param point2 The second point of this line.
+   * @return This line.
+   */
+  fun set(point1: Vector2, point2: Vector2) = set(point1.x, point1.y, point2.x, point2.y)
+
+  /**
+   * Sets the points of this line to the given points.
+   *
+   * @param x1 The x-coordinate of the first point of this line.
+   * @param y1 The y-coordinate of the first point of this line.
+   * @param x2 The x-coordinate of the second point of this line.
+   * @param y2 The y-coordinate of the second point of this line.
+   * @return This line.
+   */
+  fun set(x1: Float, y1: Float, x2: Float, y2: Float): GameLine {
+    localPoint1.x = x1
+    localPoint1.y = y1
+    localPoint2.x = x2
+    localPoint2.y = y2
+    return this
+  }
+
   /** Sets this line to dirty which means that the world points need to be recalculated. */
   fun setToDirty() {
     dirty = true
@@ -131,6 +168,29 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
   /** Sets to recalculate the length of this line. */
   fun setToRecalculateLength() {
     calculateLength = true
+  }
+
+  /**
+   * Returns a new line created from this line rotated by the given amount based on the [direction].
+   * The [direction] is used to determine the direction to rotate this line. [Direction.UP] is 90
+   * degrees, [Direction.RIGHT] is 180 degrees, [Direction.DOWN] is 270 degrees, and
+   * [Direction.LEFT] is 360 degrees.
+   *
+   * @param direction The direction to rotate this line.
+   * @param useNewShape If true, a new shape will be created and returned. If false, this shape will
+   *   be rotated and returned.
+   * @return The rotated line.
+   */
+  override fun getCardinallyRotatedShape(direction: Direction, useNewShape: Boolean): GameLine {
+    val line = if (useNewShape) GameLine(this) else this
+    line.rotation =
+        when (direction) {
+          Direction.UP -> 0f
+          Direction.RIGHT -> 90f
+          Direction.DOWN -> 180f
+          Direction.LEFT -> 270f
+        }
+    return line
   }
 
   /**
@@ -331,16 +391,10 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
     drawer.rectLine(_worldPoint1, _worldPoint2, thickness)
   }
 
-  /**
-   * Centers the world coordinates of the line on the given point.
-   *
-   * @param center The point to center the world coordinates of the line on.
-   * @return This line.
-   */
-  override fun setCenter(center: Vector2): GameLine {
+  override fun setCenter(centerX: Float, centerY: Float): GameLine {
     val currentCenter = getCenter()
-    val centerDeltaX = center.x - currentCenter.x
-    val centerDeltaY = center.y - currentCenter.y
+    val centerDeltaX = centerX - currentCenter.x
+    val centerDeltaY = centerY - currentCenter.y
 
     if (centerDeltaX == 0f && centerDeltaY == 0f) return this
 
@@ -355,6 +409,14 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
     calculateLength = true
     return this
   }
+
+  /**
+   * Centers the world coordinates of the line on the given point.
+   *
+   * @param center The point to center the world coordinates of the line on.
+   * @return This line.
+   */
+  override fun setCenter(center: Vector2) = setCenter(center.x, center.y)
 
   /**
    * Returns the center of the world points.
@@ -517,4 +579,6 @@ class GameLine(x1: Float, y1: Float, x2: Float, y2: Float) : IGameShape2D {
 
     return GameRectangle(minX, minY, maxX - minX, maxY - minY)
   }
+
+  override fun toString() = getWorldPoints().toString()
 }

@@ -31,13 +31,17 @@ open class DrawableShapesSystem(
 
     val shapes = shapesArraySupplier()
 
-    entities.forEach {
-      val shapeComponent = it.getComponent(DrawableShapesComponent::class)!!
+    entities.forEach { e ->
+      val shapeComponent = e.getComponent(DrawableShapesComponent::class)!!
 
-      shapeComponent.prodShapeSuppliers.forEach { shape -> shapes.add(shape()) }
+      shapeComponent.prodShapeSuppliers.forEach { shapeSupplier ->
+        shapeSupplier()?.let { shapes.add(it) }
+      }
 
       if (debug && shapeComponent.debug)
-          shapeComponent.debugShapeSuppliers.forEach { shape -> shapes.add(shape()) }
+          shapeComponent.debugShapeSuppliers.forEach { shapeSupplier ->
+            shapeSupplier()?.let { shapes.add(it) }
+          }
     }
   }
 }

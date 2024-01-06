@@ -18,8 +18,8 @@ import com.engine.entities.IGameEntity
  */
 class DrawableShapesComponent(
     override val entity: IGameEntity,
-    val prodShapeSuppliers: Array<() -> IDrawableShape> = Array(),
-    val debugShapeSuppliers: Array<() -> IDrawableShape> = Array(),
+    val prodShapeSuppliers: Array<() -> IDrawableShape?> = Array(),
+    val debugShapeSuppliers: Array<() -> IDrawableShape?> = Array(),
     val debug: Boolean = false
 ) : IGameComponent {
 
@@ -31,7 +31,7 @@ class DrawableShapesComponent(
    */
   constructor(
       entity: IGameEntity,
-      vararg shapeSuppliers: () -> IDrawableShape
+      vararg shapeSuppliers: () -> IDrawableShape?
   ) : this(entity, Array(shapeSuppliers))
 
   /**
@@ -42,6 +42,6 @@ class DrawableShapesComponent(
    */
   constructor(
       entity: IGameEntity,
-      vararg shapes: IDrawableShape
+      vararg shapes: IDrawableShape?
   ) : this(entity, shapes.map { { it } }.toGdxArray())
 }

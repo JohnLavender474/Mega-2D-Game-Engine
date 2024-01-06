@@ -17,17 +17,19 @@ class ControllerSystem(private val poller: IControllerPoller) :
     if (!on) return
 
     entities.forEach {
-      val component = it.getComponent(ControllerComponent::class)
+      val component = it.getComponent(ControllerComponent::class)!!
+      val actuators = component.actuators
 
-      component?.actuators?.forEach { e ->
-        val name = e.key
-        val actuator = e.value
-        when (poller.getButtonStatus(name)) {
+      for (entry in actuators) {
+        val key = entry.key
+        val actuator = entry.value() ?: continue
+
+        val status = poller.getStatus(key) ?: continue
+        when (status) {
           ButtonStatus.JUST_PRESSED -> actuator.onJustPressed(poller)
           ButtonStatus.PRESSED -> actuator.onPressContinued(poller, delta)
           ButtonStatus.JUST_RELEASED -> actuator.onJustReleased(poller)
           ButtonStatus.RELEASED -> actuator.onReleaseContinued(poller, delta)
-          else -> {}
         }
       }
     }

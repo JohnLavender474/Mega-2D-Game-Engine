@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
+import com.engine.common.enums.Direction
 import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.extensions.objectSetOf
 import com.engine.common.extensions.round
@@ -26,27 +27,13 @@ class WorldSystemTest :
         val mockWorldGraph = mockk<IGraphMap>()
         val mockWorldGraphSupplier = { mockWorldGraph }
         val mockCollisionHandler = mockk<ICollisionHandler>()
-
-        val entity =
-            spyk(
-                object : GameEntity(mockk()) {
-
-                  override fun spawn(spawnProps: Properties) {
-                    putAllProperties(spawnProps)
-                  }
-
-                  override fun onDestroy() {
-                    clearComponents()
-                    clearProperties()
-                  }
-                })
-        entity.dead = false
-
-        val physicsData = spyk(PhysicsData())
-        val body = spyk(Body(BodyType.DYNAMIC, physicsData))
-        val bodyComponent = spyk(BodyComponent(entity, body))
-
         val fixedStep = 0.02f
+
+        lateinit var entity: GameEntity
+        lateinit var physicsData: PhysicsData
+        lateinit var body: Body
+        lateinit var bodyComponent: BodyComponent
+
         val worldSystem =
             spyk(
                 WorldSystem(
@@ -55,12 +42,29 @@ class WorldSystemTest :
         beforeEach {
           clearAllMocks()
 
-          body.setPosition(0f, 0f)
+          entity =
+              spyk(
+                  object : GameEntity(mockk()) {
+
+                    override fun spawn(spawnProps: Properties) {
+                      putAllProperties(spawnProps)
+                    }
+
+                    override fun onDestroy() {
+                      clearComponents()
+                      clearProperties()
+                    }
+                  })
+          entity.dead = false
+
+          physicsData = spyk(PhysicsData())
+
+          body = spyk(Body(BodyType.DYNAMIC, physicsData))
+          body.cardinalRotation = Direction.UP
+          body.setSize(0f, 0f).setPosition(0f, 0f)
           body.fixtures.clear()
 
-          physicsData.resetToDefault()
-
-          entity.onDestroy()
+          bodyComponent = spyk(BodyComponent(entity, body))
           entity.addComponent(bodyComponent)
 
           every { mockWorldGraph.reset() } just Runs
@@ -96,19 +100,22 @@ class WorldSystemTest :
 
         it("should add bodies and fixtures to graph correctly") {
           every { mockWorldGraph.reset() } just Runs
-          every { mockWorldGraph.get(any<Body>()) } returns ObjectSet()
+          every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
 
           every { worldSystem.updatePhysics(any(), any()) } just Runs
-          every { worldSystem.updateFixturePositions(any()) } just Runs
+          // every { worldSystem.updateFixturePositions(any()) } just Runs
           every { worldSystem.processContacts() } just Runs
           every { worldSystem.postProcess(any(), any()) } just Runs
 
-          val fixture = Fixture(mockk(), "Type")
+          val fixture = Fixture(GameRectangle(), "Type")
           body.addFixture(fixture)
 
           val objs = ArrayList<Any>()
 
-          every { mockWorldGraph.add(any<IGameShape2D>()) } answers { objs.add(firstArg()) }
+          every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } answers
+              {
+                objs.add(firstArg())
+              }
           every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers { objs.add(firstArg()) }
 
           worldSystem.update(fixedStep)
@@ -126,11 +133,17 @@ class WorldSystemTest :
             every { worldSystem.preProcess(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.updatePhysics(any(), any()) } just Runs
-            every { worldSystem.updateFixturePositions(any()) } just Runs
+            // every { worldSystem.updateFixturePositions(any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
 
-            every { mockWorldGraph.add(any<IGameShape2D>()) } answers { objs.add(firstArg()) }
-            every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers { objs.add(firstArg()) }
+            every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } answers
+                {
+                  objs.add(firstArg())
+                }
+            every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers
+                {
+                  objs.add(firstArg())
+                }
             every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
             every { mockWorldGraph.reset() } just Runs
 
@@ -143,8 +156,7 @@ class WorldSystemTest :
             verify(exactly = 1) { worldSystem.resolveCollisions(any()) }
 
             verify(exactly = 1) { mockWorldGraph.reset() }
-            verify(exactly = 1) { mockWorldGraph.add(any<IGameShape2D>()) }
-            verify(exactly = 1) { mockWorldGraph.add(any<IGameShape2DSupplier>()) }
+            verify(exactly = 2) { mockWorldGraph.add(any(), any<IGameShape2D>()) }
 
             objs.size shouldBe 2
             objs shouldContain body
@@ -158,11 +170,14 @@ class WorldSystemTest :
             every { worldSystem.preProcess(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.updatePhysics(any(), any()) } just Runs
-            every { worldSystem.updateFixturePositions(any()) } just Runs
+            // every { worldSystem.updateFixturePositions(any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
 
             every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-            every { mockWorldGraph.add(any<IGameShape2D>()) } answers { objs.add(firstArg()) }
+            every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } answers
+                {
+                  objs.add(firstArg())
+                }
             every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers
                 {
                   objs.add(firstArg())
@@ -178,8 +193,7 @@ class WorldSystemTest :
             verify(exactly = 2) { worldSystem.resolveCollisions(any()) }
 
             verify(exactly = 2) { mockWorldGraph.reset() }
-            verify(exactly = 2) { mockWorldGraph.add(any<IGameShape2D>()) }
-            verify(exactly = 2) { mockWorldGraph.add(any<IGameShape2DSupplier>()) }
+            verify(exactly = 4) { mockWorldGraph.add(any(), any<IGameShape2D>()) }
 
             objs.size shouldBe 4
             objs.filter { it == body }.size shouldBe 2
@@ -220,8 +234,9 @@ class WorldSystemTest :
 
           it("should process contacts correctly - test 1") {
             every { mockWorldGraph.reset() } just Runs
+            every { mockWorldGraph.add(any(), any<IGameShape2D>()) } returns true
 
-            every { worldSystem.processPhysicsAndGraph(any(), any()) } just Runs
+            every { worldSystem.updatePhysics(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
 
@@ -257,8 +272,9 @@ class WorldSystemTest :
 
           it("should process contacts correctly - test 2") {
             every { mockWorldGraph.reset() } just Runs
+            every { mockWorldGraph.add(any(), any<IGameShape2D>()) } returns true
 
-            every { worldSystem.processPhysicsAndGraph(any(), any()) } just Runs
+            every { worldSystem.updatePhysics(any(), any()) } just Runs
             every { worldSystem.postProcess(any(), any()) } just Runs
             every { worldSystem.resolveCollisions(any()) } just Runs
 
@@ -315,7 +331,7 @@ class WorldSystemTest :
 
             every { mockWorldGraph.reset() } just Runs
 
-            every { mockWorldGraph.add(any<IGameShape2D>()) } returns true
+            every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } returns true
             every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } returns true
 
             physicsData.gravity.x = -0.5f
@@ -333,29 +349,71 @@ class WorldSystemTest :
           }
         }
 
-        it("should update fixture positions") {
-          every { worldSystem.preProcess(any(), any()) } just Runs
-          every { worldSystem.postProcess(any(), any()) } just Runs
-          every { worldSystem.updatePhysics(any(), any()) } just Runs
-          every { worldSystem.resolveCollisions(any()) } just Runs
+        describe("update fixture positions") {
+          it("should update fixture positions - test 1") {
+            every { worldSystem.preProcess(any(), any()) } just Runs
+            every { worldSystem.postProcess(any(), any()) } just Runs
+            every { worldSystem.updatePhysics(any(), any()) } just Runs
+            every { worldSystem.resolveCollisions(any()) } just Runs
 
-          every { mockWorldGraph.add(any<IGameShape2D>()) } returns true
-          every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } returns true
+            every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } returns true
+            every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } returns true
+            every { mockWorldGraph.get(any<MinsAndMaxes>()) } returns ObjectSet()
+            every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
+            every { mockWorldGraph.get(any(), any(), any(), any()) } returns ObjectSet()
+            every { mockWorldGraph.get(any(), any()) } returns Array()
+            every { mockWorldGraph.reset() } just Runs
 
-          every { mockWorldGraph.get(any<MinsAndMaxes>()) } returns ObjectSet()
-          every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-          every { mockWorldGraph.get(any(), any(), any(), any()) } returns ObjectSet()
-          every { mockWorldGraph.get(any(), any()) } returns Array()
+            val fixture = Fixture(GameRectangle(), "Type")
+            fixture.offsetFromBodyCenter = Vector2(5f, 5f)
+            body.addFixture(fixture)
 
-          every { mockWorldGraph.reset() } just Runs
+            worldSystem.update(fixedStep)
 
-          val fixture = Fixture(GameRectangle(), "Type")
-          fixture.offsetFromBodyCenter = Vector2(5f, 5f)
-          body.addFixture(fixture)
+            fixture.shape.getCenter() shouldBe Vector2(5f, 5f)
+          }
 
-          worldSystem.update(fixedStep)
+          it("should update fixture positions - test 2") {
+            every { worldSystem.preProcess(any(), any()) } just Runs
+            every { worldSystem.postProcess(any(), any()) } just Runs
+            every { worldSystem.updatePhysics(any(), any()) } just Runs
+            every { worldSystem.resolveCollisions(any()) } just Runs
 
-          fixture.shape.getCenter() shouldBe Vector2(10f, 10f)
+            every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } returns true
+            every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
+            every { mockWorldGraph.reset() } just Runs
+
+            val shape = GameRectangle().setSize(1f)
+            val fixture = spyk(Fixture(shape, "Type"))
+            fixture.offsetFromBodyCenter = Vector2(0f, 5f)
+
+            val _body = Body(BodyType.DYNAMIC).addFixture(fixture)
+            _body.setSize(5f).setCenter(0f, 0f)
+
+            val _entity = GameEntity(mockk())
+            val _bodyComponent = BodyComponent(entity, _body)
+            _entity.addComponent(_bodyComponent)
+
+            worldSystem.remove(entity)
+            worldSystem.add(_entity)
+
+            _body.cardinalRotation = Direction.UP
+            worldSystem.update(fixedStep)
+            fixture.bodyRelativeShape?.getCenter() shouldBe Vector2(0f, 5f)
+
+            _body.cardinalRotation = Direction.DOWN
+            worldSystem.update(fixedStep)
+            fixture.bodyRelativeShape?.getCenter() shouldBe Vector2(0f, -5f)
+
+            _body.cardinalRotation = Direction.LEFT
+            worldSystem.update(fixedStep)
+            fixture.bodyRelativeShape?.getCenter() shouldBe Vector2(-5f, 0f)
+
+            _body.cardinalRotation = Direction.RIGHT
+            worldSystem.update(fixedStep)
+
+            fixture.bodyRelativeShape?.getCenter() shouldBe Vector2(5f, 0f)
+          }
         }
       }
     })

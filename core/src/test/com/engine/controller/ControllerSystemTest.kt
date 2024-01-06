@@ -25,8 +25,8 @@ class ControllerSystemTest :
                 every { onReleaseContinued(any(), any()) } just Runs
               }
 
-          val map = ObjectMap<String, IButtonActuator>()
-          map.put("ButtonA", actuator)
+          val map = ObjectMap<Any, () -> IButtonActuator?>()
+          map.put("ButtonA") { actuator }
           val controllerComponent = ControllerComponent(entity, map)
           entity.addComponent(controllerComponent)
 
@@ -35,17 +35,13 @@ class ControllerSystemTest :
           for (buttonStatus in 0..4) {
             when (buttonStatus) {
               0 ->
-                  every { mockControllerPoller.getButtonStatus("ButtonA") } returns
+                  every { mockControllerPoller.getStatus("ButtonA") } returns
                       ButtonStatus.JUST_PRESSED
-              1 ->
-                  every { mockControllerPoller.getButtonStatus("ButtonA") } returns
-                      ButtonStatus.PRESSED
+              1 -> every { mockControllerPoller.getStatus("ButtonA") } returns ButtonStatus.PRESSED
               2 ->
-                  every { mockControllerPoller.getButtonStatus("ButtonA") } returns
+                  every { mockControllerPoller.getStatus("ButtonA") } returns
                       ButtonStatus.JUST_RELEASED
-              3 ->
-                  every { mockControllerPoller.getButtonStatus("ButtonA") } returns
-                      ButtonStatus.RELEASED
+              3 -> every { mockControllerPoller.getStatus("ButtonA") } returns ButtonStatus.RELEASED
             }
 
             controllerSystem.update(0.1f)

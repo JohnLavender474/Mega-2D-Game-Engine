@@ -1,13 +1,13 @@
 package com.engine.systems
 
 import com.badlogic.gdx.utils.Array
-import com.engine.common.interfaces.Activatable
+import com.engine.common.interfaces.IActivatable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.entities.IGameEntity
 
 /** An [IGameSystem] is an [Updatable] that processes [IGameEntity]s. */
-interface IGameSystem : Activatable, Updatable, Resettable {
+interface IGameSystem : IActivatable, Updatable, Resettable {
 
   /**
    * Returns whether this [IGameSystem] contains the given [IGameEntity].

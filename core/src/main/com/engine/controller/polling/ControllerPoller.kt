@@ -12,14 +12,14 @@ import com.engine.controller.buttons.Buttons
  */
 class ControllerPoller(private val buttons: Buttons) : IControllerPoller {
 
-  internal val statusMap = ObjectMap<String, ButtonStatus>()
+  internal val statusMap = ObjectMap<Any, ButtonStatus>()
   override var on = true
 
   init {
     buttons.keys().forEach { statusMap.put(it, ButtonStatus.RELEASED) }
   }
 
-  override fun getButtonStatus(name: String): ButtonStatus? = statusMap[name]
+  override fun getStatus(key: Any): ButtonStatus? = statusMap[key]
 
   override fun run() {
     if (!on) return

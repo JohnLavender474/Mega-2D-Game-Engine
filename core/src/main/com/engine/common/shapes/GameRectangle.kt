@@ -8,7 +8,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.enums.Direction
 import com.engine.common.enums.Position
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to
@@ -34,11 +38,35 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     fun setOverlapExtension(overlapExtension: (GameRectangle, IGameShape2D) -> Boolean) {
       OVERLAP_EXTENSION = overlapExtension
     }
+
+    /**
+     * Calculates the bounds of a rectangle from the given lines.
+     *
+     * @param lines The lines to calculate the bounds from.
+     * @return The bounds of the rectangle.
+     */
+    fun calculateBoundsFromLines(lines: Iterable<Pair<Vector2, Vector2>>): GameRectangle {
+      var minX = Float.MAX_VALUE
+      var minY = Float.MAX_VALUE
+      var maxX = Float.NEGATIVE_INFINITY
+      var maxY = Float.NEGATIVE_INFINITY
+
+      lines.forEach { (point1, point2) ->
+        minX = min(minX, min(point1.x, point2.x))
+        minY = min(minY, min(point1.y, point2.y))
+        maxX = max(maxX, max(point1.x, point2.x))
+        maxY = max(maxY, max(point1.y, point2.y))
+      }
+
+      return GameRectangle(minX, minY, abs(maxX - minX), abs(maxY - minY))
+    }
   }
+
+  override var originX = 0f
+  override var originY = 0f
 
   override var color: Color = RED
   override var shapeType = Line
-
   /** Thickness of the rectangle lines when drawn. This is used only if [shapeType] is [Line]. */
   var thickness: Float = 1f
 
@@ -66,6 +94,41 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
   }
 
   /**
+   * Sets the origin of this [GameRectangle] to the given [originX] and [originY].
+   *
+   * @param originX The x-coordinate of the origin.
+   * @param originY The y-coordinate of the origin.
+   * @return This [GameRectangle].
+   */
+  fun setOrigin(originX: Float, originY: Float): GameRectangle {
+    this.originX = originX
+    this.originY = originY
+    return this
+  }
+
+  /**
+   * Sets the x-coordinate of the origin of this [GameRectangle] to the given [originX].
+   *
+   * @param originX The x-coordinate of the origin.
+   * @return This [GameRectangle].
+   */
+  fun setOriginX(originX: Float): GameRectangle {
+    this.originX = originX
+    return this
+  }
+
+  /**
+   * Sets the y-coordinate of the origin of this [GameRectangle] to the given [originY].
+   *
+   * @param originY The y-coordinate of the origin.
+   * @return This [GameRectangle].
+   */
+  fun setOriginY(originY: Float): GameRectangle {
+    this.originY = originY
+    return this
+  }
+
+  /**
    * Returns a list of [GameLine]s that make up this [GameRectangle].
    *
    * @return A list of [GameLine]s that make up this [GameRectangle].
@@ -78,158 +141,71 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
           GameLine(getBottomRightPoint(), getTopRightPoint()))
 
   /**
-   * Set the size of the [GameRectangle] to a square with sides of length [sizeXY].
+   * Creates a new [GameRectangle] based on this instance and sets its rotation based on the given
+   * [direction]. [Direction.UP] is 0f, [Direction.LEFT] is 90f, [Direction.DOWN] is 180f, and
+   * [Direction.RIGHT] is 270f.
    *
-   * @param sizeXY The length of the sides of the square.
-   * @return The modified [GameRectangle].
+   * @param direction The direction to set the rotation to.
+   * @return A new [GameRectangle] based on this instance with the given rotation.
    */
-  override fun setSize(sizeXY: Float) = super.setSize(sizeXY) as GameRectangle
+  override fun getCardinallyRotatedShape(
+      direction: Direction,
+      useNewShape: Boolean,
+  ): GameRectangle {
+    val rotatedLines =
+        getAsLines().map { line ->
+          line.originX = originX
+          line.originY = originY
+          line.rotation =
+              when (direction) {
+                Direction.UP -> 0f
+                Direction.LEFT -> 90f
+                Direction.DOWN -> 180f
+                Direction.RIGHT -> 270f
+              }
+          line.getWorldPoints()
+        }
 
-  /**
-   * Set the size of the [GameRectangle] to the specified [width] and [height].
-   *
-   * @param width The width of the rectangle.
-   * @param height The height of the rectangle.
-   * @return The modified [GameRectangle].
-   */
+    val rotatedRectangle = calculateBoundsFromLines(rotatedLines)
+    return if (useNewShape) rotatedRectangle else set(rotatedRectangle)
+  }
+
+  override fun setSize(sizeXY: Float) = super<Rectangle>.setSize(sizeXY) as GameRectangle
+
   override fun setSize(width: Float, height: Float) = super.setSize(width, height) as GameRectangle
 
-  /**
-   * Set the [GameRectangle] to the specified position and size.
-   *
-   * @param x The x-coordinate of the top-left corner.
-   * @param y The y-coordinate of the top-left corner.
-   * @param width The width of the rectangle.
-   * @param height The height of the rectangle.
-   * @return The modified [GameRectangle].
-   */
   final override fun set(x: Float, y: Float, width: Float, height: Float) =
       super.set(x, y, width, height) as GameRectangle
 
-  /**
-   * Set the [GameRectangle] to match the dimensions of the given [rect].
-   *
-   * @param rect The source rectangle to copy from.
-   * @return The modified [GameRectangle].
-   */
   final override fun set(rect: Rectangle) = super.set(rect) as GameRectangle
 
-  /**
-   * Set the x-coordinate of the [GameRectangle].
-   *
-   * @param x The new x-coordinate.
-   * @return The modified [GameRectangle].
-   */
   override fun setX(x: Float) = super<Rectangle>.setX(x) as GameRectangle
 
-  /**
-   * Set the y-coordinate of the [GameRectangle].
-   *
-   * @param y The new y-coordinate.
-   * @return The modified [GameRectangle].
-   */
   override fun setY(y: Float) = super<Rectangle>.setY(y) as GameRectangle
 
-  /**
-   * Set the width of the [GameRectangle].
-   *
-   * @param width The new width.
-   * @return The modified [GameRectangle].
-   */
   override fun setWidth(width: Float) = super.setWidth(width) as GameRectangle
 
-  /**
-   * Set the height of the [GameRectangle].
-   *
-   * @param height The new height.
-   * @return The modified [GameRectangle].
-   */
   override fun setHeight(height: Float) = super.setHeight(height) as GameRectangle
 
-  /**
-   * Get the position of the [GameRectangle].
-   *
-   * @return The position of the [GameRectangle].
-   */
   override fun getPosition(): Vector2 = super<Rectangle>.getPosition(Vector2())
 
-  /**
-   * Set the position of the [GameRectangle].
-   *
-   * @param position The new position.
-   * @return The modified [GameRectangle].
-   */
   override fun setPosition(position: Vector2) =
       super<Rectangle>.setPosition(position) as GameRectangle
 
-  /**
-   * Set the position of the [GameRectangle].
-   *
-   * @param x The new x-coordinate.
-   * @param y The new y-coordinate.
-   * @return The modified [GameRectangle].
-   */
   override fun setPosition(x: Float, y: Float) = super<Rectangle>.setPosition(x, y) as GameRectangle
 
-  /**
-   * Merges this rectangle with the other rectangle. The rectangle should not have negative width or
-   * negative height.
-   *
-   * @param rect the other rectangle
-   * @return this rectangle for chaining
-   */
   override fun merge(rect: Rectangle) = super.merge(rect) as GameRectangle
 
-  /**
-   * Merges this rectangle with a point. The rectangle should not have negative width or negative
-   * height
-   *
-   * @param x the x-coordinate of the other rectangle
-   * @param y the y-coordinate of the other rectangle
-   * @return this rectangle for chaining
-   */
   override fun merge(x: Float, y: Float) = super.merge(x, y) as GameRectangle
 
-  /**
-   * Merges this rectangle with a point. The rectangle should not have negative width or negative
-   * height
-   *
-   * @param vec the vector describing the other point
-   * @return this rectangle for chaining
-   */
   override fun merge(vec: Vector2) = super.merge(vec) as GameRectangle
 
-  /**
-   * Merges the [GameRectangle] with an array of [Vector2] points and calculates the smallest
-   * rectangle that contains all points.
-   *
-   * @param vecs The array of [Vector2] points to merge.
-   * @return The modified [GameRectangle].
-   */
   override fun merge(vecs: Array<out Vector2>) = super.merge(vecs) as GameRectangle
 
-  /**
-   * Modifies the [GameRectangle] to fit outside the given [Rectangle].
-   *
-   * @param rect The [Rectangle] to fit outside.
-   * @return The modified [GameRectangle].
-   */
   override fun fitOutside(rect: Rectangle) = super.fitOutside(rect) as GameRectangle
 
-  /**
-   * Modifies the [GameRectangle] to fit inside the given [Rectangle].
-   *
-   * @param rect The [Rectangle] to fit inside.
-   * @return The modified [GameRectangle].
-   */
   override fun fitInside(rect: Rectangle) = super.fitInside(rect) as GameRectangle
 
-  /**
-   * Parses a string [v] to set the values of the [GameRectangle].
-   *
-   * @param v The string representation of the [GameRectangle].
-   * @return The modified [GameRectangle].
-   */
   override fun fromString(v: String) = super.fromString(v) as GameRectangle
 
   /**
@@ -248,18 +224,8 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
    */
   fun setMaxY(maxY: Float) = setY(maxY - height)
 
-  /**
-   * Gets the x-coordinate of the right edge of the [GameRectangle].
-   *
-   * @return The x-coordinate of the right edge.
-   */
   override fun getMaxX() = x + width
 
-  /**
-   * Gets the y-coordinate of the bottom edge of the [GameRectangle].
-   *
-   * @return The y-coordinate of the bottom edge.
-   */
   override fun getMaxY() = y + height
 
   /**
@@ -282,39 +248,16 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
         else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
       }
 
-  /**
-   * Returns a new [GameRectangle] representing the bounding rectangle of this [GameRectangle].
-   *
-   * @return A new [GameRectangle] representing the bounding rectangle.
-   */
   override fun getBoundingRectangle() = GameRectangle(this)
 
-  /**
-   * Gets the center of the [GameRectangle] as a [Vector2].
-   *
-   * @return The center of the [GameRectangle] as a [Vector2].
-   */
-  override fun getCenter(): Vector2 = super.getCenter(Vector2())
+  override fun getCenter(): Vector2 = super<Rectangle>.getCenter(Vector2())
 
-  /**
-   * Sets the center of the [GameRectangle] to the specified coordinates [centerX] and [centerY].
-   *
-   * @param centerX The x-coordinate of the center.
-   * @param centerY The y-coordinate of the center.
-   * @return The modified [GameRectangle].
-   */
   override fun setCenter(centerX: Float, centerY: Float): GameRectangle {
     setCenterX(centerX)
     setCenterY(centerY)
     return this
   }
 
-  /**
-   * Sets the center of the [GameRectangle] to the coordinates specified by the [center] Vector2.
-   *
-   * @param center The new center position as a [Vector2].
-   * @return The modified [GameRectangle].
-   */
   override fun setCenter(center: Vector2): GameRectangle = setCenter(center.x, center.y)
 
   /**
@@ -339,25 +282,12 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     return this
   }
 
-  /**
-   * Translates the position of the [GameRectangle] by the specified translation amounts
-   * [translateX] and [translateY].
-   *
-   * @param translateX The amount to translate along the x-axis.
-   * @param translateY The amount to translate along the y-axis.
-   * @return The modified [GameRectangle].
-   */
   override fun translation(translateX: Float, translateY: Float): GameRectangle {
     x += translateX
     y += translateY
     return this
   }
 
-  /**
-   * Draws the [GameRectangle] using the provided [ShapeRenderer] with the specified color.
-   *
-   * @param drawer The [ShapeRenderer] to use for drawing.
-   */
   override fun draw(drawer: ShapeRenderer) {
     drawer.set(shapeType)
     drawer.color = color
@@ -370,13 +300,6 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     }
   }
 
-  /**
-   * Positions the [GameRectangle] on the specified [point] based on the given [position].
-   *
-   * @param point The [Vector2] point to position the [GameRectangle] on.
-   * @param position The position relative to the [point].
-   * @return The modified [GameRectangle].
-   */
   override fun positionOnPoint(point: Vector2, position: Position): GameRectangle {
     when (position) {
       Position.TOP_LEFT -> setTopLeftToPoint(point)
@@ -392,13 +315,6 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     return this
   }
 
-  /**
-   * Returns the [Vector2] position corresponding to the specified [position] within the
-   * [GameRectangle].
-   *
-   * @param position The position within the [GameRectangle].
-   * @return The [Vector2] position corresponding to the specified [position].
-   */
   override fun getPositionPoint(position: Position) =
       when (position) {
         Position.TOP_LEFT -> getTopLeftPoint()
@@ -412,11 +328,6 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
         Position.BOTTOM_RIGHT -> getBottomRightPoint()
       }
 
-  /**
-   * Returns a copy of this [GameRectangle].
-   *
-   * @return A copy of this [GameRectangle].
-   */
   override fun copy(): GameRectangle = GameRectangle(this)
 
   /**
@@ -569,4 +480,6 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
   override fun equals(other: Any?) = other is Rectangle && super<Rectangle>.equals(other)
 
   override fun hashCode() = super<Rectangle>.hashCode()
+
+  override fun toString() = super<Rectangle>.toString()
 }

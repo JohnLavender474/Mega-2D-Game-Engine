@@ -4,7 +4,6 @@ import com.engine.controller.buttons.Button
 import com.engine.controller.buttons.ButtonStatus
 import com.engine.controller.buttons.Buttons
 import com.engine.controller.polling.ControllerPoller
-import com.engine.controller.polling.IControllerPoller
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -26,8 +25,8 @@ class ControllerPollerTest :
             buttons.put("ButtonB", Button(1, 1, true))
             val controllerPoller = ControllerPoller(buttons)
 
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
-            controllerPoller.getButtonStatus("ButtonB") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getStatus("ButtonB") shouldBe ButtonStatus.RELEASED
           }
         }
 
@@ -40,26 +39,26 @@ class ControllerPollerTest :
             buttons.put("ButtonA", buttonPoller)
             val controllerPoller = ControllerPoller(buttons)
 
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.PRESSED
 
             pressed = false
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
             pressed = true
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
           }
         }
 
@@ -72,18 +71,18 @@ class ControllerPollerTest :
             buttons.put("ButtonA", buttonPollerA)
             val controllerPoller = ControllerPoller(buttons)
 
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
-            controllerPoller.getButtonStatus("ButtonB") shouldBe null
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.getStatus("ButtonB") shouldBe null
 
             val buttonPollerB = spyk(Button(1, 1, true))
             buttons.put("ButtonB", buttonPollerB)
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
-            controllerPoller.getButtonStatus("ButtonB") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            controllerPoller.getStatus("ButtonB") shouldBe ButtonStatus.JUST_PRESSED
           }
         }
 
@@ -96,26 +95,26 @@ class ControllerPollerTest :
             buttons.put("ButtonA", buttonPollerA)
             val controllerPoller = ControllerPoller(buttons)
 
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.PRESSED
 
             buttons.get("ButtonA")?.enabled = false
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_RELEASED
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.RELEASED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
             buttons.get("ButtonA")?.enabled = true
 
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
             controllerPoller.run()
-            controllerPoller.getButtonStatus("ButtonA") shouldBe ButtonStatus.PRESSED
+            controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.PRESSED
           }
         }
       }

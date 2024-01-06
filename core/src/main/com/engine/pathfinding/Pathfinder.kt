@@ -82,7 +82,7 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
     if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate)) {
       GameLogger.debug(
           TAG,
-          "Target or start point is out of bounds. Target: $targetCoordinate, Start: $startCoordinate")
+          "Target or start point is out of shape. Target: $targetCoordinate, Start: $startCoordinate")
       return PathfinderResult(null, null, false)
     }
 

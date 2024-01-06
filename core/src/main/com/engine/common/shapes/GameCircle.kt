@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.enums.Direction
 
 /**
  * A circle that can be used in a game. This circle is a [Circle]. For convenience reasons, this
@@ -37,6 +38,9 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
   val libGdxCircle: Circle
 
+  override var originX = 0f
+  override var originY = 0f
+
   override var color: Color = Color.RED
   override var shapeType: ShapeType = Line
 
@@ -54,6 +58,21 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
    * @param radius The radius of the circle.
    */
   constructor(center: Vector2, radius: Float) : this(center.x, center.y, radius)
+
+  /**
+   * Returns a new [GameCircle] with the given cardinal rotation.
+   *
+   * @param direction The cardinal rotation to rotate this shape by.
+   * @return A new [GameCircle] with the given cardinal rotation.
+   */
+  override fun getCardinallyRotatedShape(direction: Direction, useNewShape: Boolean): IGameShape2D {
+    val rotatedBoundingRectangle =
+        getBoundingRectangle()
+            .setOrigin(originX, originY)
+            .getCardinallyRotatedShape(direction, false)
+    val rotatedCircle = if (useNewShape) copy() else this
+    return rotatedCircle.setCenter(rotatedBoundingRectangle.getCenter())
+  }
 
   /**
    * Gets the radius of the circle.
@@ -215,7 +234,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
    * @param centerY The y-coordinate of the center to set.
    * @return This shape.
    */
-  fun setCenter(centerX: Float, centerY: Float): IGameShape2D {
+  override fun setCenter(centerX: Float, centerY: Float): IGameShape2D {
     libGdxCircle.setPosition(centerX, centerY)
     return this
   }

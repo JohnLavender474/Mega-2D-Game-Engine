@@ -1,13 +1,13 @@
 package com.engine.entities.contracts
 
 import com.engine.common.interfaces.IPositional
-import com.engine.common.interfaces.Sizable
+import com.engine.common.interfaces.ISizable
 import com.engine.entities.IGameEntity
 import com.engine.world.Body
 import com.engine.world.BodyComponent
 
 /** An entity that has a [Body]. */
-interface IBodyEntity : IGameEntity, IPositional, Sizable {
+interface IBodyEntity : IGameEntity, IPositional, ISizable {
 
   val body: Body
     get() = getComponent(BodyComponent::class)!!.body

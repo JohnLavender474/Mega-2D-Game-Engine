@@ -2,8 +2,6 @@ package com.engine.world
 
 import com.badlogic.gdx.math.Rectangle
 import com.engine.common.interfaces.Resettable
-import com.engine.common.shapes.GameLine
-import com.engine.common.shapes.GameRectangle
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
@@ -53,16 +51,8 @@ class WorldGraph(val width: Int, val height: Int, val ppm: Int) : Resettable {
    * @return this world graph
    */
   fun addFixture(fixture: Fixture): WorldGraph {
-    val bounds =
-        fixture.shape.let {
-          when (it) {
-            is GameRectangle -> it
-            is GameLine -> it.getBoundingRectangle()
-            else -> null
-          }
-        }
-    bounds?.let {
-      val m = getMinsAndMaxes(bounds)
+    fixture.bodyRelativeShape?.let {
+      val m = getMinsAndMaxes(it.getBoundingRectangle())
       for (x in m[0] until m[2]) {
         for (y in m[1] until m[3]) {
           fixtures.computeIfAbsent(Pair(x, y)) { ArrayList() }.add(fixture)

@@ -87,8 +87,8 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
    */
   operator fun get(column: Int, row: Int): T? {
     // Indexes must be within bounds
-    if (isColumnOutOfBounds(column)) throw IndexOutOfBoundsException("Column index $column is out of bounds")
-    if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of bounds")
+    if (isColumnOutOfBounds(column)) throw IndexOutOfBoundsException("Column index $column is out of shape")
+    if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of shape")
 
     return matrixMap[column pairTo row]
   }
@@ -102,8 +102,8 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
   operator fun set(column: Int, row: Int, element: T?): T? {
     // Indexes must be within bounds
     if (isColumnOutOfBounds(column))
-        throw IndexOutOfBoundsException("Column index $column is out of bounds")
-    if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of bounds")
+        throw IndexOutOfBoundsException("Column index $column is out of shape")
+    if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of shape")
 
     // Convert row and column index to index pair
     val indexPair = column pairTo row

@@ -1,7 +1,7 @@
 package com.engine.common.interfaces
 
 /** An interface representing an object with a size, including width and height. */
-interface Sizable {
+interface ISizable {
 
   /**
    * Gets the width of the object.

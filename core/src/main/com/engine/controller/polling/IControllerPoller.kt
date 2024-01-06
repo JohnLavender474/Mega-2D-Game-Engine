@@ -1,64 +1,64 @@
 package com.engine.controller.polling
 
-import com.engine.common.interfaces.Activatable
+import com.engine.common.interfaces.IActivatable
 import com.engine.controller.buttons.ButtonStatus
 
 /**
  * Interface for controller pollers. A controller poller polls the controller for button status and
- * returns the status of the buttons. This interface extends [Activatable] and [Runnable] so that it
+ * returns the status of the buttons. This interface extends [IActivatable] and [Runnable] so that it
  * can be activated and run. The [run] method should update the status of each button.
  */
-interface IControllerPoller : Activatable, Runnable {
+interface IControllerPoller : IActivatable, Runnable {
 
   /**
    * Gets the status of the button mapped to the key.
    *
-   * @param name The button name.
+   * @param key The button key.
    * @return The status of the button mapped to the key.
    */
-  fun getButtonStatus(name: String): ButtonStatus?
+  fun getStatus(key: Any): ButtonStatus?
 
   /**
-   * Returns if the button mapped to the given [name] is pressed.
+   * Returns if the button mapped to the given [key] is pressed.
    *
-   * @param name The name of the button to check.
-   * @return If the button mapped to the given [name] is pressed.
+   * @param key The key of the button to check.
+   * @return If the button mapped to the given [key] is pressed.
    */
-  fun isButtonPressed(name: String): Boolean {
-    val status = getButtonStatus(name)
+  fun isPressed(key: Any): Boolean {
+    val status = getStatus(key)
     return status == ButtonStatus.PRESSED || status == ButtonStatus.JUST_PRESSED
   }
 
   /**
-   * Returns if the button mapped to the given [name] is just pressed.
+   * Returns if the button mapped to the given [key] is just pressed.
    *
-   * @param name The name of the button to check.
-   * @return If the button mapped to the given [name] is just pressed.
+   * @param key The key of the button to check.
+   * @return If the button mapped to the given [key] is just pressed.
    */
-  fun isButtonJustPressed(name: String): Boolean {
-    val status = getButtonStatus(name)
+  fun isJustPressed(key: Any): Boolean {
+    val status = getStatus(key)
     return status == ButtonStatus.JUST_PRESSED
   }
 
   /**
-   * Returns if the button mapped to the given [name] is just released.
+   * Returns if the button mapped to the given [key] is just released.
    *
-   * @param name The name of the button to check.
-   * @return If the button mapped to the given [name] is just released.
+   * @param key The key of the button to check.
+   * @return If the button mapped to the given [key] is just released.
    */
-  fun isButtonJustReleased(name: String): Boolean {
-    val status = getButtonStatus(name)
+  fun isJustReleased(key: Any): Boolean {
+    val status = getStatus(key)
     return status == ButtonStatus.JUST_RELEASED
   }
 
   /**
-   * Returns if the button mapped to the given [name] is released.
+   * Returns if the button mapped to the given [key] is released.
    *
-   * @param name The name of the button to check.
-   * @return If the button mapped to the given [name] is released.
+   * @param key The key of the button to check.
+   * @return If the button mapped to the given [key] is released.
    */
-  fun isButtonReleased(name: String): Boolean {
-    val status = getButtonStatus(name)
+  fun isReleased(key: Any): Boolean {
+    val status = getStatus(key)
     return status == ButtonStatus.RELEASED || status == ButtonStatus.JUST_RELEASED
   }
 }

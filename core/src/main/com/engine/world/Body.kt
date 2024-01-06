@@ -3,6 +3,8 @@ package com.engine.world
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
+import com.engine.common.GameLogger
+import com.engine.common.enums.Direction
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
@@ -28,6 +30,19 @@ import com.engine.common.shapes.GameRectangle
  * @param properties the [Properties] of the body
  * @param preProcess the [Updatable] to run before the body is processed
  * @param postProcess the [Updatable] to run after the body is processed
+ * @param cardinalRotation the [Direction] of the body; this determines the rotation of the body
+ *   returned by [rotatedBounds]. If the [cardinalRotation] is [Direction.UP], then the rotation is
+ *   0f which means essentially that no rotation is performed. This field is used in determining
+ *   body collisions in [WorldSystem] and [StandardCollisionHandler]. The default value is
+ *   [Direction.UP].
+ * @param originXCenter if true, the center x of the body will be used as the origin x instead of
+ *   the value of [originX] when calculating [rotatedBounds]. The origin only affects the value of
+ *   [rotatedBounds]. If your intention is to merely rotate the body relative to itself (i.e. rotate
+ *   but not move), then you should set this to true. The default value is true.
+ * @param originYCenter if true, the center y of the body will be used as the origin y instead of
+ *   the value of [originY] when calculating [rotatedBounds]. The origin only affects the value of
+ *   [rotatedBounds]. If your intention is to merely rotate the body relative to itself (i.e. rotate
+ *   but not move), then you should set this to true. The default value is true.
  * @see GameRectangle
  * @see BodyType
  * @see PhysicsData
@@ -46,8 +61,15 @@ class Body(
     var fixtures: Array<Pair<Any, Fixture>> = Array(),
     override var properties: Properties = Properties(),
     var preProcess: Updatable? = null,
-    var postProcess: Updatable? = null
+    var postProcess: Updatable? = null,
+    var cardinalRotation: Direction = Direction.UP,
+    var originXCenter: Boolean = true,
+    var originYCenter: Boolean = true
 ) : GameRectangle(x, y, width, height), Resettable, IPropertizable {
+
+  companion object {
+    const val TAG = "Body"
+  }
 
   /**
    * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and
@@ -72,9 +94,30 @@ class Body(
   // the bounds of this body before the current world update cycle
   internal var previousBounds = GameRectangle()
 
-  /** The difference between the current center point and the previous center point. */
+  /**
+   * The difference between the current center point and the previous center point. Set in each
+   * update cycle of the [WorldSystem].
+   */
   val positionDelta: Vector2
     get() = getCenterPoint().sub(previousBounds.getCenterPoint())
+
+  /**
+   * Returns the bounds of this body rotated in the given [Direction]. If the [cardinalRotation] is
+   * [Direction.UP], then the rotation is 0f which means essentially that no rotation is performed.
+   * If [originXCenter] is true, then the center x of the body will be used as the origin x instead
+   * of the value of [originX]. If [originYCenter] is true, then the center y of the body will be
+   * used as the origin y instead of the value of [originY]. The origin only affects the value of
+   * [rotatedBounds]. The default value of [cardinalRotation] is [Direction.UP]. The default value
+   * of [originXCenter] is true. The default value of [originYCenter] is true.
+   */
+  val rotatedBounds: GameRectangle
+    get() {
+      val center = getCenter()
+      val copy = GameRectangle(this)
+      copy.originX = if (originXCenter) center.x else originX
+      copy.originY = if (originYCenter) center.y else originY
+      return copy.getCardinallyRotatedShape(cardinalRotation, false)
+    }
 
   /**
    * Returns a copy of the previous bounds of this body. The previous bounds are the bounds of this
@@ -98,7 +141,18 @@ class Body(
    *
    * @param fixture the [Fixture] to add
    */
-  fun addFixture(fixture: Fixture) = fixtures.add(fixture.fixtureLabel to fixture)
+  fun addFixture(fixture: Fixture): Body {
+    fixtures.add(fixture.fixtureLabel to fixture)
+    return this
+  }
+
+  /**
+   * Runs the given function for each fixture entry in this body.
+   *
+   * @param function the function to run for each fixture entry
+   */
+  fun forEachFixture(function: (Any, Fixture) -> Unit) =
+      fixtures.forEach { function(it.first, it.second) }
 
   /**
    * Resets the body to its default state by resetting its [PhysicsData] and resetting the positions
@@ -116,6 +170,7 @@ class Body(
   }
 
   override fun copy(): Body {
+    GameLogger.debug(TAG, "copy(): Creating copy of body: $this.")
     val body =
         Body(
             bodyType,

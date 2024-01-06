@@ -37,7 +37,7 @@ class KeyboardTest : GdxTest() {
   }
 
   override fun render() {
-    if (poller.isButtonPressed("reset")) {
+    if (poller.isPressed("reset")) {
       setting = true
       index = 0
       lastIndex = -1

@@ -14,7 +14,7 @@ import com.engine.entities.IGameEntity
  */
 class ControllerComponent(
     override val entity: IGameEntity,
-    val actuators: ObjectMap<String, IButtonActuator>
+    val actuators: ObjectMap<Any, () -> IButtonActuator?>
 ) : IGameComponent {
 
   /**
@@ -24,10 +24,10 @@ class ControllerComponent(
    */
   constructor(
       entity: IGameEntity,
-      vararg _actuators: Pair<String, IButtonActuator>
+      vararg _actuators: Pair<Any, () -> IButtonActuator?>
   ) : this(
       entity,
-      ObjectMap<String, IButtonActuator>().apply {
+      ObjectMap<Any, () -> IButtonActuator?>().apply {
         _actuators.forEach { put(it.first, it.second) }
       })
 }

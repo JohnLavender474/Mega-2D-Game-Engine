@@ -44,6 +44,14 @@ import kotlin.math.abs
  * notified. The order of the entry is not important, so using "Type1" as the key with "Type2"
  * inside the value [Set<String>], or else vice versa, will NOT change the result. If the
  * [contactFilterMap] is null, then the [IContactListener] will be notified of ALL contacts.
+ *
+ * The [preProcess] function is run for each [Body] directly after the body's own [Body.preProcess]
+ * function has been run. This is useful if you want to run common logic for all bodies in the
+ * pre-processing stage.
+ *
+ * The [postProcess] function is run for each [Body] directly after the body's own
+ * [Body.postProcess] function has been run. This is useful if you want to run common logic for all
+ * bodies in the post-processing stage.
  */
 class WorldSystem(
     private val contactListener: IContactListener,
@@ -55,7 +63,6 @@ class WorldSystem(
 
   internal var priorContactSet = OrderedSet<Contact>()
   internal var currentContactSet = OrderedSet<Contact>()
-
   internal var accumulator = 0f
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
@@ -104,7 +111,7 @@ class WorldSystem(
   internal fun preProcess(entities: ImmutableCollection<IGameEntity>, delta: Float) {
     entities.forEach { e ->
       e.getComponent(BodyComponent::class)?.body?.let { b ->
-        b.previousBounds.set(b)
+        b.previousBounds.set(b.rotatedBounds)
         b.preProcess?.update(delta)
       }
     }
@@ -120,8 +127,8 @@ class WorldSystem(
     entity.getComponent(BodyComponent::class)?.body?.let { b ->
       updatePhysics(b, delta)
       updateFixturePositions(b)
-      worldGraphSupplier()!!.add(b)
-      b.fixtures.forEach { (_, f) -> worldGraphSupplier()!!.add(f) }
+      worldGraphSupplier()!!.add(b, b.rotatedBounds)
+      b.fixtures.forEach { (_, f) -> worldGraphSupplier()!!.add(f, f.bodyRelativeShape!!) }
     }
   }
 
@@ -206,8 +213,8 @@ class WorldSystem(
    */
   internal fun updateFixturePositions(body: Body) {
     body.fixtures.forEach { (_, f) ->
-      if (!f.attachedToBody) return
-      f.shape.setCenter(body.getCenterPoint().add(f.offsetFromBodyCenter))
+      if (!f.attachedToBody) return@forEach
+      f.setBodyRelativeShape(body)
     }
   }
 
@@ -236,7 +243,7 @@ class WorldSystem(
       if (f.active && contactFilterMap?.containsKey(f.fixtureLabel) != false) {
         val overlapping = ObjectSet<Fixture>()
 
-        worldGraphSupplier()!!.get(f.getGameShape2D()).filterIsInstance<Fixture>().forEach {
+        worldGraphSupplier()!!.get(f.bodyRelativeShape!!).filterIsInstance<Fixture>().forEach {
           if (it.active && filterContact(f, it) && f.overlaps(it)) overlapping.add(it)
         }
 
@@ -253,8 +260,9 @@ class WorldSystem(
    * @param body the [Body] to resolve the collisions of
    */
   internal fun resolveCollisions(body: Body) {
-    worldGraphSupplier()!!.get(body).filterIsInstance<Body>().forEach {
-      if (it != body && it.overlaps(body as Rectangle)) collisionHandler.handleCollision(body, it)
+    worldGraphSupplier()!!.get(body.rotatedBounds).filterIsInstance<Body>().forEach {
+      if (it != body && it.rotatedBounds.overlaps(body as Rectangle))
+          collisionHandler.handleCollision(body, it)
     }
   }
 }

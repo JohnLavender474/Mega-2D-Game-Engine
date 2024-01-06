@@ -1,6 +1,7 @@
 package com.engine.common.shapes
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.enums.Direction
 import com.engine.common.enums.Position
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -68,6 +69,67 @@ class GameRectangleTest :
         it("should not overlap line") {
           val line = GameLine(10f, 10f, 12f, 12f)
           gameRectangle.overlaps(line) shouldBe false
+        }
+
+        describe("should rotate correctly") {
+          it("rotation test 1") {
+            val actualRectangle =
+                GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.LEFT, false)
+            val expectedRectangle = GameRectangle(-6f, 1f, 4f, 3f)
+            actualRectangle shouldBe expectedRectangle
+          }
+
+          it("rotation test 2") {
+            val actualRectangle =
+                GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.DOWN, false)
+            val expectedRectangle = GameRectangle(-4f, -6f, 3f, 4f)
+            actualRectangle shouldBe expectedRectangle
+          }
+
+          it("rotation test 3") {
+            val actualRectangle =
+                GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.RIGHT, false)
+            val expectedRectangle = GameRectangle(2f, -4f, 4f, 3f)
+            actualRectangle shouldBe expectedRectangle
+          }
+
+          it("rotation test 4") {
+            val actualRectangle =
+                GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.UP, false)
+            val expectedRectangle = GameRectangle(1f, 2f, 3f, 4f)
+            actualRectangle shouldBe expectedRectangle
+          }
+
+          it("rotation test 5") {
+            var actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
+            actualRectangle.originX = 1.5f
+            actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT, false)
+
+            val expectedRectangle = GameRectangle(-4.5f, -0.5f, 4f, 3f)
+
+            actualRectangle shouldBe expectedRectangle
+          }
+
+          it("rotation test 6") {
+            var actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
+            actualRectangle.originY = 3.5f
+            actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT, false)
+
+            val expectedRectangle = GameRectangle(-2.5f, 4.5f, 4f, 3f)
+
+            actualRectangle shouldBe expectedRectangle
+          }
+
+          it("rotation test 7") {
+            var actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
+            actualRectangle.originX = -1.5f
+            actualRectangle.originY = 3.5f
+            actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT, false)
+
+            val expectedRectangle = GameRectangle(-4f, 6f, 4f, 3f)
+
+            actualRectangle shouldBe expectedRectangle
+          }
         }
       }
     })

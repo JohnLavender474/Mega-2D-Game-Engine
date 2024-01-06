@@ -1,6 +1,6 @@
 package com.engine.common.enums
 
-/** Represents a direction. */
+/** Represents a cardinal direction. */
 enum class Direction {
   UP,
   DOWN,

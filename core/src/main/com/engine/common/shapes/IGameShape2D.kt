@@ -1,17 +1,28 @@
 package com.engine.common.shapes
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.interfaces.ICopyable
 import com.engine.drawables.shapes.IDrawableShape
 
 /**
- * A 2D shape that can be used in a game. This shape is a [Shape2D]. For convenience reasons, this
- * also extends [IGameShape2DSupplier].
+ * A 2D shape that can be used in a game. This shape is a [Shape2D]. [Shape2D] objects are expected
+ * to implement the same signatures defined in [Shape2D] as well as those in [IDrawableShape] (for
+ * drawing this shape with [ShapeRenderer]), ICopyable (for returning a copy of this shape), and
+ * [ICardinallyRotatableShape2D] since it is expected that any shape can be rotated in 90 degree
+ * increment around an origin.
  *
+ * @property originX used to determine the origin of this shape when rotating it. This is the first
+ *   value of the origin.
+ * @property originY used to determine the origin of this shape when rotating it. This is the second
+ *   value of the origin.
  * @see Shape2D
  */
-interface IGameShape2D : Shape2D, IDrawableShape, ICopyable {
+interface IGameShape2D : Shape2D, IDrawableShape, ICopyable, ICardinallyRotatableShape2D {
+
+  var originX: Float
+  var originY: Float
 
   /**
    * Returns whether this shape overlaps the given shape.
@@ -100,6 +111,15 @@ interface IGameShape2D : Shape2D, IDrawableShape, ICopyable {
    * @return This shape for chaining.
    */
   fun setCenter(center: Vector2): IGameShape2D
+
+  /**
+   * Sets the center of this shape.
+   *
+   * @param centerX The first value of the center.
+   * @param centerY The second value of the center.
+   * @return This shape for chaining.
+   */
+  fun setCenter(centerX: Float, centerY: Float): IGameShape2D
 
   /**
    * Returns the max x of this shape.

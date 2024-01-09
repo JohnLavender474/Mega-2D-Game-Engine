@@ -34,15 +34,18 @@ import com.engine.common.shapes.GameRectangle
  *   returned by [rotatedBounds]. If the [cardinalRotation] is [Direction.UP], then the rotation is
  *   0f which means essentially that no rotation is performed. This field is used in determining
  *   body collisions in [WorldSystem] and [StandardCollisionHandler]. The default value is
- *   [Direction.UP].
+ *   [Direction.UP]. If you do not wish to use the built-in rotation logic, then it is best to keep
+ *   this field the default value.
  * @param originXCenter if true, the center x of the body will be used as the origin x instead of
  *   the value of [originX] when calculating [rotatedBounds]. The origin only affects the value of
  *   [rotatedBounds]. If your intention is to merely rotate the body relative to itself (i.e. rotate
- *   but not move), then you should set this to true. The default value is true.
+ *   but not move), then you should set this to true. The default value is true. If you do not wish
+ *   to use the built-in rotation logic, then it is best to keep this field the default value.
  * @param originYCenter if true, the center y of the body will be used as the origin y instead of
  *   the value of [originY] when calculating [rotatedBounds]. The origin only affects the value of
  *   [rotatedBounds]. If your intention is to merely rotate the body relative to itself (i.e. rotate
- *   but not move), then you should set this to true. The default value is true.
+ *   but not move), then you should set this to true. The default value is true. If you do not wish
+ *   to use the built-in rotation logic, then it is best to keep this field the default value.
  * @see GameRectangle
  * @see BodyType
  * @see PhysicsData
@@ -51,7 +54,7 @@ import com.engine.common.shapes.GameRectangle
  * @see WorldSystem
  * @see Resettable
  */
-class Body(
+open class Body(
     var bodyType: BodyType,
     x: Float = 0f,
     y: Float = 0f,
@@ -110,7 +113,7 @@ class Body(
    * [rotatedBounds]. The default value of [cardinalRotation] is [Direction.UP]. The default value
    * of [originXCenter] is true. The default value of [originYCenter] is true.
    */
-  val rotatedBounds: GameRectangle
+  open val rotatedBounds: GameRectangle
     get() {
       val center = getCenter()
       val copy = GameRectangle(this)
@@ -126,7 +129,7 @@ class Body(
    *
    * @return the previous bounds of this body
    */
-  fun getPreviousBounds() = GameRectangle(previousBounds)
+  open fun getPreviousBounds() = GameRectangle(previousBounds)
 
   /**
    * Returns if the body has the given [BodyType].
@@ -141,7 +144,7 @@ class Body(
    *
    * @param fixture the [Fixture] to add
    */
-  fun addFixture(fixture: Fixture): Body {
+  open fun addFixture(fixture: Fixture): Body {
     fixtures.add(fixture.fixtureLabel to fixture)
     return this
   }

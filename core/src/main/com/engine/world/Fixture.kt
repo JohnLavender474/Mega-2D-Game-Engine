@@ -24,7 +24,9 @@ import com.engine.common.shapes.IGameShape2D
  * @param attachedToBody Whether this fixture is attached to a body. If not attached to a body, this
  *   fixture will not move with the body it is attached to.
  * @param offsetFromBodyCenter The offset of this fixture from the center of the body it is attached
- *   to. Used to position this fixture relative to the body it is attached to.
+ *   to. Used to position this fixture relative to the body it is attached to. This is the offset
+ *   before the body is rotated. This is used in [setBodyRelativeShape] to calculate the
+ *   [bodyRelativeShape].
  * @param properties The properties of this fixture.
  */
 class Fixture(

@@ -34,6 +34,31 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
   constructor(vararg systems: IGameSystem) : this(systems.asIterable())
 
   /**
+   * Finds all [IGameEntity]s that match the given [predicate] and returns them as an [OrderedSet].
+   *
+   * @param predicate the predicate to match [IGameEntity]s against
+   * @return an [OrderedSet] of [IGameEntity]s that match the given [predicate]
+   */
+  fun findEntitiesBy(predicate: (IGameEntity) -> Boolean): OrderedSet<IGameEntity> {
+    val set = OrderedSet<IGameEntity>()
+    entities.forEach { if (predicate(it)) set.add(it) }
+    return set
+  }
+
+  /**
+   * Finds the first [IGameEntity] that matches the given [predicate] and returns it. If no
+   * [IGameEntity] matches the given [predicate], then null is returned.
+   *
+   * @param predicate the predicate to match [IGameEntity]s against
+   * @return the first [IGameEntity] that matches the given [predicate], or null if no [IGameEntity]
+   *   matches the given [predicate]
+   */
+  fun findFirstEntityBy(predicate: (IGameEntity) -> Boolean): IGameEntity? {
+    for (entity in entities) if (predicate(entity)) return entity
+    return null
+  }
+
+  /**
    * [IGameEntity]s passed into the [spawn] method will be added to a queue, and will not truly be
    * spawned until the next call to [update].
    *

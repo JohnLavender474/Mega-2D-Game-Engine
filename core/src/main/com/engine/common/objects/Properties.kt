@@ -17,6 +17,10 @@ fun props(vararg pairs: Pair<Any, Any?>) =
 /** A [HashMap] that stores [String] keys and [Any] type values. */
 class Properties {
 
+  /** Returns the size of the properties, i.e. the number of entries. */
+  val size: Int
+    get() = props.size
+
   private val props: ObjectMap<Any, Any?>
 
   /**
@@ -161,6 +165,19 @@ class Properties {
    */
   fun forEach(action: (key: Any, value: Any?) -> Unit) {
     for (entry in props.entries()) action(entry.key, entry.value)
+  }
+
+  /**
+   * Returns a new [Properties] instance containing all the properties from this [Properties]
+   * instance that match the given predicate.
+   *
+   * @param predicate The predicate to match.
+   * @return A [Properties] instance containing all the properties from this [Properties] instance
+   */
+  fun collect(predicate: (key: Any, value: Any?) -> Boolean): Properties {
+    val collected = Properties()
+    forEach { key, value -> if (predicate(key, value)) collected.put(key, value) }
+    return collected
   }
 
   /**

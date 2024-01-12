@@ -53,6 +53,7 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
   }
 
   override fun spawn(spawnProps: Properties) {
+    properties.clear()
     properties.putAll(spawnProps)
     if (!initialized) {
       init()

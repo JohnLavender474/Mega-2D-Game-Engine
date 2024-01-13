@@ -96,13 +96,19 @@ data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
           Pair(fixture2, fixture1)
       else null
 
+  /**
+   * Returns true if the given object is a [Contact] containing the same two fixtures. The order of
+   * the fixtures does not matter.
+   *
+   * @param other the object to compare to
+   * @return true if the given object is a [Contact] containing the same two fixtures
+   */
   override fun equals(other: Any?) =
       other is Contact &&
           ((fixture1 == other.fixture1 && fixture2 == other.fixture2) ||
               (fixture1 == other.fixture2 && fixture2 == other.fixture1))
 
   override fun hashCode() = 49 + 7 * fixture1.hashCode() + 7 * fixture2.hashCode()
-    override fun toString(): String {
-        return "Contact(fixture1=$fixture1, fixture2=$fixture2)"
-    }
+
+  override fun toString() = "Contact(fixture1=$fixture1, fixture2=$fixture2)"
 }

@@ -5,9 +5,9 @@ import com.badlogic.gdx.utils.Array
 /**
  * Iterator for iterating over multiple collections in sequence.
  *
- * @param iterable A MultiCollectionIterable containing the collections to iterate over.
+ * @param multiCollectionIterable A MultiCollectionIterable containing the collections to iterate over.
  */
-class MultiCollectionIterator<T>(internal val iterable: MultiCollectionIterable<T>) : Iterator<T> {
+class MultiCollectionIterator<T>(internal val multiCollectionIterable: MultiCollectionIterable<T>) : Iterator<T> {
 
   private var outerIndex = 0
   private var currentInnerIterator: Iterator<T>? = null
@@ -18,7 +18,7 @@ class MultiCollectionIterator<T>(internal val iterable: MultiCollectionIterable<
    * @return True if there are more elements to iterate, false otherwise.
    */
   override fun hasNext(): Boolean {
-    val iterables = iterable.iterables
+    val iterables = multiCollectionIterable.iterables
     if (outerIndex >= iterables.size) return false
 
     if (currentInnerIterator == null) {

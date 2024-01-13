@@ -1,11 +1,8 @@
 package com.engine.events
 
 import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.utils.ObjectMap
-import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.GameLogger
 import com.engine.common.extensions.gdxArrayOf
-import com.engine.common.extensions.putIfAbsentAndGet
 import com.engine.common.objects.MultiCollectionIterable
 
 /**
@@ -19,8 +16,8 @@ class EventsManager : IEventsManager {
     const val TAG = "EventsManager"
   }
 
-  internal val listeners = OrderedSet<IEventListener>()
-  internal val events = ObjectMap<Any, Array<Event>>()
+  internal val listeners = HashSet<IEventListener>()
+  internal val events = HashMap<Any, Array<Event>>()
 
   /**
    * Submits an [Event] to this [EventsManager].
@@ -30,7 +27,9 @@ class EventsManager : IEventsManager {
   override fun submitEvent(event: Event) {
     GameLogger.debug(TAG, "submitEvent(): Submitting event: $event")
     val eventKey = event.key
-    events.putIfAbsentAndGet(eventKey, gdxArrayOf()).add(event)
+    events.putIfAbsent(eventKey, gdxArrayOf())
+    val array = events[eventKey]
+    array!!.add(event)
   }
 
   /**
@@ -72,22 +71,24 @@ class EventsManager : IEventsManager {
    * per game loop.
    */
   override fun run() {
-    val _events = ObjectMap(events)
+    val _events = HashMap(events)
     events.clear()
 
     listeners.forEach { listener ->
       val eventKeyMask = listener.eventKeyMask
 
       if (eventKeyMask.isEmpty) {
-        _events.values().forEach { _events -> _events.forEach {
-          GameLogger.debug(TAG, "run(): Notifying listener $listener of event: $it")
-          listener.onEvent(it) }
+        _events.values.forEach { _events ->
+          _events.forEach {
+            GameLogger.debug(TAG, "run(): Notifying listener $listener of event: $it")
+            listener.onEvent(it)
+          }
         }
         return@forEach
       }
 
       val relevantEvents = Array<Iterable<Event>>()
-      eventKeyMask.forEach { key -> _events.get(key)?.let { relevantEvents.add(it) } }
+      eventKeyMask.forEach { key -> _events[key]?.let { relevantEvents.add(it) } }
       val iterable = MultiCollectionIterable(relevantEvents)
       iterable.forEach {
         GameLogger.debug(TAG, "run(): Notifying listener $listener of event: $it")

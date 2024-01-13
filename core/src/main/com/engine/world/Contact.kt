@@ -31,7 +31,7 @@ data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
    * @param fixtureLabels2 the labels of the second fixture
    * @return if the fixtures are of the given labels
    */
-  fun fixturesMatch(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
+  fun fixtureSetsMatch(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
       (fixtureLabels1.contains(fixture1.fixtureLabel) &&
           fixtureLabels2.contains(fixture2.fixtureLabel)) ||
           (fixtureLabels1.contains(fixture2.fixtureLabel) &&
@@ -87,7 +87,7 @@ data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
    * @return the fixtures in order of [fixtureLabels1] and [fixtureLabels2], or null if the fixtures
    *   are not of the given types
    */
-  fun getFixturesInOrder(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
+  fun getFixtureSetsInOrder(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
       if (fixtureLabels1.contains(fixture1.fixtureLabel) &&
           fixtureLabels2.contains(fixture2.fixtureLabel))
           Pair(fixture1, fixture2)

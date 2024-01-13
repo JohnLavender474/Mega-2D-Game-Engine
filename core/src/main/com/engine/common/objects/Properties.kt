@@ -142,6 +142,18 @@ class Properties {
   fun getOrDefault(key: Any, defaultValue: Any?) = if (containsKey(key)) get(key) else defaultValue
 
   /**
+   * Gets a property from this [Properties] instance. If no property is mapped to the given [key],
+   * then the [defaultValue] is returned instead.
+   *
+   * @param key The key of the property.
+   * @param defaultValue The default value of the property. Cannot be null.
+   * @param type The type to cast the property to.
+   * @return The property, or the default value if no property is mapped to the given key.
+   */
+  fun <T : Any> getOrDefault(key: Any, defaultValue: Any, type: KClass<T>) =
+      type.cast(if (containsKey(key)) get(key, type) else defaultValue)
+
+  /**
    * Gets a property from this [Properties] instance. If the property is null then an exception is
    * thrown.
    *

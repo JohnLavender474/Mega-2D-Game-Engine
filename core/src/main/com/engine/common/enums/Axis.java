@@ -1,7 +1,7 @@
 package com.engine.common.enums;
 
 /**
- * Defines
+ * Defines the axis of a 3D coordinate system.
  */
 public enum Axis {
     X, Y, Z

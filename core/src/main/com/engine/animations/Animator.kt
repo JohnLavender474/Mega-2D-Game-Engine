@@ -43,11 +43,16 @@ class Animator(
 
   override fun animate(sprite: ISprite, delta: Float) {
     val nextKey = keySupplier()
+
+    // if the key has changed, then reset the current animation before setting the key
     if (currentKey != nextKey) {
       GameLogger.debug(TAG, "animate(): Switching animation from [$currentKey] to [$nextKey]")
       currentAnimation?.reset()
     }
+
     currentKey = nextKey
+    // after the key has been set to the new key, then also reset the new animation too
+    if (currentKey != nextKey) currentAnimation?.reset()
 
     currentAnimation?.let {
       it.update(delta)

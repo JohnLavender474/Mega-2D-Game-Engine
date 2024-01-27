@@ -52,6 +52,10 @@ import kotlin.math.abs
  * The [postProcess] function is run for each [Body] directly after the body's own
  * [Body.postProcess] function has been run. This is useful if you want to run common logic for all
  * bodies in the post-processing stage.
+ *
+ * In regard to fixture overlaps, if [Fixture.attachedToBody] is true for a fixture, then its
+ * [Fixture.bodyRelativeShape] is used; otherwise its [Fixture.shape] is used. If the fixture is
+ * attached to a body but its [Fixture.bodyRelativeShape] is null, then an exception will be thrown.
  */
 class WorldSystem(
     private val contactListener: IContactListener,
@@ -109,10 +113,10 @@ class WorldSystem(
    * @param delta the time in seconds since the last frame
    */
   internal fun preProcess(entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    entities.forEach { e ->
-      e.getComponent(BodyComponent::class)?.body?.let { b ->
-        b.previousBounds.set(b.rotatedBounds)
-        b.preProcess?.update(delta)
+    entities.forEach { entity ->
+      entity.getComponent(BodyComponent::class)?.body?.let { body ->
+        body.previousBounds.set(body.rotatedBounds)
+        body.preProcess?.update(delta)
       }
     }
   }
@@ -124,11 +128,26 @@ class WorldSystem(
    * @param delta the time in seconds since the last frame
    */
   internal fun processPhysicsAndGraph(entity: IGameEntity, delta: Float) {
-    entity.getComponent(BodyComponent::class)?.body?.let { b ->
-      updatePhysics(b, delta)
-      updateFixturePositions(b)
-      worldGraphSupplier()!!.add(b, b.rotatedBounds)
-      b.fixtures.forEach { (_, f) -> worldGraphSupplier()!!.add(f, f.bodyRelativeShape!!) }
+    val worldGraph =
+        worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
+
+    entity.getComponent(BodyComponent::class)?.body?.let { body ->
+      updatePhysics(body, delta)
+      updateFixturePositions(body)
+
+      worldGraph.add(body, body.rotatedBounds)
+
+      body.fixtures.forEach { (_, fixture) ->
+        val shape =
+            if (fixture.attachedToBody)
+                fixture.bodyRelativeShape
+                    ?: throw IllegalStateException(
+                        "Fixture is attached to body but body relative shape is null. " +
+                            "Fixture: $fixture. Entity: $entity")
+            else fixture.shape
+
+        worldGraph.add(fixture, shape)
+      }
     }
   }
 
@@ -138,9 +157,9 @@ class WorldSystem(
    * @param entity the entity to process
    */
   internal fun processContactsAndCollisions(entity: IGameEntity) {
-    entity.getComponent(BodyComponent::class)?.body?.let { b ->
-      checkForContacts(b)
-      resolveCollisions(b)
+    entity.getComponent(BodyComponent::class)?.body?.let { body ->
+      checkForContacts(body)
+      resolveCollisions(body)
     }
   }
 
@@ -152,8 +171,10 @@ class WorldSystem(
    * @param delta the time in seconds since the last frame
    */
   internal fun postProcess(entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    entities.forEach { e ->
-      e.getComponent(BodyComponent::class)?.body?.let { b -> b.postProcess?.update(delta) }
+    entities.forEach { entity ->
+      entity.getComponent(BodyComponent::class)?.body?.let { body ->
+        body.postProcess?.update(delta)
+      }
     }
   }
 
@@ -212,9 +233,9 @@ class WorldSystem(
    * @param body the [Body] to update the positions of the fixtures of
    */
   internal fun updateFixturePositions(body: Body) {
-    body.fixtures.forEach { (_, f) ->
-      if (!f.attachedToBody) return@forEach
-      f.setBodyRelativeShape(body)
+    body.fixtures.forEach { (_, fixture) ->
+      if (!fixture.attachedToBody) return@forEach
+      fixture.setBodyRelativeShape(body)
     }
   }
 
@@ -239,15 +260,26 @@ class WorldSystem(
    * @param body the [Body] to check for contacts
    */
   internal fun checkForContacts(body: Body) {
-    body.fixtures.forEach { (_, f) ->
-      if (f.active && contactFilterMap?.containsKey(f.fixtureLabel) != false) {
+    val worldGraph =
+        worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
+
+    body.fixtures.forEach { (_, fixture) ->
+      if (fixture.active && contactFilterMap?.containsKey(fixture.fixtureLabel) != false) {
         val overlapping = ObjectSet<Fixture>()
 
-        worldGraphSupplier()!!.get(f.bodyRelativeShape!!).filterIsInstance<Fixture>().forEach {
-          if (it.active && filterContact(f, it) && f.overlaps(it)) overlapping.add(it)
+        val shape =
+            if (fixture.attachedToBody)
+                fixture.bodyRelativeShape
+                    ?: throw IllegalStateException(
+                        "Fixture is attached to body but body relative shape is null. " +
+                            "Fixture: $fixture. Entity: $body")
+            else fixture.shape
+
+        worldGraph.get(shape).filterIsInstance<Fixture>().forEach {
+          if (it.active && filterContact(fixture, it) && fixture.overlaps(it)) overlapping.add(it)
         }
 
-        overlapping.forEach { o -> currentContactSet.add(Contact(f, o)) }
+        overlapping.forEach { o -> currentContactSet.add(Contact(fixture, o)) }
       }
     }
   }

@@ -47,7 +47,6 @@ class Fixture(
    * [setBodyRelativeShape] is called.
    */
   var bodyRelativeShape: IGameShape2D? = null
-    private set
 
   /**
    * Sets the bounds of this fixture relative to the body it is attached to. This is calculated by
@@ -84,15 +83,37 @@ class Fixture(
   fun overlaps(other: IGameShape2D) = bodyRelativeShape?.overlaps(other) ?: false
 
   /**
-   * Returns if this fixture overlaps the given fixture. Specifically, this method returns if this
-   * fixture's [bodyRelativeShape] overlaps the given fixture's [bodyRelativeShape]. Throws a
-   * [NullPointerException] if [bodyRelativeShape] of the provided fixture is null.
+   * Returns if this fixture overlaps the given fixture. If [attachedToBody] is true for this
+   * fixture, then its [bodyRelativeShape] is used to check for overlap; otherwise its [shape] is
+   * used to check for overlap. If [attachedToBody] is true for the other fixture, then its
+   * [bodyRelativeShape] is used to check for overlap; otherwise its [shape] is used to check for
+   * overlap. If either fixture is attached to a body but its [bodyRelativeShape] is null, then an
+   * [IllegalStateException] is thrown.
    *
    * @param other The fixture to check if this fixture overlaps.
    * @throws NullPointerException If [bodyRelativeShape] of the provided fixture is null.
+   * @throws IllegalStateException If [attachedToBody] is true for this fixture but its
+   *   [bodyRelativeShape] is null, or if [attachedToBody] is true for the other fixture but its
+   *   [bodyRelativeShape] is null.
    * @see overlaps
    */
-  fun overlaps(other: Fixture) = overlaps(other.bodyRelativeShape!!)
+  fun overlaps(other: Fixture): Boolean {
+    val thisShape =
+        if (attachedToBody)
+            bodyRelativeShape
+                ?: throw IllegalStateException(
+                    "This fixture is attached to the body but the body relative shape is null: $this")
+        else shape
+
+    val otherShape =
+        if (other.attachedToBody)
+            other.bodyRelativeShape
+                ?: throw IllegalStateException(
+                    "Other fixture is attached to the body but the body relative shape is null: $other")
+        else other.shape
+
+    return thisShape.overlaps(otherShape)
+  }
 
   override fun copy(): Fixture {
     GameLogger.debug(TAG, "copy(): Creating copy of fixture: $this.")

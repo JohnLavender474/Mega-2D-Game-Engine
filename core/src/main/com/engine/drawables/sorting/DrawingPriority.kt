@@ -21,10 +21,11 @@ data class DrawingPriority(var section: DrawingSection, var priority: Int) :
    */
   override fun compareTo(other: DrawingPriority): Int {
     val sectionCompare = section.compareTo(other.section)
-    return if (sectionCompare == 0) {
-      priority.compareTo(other.priority)
-    } else {
-      sectionCompare
-    }
+    return if (sectionCompare == 0) priority.compareTo(other.priority) else sectionCompare
   }
+
+  override fun equals(other: Any?) =
+      other is DrawingPriority && section == other.section && priority == other.priority
+
+  override fun hashCode() = 31 * section.hashCode() + priority
 }

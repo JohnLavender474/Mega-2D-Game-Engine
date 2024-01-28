@@ -10,9 +10,9 @@ import com.engine.controller.buttons.Buttons
  *
  * @param buttons The map of buttons to poll.
  */
-class ControllerPoller(private val buttons: Buttons) : IControllerPoller {
+open class ControllerPoller(val buttons: Buttons) : IControllerPoller {
 
-  internal val statusMap = ObjectMap<Any, ButtonStatus>()
+  val statusMap = ObjectMap<Any, ButtonStatus>()
   override var on = true
 
   init {

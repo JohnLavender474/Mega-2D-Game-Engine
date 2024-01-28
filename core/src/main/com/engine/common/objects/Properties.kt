@@ -2,6 +2,7 @@ package com.engine.common.objects
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.extensions.putIfAbsentAndGet
+import com.engine.common.interfaces.ICopyable
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -15,7 +16,7 @@ fun props(vararg pairs: Pair<Any, Any?>) =
     Properties().apply { pairs.forEach { put(it.first, it.second) } }
 
 /** A [HashMap] that stores [String] keys and [Any] type values. */
-class Properties {
+class Properties: ICopyable {
 
   /** Returns the size of the properties, i.e. the number of entries. */
   val size: Int
@@ -197,7 +198,7 @@ class Properties {
    *
    * @return a copy of this [Properties] instance
    */
-  fun copy() = Properties(props)
+  override fun copy() = Properties(props)
 
   override fun toString(): String {
     val sb = StringBuilder()

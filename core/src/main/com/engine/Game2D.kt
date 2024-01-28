@@ -49,11 +49,11 @@ abstract class Game2D : IGame2D, Game() {
   var currentScreenKey: String? = null
 
   /**
-   * Creates the [Buttons] instance used for creating the [IControllerPoller].
+   * Creates the [IControllerPoller] used by this game.
    *
-   * @return the buttons
+   * @return the controller poller
    */
-  protected abstract fun createButtons(): Buttons
+  protected abstract fun defineControllerPoller(): IControllerPoller
 
   /**
    * Loads the assets into the [AssetManager].
@@ -112,8 +112,7 @@ abstract class Game2D : IGame2D, Game() {
     shapeRenderer = ShapeRenderer()
     shapeRenderer.setAutoShapeType(true)
     batch = SpriteBatch()
-    buttons = createButtons()
-    controllerPoller = ControllerPoller(buttons)
+    controllerPoller = defineControllerPoller()
     assMan = AssetManager()
     loadAssets(assMan)
     assMan.finishLoading()

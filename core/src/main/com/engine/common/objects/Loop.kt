@@ -1,12 +1,11 @@
 package com.engine.common.objects
 
 import com.badlogic.gdx.utils.Array
-import com.engine.common.extensions.toGdxArray
 import com.engine.common.interfaces.Resettable
 
 /**
- * A loop that uses [next] to loop through its elements. When the end of the loop is reached,
- * then [next] will start from the beginning again.
+ * A loop that uses [next] to loop through its elements. When the end of the loop is reached, then
+ * [next] will start from the beginning again.
  *
  * @param T the type of elements in this loop
  */
@@ -18,31 +17,19 @@ class Loop<T> : Resettable {
   val size: Int
     get() = array.size
 
-  /** Creates an empty loop. */
-  constructor() {
-    index = 0
-  }
-
-  /**
-   * Creates a loop with the specified elements. The elements will be added to the loop in the order
-   * they are returned by the specified collection's iterator.
-   *
-   * @param elements the elements to add to the loop
-   */
-  constructor(elements: Collection<T>) {
-    array = elements.toGdxArray()
-    index = 0
-  }
-
   /**
    * Creates a loop with the specified elements. The elements will be added to the loop in the order
    * they are specified.
    *
+   * @param startBeforeFirst whether to start the loop before the first element
    * @param elements the elements to add to the loop
    */
-  constructor(vararg elements: T) {
+  constructor(
+      elements: Array<T>,
+      startBeforeFirst: Boolean = false,
+  ) {
     array = Array(elements)
-    index = 0
+    index = if (startBeforeFirst) -1 else 0
   }
 
   /**
@@ -70,16 +57,32 @@ class Loop<T> : Resettable {
   }
 
   /**
+   * Returns whether this loop is before the first element.
+   *
+   * @return whether this loop is before the first element
+   */
+  fun isBeforeFirst() = index == -1
+
+  /**
    * Returns the current element in the loop.
    *
    * @return the current element in the loop
    */
   fun getCurrent(): T {
     if (size == 0) throw NoSuchElementException("The loop is empty.")
+    if (isBeforeFirst())
+        throw NoSuchElementException(
+            "The loop is before the first element. Must call 'next()' first")
     return array[index]
   }
 
   override fun reset() {
     index = 0
   }
+
+  override fun toString() = "Loop(array=$array, index=$index)"
+
+  override fun hashCode() = array.hashCode()
+
+  override fun equals(other: Any?) = other is Loop<*> && array == other.array
 }

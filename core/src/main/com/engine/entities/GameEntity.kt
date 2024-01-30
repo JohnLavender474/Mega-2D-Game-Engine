@@ -80,4 +80,6 @@ open class GameEntity(override val game: IGame2D) : IGameEntity {
   override fun clearComponents() = componentMap.clear()
 
   override fun print() = "${this::class.simpleName}"
+
+  override fun getTag() = TAG
 }

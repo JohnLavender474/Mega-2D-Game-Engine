@@ -176,6 +176,8 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
 
   fun setSize(size: Vector2) = setSize(size.x, size.y)
 
+  fun getSize() = getSize(Vector2())
+
   final override fun set(x: Float, y: Float, width: Float, height: Float) =
       super.set(x, y, width, height) as GameRectangle
 

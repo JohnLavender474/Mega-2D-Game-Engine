@@ -65,13 +65,23 @@ class WorldSystem(
     private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null
 ) : GameSystem(BodyComponent::class) {
 
+  companion object {
+    const val TAG = "WorldSystem"
+  }
+
+  /**
+   * A set of entities to debug. This set is used to determine which entities to print debug
+   * information for. If this set is empty, then no entities will be printed. If this set is not
+   * empty, then only entities whose [IGameEntity.getTag] is contained in this set will be printed.
+   */
+  val entitiesToDebug = ObjectSet<String>()
+
   internal var priorContactSet = OrderedSet<Contact>()
   internal var currentContactSet = OrderedSet<Contact>()
   internal var accumulator = 0f
 
   override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
     if (!on) return
-
     accumulator += delta
     while (accumulator >= fixedStep) {
       accumulator -= fixedStep
@@ -211,12 +221,14 @@ class WorldSystem(
       if (it.gravityOn) it.velocity.add(it.gravity)
 
       // clamp the x velocity
+      @Suppress("DuplicatedCode")
       if (it.velocity.x > 0f && it.velocity.x > abs(it.velocityClamp.x))
           it.velocity.x = abs(it.velocityClamp.x)
       else if (it.velocity.x < 0f && it.velocity.x < -abs(it.velocityClamp.x))
           it.velocity.x = -abs(it.velocityClamp.x)
 
       // clamp the y velocity
+      @Suppress("DuplicatedCode")
       if (it.velocity.y > 0f && it.velocity.y > abs(it.velocityClamp.y))
           it.velocity.y = abs(it.velocityClamp.y)
       else if (it.velocity.y < 0f && it.velocity.y < -abs(it.velocityClamp.y))
@@ -269,10 +281,10 @@ class WorldSystem(
 
         val shape =
             if (fixture.attachedToBody)
-                fixture.bodyRelativeShape
+                (fixture.bodyRelativeShape
                     ?: throw IllegalStateException(
                         "Fixture is attached to body but body relative shape is null. " +
-                            "Fixture: $fixture. Entity: $body")
+                            "Fixture: $fixture. Entity: $body"))
             else fixture.shape
 
         worldGraph.get(shape).filterIsInstance<Fixture>().forEach {

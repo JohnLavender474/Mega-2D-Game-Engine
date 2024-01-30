@@ -23,7 +23,7 @@ class RotatingLine(
 
   init {
     val endPoint = origin.cpy().add(radius, 0f)
-    set(origin, endPoint)
+    set(origin.cpy(), endPoint)
     line.rotation = degrees
   }
 

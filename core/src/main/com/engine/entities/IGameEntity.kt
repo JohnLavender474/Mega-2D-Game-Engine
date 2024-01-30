@@ -106,4 +106,12 @@ interface IGameEntity : IPropertizable, Initializable, IPrintable {
 
   /** Clears all the [IGameComponent]s from this [IGameEntity]. */
   fun clearComponents()
+
+  /**
+   * Gets the tag of this [IGameEntity]. The tag is a string that can be used to identify this
+   * [IGameEntity], especially when debugging.
+   *
+   * @return The tag of this [IGameEntity].
+   */
+  fun getTag(): String
 }

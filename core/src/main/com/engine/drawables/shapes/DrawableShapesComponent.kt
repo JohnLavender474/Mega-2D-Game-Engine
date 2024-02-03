@@ -18,9 +18,9 @@ import com.engine.entities.IGameEntity
  */
 class DrawableShapesComponent(
     override val entity: IGameEntity,
-    val prodShapeSuppliers: Array<() -> IDrawableShape?> = Array(),
-    val debugShapeSuppliers: Array<() -> IDrawableShape?> = Array(),
-    val debug: Boolean = false
+    var prodShapeSuppliers: Array<() -> IDrawableShape?> = Array(),
+    var debugShapeSuppliers: Array<() -> IDrawableShape?> = Array(),
+    var debug: Boolean = false
 ) : IGameComponent {
 
   /**

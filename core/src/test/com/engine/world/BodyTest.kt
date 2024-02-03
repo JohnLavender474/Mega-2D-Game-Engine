@@ -1,8 +1,10 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.enums.Direction
 import com.engine.common.extensions.gdxArrayOf
+import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
@@ -24,8 +26,8 @@ class BodyTest :
           body.physics shouldBe physicsData
           body.fixtures shouldBe fixtures
           body.properties shouldBe props
-          body.preProcess shouldBe null
-          body.postProcess shouldBe null
+          body.preProcess shouldBe OrderedMap<Any, Updatable>()
+          body.postProcess shouldBe OrderedMap<Any, Updatable>()
         }
 
         it("should have the correct default values for optional properties") {

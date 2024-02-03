@@ -63,8 +63,8 @@ open class Body(
     var physics: PhysicsData = PhysicsData(),
     var fixtures: Array<Pair<Any, Fixture>> = Array(),
     override var properties: Properties = Properties(),
-    var preProcess: Updatable? = null,
-    var postProcess: Updatable? = null,
+    var preProcess: OrderedMap<Any, Updatable> = OrderedMap(),
+    var postProcess: OrderedMap<Any, Updatable> = OrderedMap(),
     var cardinalRotation: Direction = Direction.UP,
     var originXCenter: Boolean = true,
     var originYCenter: Boolean = true
@@ -90,8 +90,8 @@ open class Body(
       physicsData: PhysicsData,
       fixtures: Array<Pair<Any, Fixture>> = Array(),
       properties: Properties = Properties(),
-      preProcess: Updatable? = null,
-      postProcess: Updatable? = null
+      preProcess: OrderedMap<Any, Updatable> = OrderedMap(),
+      postProcess: OrderedMap<Any, Updatable> = OrderedMap()
   ) : this(bodyType, 0f, 0f, 0f, 0f, physicsData, fixtures, properties, preProcess, postProcess)
 
   // the bounds of this body before the current world update cycle

@@ -16,26 +16,26 @@ class CullableOnEvent(
     override val eventKeyMask: ObjectSet<Any> = ObjectSet()
 ) : ICullable, IEventListener {
 
-  companion object {
-    const val TAG = "CullableOnEvent"
-  }
-
-  private var cull: Boolean = false
-
-  override fun shouldBeCulled(delta: Float) = cull
-
-  override fun onEvent(event: Event) {
-    GameLogger.debug(TAG, "onEvent(): event = $event")
-    if (!cull && cullOnEvent(event)) {
-      GameLogger.debug(TAG, "Now culling on event = $event")
-      cull = true
+    companion object {
+        const val TAG = "CullableOnEvent"
     }
-  }
 
-  override fun reset() {
-    GameLogger.debug(TAG, "Resetting CullableOnEvent")
-    cull = false
-  }
+    private var cull: Boolean = false
 
-  override fun toString() = "CullableOnEvent"
+    override fun shouldBeCulled(delta: Float) = cull
+
+    override fun onEvent(event: Event) {
+        GameLogger.debug(TAG, "onEvent(): event = $event")
+        if (!cull && cullOnEvent(event)) {
+            GameLogger.debug(TAG, "Now culling on event = $event")
+            cull = true
+        }
+    }
+
+    override fun reset() {
+        GameLogger.debug(TAG, "Resetting CullableOnEvent")
+        cull = false
+    }
+
+    override fun toString() = "CullableOnEvent"
 }

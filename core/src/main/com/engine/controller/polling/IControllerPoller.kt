@@ -1,8 +1,8 @@
 package com.engine.controller.polling
 
+import com.badlogic.gdx.utils.Array
 import com.engine.common.interfaces.IActivatable
 import com.engine.controller.buttons.ButtonStatus
-import com.badlogic.gdx.utils.Array
 
 /**
  * Interface for controller pollers. A controller poller polls the controller for button status and

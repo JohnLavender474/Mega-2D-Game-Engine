@@ -7,50 +7,50 @@ import io.kotest.matchers.shouldBe
 
 class PendulumTest :
     DescribeSpec({
-      describe("Pendulum class") {
-        val length = 10f
-        val gravity = -9.81f * 32 // multiply by 32 to mock PPM conversion
-        val anchor = Vector2(0f, 0f)
-        val targetFPS = 60f
+        describe("Pendulum class") {
+            val length = 10f
+            val gravity = -9.81f * 32 // multiply by 32 to mock PPM conversion
+            val anchor = Vector2(0f, 0f)
+            val targetFPS = 60f
 
-        lateinit var pendulum: Pendulum
+            lateinit var pendulum: Pendulum
 
-        beforeEach { pendulum = Pendulum(length, gravity, anchor, targetFPS) }
+            beforeEach { pendulum = Pendulum(length, gravity, anchor, targetFPS) }
 
-        it("should update pendulum motion correctly") {
-          pendulum.update(targetFPS)
+            it("should update pendulum motion correctly") {
+                pendulum.update(targetFPS)
 
-          val expectedX = -2.665f
-          val expectedY = 9.638f
+                val expectedX = -2.665f
+                val expectedY = 9.638f
 
-          val endpoint = pendulum.getMotionValue()
+                val endpoint = pendulum.getMotionValue()
 
-          endpoint.x.round(3) shouldBe expectedX
-          endpoint.y.round(3) shouldBe expectedY
+                endpoint.x.round(3) shouldBe expectedX
+                endpoint.y.round(3) shouldBe expectedY
+            }
+
+            it("should reset the pendulum motion correctly") {
+                pendulum.update(targetFPS)
+
+                pendulum.reset()
+
+                val endpoint = pendulum.getMotionValue()
+                val expectedX = 0f
+                val expectedY = 0f
+
+                endpoint.x shouldBe expectedX
+                endpoint.y shouldBe expectedY
+            }
+
+            it("should calculate point from anchor correctly") {
+                val distance = 5f
+                val point = pendulum.getPointFromAnchor(distance)
+
+                val expectedX = 5f
+                val expectedY = 0f
+
+                point.x shouldBe expectedX
+                point.y shouldBe expectedY
+            }
         }
-
-        it("should reset the pendulum motion correctly") {
-          pendulum.update(targetFPS)
-
-          pendulum.reset()
-
-          val endpoint = pendulum.getMotionValue()
-          val expectedX = 0f
-          val expectedY = 0f
-
-          endpoint.x shouldBe expectedX
-          endpoint.y shouldBe expectedY
-        }
-
-        it("should calculate point from anchor correctly") {
-          val distance = 5f
-          val point = pendulum.getPointFromAnchor(distance)
-
-          val expectedX = 5f
-          val expectedY = 0f
-
-          point.x shouldBe expectedX
-          point.y shouldBe expectedY
-        }
-      }
     })

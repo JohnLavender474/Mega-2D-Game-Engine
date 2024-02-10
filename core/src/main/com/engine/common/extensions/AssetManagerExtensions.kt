@@ -18,19 +18,19 @@ fun <T> AssetManager.loadAssetsInDirectory(
     directory: String,
     type: Class<T>,
 ) {
-  val queue = Queue<String>()
-  queue.addLast(directory)
+    val queue = Queue<String>()
+    queue.addLast(directory)
 
-  while (!queue.isEmpty) {
-    val path = queue.removeFirst()
-    val file = Gdx.files.internal(path)
+    while (!queue.isEmpty) {
+        val path = queue.removeFirst()
+        val file = Gdx.files.internal(path)
 
-    if (file.isDirectory) {
-      file.list().forEach { queue.addLast(it.path()) }
-    } else {
-      load(file.path(), type)
+        if (file.isDirectory) {
+            file.list().forEach { queue.addLast(it.path()) }
+        } else {
+            load(file.path(), type)
+        }
     }
-  }
 }
 
 /**
@@ -40,7 +40,7 @@ fun <T> AssetManager.loadAssetsInDirectory(
  * @return The texture atlas.
  */
 fun AssetManager.getTextureAtlas(atlas: String): TextureAtlas {
-  return get(atlas, TextureAtlas::class.java)
+    return get(atlas, TextureAtlas::class.java)
 }
 
 /**
@@ -51,7 +51,7 @@ fun AssetManager.getTextureAtlas(atlas: String): TextureAtlas {
  * @return The texture region.
  */
 fun AssetManager.getTextureRegion(atlas: String, region: String): TextureRegion {
-  return getTextureAtlas(atlas).findRegion(region)
+    return getTextureAtlas(atlas).findRegion(region)
 }
 
 /**
@@ -61,7 +61,7 @@ fun AssetManager.getTextureRegion(atlas: String, region: String): TextureRegion 
  * @return The sound.
  */
 fun AssetManager.getSound(sound: String): Sound {
-  return get(sound, Sound::class.java)
+    return get(sound, Sound::class.java)
 }
 
 /**
@@ -71,5 +71,5 @@ fun AssetManager.getSound(sound: String): Sound {
  * @return The music.
  */
 fun AssetManager.getMusic(music: String): Music {
-  return get(music, Music::class.java)
+    return get(music, Music::class.java)
 }

@@ -16,19 +16,19 @@ import com.engine.systems.GameSystem
  */
 class CullablesSystem : GameSystem(CullablesComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    if (!on) return
+    override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
+        if (!on) return
 
-    entities.forEach { entity ->
-      if (entity.dead) return
+        entities.forEach { entity ->
+            if (entity.dead) return
 
-      val cullables = entity.getComponent(CullablesComponent::class)?.cullables
-      for (cullable in cullables ?: return) {
-        if (cullable.shouldBeCulled(delta)) {
-          entity.kill(props(CAUSE_OF_DEATH_MESSAGE to "Culled by cullable: $cullable"))
-          break
+            val cullables = entity.getComponent(CullablesComponent::class)?.cullables
+            for (cullable in cullables ?: return) {
+                if (cullable.shouldBeCulled(delta)) {
+                    entity.kill(props(CAUSE_OF_DEATH_MESSAGE to "Culled by cullable: $cullable"))
+                    break
+                }
+            }
         }
-      }
     }
-  }
 }

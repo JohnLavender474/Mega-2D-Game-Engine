@@ -16,21 +16,21 @@ import com.engine.systems.GameSystem
  */
 class BehaviorsSystem : GameSystem(BehaviorsComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    if (!on) return
+    override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
+        if (!on) return
 
-    entities.forEach { entity ->
-      entity.getComponent(BehaviorsComponent::class)?.let { b ->
-        b.behaviors.forEach { e ->
-          val key = e.key
-          val behavior = e.value
+        entities.forEach { entity ->
+            entity.getComponent(BehaviorsComponent::class)?.let { b ->
+                b.behaviors.forEach { e ->
+                    val key = e.key
+                    val behavior = e.value
 
-          behavior.update(delta)
+                    behavior.update(delta)
 
-          val active = behavior.isActive()
-          b.setActive(key, active)
+                    val active = behavior.isActive()
+                    b.setActive(key, active)
+                }
+            }
         }
-      }
     }
-  }
 }

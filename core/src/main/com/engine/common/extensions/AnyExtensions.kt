@@ -1,4 +1,5 @@
 package com.engine.common.extensions
+
 /**
  * Checks if the current object equals any of the provided varargs or within the Iterable.
  *

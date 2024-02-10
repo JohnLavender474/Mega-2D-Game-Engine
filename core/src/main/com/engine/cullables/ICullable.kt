@@ -9,13 +9,13 @@ import com.engine.common.interfaces.Resettable
  */
 interface ICullable : Resettable {
 
-  /**
-   * Determines if this object should be culled.
-   *
-   * @return if this object should be culled.
-   */
-  fun shouldBeCulled(delta: Float): Boolean
+    /**
+     * Determines if this object should be culled.
+     *
+     * @return if this object should be culled.
+     */
+    fun shouldBeCulled(delta: Float): Boolean
 
-  /** Optional reset method. */
-  override fun reset() {}
+    /** Optional reset method. */
+    override fun reset() {}
 }

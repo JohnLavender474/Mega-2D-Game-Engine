@@ -14,11 +14,11 @@ import com.engine.common.objects.Properties
  */
 fun interface ITiledMapLayerBuilder {
 
-  /**
-   * Builds the [MapLayer] for a layer.
-   *
-   * @param layer the [MapLayer].
-   * @param returnProps the [Properties] that will be returned from the [TiledMapLevelBuilder]
-   */
-  fun build(layer: MapLayer, returnProps: Properties)
+    /**
+     * Builds the [MapLayer] for a layer.
+     *
+     * @param layer the [MapLayer].
+     * @param returnProps the [Properties] that will be returned from the [TiledMapLevelBuilder]
+     */
+    fun build(layer: MapLayer, returnProps: Properties)
 }

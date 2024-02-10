@@ -30,45 +30,46 @@ class PhysicsData(
     var takeFrictionFromOthers: Boolean = true
 ) : Resettable {
 
-  /** Resets the [PhysicsData] to its default values. */
-  fun resetToDefault() {
-    gravity.setZero()
-    velocity.setZero()
-    velocityClamp.setZero()
-    frictionToApply.setZero()
-    defaultFrictionOnSelf.set(1f, 1f)
-    frictionOnSelf.set(defaultFrictionOnSelf)
-    gravityOn = true
-    collisionOn = true
-    takeFrictionFromOthers = true
-  }
+    /** Resets the [PhysicsData] to its default values. */
+    fun resetToDefault() {
+        gravity.setZero()
+        velocity.setZero()
+        velocityClamp.setZero()
+        frictionToApply.setZero()
+        defaultFrictionOnSelf.set(1f, 1f)
+        frictionOnSelf.set(defaultFrictionOnSelf)
+        gravityOn = true
+        collisionOn = true
+        takeFrictionFromOthers = true
+    }
 
-  /**
-   * Creates a copy of this [PhysicsData].
-   *
-   * @return A copy of this [PhysicsData].
-   */
-  fun copy() =
-      PhysicsData(
-          Vector2(gravity),
-          Vector2(velocity),
-          Vector2(velocityClamp),
-          Vector2(frictionToApply),
-          Vector2(frictionOnSelf),
-          Vector2(defaultFrictionOnSelf),
-          gravityOn,
-          collisionOn,
-          takeFrictionFromOthers)
+    /**
+     * Creates a copy of this [PhysicsData].
+     *
+     * @return A copy of this [PhysicsData].
+     */
+    fun copy() =
+        PhysicsData(
+            Vector2(gravity),
+            Vector2(velocity),
+            Vector2(velocityClamp),
+            Vector2(frictionToApply),
+            Vector2(frictionOnSelf),
+            Vector2(defaultFrictionOnSelf),
+            gravityOn,
+            collisionOn,
+            takeFrictionFromOthers
+        )
 
-  /** Sets the [velocity] to zero and the [frictionOnSelf] to [defaultFrictionOnSelf]. */
-  override fun reset() {
-    velocity.setZero()
-    frictionOnSelf.set(defaultFrictionOnSelf)
-  }
+    /** Sets the [velocity] to zero and the [frictionOnSelf] to [defaultFrictionOnSelf]. */
+    override fun reset() {
+        velocity.setZero()
+        frictionOnSelf.set(defaultFrictionOnSelf)
+    }
 
-  override fun toString() =
-      "PhysicsData(gravity=$gravity, velocity=$velocity, velocityClamp=$velocityClamp, " +
-          "frictionToApply=$frictionToApply, frictionOnSelf=$frictionOnSelf, " +
-          "defaultFrictionOnSelf=$defaultFrictionOnSelf, gravityOn=$gravityOn, " +
-          "collisionOn=$collisionOn, takeFrictionFromOthers=$takeFrictionFromOthers)"
+    override fun toString() =
+        "PhysicsData(gravity=$gravity, velocity=$velocity, velocityClamp=$velocityClamp, " +
+                "frictionToApply=$frictionToApply, frictionOnSelf=$frictionOnSelf, " +
+                "defaultFrictionOnSelf=$defaultFrictionOnSelf, gravityOn=$gravityOn, " +
+                "collisionOn=$collisionOn, takeFrictionFromOthers=$takeFrictionFromOthers)"
 }

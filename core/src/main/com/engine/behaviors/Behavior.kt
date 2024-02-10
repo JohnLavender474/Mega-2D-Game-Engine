@@ -15,17 +15,17 @@ class Behavior(
     private val end: (() -> Unit)? = null
 ) : AbstractBehavior() {
 
-  override fun evaluate(delta: Float) = evaluate.invoke(delta)
+    override fun evaluate(delta: Float) = evaluate.invoke(delta)
 
-  override fun init() {
-    init?.invoke()
-  }
+    override fun init() {
+        init?.invoke()
+    }
 
-  override fun act(delta: Float) {
-    act?.invoke(delta)
-  }
+    override fun act(delta: Float) {
+        act?.invoke(delta)
+    }
 
-  override fun end() {
-    end?.invoke()
-  }
+    override fun end() {
+        end?.invoke()
+    }
 }

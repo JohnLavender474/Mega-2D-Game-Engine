@@ -21,135 +21,135 @@ import com.engine.drawables.shapes.IDrawableShape
  */
 interface IGameShape2D : Shape2D, IDrawableShape, ICopyable, ICardinallyRotatableShape2D {
 
-  var originX: Float
-  var originY: Float
+    var originX: Float
+    var originY: Float
 
-  /**
-   * Returns whether this shape overlaps the given shape.
-   *
-   * @param other The shape to check if this shape overlaps.
-   * @return Whether this shape overlaps the given shape.
-   */
-  fun overlaps(other: IGameShape2D): Boolean
+    /**
+     * Returns whether this shape overlaps the given shape.
+     *
+     * @param other The shape to check if this shape overlaps.
+     * @return Whether this shape overlaps the given shape.
+     */
+    fun overlaps(other: IGameShape2D): Boolean
 
-  /**
-   * Returns the bounding rectangle of this shape.
-   *
-   * @return The bounding rectangle of this shape.
-   */
-  fun getBoundingRectangle(): GameRectangle
+    /**
+     * Returns the bounding rectangle of this shape.
+     *
+     * @return The bounding rectangle of this shape.
+     */
+    fun getBoundingRectangle(): GameRectangle
 
-  /**
-   * Sets the position of this shape to the given position.
-   *
-   * @param position The position to set this shape's position to.
-   * @return This shape.
-   */
-  fun setPosition(position: Vector2) = setPosition(position.x, position.y)
+    /**
+     * Sets the position of this shape to the given position.
+     *
+     * @param position The position to set this shape's position to.
+     * @return This shape.
+     */
+    fun setPosition(position: Vector2) = setPosition(position.x, position.y)
 
-  /*
-   * Sets the position of this shape to the given position.
-   *
-   * @param second The first position to set this shape's first to.
-   * @param second The second position to set this shape's second to.
-   * @return This shape.
-   */
-  fun setPosition(x: Float, y: Float): IGameShape2D {
-    setX(x)
-    setY(y)
-    return this
-  }
+    /*
+     * Sets the position of this shape to the given position.
+     *
+     * @param second The first position to set this shape's first to.
+     * @param second The second position to set this shape's second to.
+     * @return This shape.
+     */
+    fun setPosition(x: Float, y: Float): IGameShape2D {
+        setX(x)
+        setY(y)
+        return this
+    }
 
-  /**
-   * Sets the first position of this shape to the given first position.
-   *
-   * @param x The first position to set this shape's first position to.
-   * @return This shape.
-   */
-  fun setX(x: Float): IGameShape2D
+    /**
+     * Sets the first position of this shape to the given first position.
+     *
+     * @param x The first position to set this shape's first position to.
+     * @return This shape.
+     */
+    fun setX(x: Float): IGameShape2D
 
-  /**
-   * Sets the second position of this shape to the given second position.
-   *
-   * @param y The second position to set this shape's second position to.
-   * @return This shape.
-   */
-  fun setY(y: Float): IGameShape2D
+    /**
+     * Sets the second position of this shape to the given second position.
+     *
+     * @param y The second position to set this shape's second position to.
+     * @return This shape.
+     */
+    fun setY(y: Float): IGameShape2D
 
-  /**
-   * Returns the first position of this shape.
-   *
-   * @return The first position of this shape.
-   */
-  fun getX(): Float
+    /**
+     * Returns the first position of this shape.
+     *
+     * @return The first position of this shape.
+     */
+    fun getX(): Float
 
-  /**
-   * Returns the second position of this shape.
-   *
-   * @return The second position of this shape.
-   */
-  fun getY(): Float
+    /**
+     * Returns the second position of this shape.
+     *
+     * @return The second position of this shape.
+     */
+    fun getY(): Float
 
-  /**
-   * Returns the position of this shape.
-   *
-   * @return The position of this shape.
-   */
-  fun getPosition() = Vector2(getX(), getY())
+    /**
+     * Returns the position of this shape.
+     *
+     * @return The position of this shape.
+     */
+    fun getPosition() = Vector2(getX(), getY())
 
-  /**
-   * Returns the center of this shape.
-   *
-   * @return The center of this shape.
-   */
-  fun getCenter(): Vector2
+    /**
+     * Returns the center of this shape.
+     *
+     * @return The center of this shape.
+     */
+    fun getCenter(): Vector2
 
-  /**
-   * Sets the center of this shape.
-   *
-   * @param center The center to set.
-   * @return This shape for chaining.
-   */
-  fun setCenter(center: Vector2): IGameShape2D
+    /**
+     * Sets the center of this shape.
+     *
+     * @param center The center to set.
+     * @return This shape for chaining.
+     */
+    fun setCenter(center: Vector2): IGameShape2D
 
-  /**
-   * Sets the center of this shape.
-   *
-   * @param centerX The first value of the center.
-   * @param centerY The second value of the center.
-   * @return This shape for chaining.
-   */
-  fun setCenter(centerX: Float, centerY: Float): IGameShape2D
+    /**
+     * Sets the center of this shape.
+     *
+     * @param centerX The first value of the center.
+     * @param centerY The second value of the center.
+     * @return This shape for chaining.
+     */
+    fun setCenter(centerX: Float, centerY: Float): IGameShape2D
 
-  /**
-   * Returns the max x of this shape.
-   *
-   * @return The max x of this shape.
-   */
-  fun getMaxX(): Float
+    /**
+     * Returns the max x of this shape.
+     *
+     * @return The max x of this shape.
+     */
+    fun getMaxX(): Float
 
-  /**
-   * Returns the max y of this shape.
-   *
-   * @return The max y of this shape.
-   */
-  fun getMaxY(): Float
+    /**
+     * Returns the max y of this shape.
+     *
+     * @return The max y of this shape.
+     */
+    fun getMaxY(): Float
 
-  /**
-   * Translates this shape by the given translation.
-   *
-   * @param translateX The first value of the translation.
-   * @param translateY The second value of the translation.
-   * @return This shape.
-   */
-  fun translation(translateX: Float, translateY: Float): IGameShape2D
+    /**
+     * Translates this shape by the given translation.
+     *
+     * @param translateX The first value of the translation.
+     * @param translateY The second value of the translation.
+     * @return This shape.
+     */
+    fun translation(translateX: Float, translateY: Float): IGameShape2D
 
-  /**
-   * Translates this shape by the given translation.
-   *
-   * @param translation The translation to translate this shape by.
-   * @return This shape.
-   * @see translation
-   */
-  fun translation(translation: Vector2) = translation(translation.x, translation.y)
+    /**
+     * Translates this shape by the given translation.
+     *
+     * @param translation The translation to translate this shape by.
+     * @return This shape.
+     * @see translation
+     */
+    fun translation(translation: Vector2) = translation(translation.x, translation.y)
 }

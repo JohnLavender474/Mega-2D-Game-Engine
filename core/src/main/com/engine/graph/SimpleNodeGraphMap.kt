@@ -25,32 +25,32 @@ class SimpleNodeGraphMap(
     override val ppm: Int
 ) : IGraphMap {
 
-  private val map = ConcurrentHashMap<IntPair, HashSet<Any>>()
+    private val map = ConcurrentHashMap<IntPair, HashSet<Any>>()
 
-  override fun add(obj: Any, shape: IGameShape2D): Boolean {
-    val bounds = shape.getBoundingRectangle()
+    override fun add(obj: Any, shape: IGameShape2D): Boolean {
+        val bounds = shape.getBoundingRectangle()
 
-    val minX = floor(bounds.x / ppm).toInt()
-    val minY = floor(bounds.y / ppm).toInt()
-    val maxX = floor(bounds.getMaxX() / ppm).toInt()
-    val maxY = floor(bounds.getMaxY() / ppm).toInt()
+        val minX = floor(bounds.x / ppm).toInt()
+        val minY = floor(bounds.y / ppm).toInt()
+        val maxX = floor(bounds.getMaxX() / ppm).toInt()
+        val maxY = floor(bounds.getMaxY() / ppm).toInt()
 
-    for (column in minX..maxX) for (row in minY..maxY) {
-      val set = map[column pairTo row] ?: HashSet()
-      set.add(obj)
-      map[column pairTo row] = set
+        for (column in minX..maxX) for (row in minY..maxY) {
+            val set = map[column pairTo row] ?: HashSet()
+            set.add(obj)
+            map[column pairTo row] = set
+        }
+
+        return true
     }
 
-    return true
-  }
+    override fun get(x: Int, y: Int) = map[x pairTo y] ?: HashSet()
 
-  override fun get(x: Int, y: Int) = map[x pairTo y] ?: HashSet()
+    override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): HashSet<Any> {
+        val set = HashSet<Any>()
+        for (column in minX..maxX) for (row in minY..maxY) set.addAll(get(column, row))
+        return set
+    }
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): HashSet<Any> {
-    val set = HashSet<Any>()
-    for (column in minX..maxX) for (row in minY..maxY) set.addAll(get(column, row))
-    return set
-  }
-
-  override fun reset() = map.clear()
+    override fun reset() = map.clear()
 }

@@ -11,7 +11,7 @@ class Cullable(
     private val resetFunction: () -> Unit
 ) : ICullable {
 
-  override fun shouldBeCulled(delta: Float) = shouldBeCulledFunction(delta)
+    override fun shouldBeCulled(delta: Float) = shouldBeCulledFunction(delta)
 
-  override fun reset() = resetFunction()
+    override fun reset() = resetFunction()
 }

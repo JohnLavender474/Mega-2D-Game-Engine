@@ -9,34 +9,34 @@ package com.engine.points
  */
 class Points(var min: Int, var max: Int, current: Int) {
 
-  var current = current
-    private set
+    var current = current
+        private set
 
-  /**
-   * Sets the current stat. If the current stat is less than the minimum stat, the current stat will
-   * be set to the minimum stat. If the current stat is greater than the maximum stat, the current
-   * stat will be set to the maximum stat.
-   *
-   * @param points The current pointsHandles.
-   */
-  fun set(points: Int) {
-    current = points
-    if (current < min) current = min
-    if (current > max) current = max
-  }
+    /**
+     * Sets the current stat. If the current stat is less than the minimum stat, the current stat will
+     * be set to the minimum stat. If the current stat is greater than the maximum stat, the current
+     * stat will be set to the maximum stat.
+     *
+     * @param points The current pointsHandles.
+     */
+    fun set(points: Int) {
+        current = points
+        if (current < min) current = min
+        if (current > max) current = max
+    }
 
-  /**
-   * Translates the current stat by the specified delta. If the current stat is less than the
-   * minimum stat, the current stat will be set to the minimum stat. If the current stat is greater
-   * than the maximum stat, the current stat will be set to the maximum stat.
-   *
-   * @param delta The delta.
-   */
-  fun translate(delta: Int) = set(current + delta)
+    /**
+     * Translates the current stat by the specified delta. If the current stat is less than the
+     * minimum stat, the current stat will be set to the minimum stat. If the current stat is greater
+     * than the maximum stat, the current stat will be set to the maximum stat.
+     *
+     * @param delta The delta.
+     */
+    fun translate(delta: Int) = set(current + delta)
 
-  /** Sets the current stat to the max stat. */
-  fun setToMax() = set(max)
+    /** Sets the current stat to the max stat. */
+    fun setToMax() = set(max)
 
-  /** Sets the current stat to the min stat. */
-  fun setToMin() = set(min)
+    /** Sets the current stat to the min stat. */
+    fun setToMin() = set(min)
 }

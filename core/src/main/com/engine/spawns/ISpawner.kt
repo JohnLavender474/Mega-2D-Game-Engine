@@ -14,25 +14,25 @@ import com.engine.cullables.ICullable
  */
 interface ISpawner : UpdatePredicate, ICullable {
 
-  /**
-   * Returns true if this [ISpawner] should be considered again for spawning after the first spawn.
-   */
-  var respawnable: Boolean
+    /**
+     * Returns true if this [ISpawner] should be considered again for spawning after the first spawn.
+     */
+    var respawnable: Boolean
 
-  /**
-   * Gets the [Spawn] if the [test] method returns true.
-   *
-   * @return the [Spawn] if the [test] method returns true, or null otherwise.
-   */
-  fun get(): Spawn?
+    /**
+     * Gets the [Spawn] if the [test] method returns true.
+     *
+     * @return the [Spawn] if the [test] method returns true, or null otherwise.
+     */
+    fun get(): Spawn?
 
-  /**
-   * Returns true if this [ISpawner] should be culled. By default, returns false always.
-   *
-   * @return true if the [Spawn] should be culled, otherwise false
-   */
-  override fun shouldBeCulled(delta: Float) = false
+    /**
+     * Returns true if this [ISpawner] should be culled. By default, returns false always.
+     *
+     * @return true if the [Spawn] should be culled, otherwise false
+     */
+    override fun shouldBeCulled(delta: Float) = false
 
-  /** Called when this spawner is culled. Optional. */
-  override fun reset() {}
+    /** Called when this spawner is culled. Optional. */
+    override fun reset() {}
 }

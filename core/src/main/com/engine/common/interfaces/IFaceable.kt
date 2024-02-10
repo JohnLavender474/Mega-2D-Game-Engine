@@ -9,8 +9,8 @@ import com.engine.common.enums.Facing
  */
 interface IFaceable {
 
-  /** The [Facing] of this [IFaceable]. */
-  var facing: Facing
+    /** The [Facing] of this [IFaceable]. */
+    var facing: Facing
 }
 
 /**
@@ -23,5 +23,5 @@ fun IFaceable.isFacing(facing: Facing) = this.facing == facing
 
 /** Swaps the [Facing] of this [IFaceable]. */
 fun IFaceable.swapFacing() {
-  facing = if (facing == Facing.LEFT) Facing.RIGHT else Facing.LEFT
+    facing = if (facing == Facing.LEFT) Facing.RIGHT else Facing.LEFT
 }

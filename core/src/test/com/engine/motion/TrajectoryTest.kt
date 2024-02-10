@@ -8,51 +8,52 @@ import io.kotest.matchers.shouldBe
 
 class TrajectoryTest :
     DescribeSpec({
-      describe("Trajectory class") {
-        val ppm = 32
-        val trajectoryDefinitionsString = "1.0, 2.0, 2.0; 2.0, 3.0, 1.0; 3.0, 4.0, 3.0"
-        val trajectoryDefinitions =
-            gdxArrayOf(
-                TrajectoryDefinition(1.0f, 2.0f, 2.0f),
-                TrajectoryDefinition(2.0f, 3.0f, 1.0f),
-                TrajectoryDefinition(3.0f, 4.0f, 3.0f))
+        describe("Trajectory class") {
+            val ppm = 32
+            val trajectoryDefinitionsString = "1.0, 2.0, 2.0; 2.0, 3.0, 1.0; 3.0, 4.0, 3.0"
+            val trajectoryDefinitions =
+                gdxArrayOf(
+                    TrajectoryDefinition(1.0f, 2.0f, 2.0f),
+                    TrajectoryDefinition(2.0f, 3.0f, 1.0f),
+                    TrajectoryDefinition(3.0f, 4.0f, 3.0f)
+                )
 
-        val defaultTrajectory = Trajectory(Array())
-        val parsedTrajectory = Trajectory(trajectoryDefinitionsString, ppm)
-        val customTrajectory = Trajectory(trajectoryDefinitions, ppm)
+            val defaultTrajectory = Trajectory(Array())
+            val parsedTrajectory = Trajectory(trajectoryDefinitionsString, ppm)
+            val customTrajectory = Trajectory(trajectoryDefinitions, ppm)
 
-        it("should initialize correctly with empty definitions") {
-          val motionValue = defaultTrajectory.getMotionValue()
-          motionValue shouldBe null
+            it("should initialize correctly with empty definitions") {
+                val motionValue = defaultTrajectory.getMotionValue()
+                motionValue shouldBe null
+            }
+
+            it("should parse and initialize correctly from a string") {
+                val motionValue = parsedTrajectory.getMotionValue()
+                motionValue shouldBe Vector2(1.0f * ppm, 2.0f * ppm)
+            }
+
+            it("should initialize correctly with custom definitions") {
+                val motionValue = customTrajectory.getMotionValue()
+                motionValue shouldBe Vector2(1.0f * ppm, 2.0f * ppm)
+            }
+
+            it("should update trajectory motion correctly") {
+                // First definition (1.0, 2.0, 2.0)
+                customTrajectory.update(1.0f)
+                val motionValue1 = customTrajectory.getMotionValue()
+                motionValue1 shouldBe Vector2(1.0f * ppm, 2.0f * ppm)
+
+                // Second definition (2.0, 3.0, 1.0)
+                customTrajectory.update(1.0f)
+                val motionValue2 = customTrajectory.getMotionValue()
+                motionValue2 shouldBe Vector2(2.0f * ppm, 3.0f * ppm)
+            }
+
+            it("should reset trajectory to its initial state") {
+                customTrajectory.update(1.0f)
+                customTrajectory.reset()
+                val motionValue = customTrajectory.getMotionValue()
+                motionValue shouldBe Vector2(3f * ppm, 4f * ppm)
+            }
         }
-
-        it("should parse and initialize correctly from a string") {
-          val motionValue = parsedTrajectory.getMotionValue()
-          motionValue shouldBe Vector2(1.0f * ppm, 2.0f * ppm)
-        }
-
-        it("should initialize correctly with custom definitions") {
-          val motionValue = customTrajectory.getMotionValue()
-          motionValue shouldBe Vector2(1.0f * ppm, 2.0f * ppm)
-        }
-
-        it("should update trajectory motion correctly") {
-          // First definition (1.0, 2.0, 2.0)
-          customTrajectory.update(1.0f)
-          val motionValue1 = customTrajectory.getMotionValue()
-          motionValue1 shouldBe Vector2(1.0f * ppm, 2.0f * ppm)
-
-          // Second definition (2.0, 3.0, 1.0)
-          customTrajectory.update(1.0f)
-          val motionValue2 = customTrajectory.getMotionValue()
-          motionValue2 shouldBe Vector2(2.0f * ppm, 3.0f * ppm)
-        }
-
-        it("should reset trajectory to its initial state") {
-          customTrajectory.update(1.0f)
-          customTrajectory.reset()
-          val motionValue = customTrajectory.getMotionValue()
-          motionValue shouldBe Vector2(3f * ppm, 4f * ppm)
-        }
-      }
     })

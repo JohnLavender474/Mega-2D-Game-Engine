@@ -13,15 +13,15 @@ import com.engine.systems.IGameSystem
  */
 interface IGameEngine : Updatable, Resettable {
 
-  /** The [IGameSystem]s in this [IGameEngine]. */
-  val systems: Iterable<IGameSystem>
+    /** The [IGameSystem]s in this [IGameEngine]. */
+    val systems: Iterable<IGameSystem>
 
-  /**
-   * Spawns a [GameEntity] with the given [Properties].
-   *
-   * @param entity the [GameEntity] to spawn
-   * @param spawnProps the [Properties] to spawn the [GameEntity] with
-   * @return whether the [GameEntity] was spawned
-   */
-  fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean
+    /**
+     * Spawns a [GameEntity] with the given [Properties].
+     *
+     * @param entity the [GameEntity] to spawn
+     * @param spawnProps the [Properties] to spawn the [GameEntity] with
+     * @return whether the [GameEntity] was spawned
+     */
+    fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean
 }

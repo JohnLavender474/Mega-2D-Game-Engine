@@ -7,11 +7,11 @@ package com.engine.common.interfaces
  */
 fun interface IContainable<T> {
 
-  /**
-   * Checks if this object is contained in the given container.
-   *
-   * @param container The container
-   * @return True if this object is contained in the given container, false otherwise
-   */
-  fun isContainedIn(container: T): Boolean
+    /**
+     * Checks if this object is contained in the given container.
+     *
+     * @param container The container
+     * @return True if this object is contained in the given container, false otherwise
+     */
+    fun isContainedIn(container: T): Boolean
 }

@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.Array
  * @return the [Array] created from the given elements
  */
 fun <T> gdxArrayOf(vararg elements: T): Array<T> {
-  val array = Array<T>()
-  elements.forEach { array.add(it) }
-  return array
+    val array = Array<T>()
+    elements.forEach { array.add(it) }
+    return array
 }
 
 /**
@@ -21,9 +21,9 @@ fun <T> gdxArrayOf(vararg elements: T): Array<T> {
  * @return the [Array] created with the specified [size] and [value]
  */
 fun <T> gdxFilledArrayOf(size: Int, value: T): Array<T> {
-  val array = gdxArrayOf<T>()
-  for (i in 0 until size) array.add(value)
-  return array
+    val array = gdxArrayOf<T>()
+    for (i in 0 until size) array.add(value)
+    return array
 }
 
 /**
@@ -33,8 +33,8 @@ fun <T> gdxFilledArrayOf(size: Int, value: T): Array<T> {
  * @return The modified array with all elements set to [value].
  */
 fun <T> Array<T>.fill(value: T): Array<T> {
-  for (i in 0 until size) set(i, value)
-  return this
+    for (i in 0 until size) set(i, value)
+    return this
 }
 
 /**
@@ -44,9 +44,9 @@ fun <T> Array<T>.fill(value: T): Array<T> {
  * @return A new array containing only the elements that satisfy the [predicate].
  */
 fun <T> Array<T>.filter(predicate: (T) -> Boolean): Array<T> {
-  val array = Array<T>()
-  forEach { if (predicate(it)) array.add(it) }
-  return array
+    val array = Array<T>()
+    forEach { if (predicate(it)) array.add(it) }
+    return array
 }
 
 /**
@@ -56,7 +56,26 @@ fun <T> Array<T>.filter(predicate: (T) -> Boolean): Array<T> {
  * @return A new array containing the transformed elements.
  */
 fun <T, R> Array<T>.map(transform: (T) -> R): Array<R> {
-  val array = Array<R>()
-  forEach { array.add(transform(it)) }
-  return array
+    val array = Array<R>()
+    forEach { array.add(transform(it)) }
+    return array
+}
+
+/**
+ * Processes and filters the elements of the array based on the given [process] and [filter] functions.
+ * The [process] function is applied to each element, and the [filter] function is used to determine
+ * which elements to include in the new array. The [process] function is applied before the [filter]
+ * function. The order of the elements is preserved.
+ *
+ * @param process The processing function to apply to each element.
+ * @param filter The filter condition to apply to each element.
+ * @return A new array containing only the elements that satisfy the [filter] condition.
+ */
+fun <T> Array<T>.processAndFilter(process: (T) -> Unit, filter: (T) -> Boolean): Array<T> {
+    val array = Array<T>()
+    forEach {
+        process(it)
+        if (filter(it)) array.add(it)
+    }
+    return array
 }

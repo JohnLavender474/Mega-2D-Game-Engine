@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Queue
  * @return true if this queue contains the element, false otherwise
  */
 fun <T> Queue<T>.has(element: T): Boolean {
-  for (i in 0 until size) {
-    if (get(i) == element) return true
-  }
-  return false
+    for (i in 0 until size) {
+        if (get(i) == element) return true
+    }
+    return false
 }

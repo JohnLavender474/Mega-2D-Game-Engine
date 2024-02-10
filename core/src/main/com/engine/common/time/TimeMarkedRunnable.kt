@@ -4,11 +4,11 @@ package com.engine.common.time
 class TimeMarkedRunnable(val time: Float, val runnable: () -> Unit) :
     Runnable, Comparable<TimeMarkedRunnable> {
 
-  override fun run() = runnable()
+    override fun run() = runnable()
 
-  override fun compareTo(other: TimeMarkedRunnable) = time.compareTo(other.time)
+    override fun compareTo(other: TimeMarkedRunnable) = time.compareTo(other.time)
 
-  override fun equals(other: Any?) = other is TimeMarkedRunnable && other.time.equals(time)
+    override fun equals(other: Any?) = other is TimeMarkedRunnable && other.time.equals(time)
 
-  override fun hashCode() = time.hashCode()
+    override fun hashCode() = time.hashCode()
 }

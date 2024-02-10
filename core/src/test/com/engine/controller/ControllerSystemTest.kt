@@ -10,49 +10,51 @@ import io.mockk.*
 
 class ControllerSystemTest :
     DescribeSpec({
-      describe("ControllerSystem") {
-        it("should call appropriate methods on actuators when processing") {
-          val mockControllerPoller = mockk<IControllerPoller>()
-          val controllerSystem = ControllerSystem(mockControllerPoller)
+        describe("ControllerSystem") {
+            it("should call appropriate methods on actuators when processing") {
+                val mockControllerPoller = mockk<IControllerPoller>()
+                val controllerSystem = ControllerSystem(mockControllerPoller)
 
-          val entity = GameEntity(mockk())
+                val entity = GameEntity(mockk())
 
-          val actuator =
-              mockk<IButtonActuator> {
-                every { onJustPressed(any()) } just Runs
-                every { onPressContinued(any(), any()) } just Runs
-                every { onJustReleased(any()) } just Runs
-                every { onReleaseContinued(any(), any()) } just Runs
-              }
+                val actuator =
+                    mockk<IButtonActuator> {
+                        every { onJustPressed(any()) } just Runs
+                        every { onPressContinued(any(), any()) } just Runs
+                        every { onJustReleased(any()) } just Runs
+                        every { onReleaseContinued(any(), any()) } just Runs
+                    }
 
-          val map = ObjectMap<Any, () -> IButtonActuator?>()
-          map.put("ButtonA") { actuator }
-          val controllerComponent = ControllerComponent(entity, map)
-          entity.addComponent(controllerComponent)
+                val map = ObjectMap<Any, () -> IButtonActuator?>()
+                map.put("ButtonA") { actuator }
+                val controllerComponent = ControllerComponent(entity, map)
+                entity.addComponent(controllerComponent)
 
-          controllerSystem.add(entity)
+                controllerSystem.add(entity)
 
-          for (buttonStatus in 0..4) {
-            when (buttonStatus) {
-              0 ->
-                  every { mockControllerPoller.getStatus("ButtonA") } returns
-                      ButtonStatus.JUST_PRESSED
-              1 -> every { mockControllerPoller.getStatus("ButtonA") } returns ButtonStatus.PRESSED
-              2 ->
-                  every { mockControllerPoller.getStatus("ButtonA") } returns
-                      ButtonStatus.JUST_RELEASED
-              3 -> every { mockControllerPoller.getStatus("ButtonA") } returns ButtonStatus.RELEASED
+                for (buttonStatus in 0..4) {
+                    when (buttonStatus) {
+                        0 ->
+                            every { mockControllerPoller.getStatus("ButtonA") } returns
+                                    ButtonStatus.JUST_PRESSED
+
+                        1 -> every { mockControllerPoller.getStatus("ButtonA") } returns ButtonStatus.PRESSED
+                        2 ->
+                            every { mockControllerPoller.getStatus("ButtonA") } returns
+                                    ButtonStatus.JUST_RELEASED
+
+                        3 -> every { mockControllerPoller.getStatus("ButtonA") } returns ButtonStatus.RELEASED
+                    }
+
+                    controllerSystem.update(0.1f)
+
+                    when (buttonStatus) {
+                        0 -> verify(exactly = 1) { actuator.onJustPressed(mockControllerPoller) }
+                        1 -> verify { actuator.onPressContinued(mockControllerPoller, 0.1f) }
+                        2 -> verify { actuator.onJustReleased(mockControllerPoller) }
+                        3 -> verify { actuator.onReleaseContinued(mockControllerPoller, 0.1f) }
+                    }
+                }
             }
-
-            controllerSystem.update(0.1f)
-
-            when (buttonStatus) {
-              0 -> verify(exactly = 1) { actuator.onJustPressed(mockControllerPoller) }
-              1 -> verify { actuator.onPressContinued(mockControllerPoller, 0.1f) }
-              2 -> verify { actuator.onJustReleased(mockControllerPoller) }
-              3 -> verify { actuator.onReleaseContinued(mockControllerPoller, 0.1f) }
-            }
-          }
         }
-      }
     })

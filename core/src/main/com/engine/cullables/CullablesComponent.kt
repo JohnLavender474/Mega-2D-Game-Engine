@@ -14,15 +14,15 @@ class CullablesComponent(
     val cullables: Array<ICullable> = Array()
 ) : IGameComponent {
 
-  /** @see [CullablesComponent(entity: IGameEntity, cullables: Array<ICullable>)] */
-  constructor(entity: IGameEntity, vararg cullables: ICullable) : this(entity, Array(cullables))
+    /** @see [CullablesComponent(entity: IGameEntity, cullables: Array<ICullable>)] */
+    constructor(entity: IGameEntity, vararg cullables: ICullable) : this(entity, Array(cullables))
 
-  /**
-   * Adds a [ICullable] to the list of cullables.
-   *
-   * @param cullable The cullable to add.
-   */
-  fun add(cullable: ICullable) = cullables.add(cullable)
+    /**
+     * Adds a [ICullable] to the list of cullables.
+     *
+     * @param cullable The cullable to add.
+     */
+    fun add(cullable: ICullable) = cullables.add(cullable)
 
-  override fun reset() = cullables.forEach { it.reset() }
+    override fun reset() = cullables.forEach { it.reset() }
 }

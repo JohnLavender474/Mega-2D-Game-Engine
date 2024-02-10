@@ -17,52 +17,52 @@ abstract class MenuScreen(
     protected val buttons: ObjectMap<String, IMenuButton> = ObjectMap()
 ) : Screen {
 
-  var currentButtonKey: String? = firstButtonKey
-  var selectionMade = false
-    private set
+    var currentButtonKey: String? = firstButtonKey
+    var selectionMade = false
+        private set
 
-  /**
-   * Gets the direction of the navigation. This is called every frame. If no navigation is made,
-   * then null should be returned.
-   *
-   * @return the direction of the navigation, or null
-   */
-  protected abstract fun getNavigationDirection(): Direction?
+    /**
+     * Gets the direction of the navigation. This is called every frame. If no navigation is made,
+     * then null should be returned.
+     *
+     * @return the direction of the navigation, or null
+     */
+    protected abstract fun getNavigationDirection(): Direction?
 
-  /**
-   * Returns if a selection is requested. This is called every frame. If no selection is requested,
-   * then false should be returned.
-   *
-   * @return if a selection is requested
-   */
-  protected abstract fun selectionRequested(): Boolean
+    /**
+     * Returns if a selection is requested. This is called every frame. If no selection is requested,
+     * then false should be returned.
+     *
+     * @return if a selection is requested
+     */
+    protected abstract fun selectionRequested(): Boolean
 
-  /**
-   * Called every frame if any navigation is made.
-   *
-   * @see getNavigationDirection
-   */
-  protected open fun onAnyMovement() {}
+    /**
+     * Called every frame if any navigation is made.
+     *
+     * @see getNavigationDirection
+     */
+    protected open fun onAnyMovement() {}
 
-  override fun show() {
-    selectionMade = false
-    currentButtonKey = firstButtonKey
-  }
-
-  override fun render(delta: Float) {
-    if (selectionMade || pauseSupplier.invoke()) {
-      return
+    override fun show() {
+        selectionMade = false
+        currentButtonKey = firstButtonKey
     }
 
-    buttons[currentButtonKey]?.let { button ->
-      getNavigationDirection()?.let {
-        onAnyMovement()
-        currentButtonKey = button.onNavigate(it, delta)
-      }
+    override fun render(delta: Float) {
+        if (selectionMade || pauseSupplier.invoke()) {
+            return
+        }
 
-      if (selectionRequested()) {
-        selectionMade = button.onSelect(delta)
-      }
+        buttons[currentButtonKey]?.let { button ->
+            getNavigationDirection()?.let {
+                onAnyMovement()
+                currentButtonKey = button.onNavigate(it, delta)
+            }
+
+            if (selectionRequested()) {
+                selectionMade = button.onSelect(delta)
+            }
+        }
     }
-  }
 }

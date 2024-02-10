@@ -17,17 +17,17 @@ fun <T> Collection<T>.toImmutableCollection() = ImmutableCollection(this)
  * @return a [List] of all elements in this [Collection] that are of type [R]
  */
 inline fun <reified R> Collection<*>.filterType(predicate: (R) -> Boolean): Array<R> {
-  val array = Array<R>()
-  forEach {
-    if (it is R && predicate(it)) {
-      array.add(it)
+    val array = Array<R>()
+    forEach {
+        if (it is R && predicate(it)) {
+            array.add(it)
+        }
     }
-  }
-  return array
+    return array
 }
 
 fun <T> Collection<T>.toGdxArray(): Array<T> {
-  val array = Array<T>()
-  forEach { array.add(it) }
-  return array
+    val array = Array<T>()
+    forEach { array.add(it) }
+    return array
 }

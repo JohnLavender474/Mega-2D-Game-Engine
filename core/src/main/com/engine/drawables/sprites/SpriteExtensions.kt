@@ -11,26 +11,29 @@ import com.engine.common.enums.Position
  * @param pos the position to set this sprite to
  */
 fun Sprite.setPosition(p: Vector2, pos: Position) {
-  when (pos) {
-    Position.BOTTOM_LEFT -> setPosition(p.x, p.y)
-    Position.BOTTOM_CENTER -> setPosition(p.x - width / 2f, p.y)
-    Position.BOTTOM_RIGHT -> setPosition(p.x - width, p.y)
-    Position.CENTER_LEFT -> {
-      setCenter(p.x, p.y)
-      x += width / 2f
+    when (pos) {
+        Position.BOTTOM_LEFT -> setPosition(p.x, p.y)
+        Position.BOTTOM_CENTER -> setPosition(p.x - width / 2f, p.y)
+        Position.BOTTOM_RIGHT -> setPosition(p.x - width, p.y)
+        Position.CENTER_LEFT -> {
+            setCenter(p.x, p.y)
+            x += width / 2f
+        }
+
+        Position.CENTER -> setCenter(p.x, p.y)
+        Position.CENTER_RIGHT -> {
+            setCenter(p.x, p.y)
+            x -= width / 2f
+        }
+
+        Position.TOP_LEFT -> setPosition(p.x, p.y - height)
+        Position.TOP_CENTER -> {
+            setCenter(p.x, p.y)
+            y -= height / 2f
+        }
+
+        Position.TOP_RIGHT -> setPosition(p.x - width, p.y - height)
     }
-    Position.CENTER -> setCenter(p.x, p.y)
-    Position.CENTER_RIGHT -> {
-      setCenter(p.x, p.y)
-      x -= width / 2f
-    }
-    Position.TOP_LEFT -> setPosition(p.x, p.y - height)
-    Position.TOP_CENTER -> {
-      setCenter(p.x, p.y)
-      y -= height / 2f
-    }
-    Position.TOP_RIGHT -> setPosition(p.x - width, p.y - height)
-  }
 }
 
 /**
@@ -44,8 +47,8 @@ fun Sprite.setPosition(p: Vector2, pos: Position) {
  * @param yOffset the y offset
  */
 fun Sprite.setPosition(p: Vector2, pos: Position, xOffset: Float, yOffset: Float) {
-  setPosition(p, pos)
-  translate(xOffset, yOffset)
+    setPosition(p, pos)
+    translate(xOffset, yOffset)
 }
 
 /**

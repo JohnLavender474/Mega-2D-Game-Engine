@@ -1,6 +1,5 @@
 package com.engine.pathfinding
 
-import com.badlogic.gdx.utils.Array
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.objects.IntPair
 import com.engine.common.objects.Properties

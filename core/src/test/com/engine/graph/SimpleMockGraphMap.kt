@@ -22,37 +22,37 @@ class SimpleMockGraphMap(
     override val ppm: Int
 ) : IGraphMap {
 
-  private val objs = ObjectMap<IntPair, OrderedSet<Any>>()
+    private val objs = ObjectMap<IntPair, OrderedSet<Any>>()
 
-  override fun add(obj: Any, shape: IGameShape2D): Boolean {
-    val bounds = shape.getBoundingRectangle()
+    override fun add(obj: Any, shape: IGameShape2D): Boolean {
+        val bounds = shape.getBoundingRectangle()
 
-    val x = (bounds.x / ppm).toInt()
-    val y = (bounds.y / ppm).toInt()
-    val maxX = (bounds.getMaxX() / ppm).toInt()
-    val maxY = (bounds.getMaxY() / ppm).toInt()
+        val x = (bounds.x / ppm).toInt()
+        val y = (bounds.y / ppm).toInt()
+        val maxX = (bounds.getMaxX() / ppm).toInt()
+        val maxY = (bounds.getMaxY() / ppm).toInt()
 
-    for (i in x..maxX) {
-      for (j in y..maxY) {
-        if (!objs.containsKey(IntPair(i, j))) objs.put(IntPair(i, j), OrderedSet())
-        val array = objs.get(IntPair(i, j))
-        array.add(obj)
-      }
+        for (i in x..maxX) {
+            for (j in y..maxY) {
+                if (!objs.containsKey(IntPair(i, j))) objs.put(IntPair(i, j), OrderedSet())
+                val array = objs.get(IntPair(i, j))
+                array.add(obj)
+            }
+        }
+
+        return true
     }
 
-    return true
-  }
+    override fun get(x: Int, y: Int): OrderedSet<Any> {
+        if (objs.containsKey(IntPair(x, y))) return objs.get(IntPair(x, y))
+        return OrderedSet()
+    }
 
-  override fun get(x: Int, y: Int): OrderedSet<Any> {
-    if (objs.containsKey(IntPair(x, y))) return objs.get(IntPair(x, y))
-    return OrderedSet()
-  }
+    override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any> {
+        val objs = ObjectSet<Any>()
+        for (i in minX..maxX) for (j in minY..maxY) objs.addAll(get(i, j))
+        return objs
+    }
 
-  override fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): ObjectSet<Any> {
-    val objs = ObjectSet<Any>()
-    for (i in minX..maxX) for (j in minY..maxY) objs.addAll(get(i, j))
-    return objs
-  }
-
-  override fun reset() = objs.clear()
+    override fun reset() = objs.clear()
 }

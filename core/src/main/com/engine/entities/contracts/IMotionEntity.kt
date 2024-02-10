@@ -10,42 +10,58 @@ import com.engine.motion.MotionComponent
  */
 interface IMotionEntity : IGameEntity {
 
-  /**
-   * Returns the [MotionComponent] of this entity. Throws exception if no [MotionComponent] has been
-   * added.
-   *
-   * @return the [MotionComponent] of this entity
-   */
-  fun getMotionComponent() = getComponent(MotionComponent::class)
+    /**
+     * Returns the [MotionComponent] of this entity. Throws exception if no [MotionComponent] has been
+     * added.
+     *
+     * @return the [MotionComponent] of this entity
+     */
+    fun getMotionComponent() = getComponent(MotionComponent::class)!!
 
-  /**
-   * Returns the motions of this entity. Throws exception if no [MotionComponent] has been added.
-   *
-   * @return the motions of this entity
-   */
-  fun getMotions() = getMotionComponent()!!.motions
+    /**
+     * Returns the motions of this entity.
+     *
+     * @return the motions of this entity
+     */
+    fun getMotionDefinitions() = getMotionComponent().definitions
 
-  /**
-   * Adds a [IMotion] to this entity.
-   *
-   * @param key the key to associate with the [IMotion]
-   * @param definition the [IMotion] and function pair
-   * @return the prior [IMotion] value if any, or null
-   */
-  fun putMotion(key: Any, definition: MotionComponent.MotionDefinition) =
-      getMotionComponent()!!.put(key, definition)
+    /**
+     * Returns the [IMotion] associated with the given key.
+     *
+     * @param key the key to get the [IMotion] for
+     * @return the [IMotion] associated with the given key
+     */
+    fun getMotionDefinition(key: Any): MotionComponent.MotionDefinition? = getMotionDefinitions().get(key)
 
-  /**
-   * Removes a [IMotion] from this entity.
-   *
-   * @param key the key to remove
-   * @return the [IMotion] that was removed, or null
-   */
-  fun removeMotion(key: Any) = getMotionComponent()!!.motions.remove(key)
+    /**
+     * Returns the [IMotion] associated with the given key.
+     *
+     * @param key the key to get the [IMotion] for
+     * @return the [IMotion] associated with the given key
+     */
+    fun getMotion(key: Any): IMotion? = getMotionDefinition(key)?.motion
 
-  /** Clears all motions from this entity. */
-  fun clearMotions() = getMotionComponent()!!.motions.clear()
+    /**
+     * Adds a [IMotion] to this entity.
+     *
+     * @param key the key to associate with the [IMotion]
+     * @param definition the [IMotion] and function pair
+     * @return the prior [IMotion] value if any, or null
+     */
+    fun putMotionDefinition(key: Any, definition: MotionComponent.MotionDefinition) =
+        getMotionComponent().put(key, definition)
 
-  /** Resets the motions in this entity. */
-  fun resetMotionComponent() = getMotionComponent()!!.reset()
+    /**
+     * Removes a [IMotion] from this entity.
+     *
+     * @param key the key to remove
+     * @return the [IMotion] that was removed, or null
+     */
+    fun removeMotionDefinition(key: Any): MotionComponent.MotionDefinition? = getMotionDefinitions().remove(key)
+
+    /** Clears all motions from this entity. */
+    fun clearMotionDefinitions() = getMotionDefinitions().clear()
+
+    /** Resets the motions in this entity. */
+    fun resetMotionComponent() = getMotionComponent().reset()
 }

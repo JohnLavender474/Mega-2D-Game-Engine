@@ -28,54 +28,54 @@ class AudioSystem(
     var stopMusicWhenOff: Boolean = true
 ) : GameSystem(AudioComponent::class) {
 
-  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    entities.forEach { entity ->
-      val audioComponent = entity.getComponent(AudioComponent::class)
+    override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
+        entities.forEach { entity ->
+            val audioComponent = entity.getComponent(AudioComponent::class)
 
-      // play sounds
-      if (on || playSoundsWhenOff) {
-        audioComponent?.playSoundRequests?.forEach {
-          soundRequestProcessor(it)
-          /*
-          val sound = assetManager.get(it.source, Sound::class.java)
-          audioManager.playSound(sound, it.loop)
-           */
+            // play sounds
+            if (on || playSoundsWhenOff) {
+                audioComponent?.playSoundRequests?.forEach {
+                    soundRequestProcessor(it)
+                    /*
+                    val sound = assetManager.get(it.source, Sound::class.java)
+                    audioManager.playSound(sound, it.loop)
+                     */
+                }
+            }
+
+            // play music
+            if (on || playMusicWhenOff) {
+                audioComponent?.playMusicRequests?.forEach {
+                    musicRequestProcessor(it)
+                    /*
+                    val music = assetManager.get(it.source, Music::class.java)
+                    it.onCompletionListener?.let { listener -> music.setOnCompletionListener(listener) }
+                    audioManager.playMusic(music, it.loop)
+                     */
+                }
+            }
+
+            // stop sounds
+            if (on || stopSoundsWhenOff)
+                audioComponent?.stopSoundRequests?.forEach {
+                    soundStopper(it)
+                    /*
+                    val sound = assetManager.get(it, Sound::class.java)
+                    audioManager.stopSound(sound)
+                     */
+                }
+
+            // stop music
+            if (on || stopMusicWhenOff)
+                audioComponent?.stopMusicRequests?.forEach {
+                    musicStopper(it)
+                    /*
+                    val music = assetManager.get(it, Music::class.java)
+                    audioManager.stopMusic(music)
+                     */
+                }
+
+            audioComponent?.reset()
         }
-      }
-
-      // play music
-      if (on || playMusicWhenOff) {
-        audioComponent?.playMusicRequests?.forEach {
-          musicRequestProcessor(it)
-          /*
-          val music = assetManager.get(it.source, Music::class.java)
-          it.onCompletionListener?.let { listener -> music.setOnCompletionListener(listener) }
-          audioManager.playMusic(music, it.loop)
-           */
-        }
-      }
-
-      // stop sounds
-      if (on || stopSoundsWhenOff)
-          audioComponent?.stopSoundRequests?.forEach {
-            soundStopper(it)
-            /*
-            val sound = assetManager.get(it, Sound::class.java)
-            audioManager.stopSound(sound)
-             */
-          }
-
-      // stop music
-      if (on || stopMusicWhenOff)
-          audioComponent?.stopMusicRequests?.forEach {
-            musicStopper(it)
-            /*
-            val music = assetManager.get(it, Music::class.java)
-            audioManager.stopMusic(music)
-             */
-          }
-
-      audioComponent?.reset()
     }
-  }
 }

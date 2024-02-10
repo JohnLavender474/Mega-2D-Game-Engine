@@ -27,50 +27,52 @@ import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
 abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties) :
     BaseScreen(game, properties) {
 
-  companion object {
-    const val TAG = "TiledMapLevelScreen"
-  }
+    companion object {
+        const val TAG = "TiledMapLevelScreen"
+    }
 
-  var tmxMapSource: String? = null
+    var tmxMapSource: String? = null
 
-  protected var tiledMapLoadResult: TiledMapLoadResult? = null
-  protected var tiledMapLevelRenderer: TiledMapLevelRenderer? = null
+    protected var tiledMapLoadResult: TiledMapLoadResult? = null
+    protected var tiledMapLevelRenderer: TiledMapLevelRenderer? = null
 
-  /**
-   * The map of layer names to [ITiledMapLayerBuilder]s.
-   *
-   * @see ITiledMapLayerBuilder
-   */
-  protected abstract fun getLayerBuilders(): TiledMapLayerBuilders
+    /**
+     * The map of layer names to [ITiledMapLayerBuilder]s.
+     *
+     * @see ITiledMapLayerBuilder
+     */
+    protected abstract fun getLayerBuilders(): TiledMapLayerBuilders
 
-  /**
-   * Builds the level using the specified [Properties] returned from [TiledMapLayerBuilders.build].
-   *
-   * @param result the [Properties] that were built from the layers
-   */
-  protected abstract fun buildLevel(result: Properties)
+    /**
+     * Builds the level using the result of building the map and the [Properties] returned from
+     * [TiledMapLayerBuilders.build].
+     *
+     * @param tiledMapLoadResult the [TiledMapLoadResult] that was loaded from
+     * @param result the [Properties] that were built from the layers
+     */
+    protected abstract fun buildLevel(result: Properties)
 
-  /**
-   * Loads the tiled map and builds the level. This method must be called after the [tmxMapSource]
-   * is set. If the [tmxMapSource] is not set, an [IllegalStateException] will be thrown. This
-   * method loads the map using a [TiledMapLevelLoader], and the field [tiledMapLoadResult] is set
-   * to the result of the load.
-   *
-   * @throws IllegalStateException if the [tmxMapSource] is not set
-   */
-  override fun show() =
-      tmxMapSource?.let {
-        tiledMapLoadResult = TiledMapLevelLoader.load(it)
-        GameLogger.debug(TAG, "show(): tiledMapLoadResult = $tiledMapLoadResult")
-        val returnProps = Properties()
-        val layerBuilders = getLayerBuilders()
-        layerBuilders.build(tiledMapLoadResult!!.map.layers, returnProps)
-        buildLevel(returnProps)
-        tiledMapLevelRenderer = TiledMapLevelRenderer(tiledMapLoadResult!!.map, game.batch)
-      } ?: throw IllegalStateException("Tmx map source must be set before calling show()")
+    /**
+     * Loads the tiled map and builds the level. This method must be called after the [tmxMapSource]
+     * is set. If the [tmxMapSource] is not set, an [IllegalStateException] will be thrown. This
+     * method loads the map using a [TiledMapLevelLoader], and the field [tiledMapLoadResult] is set
+     * to the result of the load.
+     *
+     * @throws IllegalStateException if the [tmxMapSource] is not set
+     */
+    override fun show() =
+        tmxMapSource?.let {
+            tiledMapLoadResult = TiledMapLevelLoader.load(it)
+            GameLogger.debug(TAG, "show(): tiledMapLoadResult = $tiledMapLoadResult")
+            val returnProps = Properties()
+            val layerBuilders = getLayerBuilders()
+            layerBuilders.build(tiledMapLoadResult!!.map.layers, returnProps)
+            buildLevel(returnProps)
+            tiledMapLevelRenderer = TiledMapLevelRenderer(tiledMapLoadResult!!.map, game.batch)
+        } ?: throw IllegalStateException("Tmx map source must be set before calling show()")
 
-  /** Disposes the tiled map. */
-  override fun dispose() {
-    tiledMapLoadResult?.map?.dispose()
-  }
+    /** Disposes the tiled map. */
+    override fun dispose() {
+        tiledMapLoadResult?.map?.dispose()
+    }
 }

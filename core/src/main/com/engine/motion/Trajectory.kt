@@ -25,76 +25,76 @@ class Trajectory(
     private val ppm: Int = 1
 ) : IMotion {
 
-  companion object {
+    companion object {
+
+        /**
+         * Parses a string containing trajectory definitions into am array of [TrajectoryDefinition]
+         * objects.
+         *
+         * @param trajectoryDefinitionString The string containing trajectory definitions in the format
+         *   "xVelocity,yVelocity,time".
+         * @return An array of parsed trajectory definitions.
+         */
+        fun parseTrajectoryDefinitions(trajectoryDefinitionString: String) =
+            trajectoryDefinitionString
+                .split(";".toRegex())
+                .map {
+                    val values = it.split(",".toRegex())
+                    TrajectoryDefinition(values[0].toFloat(), values[1].toFloat(), values[2].toFloat())
+                }
+                .toGdxArray()
+    }
+
+    private var currentDefinition =
+        if (!trajectoryDefinitions.isEmpty) trajectoryDefinitions[0] else null
+    private var duration = 0f
+    private var index = 0
 
     /**
-     * Parses a string containing trajectory definitions into am array of [TrajectoryDefinition]
-     * objects.
+     * Creates a trajectory with the specified pixels per meter (PPM) conversion factor and trajectory
+     * definitions.
      *
-     * @param trajectoryDefinitionString The string containing trajectory definitions in the format
-     *   "xVelocity,yVelocity,time".
-     * @return An array of parsed trajectory definitions.
+     * @param trajectoryDefinitions The string that should be parsed into an array of trajectory
+     *   definitions.
+     * @param ppm The pixels per meter (PPM) conversion factor. If none is provided, then a default
+     *   value of 1 is used.
      */
-    fun parseTrajectoryDefinitions(trajectoryDefinitionString: String) =
-        trajectoryDefinitionString
-            .split(";".toRegex())
-            .map {
-              val values = it.split(",".toRegex())
-              TrajectoryDefinition(values[0].toFloat(), values[1].toFloat(), values[2].toFloat())
-            }
-            .toGdxArray()
-  }
+    constructor(
+        trajectoryDefinitions: String,
+        ppm: Int = 1
+    ) : this(parseTrajectoryDefinitions(trajectoryDefinitions), ppm)
 
-  private var currentDefinition =
-      if (!trajectoryDefinitions.isEmpty) trajectoryDefinitions[0] else null
-  private var duration = 0f
-  private var index = 0
+    /**
+     * Gets the current trajectory values in pixels per second.
+     *
+     * @return The current trajectory values as a [Vector2] in pixels per second.
+     */
+    override fun getMotionValue() =
+        currentDefinition?.let { Vector2(it.xVelocity, it.yVelocity).scl(ppm.toFloat()) }
 
-  /**
-   * Creates a trajectory with the specified pixels per meter (PPM) conversion factor and trajectory
-   * definitions.
-   *
-   * @param trajectoryDefinitions The string that should be parsed into an array of trajectory
-   *   definitions.
-   * @param ppm The pixels per meter (PPM) conversion factor. If none is provided, then a default
-   *   value of 1 is used.
-   */
-  constructor(
-      trajectoryDefinitions: String,
-      ppm: Int = 1
-  ) : this(parseTrajectoryDefinitions(trajectoryDefinitions), ppm)
-
-  /**
-   * Gets the current trajectory values in pixels per second.
-   *
-   * @return The current trajectory values as a [Vector2] in pixels per second.
-   */
-  override fun getMotionValue() =
-      currentDefinition?.let { Vector2(it.xVelocity, it.yVelocity).scl(ppm.toFloat()) }
-
-  /**
-   * Updates the trajectory motion based on elapsed time.
-   *
-   * @param delta The time elapsed since the last update.
-   */
-  override fun update(delta: Float) {
-    duration += delta
-    currentDefinition = trajectoryDefinitions[index]
-
-    currentDefinition?.let {
-      if (duration >= it.time) {
-        duration = 0f
-        index++
-
-        if (index >= trajectoryDefinitions.size) index = 0
+    /**
+     * Updates the trajectory motion based on elapsed time.
+     *
+     * @param delta The time elapsed since the last update.
+     */
+    override fun update(delta: Float) {
+        duration += delta
         currentDefinition = trajectoryDefinitions[index]
-      }
-    }
-  }
 
-  /** Resets the trajectory to its initial state. */
-  override fun reset() {
-    duration = 0f
-    index = 0
-  }
+        currentDefinition?.let {
+            if (duration >= it.time) {
+                duration = 0f
+                index++
+
+                if (index >= trajectoryDefinitions.size) index = 0
+                currentDefinition = trajectoryDefinitions[index]
+            }
+        }
+    }
+
+    /** Resets the trajectory to its initial state. */
+    override fun reset() {
+        duration = 0f
+        index = 0
+    }
 }

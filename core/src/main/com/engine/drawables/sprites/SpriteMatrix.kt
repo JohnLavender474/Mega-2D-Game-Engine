@@ -49,60 +49,61 @@ class SpriteMatrix(
     columns: Int
 ) : IDrawable<Batch>, Matrix<ISprite>(rows, columns) {
 
-  init {
-    for (x in 0 until columns) {
-      for (y in 0 until rows) {
-        val sprite = GameSprite(model, priority)
-        sprite.setSize(modelWidth, modelHeight)
-        sprite.setPosition(x * modelWidth, y * modelHeight)
-        this[x, y] = sprite
-      }
+    init {
+        for (x in 0 until columns) {
+            for (y in 0 until rows) {
+                val sprite = GameSprite(model, priority)
+                sprite.setSize(modelWidth, modelHeight)
+                sprite.setPosition(x * modelWidth, y * modelHeight)
+                this[x, y] = sprite
+            }
+        }
     }
-  }
 
-  /**
-   * Creates a [SpriteMatrix] with the specified parameters.
-   *
-   * @param params The parameters to use.
-   */
-  constructor(
-      params: SpriteMatrixParams
-  ) : this(
-      params.model,
-      params.priority,
-      params.modelWidth,
-      params.modelHeight,
-      params.rows,
-      params.columns)
+    /**
+     * Creates a [SpriteMatrix] with the specified parameters.
+     *
+     * @param params The parameters to use.
+     */
+    constructor(
+        params: SpriteMatrixParams
+    ) : this(
+        params.model,
+        params.priority,
+        params.modelWidth,
+        params.modelHeight,
+        params.rows,
+        params.columns
+    )
 
-  /**
-   * Translates each sprite in the matrix.
-   *
-   * @param x The x coordinate to translate by.
-   * @param y The y coordinate to translate by.
-   */
-  fun translate(x: Float, y: Float) = forEach { _, _, sprite ->
-    (sprite as GameSprite).translate(x, y)
-  }
-
-  /**
-   * Sets the position of the matrix. The position of the first sprite is set to the specified
-   * position. The position of the other sprites are set relative to the first sprite based on their
-   * x and y coordinates and also the model width and height.
-   *
-   * @param startX The x coordinate of the first sprite.
-   * @param startY The y coordinate of the first sprite.
-   */
-  fun setPosition(startX: Float, startY: Float) {
-    forEach { x, y, sprite ->
-      (sprite as GameSprite).setPosition(startX + (x * modelWidth), startY + (y * modelHeight))
+    /**
+     * Translates each sprite in the matrix.
+     *
+     * @param x The x coordinate to translate by.
+     * @param y The y coordinate to translate by.
+     */
+    fun translate(x: Float, y: Float) = forEach { _, _, sprite ->
+        (sprite as GameSprite).translate(x, y)
     }
-  }
 
-  /**
-   * Draws each sprite in the matrix.
-   *
-   * @param drawer The batch to draw the sprites with.
-   */
-  override fun draw(drawer: Batch) = forEach { it.draw(drawer) }
+    /**
+     * Sets the position of the matrix. The position of the first sprite is set to the specified
+     * position. The position of the other sprites are set relative to the first sprite based on their
+     * x and y coordinates and also the model width and height.
+     *
+     * @param startX The x coordinate of the first sprite.
+     * @param startY The y coordinate of the first sprite.
+     */
+    fun setPosition(startX: Float, startY: Float) {
+        forEach { x, y, sprite ->
+            (sprite as GameSprite).setPosition(startX + (x * modelWidth), startY + (y * modelHeight))
+        }
+    }
+
+    /**
+     * Draws each sprite in the matrix.
+     *
+     * @param drawer The batch to draw the sprites with.
+     */
+    override fun draw(drawer: Batch) = forEach { it.draw(drawer) }
 }

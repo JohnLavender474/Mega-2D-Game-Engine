@@ -17,17 +17,17 @@ class ControllerComponent(
     val actuators: ObjectMap<Any, () -> IButtonActuator?>
 ) : IGameComponent {
 
-  /**
-   * Creates a [ControllerComponent] with the given actuators.
-   *
-   * @param _actuators The actuators to add to the component.
-   */
-  constructor(
-      entity: IGameEntity,
-      vararg _actuators: Pair<Any, () -> IButtonActuator?>
-  ) : this(
-      entity,
-      ObjectMap<Any, () -> IButtonActuator?>().apply {
-        _actuators.forEach { put(it.first, it.second) }
-      })
+    /**
+     * Creates a [ControllerComponent] with the given actuators.
+     *
+     * @param _actuators The actuators to add to the component.
+     */
+    constructor(
+        entity: IGameEntity,
+        vararg _actuators: Pair<Any, () -> IButtonActuator?>
+    ) : this(
+        entity,
+        ObjectMap<Any, () -> IButtonActuator?>().apply {
+            _actuators.forEach { put(it.first, it.second) }
+        })
 }

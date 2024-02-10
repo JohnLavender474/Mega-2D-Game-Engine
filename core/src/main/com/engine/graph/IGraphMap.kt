@@ -21,12 +21,12 @@ data class MinsAndMaxes(val minX: Int, val minY: Int, val maxX: Int, val maxY: I
  * @return the minimum and maximum first and second coordinates of the given object
  */
 fun IGraphMap.convertToMinsAndMaxes(obj: IGameShape2D): MinsAndMaxes {
-  val minX = floor(obj.getX() / ppm) - 1
-  val minY = floor(obj.getY() / ppm) - 1
-  val maxX = ceil(obj.getMaxX() / ppm) + 1
-  val maxY = ceil(obj.getMaxY() / ppm) + 1
+    val minX = floor(obj.getX() / ppm) - 1
+    val minY = floor(obj.getY() / ppm) - 1
+    val maxX = ceil(obj.getMaxX() / ppm) + 1
+    val maxY = ceil(obj.getMaxY() / ppm) + 1
 
-  return MinsAndMaxes(minX, minY, maxX, maxY)
+    return MinsAndMaxes(minX, minY, maxX, maxY)
 }
 
 /**
@@ -37,13 +37,13 @@ fun IGraphMap.convertToMinsAndMaxes(obj: IGameShape2D): MinsAndMaxes {
  * @return the graph coordinates
  */
 fun IGraphMap.convertToGraphCoordinate(worldX: Float, worldY: Float): IntPair {
-  var graphX = (worldX / ppm).toInt()
-  var graphY = (worldY / ppm).toInt()
+    var graphX = (worldX / ppm).toInt()
+    var graphY = (worldY / ppm).toInt()
 
-  if (graphX < x) graphX = x else if (graphX >= x + width) graphX = x + width - 1
-  if (graphY < y) graphY = y else if (graphY >= y + height) graphY = y + height - 1
+    if (graphX < x) graphX = x else if (graphX >= x + width) graphX = x + width - 1
+    if (graphY < y) graphY = y else if (graphY >= y + height) graphY = y + height - 1
 
-  return graphX pairTo graphY
+    return graphX pairTo graphY
 }
 
 /** @see [convertToGraphCoordinate] */
@@ -85,78 +85,78 @@ fun IGraphMap.isOutOfBounds(coordinate: IntPair) =
 /** A graph that can be used to store and retrieve objects. */
 interface IGraphMap : Resettable {
 
-  val x: Int
-  val y: Int
-  val width: Int
-  val height: Int
-  val ppm: Int
+    val x: Int
+    val y: Int
+    val width: Int
+    val height: Int
+    val ppm: Int
 
-  /**
-   * Adds the given shape to this graph. By default, it calls [add] with the shape used as both the
-   * object and the shape.
-   *
-   * @param shape the shape to add
-   * @return true if the shape was added, false otherwise
-   */
-  fun add(shape: IGameShape2D) = add(shape, shape)
+    /**
+     * Adds the given shape to this graph. By default, it calls [add] with the shape used as both the
+     * object and the shape.
+     *
+     * @param shape the shape to add
+     * @return true if the shape was added, false otherwise
+     */
+    fun add(shape: IGameShape2D) = add(shape, shape)
 
-  /**
-   * Adds the given object to this graph using the provided shape. The shape is NOT added, only the
-   * provided object.
-   *
-   * @param obj the object to add
-   * @param shape the shape of the object
-   * @return true if the object was added, false otherwise
-   */
-  fun add(obj: Any, shape: IGameShape2D): Boolean
+    /**
+     * Adds the given object to this graph using the provided shape. The shape is NOT added, only the
+     * provided object.
+     *
+     * @param obj the object to add
+     * @param shape the shape of the object
+     * @return true if the object was added, false otherwise
+     */
+    fun add(obj: Any, shape: IGameShape2D): Boolean
 
-  /**
-   * Adds the given object to this graph. By default, it calls [add] with the shape of the object.
-   *
-   * @param obj the object to add
-   * @return true if the object was added, false otherwise
-   */
-  fun add(obj: IGameShape2DSupplier) = add(obj, obj.getGameShape2D())
+    /**
+     * Adds the given object to this graph. By default, it calls [add] with the shape of the object.
+     *
+     * @param obj the object to add
+     * @return true if the object was added, false otherwise
+     */
+    fun add(obj: IGameShape2DSupplier) = add(obj, obj.getGameShape2D())
 
-  /** @see [get(Int, Int)] */
-  fun get(coordinate: IntPair) = get(coordinate.first, coordinate.second)
+    /** @see [get(Int, Int)] */
+    fun get(coordinate: IntPair) = get(coordinate.first, coordinate.second)
 
-  /**
-   * Gets the objects at the specified coordinate.
-   *
-   * @param x the first coordinate
-   * @param y the second coordinate
-   * @return the objects at the specified coordinate
-   */
-  fun get(x: Int, y: Int): Iterable<Any>
+    /**
+     * Gets the objects at the specified coordinate.
+     *
+     * @param x the first coordinate
+     * @param y the second coordinate
+     * @return the objects at the specified coordinate
+     */
+    fun get(x: Int, y: Int): Iterable<Any>
 
-  /**
-   * Gets the objects in the specified area.
-   *
-   * @param minX the minimum first coordinate
-   * @param minY the minimum second coordinate
-   * @param maxX the maximum first coordinate
-   * @param maxY the maximum second coordinate
-   * @return the objects in the specified area
-   */
-  fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Iterable<Any>
+    /**
+     * Gets the objects in the specified area.
+     *
+     * @param minX the minimum first coordinate
+     * @param minY the minimum second coordinate
+     * @param maxX the maximum first coordinate
+     * @param maxY the maximum second coordinate
+     * @return the objects in the specified area
+     */
+    fun get(minX: Int, minY: Int, maxX: Int, maxY: Int): Iterable<Any>
 
-  /**
-   * Gets the objects in the specified area. By default, calls [get] with the values of
-   * [MinsAndMaxes].
-   *
-   * @param m the minimum and maximum first and second coordinates of the area
-   * @return the objects in the specified area
-   */
-  fun get(m: MinsAndMaxes) = get(m.minX, m.minY, m.maxX, m.maxY)
+    /**
+     * Gets the objects in the specified area. By default, calls [get] with the values of
+     * [MinsAndMaxes].
+     *
+     * @param m the minimum and maximum first and second coordinates of the area
+     * @return the objects in the specified area
+     */
+    fun get(m: MinsAndMaxes) = get(m.minX, m.minY, m.maxX, m.maxY)
 
-  /**
-   * Gets the objects in the specified area. The area is specified by using the
-   * [convertToMinsAndMaxes] method on the supplied [GameRectangle]. By default, converts the given
-   * [IGameShape2D] to a [MinsAndMaxes] instance using the [convertToMinsAndMaxes] method.
-   *
-   * @param shape the shape to get the area from
-   * @return the objects in the specified area
-   */
-  fun get(shape: IGameShape2D) = get(convertToMinsAndMaxes(shape))
+    /**
+     * Gets the objects in the specified area. The area is specified by using the
+     * [convertToMinsAndMaxes] method on the supplied [GameRectangle]. By default, converts the given
+     * [IGameShape2D] to a [MinsAndMaxes] instance using the [convertToMinsAndMaxes] method.
+     *
+     * @param shape the shape to get the area from
+     * @return the objects in the specified area
+     */
+    fun get(shape: IGameShape2D) = get(convertToMinsAndMaxes(shape))
 }

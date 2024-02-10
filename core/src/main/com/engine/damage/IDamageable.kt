@@ -7,22 +7,22 @@ package com.engine.damage
  */
 interface IDamageable {
 
-  /** Return true if this [IDamageable] is invincible, otherwise false. */
-  val invincible: Boolean
+    /** Return true if this [IDamageable] is invincible, otherwise false. */
+    val invincible: Boolean
 
-  /**
-   * Return true if this [IDamageable] can take damage from the [IDamager], otherwise false.
-   *
-   * @param damager the [IDamager] that is dealing damage to this [IDamageable]
-   * @return true if this [IDamageable] can take damage from the [IDamager], otherwise false
-   */
-  fun canBeDamagedBy(damager: IDamager): Boolean
+    /**
+     * Return true if this [IDamageable] can take damage from the [IDamager], otherwise false.
+     *
+     * @param damager the [IDamager] that is dealing damage to this [IDamageable]
+     * @return true if this [IDamageable] can take damage from the [IDamager], otherwise false
+     */
+    fun canBeDamagedBy(damager: IDamager): Boolean
 
-  /**
-   * Take damage from the [IDamager]. Return true if damage was taken, otherwise false.
-   *
-   * @param damager the [IDamager] that is dealing damage to this [IDamageable]
-   * @return true if damage was taken, otherwise false
-   */
-  fun takeDamageFrom(damager: IDamager): Boolean
+    /**
+     * Take damage from the [IDamager]. Return true if damage was taken, otherwise false.
+     *
+     * @param damager the [IDamager] that is dealing damage to this [IDamageable]
+     * @return true if damage was taken, otherwise false
+     */
+    fun takeDamageFrom(damager: IDamager): Boolean
 }

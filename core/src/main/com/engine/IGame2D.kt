@@ -21,29 +21,29 @@ import com.engine.screens.IScreen
  */
 interface IGame2D : ApplicationListener {
 
-  var batch: SpriteBatch
-  var shapeRenderer: ShapeRenderer
+    var batch: SpriteBatch
+    var shapeRenderer: ShapeRenderer
 
-  var buttons: Buttons
-  var controllerPoller: IControllerPoller
+    var buttons: Buttons
+    var controllerPoller: IControllerPoller
 
-  var assMan: AssetManager
-  var eventsMan: IEventsManager
+    var assMan: AssetManager
+    var eventsMan: IEventsManager
 
-  var gameEngine: IGameEngine
+    var gameEngine: IGameEngine
 
-  var paused: Boolean
+    var paused: Boolean
 
-  val screens: ObjectMap<String, IScreen>
-  val viewports: ObjectMap<String, Viewport>
-  val currentScreen: IScreen?
+    val screens: ObjectMap<String, IScreen>
+    val viewports: ObjectMap<String, Viewport>
+    val currentScreen: IScreen?
 
-  val properties: Properties
+    val properties: Properties
 
-  /**
-   * Sets the current screen using the key.
-   *
-   * @param key the key
-   */
-  fun setCurrentScreen(key: String)
+    /**
+     * Sets the current screen using the key.
+     *
+     * @param key the key
+     */
+    fun setCurrentScreen(key: String)
 }

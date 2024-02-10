@@ -8,7 +8,7 @@ package com.engine.world
  * move. A [Body] can only be one of these types.
  */
 enum class BodyType {
-  ABSTRACT,
-  STATIC,
-  DYNAMIC
+    ABSTRACT,
+    STATIC,
+    DYNAMIC
 }

@@ -7,39 +7,39 @@ import com.engine.common.interfaces.Updatable
 /** An animation that can be used to animate a texture region. */
 interface IAnimation : Updatable, Resettable {
 
-  /**
-   * Returns the current texture region of this animation.
-   *
-   * @return the current texture region of this animation
-   */
-  fun getCurrentRegion(): TextureRegion?
+    /**
+     * Returns the current texture region of this animation.
+     *
+     * @return the current texture region of this animation
+     */
+    fun getCurrentRegion(): TextureRegion?
 
-  /**
-   * Returns whether this animation is finished.
-   *
-   * @return whether this animation is finished
-   */
-  fun isFinished(): Boolean
+    /**
+     * Returns whether this animation is finished.
+     *
+     * @return whether this animation is finished
+     */
+    fun isFinished(): Boolean
 
-  /**
-   * Returns the duration of this animation.
-   *
-   * @return the duration of this animation
-   */
-  fun getDuration(): Float
+    /**
+     * Returns the duration of this animation.
+     *
+     * @return the duration of this animation
+     */
+    fun getDuration(): Float
 
-  /**
-   * Returns whether this animation is looping.
-   *
-   * @return whether this animation is looping
-   */
-  fun isLooping(): Boolean
+    /**
+     * Returns whether this animation is looping.
+     *
+     * @return whether this animation is looping
+     */
+    fun isLooping(): Boolean
 
-  /**
-   * Sets whether this animation is looping.
-   *
-   * @param loop whether this animation is looping
-   * @return this animation for chaining
-   */
-  fun setLooping(loop: Boolean)
+    /**
+     * Sets whether this animation is looping.
+     *
+     * @param loop whether this animation is looping
+     * @return this animation for chaining
+     */
+    fun setLooping(loop: Boolean)
 }

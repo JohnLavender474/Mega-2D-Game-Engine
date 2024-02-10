@@ -19,11 +19,11 @@ abstract class SortingGameSystem(
     componentMask: Iterable<KClass<out IGameComponent>>
 ) : GameSystem(componentMask, TreeSet<IGameEntity>(comparator)) {
 
-  /**
-   * @see SortingGameSystem(comparator: Comparator<GameEntity>, componentMask: Collection<KClass<out
-   */
-  constructor(
-      comparator: Comparator<IGameEntity>,
-      vararg componentMask: KClass<out IGameComponent>
-  ) : this(comparator, componentMask.toList())
+    /**
+     * @see SortingGameSystem(comparator: Comparator<GameEntity>, componentMask: Collection<KClass<out
+     */
+    constructor(
+        comparator: Comparator<IGameEntity>,
+        vararg componentMask: KClass<out IGameComponent>
+    ) : this(comparator, componentMask.toList())
 }

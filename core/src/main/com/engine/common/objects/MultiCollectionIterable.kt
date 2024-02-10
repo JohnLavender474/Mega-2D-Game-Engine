@@ -9,43 +9,43 @@ import com.badlogic.gdx.utils.Array
  */
 class MultiCollectionIterator<T>(internal val multiCollectionIterable: MultiCollectionIterable<T>) : Iterator<T> {
 
-  private var outerIndex = 0
-  private var currentInnerIterator: Iterator<T>? = null
+    private var outerIndex = 0
+    private var currentInnerIterator: Iterator<T>? = null
 
-  /**
-   * Checks if there are more elements to iterate.
-   *
-   * @return True if there are more elements to iterate, false otherwise.
-   */
-  override fun hasNext(): Boolean {
-    val iterables = multiCollectionIterable.iterables
-    if (outerIndex >= iterables.size) return false
+    /**
+     * Checks if there are more elements to iterate.
+     *
+     * @return True if there are more elements to iterate, false otherwise.
+     */
+    override fun hasNext(): Boolean {
+        val iterables = multiCollectionIterable.iterables
+        if (outerIndex >= iterables.size) return false
 
-    if (currentInnerIterator == null) {
-      // Initialize the inner iterator with the current collection
-      currentInnerIterator = iterables[outerIndex].iterator()
+        if (currentInnerIterator == null) {
+            // Initialize the inner iterator with the current collection
+            currentInnerIterator = iterables[outerIndex].iterator()
+        }
+
+        while (!currentInnerIterator!!.hasNext()) {
+            // Move to the next collection when the current one is exhausted
+            outerIndex++
+            if (outerIndex >= iterables.size) return false
+            currentInnerIterator = iterables[outerIndex].iterator()
+        }
+
+        return true
     }
 
-    while (!currentInnerIterator!!.hasNext()) {
-      // Move to the next collection when the current one is exhausted
-      outerIndex++
-      if (outerIndex >= iterables.size) return false
-      currentInnerIterator = iterables[outerIndex].iterator()
+    /**
+     * Retrieves the next element in the sequence.
+     *
+     * @return The next element in the sequence.
+     * @throws NoSuchElementException if there are no more elements to iterate.
+     */
+    override fun next(): T {
+        if (!hasNext()) throw NoSuchElementException()
+        return currentInnerIterator!!.next()
     }
-
-    return true
-  }
-
-  /**
-   * Retrieves the next element in the sequence.
-   *
-   * @return The next element in the sequence.
-   * @throws NoSuchElementException if there are no more elements to iterate.
-   */
-  override fun next(): T {
-    if (!hasNext()) throw NoSuchElementException()
-    return currentInnerIterator!!.next()
-  }
 }
 
 /**
@@ -55,10 +55,10 @@ class MultiCollectionIterator<T>(internal val multiCollectionIterable: MultiColl
  */
 class MultiCollectionIterable<T>(internal val iterables: Array<Iterable<T>>) : Iterable<T> {
 
-  /**
-   * Returns a MultiCollectionIterator to iterate over the collections.
-   *
-   * @return A MultiCollectionIterator instance.
-   */
-  override fun iterator() = MultiCollectionIterator(this)
+    /**
+     * Returns a MultiCollectionIterator to iterate over the collections.
+     *
+     * @return A MultiCollectionIterator instance.
+     */
+    override fun iterator() = MultiCollectionIterator(this)
 }

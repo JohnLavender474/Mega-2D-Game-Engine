@@ -15,23 +15,23 @@ class SpawnerForEvent(
     respawnable: Boolean = true
 ) : Spawner(shouldBeCulled, onCull, respawnable), IEventListener {
 
-  private val events = Array<Event>()
+    private val events = Array<Event>()
 
-  override fun test(delta: Float): Boolean {
-    if (!super.test(delta)) return false
+    override fun test(delta: Float): Boolean {
+        if (!super.test(delta)) return false
 
-    for (event in events) if (predicate(event)) {
-      spawn = spawnSupplier()
-      break
+        for (event in events) if (predicate(event)) {
+            spawn = spawnSupplier()
+            break
+        }
+        events.clear()
+
+        return spawned
     }
-    events.clear()
 
-    return spawned
-  }
+    override fun onEvent(event: Event) {
+        if (!spawned) events.add(event)
+    }
 
-  override fun onEvent(event: Event) {
-    if (!spawned) events.add(event)
-  }
-
-  override fun toString() = "SpawnerForEvent[eventKeyMask=$eventKeyMask]"
+    override fun toString() = "SpawnerForEvent[eventKeyMask=$eventKeyMask]"
 }

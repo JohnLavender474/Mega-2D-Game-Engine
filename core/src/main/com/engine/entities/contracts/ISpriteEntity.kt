@@ -8,9 +8,9 @@ import com.engine.entities.IGameEntity
 /** An entity containing sprites. */
 interface ISpriteEntity : IGameEntity {
 
-  val sprites: OrderedMap<String, ISprite>
-    get() = getComponent(SpritesComponent::class)!!.sprites
+    val sprites: OrderedMap<String, ISprite>
+        get() = getComponent(SpritesComponent::class)!!.sprites
 
-  val firstSprite: ISprite?
-    get() = if (sprites.isEmpty) null else sprites.first().value
+    val firstSprite: ISprite?
+        get() = if (sprites.isEmpty) null else sprites.first().value
 }

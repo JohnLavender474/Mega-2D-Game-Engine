@@ -17,31 +17,31 @@ open class DrawableShapesSystem(
     var debug: Boolean = false
 ) : GameSystem(DrawableShapesComponent::class) {
 
-  /**
-   * Creates a [DrawableShapesSystem] where the provided [OrderedMap] is used to store the shapes to
-   * be drawn.
-   *
-   * @param shapesArray The [OrderedMap] to store the shapes to be drawn
-   * @see [DrawableShapesSystem]
-   */
-  constructor(shapesArray: MutableCollection<IDrawableShape>) : this({ shapesArray })
+    /**
+     * Creates a [DrawableShapesSystem] where the provided [OrderedMap] is used to store the shapes to
+     * be drawn.
+     *
+     * @param shapesArray The [OrderedMap] to store the shapes to be drawn
+     * @see [DrawableShapesSystem]
+     */
+    constructor(shapesArray: MutableCollection<IDrawableShape>) : this({ shapesArray })
 
-  override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
-    if (!on) return
+    override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
+        if (!on) return
 
-    val shapes = shapesArraySupplier()
+        val shapes = shapesArraySupplier()
 
-    entities.forEach { e ->
-      val shapeComponent = e.getComponent(DrawableShapesComponent::class)!!
+        entities.forEach { e ->
+            val shapeComponent = e.getComponent(DrawableShapesComponent::class)!!
 
-      shapeComponent.prodShapeSuppliers.forEach { shapeSupplier ->
-        shapeSupplier()?.let { shapes.add(it) }
-      }
+            shapeComponent.prodShapeSuppliers.forEach { shapeSupplier ->
+                shapeSupplier()?.let { shapes.add(it) }
+            }
 
-      if (debug && shapeComponent.debug)
-          shapeComponent.debugShapeSuppliers.forEach { shapeSupplier ->
-            shapeSupplier()?.let { shapes.add(it) }
-          }
+            if (debug && shapeComponent.debug)
+                shapeComponent.debugShapeSuppliers.forEach { shapeSupplier ->
+                    shapeSupplier()?.let { shapes.add(it) }
+                }
+        }
     }
-  }
 }

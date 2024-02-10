@@ -18,19 +18,19 @@ import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile
  */
 class TiledMapLevelRenderer(map: TiledMap, batch: Batch) : OrthogonalTiledMapRenderer(map, batch) {
 
-  /**
-   * Renders the [TiledMap] using the specified [OrthographicCamera].
-   *
-   * @param camera the [OrthographicCamera] to use for rendering
-   */
-  fun render(camera: OrthographicCamera) {
-    setView(camera)
-    super.render()
-  }
+    /**
+     * Renders the [TiledMap] using the specified [OrthographicCamera].
+     *
+     * @param camera the [OrthographicCamera] to use for rendering
+     */
+    fun render(camera: OrthographicCamera) {
+        setView(camera)
+        super.render()
+    }
 
-  override fun beginRender() = AnimatedTiledMapTile.updateAnimationBaseTime()
+    override fun beginRender() = AnimatedTiledMapTile.updateAnimationBaseTime()
 
-  override fun endRender() {}
+    override fun endRender() {}
 
-  override fun dispose() {}
+    override fun dispose() {}
 }

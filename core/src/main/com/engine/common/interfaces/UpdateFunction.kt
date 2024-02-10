@@ -7,11 +7,11 @@ package com.engine.common.interfaces
  */
 fun interface UpdateFunction<T> {
 
-  /**
-   * Updates the given object.
-   *
-   * @param delta The time in seconds since the last update.
-   * @param t The object to update.
-   */
-  fun update(delta: Float, t: T)
+    /**
+     * Updates the given object.
+     *
+     * @param delta The time in seconds since the last update.
+     * @param t The object to update.
+     */
+    fun update(delta: Float, t: T)
 }

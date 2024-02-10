@@ -17,30 +17,30 @@ class SpawnerForBoundsEntered(
     respawnable: Boolean = true
 ) : Spawner(shouldBeCulled, onCull, respawnable) {
 
-  companion object {
-    const val TAG = "SpawnerForBoundsEntered"
-  }
-
-  private var isEntered = false
-
-  override fun test(delta: Float): Boolean {
-    if (!super.test(delta)) return false
-
-    val wasEntered = isEntered
-    isEntered = thisBounds().overlaps(otherBounds() as Rectangle)
-    if (!wasEntered && isEntered) {
-      spawn = spawnSupplier()
-      GameLogger.debug(TAG, "test(): Spawning: $spawn")
+    companion object {
+        const val TAG = "SpawnerForBoundsEntered"
     }
 
-    return spawned
-  }
+    private var isEntered = false
 
-  override fun reset() {
-    super.reset()
-    GameLogger.debug(TAG, "reset(): Resetting spawner: $this")
-    isEntered = false
-  }
+    override fun test(delta: Float): Boolean {
+        if (!super.test(delta)) return false
 
-  override fun toString() = "SpawnerForBoundsEntered"
+        val wasEntered = isEntered
+        isEntered = thisBounds().overlaps(otherBounds() as Rectangle)
+        if (!wasEntered && isEntered) {
+            spawn = spawnSupplier()
+            GameLogger.debug(TAG, "test(): Spawning: $spawn")
+        }
+
+        return spawned
+    }
+
+    override fun reset() {
+        super.reset()
+        GameLogger.debug(TAG, "reset(): Resetting spawner: $this")
+        isEntered = false
+    }
+
+    override fun toString() = "SpawnerForBoundsEntered"
 }

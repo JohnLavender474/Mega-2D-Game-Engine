@@ -13,13 +13,13 @@ import com.badlogic.gdx.utils.Array
  * @return the flattened array of texture regions
  */
 fun TextureRegion.splitAndFlatten(rows: Int, columns: Int): Array<TextureRegion> {
-  val splitRegions = split(regionWidth / columns, regionHeight / rows)
-  val array = Array<TextureRegion>(true, rows * columns)
-  val size = rows * columns
-  for (i in 0 until size) {
-    val row = i.floorDiv(columns)
-    val column = i % columns
-    array.add(splitRegions[row][column])
-  }
-  return array
+    val splitRegions = split(regionWidth / columns, regionHeight / rows)
+    val array = Array<TextureRegion>(true, rows * columns)
+    val size = rows * columns
+    for (i in 0 until size) {
+        val row = i.floorDiv(columns)
+        val column = i % columns
+        array.add(splitRegions[row][column])
+    }
+    return array
 }

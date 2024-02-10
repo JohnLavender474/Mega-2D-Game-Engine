@@ -23,8 +23,8 @@ class PathfinderParams(
     override val properties: Properties = Properties()
 ) : IPropertizable {
 
-  override fun toString() =
-      "PathfinderParams(currentStart=${startSupplier()}, " +
-          "currentTarget=${targetSupplier()}, " +
-          "currentlyAllowsDiagonal=${allowDiagonal()}"
+    override fun toString() =
+        "PathfinderParams(currentStart=${startSupplier()}, " +
+                "currentTarget=${targetSupplier()}, " +
+                "currentlyAllowsDiagonal=${allowDiagonal()}"
 }

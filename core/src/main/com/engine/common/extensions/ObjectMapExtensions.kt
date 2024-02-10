@@ -10,9 +10,9 @@ import com.badlogic.gdx.utils.OrderedMap
  * @return the [ObjectMap] created from the given [Pair]s
  */
 fun <T, U> objectMapOf(vararg pairs: Pair<T, U>): ObjectMap<T, U> {
-  val map = ObjectMap<T, U>()
-  pairs.forEach { map.put(it.first, it.second) }
-  return map
+    val map = ObjectMap<T, U>()
+    pairs.forEach { map.put(it.first, it.second) }
+    return map
 }
 
 /**
@@ -22,9 +22,9 @@ fun <T, U> objectMapOf(vararg pairs: Pair<T, U>): ObjectMap<T, U> {
  * @return the [OrderedMap] created from the given [Pair]s
  */
 fun <T, U> orderedMapOf(vararg pairs: Pair<T, U>): OrderedMap<T, U> {
-  val map = OrderedMap<T, U>()
-  pairs.forEach { map.put(it.first, it.second) }
-  return map
+    val map = OrderedMap<T, U>()
+    pairs.forEach { map.put(it.first, it.second) }
+    return map
 }
 
 /**
@@ -37,6 +37,6 @@ fun <T, U> orderedMapOf(vararg pairs: Pair<T, U>): OrderedMap<T, U> {
  *   the computed value is null
  */
 fun <K, V> ObjectMap<K, V>.putIfAbsentAndGet(key: K, defaultValue: V): V {
-  if (!containsKey(key)) put(key, defaultValue)
-  return get(key)
+    if (!containsKey(key)) put(key, defaultValue)
+    return get(key)
 }

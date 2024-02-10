@@ -7,10 +7,10 @@ package com.engine.drawables
  */
 fun interface IDrawable<T> {
 
-  /**
-   * Draws this object using the provided drawer.
-   *
-   * @param drawer the drawer to use
-   */
-  fun draw(drawer: T)
+    /**
+     * Draws this object using the provided drawer.
+     *
+     * @param drawer the drawer to use
+     */
+    fun draw(drawer: T)
 }

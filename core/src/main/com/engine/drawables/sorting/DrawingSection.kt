@@ -8,7 +8,7 @@ import com.engine.drawables.IDrawable
  * @see DrawingPriority
  */
 enum class DrawingSection {
-  BACKGROUND,
-  PLAYGROUND,
-  FOREGROUND
+    BACKGROUND,
+    PLAYGROUND,
+    FOREGROUND
 }

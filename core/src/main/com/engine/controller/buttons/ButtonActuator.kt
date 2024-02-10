@@ -10,19 +10,19 @@ class ButtonActuator(
     private val onReleaseContinued: ((IControllerPoller, Float) -> Unit)? = null
 ) : IButtonActuator {
 
-  override fun onJustPressed(poller: IControllerPoller) {
-    onJustPressed?.invoke(poller)
-  }
+    override fun onJustPressed(poller: IControllerPoller) {
+        onJustPressed?.invoke(poller)
+    }
 
-  override fun onPressContinued(poller: IControllerPoller, delta: Float) {
-    onPressContinued?.invoke(poller, delta)
-  }
+    override fun onPressContinued(poller: IControllerPoller, delta: Float) {
+        onPressContinued?.invoke(poller, delta)
+    }
 
-  override fun onJustReleased(poller: IControllerPoller) {
-    onJustReleased?.invoke(poller)
-  }
+    override fun onJustReleased(poller: IControllerPoller) {
+        onJustReleased?.invoke(poller)
+    }
 
-  override fun onReleaseContinued(poller: IControllerPoller, delta: Float) {
-    onReleaseContinued?.invoke(poller, delta)
-  }
+    override fun onReleaseContinued(poller: IControllerPoller, delta: Float) {
+        onReleaseContinued?.invoke(poller, delta)
+    }
 }

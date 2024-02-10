@@ -15,75 +15,75 @@ import com.engine.common.interfaces.Updatable
  */
 class SpawnsManager : Updatable, Resettable {
 
-  companion object {
-    const val TAG = "SpawnsManager"
-  }
-
-  internal val spawns = Array<Spawn>()
-  internal val spawners = Array<ISpawner>()
-
-  /**
-   * Returns an array of the [Spawn]s that were spawned since the last update, and then clears the
-   * array. This method should be called once per frame.
-   *
-   * @return the [Spawn]s that were spawned since the last update.
-   */
-  fun getSpawnsAndClear(): Array<Spawn> {
-    val spawnsToReturn = Array(spawns)
-    spawns.clear()
-    return spawnsToReturn
-  }
-
-  /**
-   * Sets the [ISpawner]s to manage.
-   *
-   * @param spawners the [ISpawner]s to manage.
-   * @see ISpawner
-   */
-  fun setSpawners(spawners: Array<ISpawner>) {
-    GameLogger.debug(TAG, "setSpawners(): Setting spawners: $spawners")
-    this.spawners.clear()
-    this.spawners.addAll(spawners)
-  }
-
-  /**
-   * Updates the [ISpawner]s and adds the [Spawn]s to the [getSpawnsAndClear] list. Also culls the
-   * [ISpawner]s that should no longer be considered for spawning. This method should be called once
-   * per frame. This method should be called before the [getSpawnsAndClear] method.
-   *
-   * @param delta the time in seconds since the last update.
-   */
-  override fun update(delta: Float) {
-    val iter = spawners.iterator()
-
-    while (iter.hasNext()) {
-      val spawner = iter.next()
-
-      if (spawner.shouldBeCulled(delta)) {
-        spawner.reset()
-        iter.remove()
-        GameLogger.debug(TAG, "update(): Culling spawner: $spawner")
-        continue
-      }
-
-      if (spawner.test(delta)) {
-        val spawn = spawner.get()
-        GameLogger.debug(TAG, "update(): Spawning entity: $spawn")
-        spawns.add(spawn)
-
-        if (!spawner.respawnable) {
-          spawner.reset()
-          iter.remove()
-          GameLogger.debug(TAG, "update(): Culling spawner due to not being respawnable: $spawner")
-        }
-      }
+    companion object {
+        const val TAG = "SpawnsManager"
     }
-  }
 
-  /** Clears the [ISpawner]s and [Spawn]s. */
-  override fun reset() {
-    GameLogger.debug(TAG, "reset(): Clearing spawners and spawns")
-    spawners.clear()
-    spawns.clear()
-  }
+    internal val spawns = Array<Spawn>()
+    internal val spawners = Array<ISpawner>()
+
+    /**
+     * Returns an array of the [Spawn]s that were spawned since the last update, and then clears the
+     * array. This method should be called once per frame.
+     *
+     * @return the [Spawn]s that were spawned since the last update.
+     */
+    fun getSpawnsAndClear(): Array<Spawn> {
+        val spawnsToReturn = Array(spawns)
+        spawns.clear()
+        return spawnsToReturn
+    }
+
+    /**
+     * Sets the [ISpawner]s to manage.
+     *
+     * @param spawners the [ISpawner]s to manage.
+     * @see ISpawner
+     */
+    fun setSpawners(spawners: Array<ISpawner>) {
+        GameLogger.debug(TAG, "setSpawners(): Setting spawners: $spawners")
+        this.spawners.clear()
+        this.spawners.addAll(spawners)
+    }
+
+    /**
+     * Updates the [ISpawner]s and adds the [Spawn]s to the [getSpawnsAndClear] list. Also culls the
+     * [ISpawner]s that should no longer be considered for spawning. This method should be called once
+     * per frame. This method should be called before the [getSpawnsAndClear] method.
+     *
+     * @param delta the time in seconds since the last update.
+     */
+    override fun update(delta: Float) {
+        val iter = spawners.iterator()
+
+        while (iter.hasNext()) {
+            val spawner = iter.next()
+
+            if (spawner.shouldBeCulled(delta)) {
+                spawner.reset()
+                iter.remove()
+                GameLogger.debug(TAG, "update(): Culling spawner: $spawner")
+                continue
+            }
+
+            if (spawner.test(delta)) {
+                val spawn = spawner.get()
+                GameLogger.debug(TAG, "update(): Spawning entity: $spawn")
+                spawns.add(spawn)
+
+                if (!spawner.respawnable) {
+                    spawner.reset()
+                    iter.remove()
+                    GameLogger.debug(TAG, "update(): Culling spawner due to not being respawnable: $spawner")
+                }
+            }
+        }
+    }
+
+    /** Clears the [ISpawner]s and [Spawn]s. */
+    override fun reset() {
+        GameLogger.debug(TAG, "reset(): Clearing spawners and spawns")
+        spawners.clear()
+        spawns.clear()
+    }
 }

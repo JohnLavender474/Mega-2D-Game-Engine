@@ -6,16 +6,16 @@ import io.mockk.*
 
 class BodyComponentTest :
     DescribeSpec({
-      describe("BodyComponent class") {
-        val mockBody = mockk<Body>()
-        val bodyComponent = BodyComponent(mockk(), mockBody)
+        describe("BodyComponent class") {
+            val mockBody = mockk<Body>()
+            val bodyComponent = BodyComponent(mockk(), mockBody)
 
-        it("should have the correct initial properties") { bodyComponent.body shouldBe mockBody }
+            it("should have the correct initial properties") { bodyComponent.body shouldBe mockBody }
 
-        it("should reset the body when reset() is called") {
-          every { mockBody.reset() } just Runs
-          bodyComponent.reset()
-          verify { mockBody.reset() }
+            it("should reset the body when reset() is called") {
+                every { mockBody.reset() } just Runs
+                bodyComponent.reset()
+                verify { mockBody.reset() }
+            }
         }
-      }
     })

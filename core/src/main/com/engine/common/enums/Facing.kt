@@ -6,6 +6,6 @@ package com.engine.common.enums
  * @param value The scale to apply to the object when facing this direction.
  */
 enum class Facing(val value: Int) {
-  LEFT(-1),
-  RIGHT(1)
+    LEFT(-1),
+    RIGHT(1)
 }

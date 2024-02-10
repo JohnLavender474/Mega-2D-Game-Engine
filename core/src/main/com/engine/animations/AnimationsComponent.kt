@@ -18,40 +18,40 @@ class AnimationsComponent(
     val animators: Array<Pair<() -> ISprite, IAnimator>> = Array()
 ) : IGameComponent {
 
-  companion object {
-    const val TAG = "AnimationsComponent"
-  }
+    companion object {
+        const val TAG = "AnimationsComponent"
+    }
 
-  /**
-   * Convenience constructor if only one animator. Creates an animations component with the
-   * specified sprite supplier and animator.
-   *
-   * @param spriteSupplier the sprite supplier that is used to supply the sprite to animate
-   * @param animator the animator that is used to animate the sprite
-   * @see AnimationsComponent
-   */
-  constructor(
-      entity: IGameEntity,
-      spriteSupplier: () -> ISprite,
-      animator: IAnimator
-  ) : this(
-      entity, Array<Pair<() -> ISprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
+    /**
+     * Convenience constructor if only one animator. Creates an animations component with the
+     * specified sprite supplier and animator.
+     *
+     * @param spriteSupplier the sprite supplier that is used to supply the sprite to animate
+     * @param animator the animator that is used to animate the sprite
+     * @see AnimationsComponent
+     */
+    constructor(
+        entity: IGameEntity,
+        spriteSupplier: () -> ISprite,
+        animator: IAnimator
+    ) : this(
+        entity, Array<Pair<() -> ISprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
 
-  /**
-   * Convenience constructor if the entity is a [ISpriteEntity] where only the first sprite needs to
-   * be animated. The first sprite is [ISpriteEntity.firstSprite] which CANNOT BE NULL. This sprite
-   * is animated using the specified animator.
-   *
-   * @param entity the entity that contains the sprite to animate
-   * @param animator the animator that is used to animate the sprite
-   */
-  constructor(
-      entity: ISpriteEntity,
-      animator: IAnimator
-  ) : this(entity, { entity.firstSprite!! }, animator)
+    /**
+     * Convenience constructor if the entity is a [ISpriteEntity] where only the first sprite needs to
+     * be animated. The first sprite is [ISpriteEntity.firstSprite] which CANNOT BE NULL. This sprite
+     * is animated using the specified animator.
+     *
+     * @param entity the entity that contains the sprite to animate
+     * @param animator the animator that is used to animate the sprite
+     */
+    constructor(
+        entity: ISpriteEntity,
+        animator: IAnimator
+    ) : this(entity, { entity.firstSprite!! }, animator)
 
-  override fun reset() {
-    GameLogger.debug(TAG, "reset(): Resetting animations component for entity [$entity]")
-    animators.forEach { it.second.reset() }
-  }
+    override fun reset() {
+        GameLogger.debug(TAG, "reset(): Resetting animations component for entity [$entity]")
+        animators.forEach { it.second.reset() }
+    }
 }

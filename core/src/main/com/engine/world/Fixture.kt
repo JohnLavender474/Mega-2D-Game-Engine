@@ -38,97 +38,101 @@ class Fixture(
     override var properties: Properties = Properties(),
 ) : IPropertizable, ICopyable {
 
-  companion object {
-    const val TAG = "Fixture"
-  }
+    companion object {
+        const val TAG = "Fixture"
+    }
 
-  /**
-   * The shape of this fixture relative to the body it is attached to. This is null until
-   * [setBodyRelativeShape] is called.
-   */
-  var bodyRelativeShape: IGameShape2D? = null
+    /**
+     * The shape of this fixture relative to the body it is attached to. This is null until
+     * [setBodyRelativeShape] is called.
+     */
+    var bodyRelativeShape: IGameShape2D? = null
 
-  /**
-   * Sets the bounds of this fixture relative to the body it is attached to. This is calculated by
-   * taking the bounds of this fixture and translating it by the offset of this fixture from the
-   * center of the body it is attached to.
-   *
-   * @param body The body to set the bounds relative to.
-   */
-  fun setBodyRelativeShape(body: Body) {
-    val bodyCenter = body.getCenter()
-    shape.setCenter(bodyCenter).translation(offsetFromBodyCenter)
+    /**
+     * Sets the bounds of this fixture relative to the body it is attached to. This is calculated by
+     * taking the bounds of this fixture and translating it by the offset of this fixture from the
+     * center of the body it is attached to.
+     *
+     * @param body The body to set the bounds relative to.
+     */
+    fun setBodyRelativeShape(body: Body) {
+        val bodyCenter = body.getCenter()
+        shape.setCenter(bodyCenter).translation(offsetFromBodyCenter)
 
-    val relativeShape = shape.copy() as IGameShape2D
-    relativeShape.originX = if (body.originXCenter) bodyCenter.x else body.originX
-    relativeShape.originY = if (body.originYCenter) bodyCenter.y else body.originY
-    val cardinalRotation = body.cardinalRotation
-    bodyRelativeShape = relativeShape.getCardinallyRotatedShape(cardinalRotation, false)
-    bodyRelativeShape!!.color = shape.color
-    bodyRelativeShape!!.shapeType = shape.shapeType
+        val relativeShape = shape.copy() as IGameShape2D
+        relativeShape.originX = if (body.originXCenter) bodyCenter.x else body.originX
+        relativeShape.originY = if (body.originYCenter) bodyCenter.y else body.originY
+        val cardinalRotation = body.cardinalRotation
+        bodyRelativeShape = relativeShape.getCardinallyRotatedShape(cardinalRotation, false)
+        bodyRelativeShape!!.color = shape.color
+        bodyRelativeShape!!.shapeType = shape.shapeType
 
-    GameLogger.debug(
-        TAG,
-        "setBodyRelativeShape(): cardinal rotation = $cardinalRotation, raw shape = $shape, relative shape = $bodyRelativeShape.")
-  }
+        GameLogger.debug(
+            TAG,
+            "setBodyRelativeShape(): cardinal rotation = $cardinalRotation, raw shape = $shape, relative shape = $bodyRelativeShape."
+        )
+    }
 
-  /**
-   * Returns if this fixture's [bodyRelativeShape] overlaps the given [bodyRelativeShape]. If the
-   * [bodyRelativeShape] has not been set yet via [setBodyRelativeShape], then false is returned.
-   *
-   * @return Whether this fixture's [bodyRelativeShape] overlaps the given [bodyRelativeShape], or
-   *   false if [bodyRelativeShape] is null.
-   * @see IGameShape2D.overlaps
-   */
-  fun overlaps(other: IGameShape2D) = bodyRelativeShape?.overlaps(other) ?: false
+    /**
+     * Returns if this fixture's [bodyRelativeShape] overlaps the given [bodyRelativeShape]. If the
+     * [bodyRelativeShape] has not been set yet via [setBodyRelativeShape], then false is returned.
+     *
+     * @return Whether this fixture's [bodyRelativeShape] overlaps the given [bodyRelativeShape], or
+     *   false if [bodyRelativeShape] is null.
+     * @see IGameShape2D.overlaps
+     */
+    fun overlaps(other: IGameShape2D) = bodyRelativeShape?.overlaps(other) ?: false
 
-  /**
-   * Returns if this fixture overlaps the given fixture. If [attachedToBody] is true for this
-   * fixture, then its [bodyRelativeShape] is used to check for overlap; otherwise its [shape] is
-   * used to check for overlap. If [attachedToBody] is true for the other fixture, then its
-   * [bodyRelativeShape] is used to check for overlap; otherwise its [shape] is used to check for
-   * overlap. If either fixture is attached to a body but its [bodyRelativeShape] is null, then an
-   * [IllegalStateException] is thrown.
-   *
-   * @param other The fixture to check if this fixture overlaps.
-   * @throws NullPointerException If [bodyRelativeShape] of the provided fixture is null.
-   * @throws IllegalStateException If [attachedToBody] is true for this fixture but its
-   *   [bodyRelativeShape] is null, or if [attachedToBody] is true for the other fixture but its
-   *   [bodyRelativeShape] is null.
-   * @see overlaps
-   */
-  fun overlaps(other: Fixture): Boolean {
-    val thisShape =
-        if (attachedToBody)
-            bodyRelativeShape
-                ?: throw IllegalStateException(
-                    "This fixture is attached to the body but the body relative shape is null: $this")
-        else shape
+    /**
+     * Returns if this fixture overlaps the given fixture. If [attachedToBody] is true for this
+     * fixture, then its [bodyRelativeShape] is used to check for overlap; otherwise its [shape] is
+     * used to check for overlap. If [attachedToBody] is true for the other fixture, then its
+     * [bodyRelativeShape] is used to check for overlap; otherwise its [shape] is used to check for
+     * overlap. If either fixture is attached to a body but its [bodyRelativeShape] is null, then an
+     * [IllegalStateException] is thrown.
+     *
+     * @param other The fixture to check if this fixture overlaps.
+     * @throws NullPointerException If [bodyRelativeShape] of the provided fixture is null.
+     * @throws IllegalStateException If [attachedToBody] is true for this fixture but its
+     *   [bodyRelativeShape] is null, or if [attachedToBody] is true for the other fixture but its
+     *   [bodyRelativeShape] is null.
+     * @see overlaps
+     */
+    fun overlaps(other: Fixture): Boolean {
+        val thisShape =
+            if (attachedToBody)
+                bodyRelativeShape
+                    ?: throw IllegalStateException(
+                        "This fixture is attached to the body but the body relative shape is null: $this"
+                    )
+            else shape
 
-    val otherShape =
-        if (other.attachedToBody)
-            other.bodyRelativeShape
-                ?: throw IllegalStateException(
-                    "Other fixture is attached to the body but the body relative shape is null: $other")
-        else other.shape
+        val otherShape =
+            if (other.attachedToBody)
+                other.bodyRelativeShape
+                    ?: throw IllegalStateException(
+                        "Other fixture is attached to the body but the body relative shape is null: $other"
+                    )
+            else other.shape
 
-    return thisShape.overlaps(otherShape)
-  }
+        return thisShape.overlaps(otherShape)
+    }
 
-  override fun copy(): Fixture {
-    GameLogger.debug(TAG, "copy(): Creating copy of fixture: $this.")
-    return Fixture(
-        shape.copy() as IGameShape2D,
-        fixtureLabel,
-        active,
-        attachedToBody,
-        Vector2(offsetFromBodyCenter),
-        properties.copy())
-  }
+    override fun copy(): Fixture {
+        GameLogger.debug(TAG, "copy(): Creating copy of fixture: $this.")
+        return Fixture(
+            shape.copy() as IGameShape2D,
+            fixtureLabel,
+            active,
+            attachedToBody,
+            Vector2(offsetFromBodyCenter),
+            properties.copy()
+        )
+    }
 
-  override fun toString(): String {
-    return "Fixture(shape=$shape, bodyRelativeShape=$bodyRelativeShape, fixtureLabel=$fixtureLabel, " +
-        "active=$active, attachedToBody=$attachedToBody, offsetFromBodyCenter=$offsetFromBodyCenter, " +
-        "properties=$properties)"
-  }
+    override fun toString(): String {
+        return "Fixture(shape=$shape, bodyRelativeShape=$bodyRelativeShape, fixtureLabel=$fixtureLabel, " +
+                "active=$active, attachedToBody=$attachedToBody, offsetFromBodyCenter=$offsetFromBodyCenter, " +
+                "properties=$properties)"
+    }
 }

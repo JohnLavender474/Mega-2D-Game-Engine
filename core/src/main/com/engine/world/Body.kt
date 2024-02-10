@@ -70,127 +70,128 @@ open class Body(
     var originYCenter: Boolean = true
 ) : GameRectangle(x, y, width, height), Resettable, IPropertizable {
 
-  companion object {
-    const val TAG = "Body"
-  }
-
-  /**
-   * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and
-   * [HashMap] of user data.
-   *
-   * @param bodyType the [BodyType] of the body
-   * @param physicsData the [PhysicsData] of the body
-   * @param fixtures the [OrderedMap] of [Fixture]s of the body
-   * @param properties the [Properties] of the body
-   * @param preProcess the [Updatable] to run before the body is processed
-   * @param postProcess the [Updatable] to run after the body is processed
-   */
-  constructor(
-      bodyType: BodyType,
-      physicsData: PhysicsData,
-      fixtures: Array<Pair<Any, Fixture>> = Array(),
-      properties: Properties = Properties(),
-      preProcess: OrderedMap<Any, Updatable> = OrderedMap(),
-      postProcess: OrderedMap<Any, Updatable> = OrderedMap()
-  ) : this(bodyType, 0f, 0f, 0f, 0f, physicsData, fixtures, properties, preProcess, postProcess)
-
-  // the bounds of this body before the current world update cycle
-  internal var previousBounds = GameRectangle()
-
-  /**
-   * The difference between the current center point and the previous center point. Set in each
-   * update cycle of the [WorldSystem].
-   */
-  val positionDelta: Vector2
-    get() = getCenterPoint().sub(previousBounds.getCenterPoint())
-
-  /**
-   * Returns the bounds of this body rotated in the given [Direction]. If the [cardinalRotation] is
-   * [Direction.UP], then the rotation is 0f which means essentially that no rotation is performed.
-   * If [originXCenter] is true, then the center x of the body will be used as the origin x instead
-   * of the value of [originX]. If [originYCenter] is true, then the center y of the body will be
-   * used as the origin y instead of the value of [originY]. The origin only affects the value of
-   * [rotatedBounds]. The default value of [cardinalRotation] is [Direction.UP]. The default value
-   * of [originXCenter] is true. The default value of [originYCenter] is true.
-   */
-  open val rotatedBounds: GameRectangle
-    get() {
-      val center = getCenter()
-      val copy = GameRectangle(this)
-      copy.originX = if (originXCenter) center.x else originX
-      copy.originY = if (originYCenter) center.y else originY
-      return copy.getCardinallyRotatedShape(cardinalRotation, false)
+    companion object {
+        const val TAG = "Body"
     }
 
-  /**
-   * Returns a copy of the previous bounds of this body. The previous bounds are the bounds of this
-   * body before the current update cycle of the [WorldSystem] and is set from within the
-   * [WorldSystem].
-   *
-   * @return the previous bounds of this body
-   */
-  open fun getPreviousBounds() = GameRectangle(previousBounds)
+    /**
+     * Creates a [Body] with the given [BodyType], [PhysicsData], [ArrayList] of [Fixture]s, and
+     * [HashMap] of user data.
+     *
+     * @param bodyType the [BodyType] of the body
+     * @param physicsData the [PhysicsData] of the body
+     * @param fixtures the [OrderedMap] of [Fixture]s of the body
+     * @param properties the [Properties] of the body
+     * @param preProcess the [Updatable] to run before the body is processed
+     * @param postProcess the [Updatable] to run after the body is processed
+     */
+    constructor(
+        bodyType: BodyType,
+        physicsData: PhysicsData,
+        fixtures: Array<Pair<Any, Fixture>> = Array(),
+        properties: Properties = Properties(),
+        preProcess: OrderedMap<Any, Updatable> = OrderedMap(),
+        postProcess: OrderedMap<Any, Updatable> = OrderedMap()
+    ) : this(bodyType, 0f, 0f, 0f, 0f, physicsData, fixtures, properties, preProcess, postProcess)
 
-  /**
-   * Returns if the body has the given [BodyType].
-   *
-   * @param bodyType the [BodyType] to check
-   * @return if the body is the given [BodyType]
-   */
-  fun isBodyType(bodyType: BodyType) = this.bodyType == bodyType
+    // the bounds of this body before the current world update cycle
+    internal var previousBounds = GameRectangle()
 
-  /**
-   * Adds the given [Fixture] to this body. The fixture is mapped to the fixture's label.
-   *
-   * @param fixture the [Fixture] to add
-   */
-  open fun addFixture(fixture: Fixture): Body {
-    fixtures.add(fixture.fixtureLabel to fixture)
-    return this
-  }
+    /**
+     * The difference between the current center point and the previous center point. Set in each
+     * update cycle of the [WorldSystem].
+     */
+    val positionDelta: Vector2
+        get() = getCenterPoint().sub(previousBounds.getCenterPoint())
 
-  /**
-   * Runs the given function for each fixture entry in this body.
-   *
-   * @param function the function to run for each fixture entry
-   */
-  fun forEachFixture(function: (Any, Fixture) -> Unit) =
-      fixtures.forEach { function(it.first, it.second) }
+    /**
+     * Returns the bounds of this body rotated in the given [Direction]. If the [cardinalRotation] is
+     * [Direction.UP], then the rotation is 0f which means essentially that no rotation is performed.
+     * If [originXCenter] is true, then the center x of the body will be used as the origin x instead
+     * of the value of [originX]. If [originYCenter] is true, then the center y of the body will be
+     * used as the origin y instead of the value of [originY]. The origin only affects the value of
+     * [rotatedBounds]. The default value of [cardinalRotation] is [Direction.UP]. The default value
+     * of [originXCenter] is true. The default value of [originYCenter] is true.
+     */
+    open val rotatedBounds: GameRectangle
+        get() {
+            val center = getCenter()
+            val copy = GameRectangle(this)
+            copy.originX = if (originXCenter) center.x else originX
+            copy.originY = if (originYCenter) center.y else originY
+            return copy.getCardinallyRotatedShape(cardinalRotation, false)
+        }
 
-  /**
-   * Resets the body to its default state by resetting its [PhysicsData] and resetting the positions
-   * of its [Fixture]s to their default positions (offset from the center of the body).
-   *
-   * @see Resettable.reset
-   */
-  override fun reset() {
-    previousBounds.set(this)
-    physics.reset()
-    fixtures.forEach { f ->
-      val p = getCenterPoint().add(f.second.offsetFromBodyCenter)
-      f.second.shape.setCenter(p)
+    /**
+     * Returns a copy of the previous bounds of this body. The previous bounds are the bounds of this
+     * body before the current update cycle of the [WorldSystem] and is set from within the
+     * [WorldSystem].
+     *
+     * @return the previous bounds of this body
+     */
+    open fun getPreviousBounds() = GameRectangle(previousBounds)
+
+    /**
+     * Returns if the body has the given [BodyType].
+     *
+     * @param bodyType the [BodyType] to check
+     * @return if the body is the given [BodyType]
+     */
+    fun isBodyType(bodyType: BodyType) = this.bodyType == bodyType
+
+    /**
+     * Adds the given [Fixture] to this body. The fixture is mapped to the fixture's label.
+     *
+     * @param fixture the [Fixture] to add
+     */
+    open fun addFixture(fixture: Fixture): Body {
+        fixtures.add(fixture.fixtureLabel to fixture)
+        return this
     }
-  }
 
-  override fun copy(): Body {
-    GameLogger.debug(TAG, "copy(): Creating copy of body: $this.")
-    val body =
-        Body(
-            bodyType,
-            x,
-            y,
-            width,
-            height,
-            physics.copy(),
-            Array(),
-            properties.copy(),
-            preProcess,
-            postProcess)
-    fixtures.forEach { body.addFixture(it.second.copy()) }
-    return body
-  }
+    /**
+     * Runs the given function for each fixture entry in this body.
+     *
+     * @param function the function to run for each fixture entry
+     */
+    fun forEachFixture(function: (Any, Fixture) -> Unit) =
+        fixtures.forEach { function(it.first, it.second) }
 
-  override fun equals(other: Any?) = this === other
+    /**
+     * Resets the body to its default state by resetting its [PhysicsData] and resetting the positions
+     * of its [Fixture]s to their default positions (offset from the center of the body).
+     *
+     * @see Resettable.reset
+     */
+    override fun reset() {
+        previousBounds.set(this)
+        physics.reset()
+        fixtures.forEach { f ->
+            val p = getCenterPoint().add(f.second.offsetFromBodyCenter)
+            f.second.shape.setCenter(p)
+        }
+    }
 
-  override fun hashCode() = System.identityHashCode(this)
+    override fun copy(): Body {
+        GameLogger.debug(TAG, "copy(): Creating copy of body: $this.")
+        val body =
+            Body(
+                bodyType,
+                x,
+                y,
+                width,
+                height,
+                physics.copy(),
+                Array(),
+                properties.copy(),
+                preProcess,
+                postProcess
+            )
+        fixtures.forEach { body.addFixture(it.second.copy()) }
+        return body
+    }
+
+    override fun equals(other: Any?) = this === other
+
+    override fun hashCode() = System.identityHashCode(this)
 }

@@ -10,46 +10,46 @@ import io.mockk.*
 
 class AnimationsSystemTest :
     DescribeSpec({
-      describe("AnimationSystem") {
-        lateinit var entity: GameEntity
-        lateinit var mockSprite: ISprite
-        lateinit var mockAnimator: IAnimator
-        lateinit var animationsComponent: AnimationsComponent
-        lateinit var animationsSystem: AnimationsSystem
+        describe("AnimationSystem") {
+            lateinit var entity: GameEntity
+            lateinit var mockSprite: ISprite
+            lateinit var mockAnimator: IAnimator
+            lateinit var animationsComponent: AnimationsComponent
+            lateinit var animationsSystem: AnimationsSystem
 
-        beforeEach {
-          clearAllMocks()
-          entity =
-              object : GameEntity(mockk()) {
+            beforeEach {
+                clearAllMocks()
+                entity =
+                    object : GameEntity(mockk()) {
 
-                override fun spawn(spawnProps: Properties) {}
+                        override fun spawn(spawnProps: Properties) {}
 
-                override fun onDestroy() {}
-              }
-          entity.dead = false
+                        override fun onDestroy() {}
+                    }
+                entity.dead = false
 
-          mockSprite = mockk { every { setRegion(any<TextureRegion>()) } just Runs }
+                mockSprite = mockk { every { setRegion(any<TextureRegion>()) } just Runs }
 
-          mockAnimator = mockk {
-            every { animate(any(), any()) } answers
-                {
-                  val sprite = arg<ISprite>(0)
-                  sprite.setRegion(TextureRegion())
+                mockAnimator = mockk {
+                    every { animate(any(), any()) } answers
+                            {
+                                val sprite = arg<ISprite>(0)
+                                sprite.setRegion(TextureRegion())
+                            }
                 }
-          }
 
-          val anims = gdxArrayOf({ mockSprite } to mockAnimator)
-          animationsComponent = spyk(AnimationsComponent(entity, anims))
-          animationsSystem = spyk(AnimationsSystem())
+                val anims = gdxArrayOf({ mockSprite } to mockAnimator)
+                animationsComponent = spyk(AnimationsComponent(entity, anims))
+                animationsSystem = spyk(AnimationsSystem())
 
-          entity.addComponent(animationsComponent)
-          animationsSystem.add(entity)
+                entity.addComponent(animationsComponent)
+                animationsSystem.add(entity)
+            }
+
+            it("process") {
+                animationsSystem.update(1f)
+                verify(exactly = 1) { mockAnimator.animate(mockSprite, 1f) }
+                verify(exactly = 1) { mockSprite.setRegion(any<TextureRegion>()) }
+            }
         }
-
-        it("process") {
-          animationsSystem.update(1f)
-          verify(exactly = 1) { mockAnimator.animate(mockSprite, 1f) }
-          verify(exactly = 1) { mockSprite.setRegion(any<TextureRegion>()) }
-        }
-      }
     })

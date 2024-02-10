@@ -12,20 +12,20 @@ import com.engine.drawables.IDrawable
 data class DrawingPriority(var section: DrawingSection, var priority: Int) :
     Comparable<DrawingPriority> {
 
-  /**
-   * Compares this [DrawingPriority] to another [DrawingPriority] by section and priority.
-   *
-   * @param other the other [DrawingPriority] to compare to
-   * @return a negative integer, zero, or a positive integer as this [DrawingPriority] is less than,
-   *   equal to, or greater than the specified [DrawingPriority].
-   */
-  override fun compareTo(other: DrawingPriority): Int {
-    val sectionCompare = section.compareTo(other.section)
-    return if (sectionCompare == 0) priority.compareTo(other.priority) else sectionCompare
-  }
+    /**
+     * Compares this [DrawingPriority] to another [DrawingPriority] by section and priority.
+     *
+     * @param other the other [DrawingPriority] to compare to
+     * @return a negative integer, zero, or a positive integer as this [DrawingPriority] is less than,
+     *   equal to, or greater than the specified [DrawingPriority].
+     */
+    override fun compareTo(other: DrawingPriority): Int {
+        val sectionCompare = section.compareTo(other.section)
+        return if (sectionCompare == 0) priority.compareTo(other.priority) else sectionCompare
+    }
 
-  override fun equals(other: Any?) =
-      other is DrawingPriority && section == other.section && priority == other.priority
+    override fun equals(other: Any?) =
+        other is DrawingPriority && section == other.section && priority == other.priority
 
-  override fun hashCode() = 31 * section.hashCode() + priority
+    override fun hashCode() = 31 * section.hashCode() + priority
 }

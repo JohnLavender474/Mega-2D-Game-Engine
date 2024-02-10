@@ -23,6 +23,6 @@ class PathfindingComponent(
     var doUpdate: () -> Boolean = { true }
 ) : IGameComponent {
 
-  internal var currentPath: PathfinderResult? = null
-  var updateIntervalTimer: Timer = Timer(0.1f)
+    internal var currentPath: PathfinderResult? = null
+    var updateIntervalTimer: Timer = Timer(0.1f)
 }

@@ -6,6 +6,6 @@ import com.engine.entities.IGameEntity
 /** An entity that can have children. */
 interface IParentEntity : IGameEntity {
 
-  /** The children of this entity. */
-  val children: Array<out IGameEntity>
+    /** The children of this entity. */
+    var children: Array<IGameEntity>
 }

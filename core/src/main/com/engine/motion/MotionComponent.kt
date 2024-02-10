@@ -13,37 +13,37 @@ import com.engine.entities.IGameEntity
  */
 class MotionComponent(override val entity: IGameEntity) : IGameComponent {
 
-  /**
-   * A definition of a [IMotion] and function pair. The function is called when the [IMotion] is
-   * updated and a value has been obtained from [IMotion.getMotionValue].
-   *
-   * @param motion the [IMotion]
-   * @param function the function
-   */
-  data class MotionDefinition(
-      val motion: IMotion,
-      val function: (Vector2, Float) -> Unit,
-      var onReset: (() -> Unit)? = null
-  ) : Resettable {
+    /**
+     * A definition of a [IMotion] and function pair. The function is called when the [IMotion] is
+     * updated and a value has been obtained from [IMotion.getMotionValue].
+     *
+     * @param motion the [IMotion]
+     * @param function the function
+     */
+    data class MotionDefinition(
+        val motion: IMotion,
+        val function: (Vector2, Float) -> Unit,
+        var onReset: (() -> Unit)? = null
+    ) : Resettable {
 
-    override fun reset() {
-      motion.reset()
-      onReset?.invoke()
+        override fun reset() {
+            motion.reset()
+            onReset?.invoke()
+        }
     }
-  }
 
-  val motions = OrderedMap<Any, MotionDefinition>()
+    val definitions = OrderedMap<Any, MotionDefinition>()
 
-  /**
-   * Adds a [IMotion] to this component. The function is called when the [IMotion] is updated and a
-   * value has been obtained from [IMotion.getMotionValue].
-   *
-   * @param key the key to associate with the [IMotion]
-   * @param definition the [IMotion] and function pair
-   * @return if the [IMotion] and function pair was added
-   */
-  fun put(key: Any, definition: MotionDefinition): MotionDefinition? = motions.put(key, definition)
+    /**
+     * Adds a [IMotion] to this component. The function is called when the [IMotion] is updated and a
+     * value has been obtained from [IMotion.getMotionValue].
+     *
+     * @param key the key to associate with the [IMotion]
+     * @param definition the [IMotion] and function pair
+     * @return if the [IMotion] and function pair was added
+     */
+    fun put(key: Any, definition: MotionDefinition): MotionDefinition? = definitions.put(key, definition)
 
-  /** Resets the motions in this component */
-  override fun reset() = motions.values().forEach { it.reset() }
+    /** Resets the motions in this component */
+    override fun reset() = definitions.values().forEach { it.reset() }
 }

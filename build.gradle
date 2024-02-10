@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     ext.kotlinVersion = '1.8.10'
 
@@ -13,89 +15,48 @@ buildscript {
     }
 }
 
-allprojects {
-    apply plugin: "eclipse"
-
-    version = '1.0'
-    ext {
-        appName = "2D Game Engine"
-        gdxVersion = '1.11.0'
-        roboVMVersion = '2.3.16'
-        box2DLightsVersion = '1.5'
-        ashleyVersion = '1.7.4'
-        aiVersion = '1.8.2'
-        gdxControllersVersion = '2.2.1'
-    }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://jitpack.io" }
-    }
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
 }
 
-project(":desktop") {
-    apply plugin: "kotlin"
-    apply plugin: "java-library"
-    apply plugin: "war"
+group = 'com.github.JohnLavender474'
+version = '1.0.0'
 
-    dependencies {
-        implementation project(":core")
-        implementation project(":test")
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        api "com.badlogicgames.gdx:gdx-lwjgl3-glfw-awt-macos:$gdxVersion"
-        api "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
-        providedCompile "org.projectlombok:lombok:1.16.6"
-        annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    }
+repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
-project(":core") {
-    apply plugin: "kotlin"
-    apply plugin: "java-library"
-    apply plugin: "war"
-
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-        api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-        api "com.badlogicgames.gdx:gdx-freetype:1.11.0"
-        api "com.badlogicgames.gdx:gdx-tools:1.6.3"
-        api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
-        api "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
-        testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-        testImplementation "io.kotest:kotest-runner-junit5-jvm:4.6.0"
-        testImplementation "io.kotest:kotest-runner-junit5:4.0.2"
-        testImplementation "io.kotest:kotest-assertions-core:4.0.2"
-        testImplementation "io.kotest:kotest-property:4.0.2"
-        testImplementation "io.mockk:mockk:1.13.7"
-    }
+ext {
+    appName = "2D Game Engine"
+    gdxVersion = '1.11.0'
+    roboVMVersion = '2.3.16'
+    box2DLightsVersion = '1.5'
+    ashleyVersion = '1.7.4'
+    aiVersion = '1.8.2'
+    gdxControllersVersion = '2.2.1'
 }
 
-project(":test") {
-    apply plugin: "kotlin"
-    apply plugin: "java-library"
-    apply plugin: "war"
+sourceSets.main.java.srcDirs = [ "src/main/" ]
+sourceSets.test.java.srcDirs = [ "src/test/" ]
 
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-        api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-        api "com.badlogicgames.gdx:gdx-freetype:1.11.0"
-        api "com.badlogicgames.gdx:gdx-tools:1.6.3"
-        api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
-        api "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
-        testImplementation 'io.kotest:kotest-runner-junit5-jvm:4.6.0'
-        testImplementation 'io.kotest:kotest-runner-junit5:4.0.2'
-        testImplementation 'io.kotest:kotest-assertions-core:4.0.2'
-        testImplementation 'io.kotest:kotest-property:4.0.2'
-        testImplementation("io.mockk:mockk:1.13.7")
-    }
+dependencies {
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    api "com.badlogicgames.gdx:gdx-freetype:1.11.0"
+    api "com.badlogicgames.gdx:gdx-tools:1.6.3"
+    api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+    api "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
+    testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    testImplementation "io.kotest:kotest-runner-junit5-jvm:4.6.0"
+    testImplementation "io.kotest:kotest-runner-junit5:4.0.2"
+    testImplementation "io.kotest:kotest-assertions-core:4.0.2"
+    testImplementation "io.kotest:kotest-property:4.0.2"
+    testImplementation "io.mockk:mockk:1.13.7"
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.jvmTarget = '1.8'
 }

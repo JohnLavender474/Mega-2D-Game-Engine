@@ -29,7 +29,7 @@ repositories {
 }
 
 ext {
-    appName = "2D Game Engine"
+    appName = "2D-Game-Engine"
     gdxVersion = '1.11.0'
     roboVMVersion = '2.3.16'
     box2DLightsVersion = '1.5'

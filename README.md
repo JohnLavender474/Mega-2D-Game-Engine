@@ -9,15 +9,106 @@ library follows an Entity-Component-System (ECS) design, providing extensibility
 
 ### Installation
 
-Include the 2D Game Engine library in your Kotlin project by adding the following dependency:
+Include the 2D Game Engine library in your Kotlin project by adding the following dependency to both the "core" and
+"desktop" modules in your root build.gradle file:
 
 ```
-TODO: implementation("your.library.coordinates:2d-game-engine:version")
+implementation "com.github.JohnLavender474:2D-Game-Engine:$gameEngineVersion"
 ```
 
-Currently, this library is not available on any public repositories since
-it is still in development. To use this library, you must copy the core-1.0.jar file
-under the /core/libs/ directory into your project and add the jar as a dependency.
+You can find the latest version of the library by checking the releases tab on the GitHub repository.
+
+Alternatively, you can add the library as a local dependency by copy-pasting the .jar file from build/libs into your
+project. You can place the .jar file in a "libs" folder in your core module and add the following line to the root 
+build.gradle file under project("core"):
+
+```
+api fileTree(dir: 'libs', include: '*.jar')
+```
+
+Below is an example build.gradle file taken from the "Megaman Maverick" project:
+
+```
+buildscript {
+    ext.kotlinVersion = '1.8.10'
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://jitpack.io' }
+        google()
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+
+    version = '1.0'
+    ext {
+        gameEngineVersion = '1.0'
+        appName = "Megaman Maverick"
+        gdxVersion = '1.12.1'
+        roboVMVersion = '2.3.16'
+        box2DLightsVersion = '1.5'
+        ashleyVersion = '1.7.4'
+        aiVersion = '1.8.2'
+        gdxControllersVersion = '2.2.1'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://jitpack.io" }
+    }
+
+}
+
+project(":desktop") {
+    apply plugin: "kotlin"
+
+    dependencies {
+        implementation project(":core")
+        implementation "com.github.JohnLavender474:2D-Game-Engine:$gameEngineVersion"
+        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        api "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
+        api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+    }
+}
+
+project(":core") {
+    apply plugin: "kotlin"
+    apply plugin: "java-library"
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        /* TODO: remove implementation lines for fetching repo from jitpack and 
+            uncomment line below to use local .jar instead */
+        /* api fileTree(dir: 'libs', include: '*.jar') */
+        implementation "com.github.JohnLavender474:2D-Game-Engine:$gameEngineVersion"
+        testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+        testImplementation "io.kotest:kotest-runner-junit5-jvm:4.6.0"
+        testImplementation "io.kotest:kotest-runner-junit5:4.0.2"
+        testImplementation "io.kotest:kotest-assertions-core:4.0.2"
+        testImplementation "io.kotest:kotest-property:4.0.2"
+        testImplementation "io.mockk:mockk:1.13.7"
+    }
+}
+```
 
 ## Game2D Class
 

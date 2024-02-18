@@ -47,7 +47,6 @@ abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties) :
      * Builds the level using the result of building the map and the [Properties] returned from
      * [TiledMapLayerBuilders.build].
      *
-     * @param tiledMapLoadResult the [TiledMapLoadResult] that was loaded from
      * @param result the [Properties] that were built from the layers
      */
     protected abstract fun buildLevel(result: Properties)

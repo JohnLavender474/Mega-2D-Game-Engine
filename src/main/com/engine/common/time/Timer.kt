@@ -23,7 +23,10 @@ class Timer(val duration: Float) : Updatable, Resettable {
     var justFinished = false
         private set
 
+    var runOnFirstUpdate: (() -> Unit)? = null
     var runOnFinished: (() -> Unit)? = null
+
+    private var firstUpdate = true
 
     /**
      * Creates a [Timer] with the given [duration] and [runnables]. The [runnables] will be sorted by
@@ -33,8 +36,7 @@ class Timer(val duration: Float) : Updatable, Resettable {
      * @param _runnables the [TimeMarkedRunnable]s to run
      */
     constructor(
-        duration: Float,
-        vararg _runnables: TimeMarkedRunnable
+        duration: Float, vararg _runnables: TimeMarkedRunnable
     ) : this(duration, Array(_runnables))
 
     /**
@@ -45,8 +47,7 @@ class Timer(val duration: Float) : Updatable, Resettable {
      * @param _runnables the [TimeMarkedRunnable]s to run
      */
     constructor(
-        duration: Float,
-        _runnables: Array<TimeMarkedRunnable>
+        duration: Float, _runnables: Array<TimeMarkedRunnable>
     ) : this(duration, false, _runnables)
 
     /**
@@ -58,30 +59,33 @@ class Timer(val duration: Float) : Updatable, Resettable {
      * @param _runnables the [TimeMarkedRunnable]s to run
      */
     constructor(
-        duration: Float,
-        setToEnd: Boolean,
-        _runnables: Array<TimeMarkedRunnable>
+        duration: Float, setToEnd: Boolean, _runnables: Array<TimeMarkedRunnable>
     ) : this(duration) {
         setRunnables(_runnables)
         time = if (setToEnd) duration else 0f
     }
 
     override fun update(delta: Float) {
+        if (firstUpdate) {
+            runOnFirstUpdate?.invoke()
+            firstUpdate = false
+        }
         val finishedBefore = isFinished()
-
         time = min(duration, time + delta)
-
-        while (!runnableQueue.isEmpty && runnableQueue.first().time <= time) runnableQueue
-            .removeFirst()
-            .run()
-
+        while (!runnableQueue.isEmpty && runnableQueue.first().time <= time) runnableQueue.removeFirst().run()
         justFinished = !finishedBefore && isFinished()
         if (justFinished) runOnFinished?.invoke()
     }
 
+    /**
+     * Resets the timer. This will set the [time] to 0 and set [justFinished] to false. The [runnables]
+     * will be sorted by their time and run in that order. This will also clear the [runnableQueue].
+     * This will not change the [duration]. The runnable [runOnFirstUpdate] will be run on the next update.
+     */
     override fun reset() {
         time = 0f
         justFinished = false
+        firstUpdate = true
 
         runnableQueue.clear()
         val temp = Array(runnables)

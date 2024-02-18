@@ -11,7 +11,7 @@ import com.engine.entities.IGameEntity
  * @property source the source of the sound
  * @property loop whether to loop the sound
  */
-class SoundRequest(val source: Any, val loop: Boolean = false)
+data class SoundRequest(val source: Any, val loop: Boolean = false)
 
 /**
  * A request to play a music.
@@ -19,7 +19,7 @@ class SoundRequest(val source: Any, val loop: Boolean = false)
  * @property source the source of the music
  * @property onCompletionListener the listener to call when the music finishes
  */
-class MusicRequest(
+data class MusicRequest(
     val source: Any,
     val loop: Boolean = true,
     val onCompletionListener: ((Music) -> Unit)? = null

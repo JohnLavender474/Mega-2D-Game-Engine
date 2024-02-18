@@ -12,7 +12,6 @@ import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.controller.buttons.Buttons
 import com.engine.controller.polling.IControllerPoller
-import com.engine.events.EventsManager
 import com.engine.events.IEventsManager
 import com.engine.screens.IScreen
 
@@ -48,27 +47,6 @@ abstract class Game2D : IGame2D, Game() {
     var currentScreenKey: String? = null
 
     /**
-     * Creates the [IControllerPoller] used by this game.
-     *
-     * @return the controller poller
-     */
-    protected abstract fun defineControllerPoller(): IControllerPoller
-
-    /**
-     * Loads the assets into the [AssetManager].
-     *
-     * @param assMan the asset manager to load assets into.
-     */
-    protected abstract fun loadAssets(assMan: AssetManager)
-
-    /**
-     * Creates the [IGameEngine].
-     *
-     * @return the game engine
-     */
-    protected abstract fun createGameEngine(): IGameEngine
-
-    /**
      * Hides the old screen and removes it from the events manager. After that, if there is a screen
      * mapped to the specified key, then that screen is shown, resized, and added as a listener to the
      * events manager.
@@ -102,24 +80,6 @@ abstract class Game2D : IGame2D, Game() {
     }
 
     /**
-     * Initializes the sprite batch, the shape renderer (with auto shape type set to true), the
-     * buttons, the controller poller, the asset manager, the audio manager, the events manager, and
-     * the game engine. Also calls [loadAssets] to load assets into the asset manager.
-     */
-    override fun create() {
-        GameLogger.debug(TAG, "create()")
-        shapeRenderer = ShapeRenderer()
-        shapeRenderer.setAutoShapeType(true)
-        batch = SpriteBatch()
-        controllerPoller = defineControllerPoller()
-        assMan = AssetManager()
-        loadAssets(assMan)
-        assMan.finishLoading()
-        eventsMan = EventsManager()
-        gameEngine = createGameEngine()
-    }
-
-    /**
      * Resizes the viewports and current screen.
      *
      * @param width the width
@@ -150,9 +110,7 @@ abstract class Game2D : IGame2D, Game() {
     /** Pauses the current screen and sets [paused] to true. */
     override fun pause() {
         GameLogger.debug(TAG, "pause()")
-
         if (paused) return
-
         paused = true
         currentScreen?.pause()
     }
@@ -160,9 +118,7 @@ abstract class Game2D : IGame2D, Game() {
     /** Resumes the current screen and sets [paused] to false. */
     override fun resume() {
         GameLogger.debug(TAG, "resume()")
-
         if (!paused) return
-
         paused = false
         currentScreen?.resume()
     }
@@ -170,7 +126,6 @@ abstract class Game2D : IGame2D, Game() {
     /** Disposes of the [batch], [shapeRenderer], and [IScreen]s. */
     override fun dispose() {
         GameLogger.debug(TAG, "dispose()")
-
         batch.dispose()
         shapeRenderer.dispose()
         screens.values().forEach { it.dispose() }

@@ -68,12 +68,7 @@ class SpriteMatrix(
     constructor(
         params: SpriteMatrixParams
     ) : this(
-        params.model,
-        params.priority,
-        params.modelWidth,
-        params.modelHeight,
-        params.rows,
-        params.columns
+        params.model, params.priority, params.modelWidth, params.modelHeight, params.rows, params.columns
     )
 
     /**
@@ -100,10 +95,9 @@ class SpriteMatrix(
         }
     }
 
-    /**
-     * Draws each sprite in the matrix.
-     *
-     * @param drawer The batch to draw the sprites with.
-     */
     override fun draw(drawer: Batch) = forEach { it.draw(drawer) }
+
+    override fun toString(): String {
+        return "SpriteMatrix(modelWidth=$modelWidth, modelHeight=$modelHeight, rows=$rows, columns=$columns, matrix=$matrixMap)"
+    }
 }

@@ -12,7 +12,10 @@ import java.util.*
  * [IEventListener]s are added to the [EventsManager]. When an [Event] is submitted, all
  * [IEventListener]s are notified of the [Event] when the [run] method is called.
  */
-class EventsManager : IEventsManager {
+class EventsManager(
+    private val debugEventFilter: (Event) -> Boolean = { true },
+    private val debugListenerFilter: (IEventListener) -> Boolean = { true }
+) : IEventsManager {
 
     companion object {
         const val TAG = "EventsManager"
@@ -39,15 +42,22 @@ class EventsManager : IEventsManager {
      */
     override fun submitEvent(event: Event) {
         if (running) {
-            GameLogger.debug(TAG, "submitEvent(): Queuing event to be added in next update cycle: $event")
+            if (debugEventFilter.invoke(event)) GameLogger.debug(
+                TAG, "submitEvent(): Queuing event to be added in next update cycle: $event"
+            )
             eventsToAdd.add(event)
         } else submitEventNow(event)
     }
 
     private fun submitEventNow(event: Event) {
-        GameLogger.debug(TAG, "submitEvent(): Adding event now: $event")
+        if (debugEventFilter.invoke(event)) GameLogger.debug(TAG, "submitEvent(): Adding event now: $event")
+
         val eventKey = event.key
         events.putIfAbsentAndGet(eventKey, Array()).add(event)
+
+        if (debugEventFilter.invoke(event)) GameLogger.debug(
+            TAG, "submitEvent(): Events map entry after adding event: $events"
+        )
     }
 
     /**
@@ -59,16 +69,15 @@ class EventsManager : IEventsManager {
      * @param listener The [IEventListener] to add.
      * @return If the [IEventListener] was added.
      */
-    override fun addListener(listener: IEventListener) =
-        if (running) {
-            GameLogger.debug(
-                TAG, "addListener(): Queuing listener to be added in next update cycle: $listener"
-            )
-            listenersToAdd.add(listener)
-        } else addListenerNow(listener)
+    override fun addListener(listener: IEventListener) = if (running) {
+        if (debugListenerFilter.invoke(listener)) GameLogger.debug(
+            TAG, "addListener(): Queuing listener to be added in next update cycle: $listener"
+        )
+        listenersToAdd.add(listener)
+    } else addListenerNow(listener)
 
     private fun addListenerNow(listener: IEventListener): Boolean {
-        GameLogger.debug(TAG, "addListener(): Adding listener now: $listener")
+        if (debugListenerFilter.invoke(listener)) GameLogger.debug(TAG, "addListener(): Adding listener now: $listener")
         return listeners.add(listener)
     }
 
@@ -81,16 +90,17 @@ class EventsManager : IEventsManager {
      * @param listener The [IEventListener] to remove.
      * @return If the [IEventListener] was removed.
      */
-    override fun removeListener(listener: IEventListener) =
-        if (running) {
-            GameLogger.debug(
-                TAG, "removeListener(): Queuing listener to be removed in next update cycle: $listener"
-            )
-            listenersToRemove.add(listener)
-        } else removeListenerNow(listener)
+    override fun removeListener(listener: IEventListener) = if (running) {
+        if (debugListenerFilter.invoke(listener)) GameLogger.debug(
+            TAG, "removeListener(): Queuing listener to be removed in next update cycle: $listener"
+        )
+        listenersToRemove.add(listener)
+    } else removeListenerNow(listener)
 
     private fun removeListenerNow(listener: IEventListener): Boolean {
-        GameLogger.debug(TAG, "removeListener(): Removing listener now: $listener")
+        if (debugListenerFilter.invoke(listener)) GameLogger.debug(
+            TAG, "removeListener(): Removing listener now: $listener"
+        )
         return listeners.remove(listener)
     }
 
@@ -133,22 +143,36 @@ class EventsManager : IEventsManager {
         listeners.forEach { listener ->
             val eventKeyMask = listener.eventKeyMask
             if (eventKeyMask.isEmpty) {
-                GameLogger.debug(TAG, "run(): Listener has empty event key mask: $listener")
+                if (debugListenerFilter.invoke(listener)) GameLogger.debug(
+                    TAG, "run(): Listener has empty event key mask: $listener"
+                )
+
                 events.values().flatten().forEach { event ->
-                    GameLogger.debug(TAG, "run(): Notifying listener $listener of event: $event")
+                    if (debugListenerFilter.invoke(listener)) GameLogger.debug(
+                        TAG, "run(): Notifying listener $listener of event: $event"
+                    )
+
                     listener.onEvent(event)
                 }
-                return@forEach
-            }
+            } else {
+                events.forEach {
+                    val eventKey = it.key
+                    val eventsArray = it.value
+                    if (eventKeyMask.contains(eventKey)) {
+                        if (debugListenerFilter.invoke(listener)) GameLogger.debug(
+                            TAG, "run(): Notifying listener $listener of event type: $eventKey"
+                        )
 
-            events
-                .filter { eventKeyMask.contains(it.key) }
-                .forEach { entry ->
-                    entry.value.forEach { event ->
-                        GameLogger.debug(TAG, "run(): Notifying listener $listener of event: $event")
-                        listener.onEvent(event)
+                        eventsArray.forEach { event ->
+                            if (debugListenerFilter.invoke(listener)) GameLogger.debug(
+                                TAG, "run(): Notifying listener $listener of event: $event"
+                            )
+
+                            listener.onEvent(event)
+                        }
                     }
                 }
+            }
         }
 
         events.clear()

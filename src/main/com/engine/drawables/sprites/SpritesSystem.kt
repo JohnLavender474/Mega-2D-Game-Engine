@@ -30,7 +30,7 @@ open class SpritesSystem(protected val spritesCollectionSupplier: () -> MutableC
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
 
-        // collect the sprites into the supplied set
+        // collect the sprites into the supplied collection
         val sprites = spritesCollectionSupplier()
         entities.forEach { entity ->
             val spritesComponent = entity.getComponent(SpritesComponent::class)

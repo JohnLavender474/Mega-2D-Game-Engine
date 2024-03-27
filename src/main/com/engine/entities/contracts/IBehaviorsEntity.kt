@@ -24,7 +24,7 @@ interface IBehaviorsEntity : IGameEntity {
      * @param key The key of the [AbstractBehavior] to check.
      * @return If the [AbstractBehavior] with the given [key] is active.
      */
-    fun isBehaviorActive(key: Any) = getBehaviorsComponent()?.isBehaviorActive(key) ?: false
+    fun isBehaviorActive(key: Any) = getBehaviorsComponent()!!.isBehaviorActive(key)
 
     /** @see [isBehaviorActive(Iterable<Any>)] */
     fun isAnyBehaviorActive(vararg keys: Any) = isAnyBehaviorActive(keys.asIterable())
@@ -54,5 +54,45 @@ interface IBehaviorsEntity : IGameEntity {
      *
      * @param key The key of the [AbstractBehavior] to force quit.
      */
-    fun forceQuitBehavior(key: Any) = getBehaviorsComponent()?.forceQuitBehavior(key)
+    fun forceQuitBehavior(key: Any) = getBehaviorsComponent()!!.forceQuitBehavior(key)
+
+    /**
+     * Returns if the behavior is allowed.
+     *
+     * @param key the key of the behavior
+     * @return if the behavior is allowed
+     */
+    fun isBehaviorAllowed(key: Any) = getBehaviorsComponent()!!.isBehaviorAllowed(key)
+
+    /**
+     * Sets if the behavior should be allowed.
+     *
+     * @param key the key of the behavior
+     * @param allowed if the behavior should be allowed
+     */
+    fun setBehaviorAllowed(key: Any, allowed: Boolean) = getBehaviorsComponent()!!.setBehaviorAllowed(key, allowed)
+
+    /**
+     * Sets if behaviors should be allowed based on the function.
+     *
+     * @param function the function
+     */
+    fun setBehaviorsAllowed(function: (Any, AbstractBehavior) -> Boolean) =
+        getBehaviorsComponent()!!.setBehaviorsAllowed(function)
+
+    /**
+     * Sets if the behaviors with the given keys should be allowed
+     *
+     * @params keys the keys of the behaviors
+     * @param allowed if the behaviors should be allowed
+     */
+    fun setBehaviorsAllowed(keys: Iterable<Any>, allowed: Boolean) =
+        getBehaviorsComponent()!!.setBehaviorsAllowed(keys, allowed)
+
+    /**
+     * Sets if all behaviors should be allowed
+     *
+     * @param allowed if all behaviors should be allowed
+     */
+    fun setAllBehaviorsAllowed(allowed: Boolean) = getBehaviorsComponent()!!.setAllBehaviorsAllowed(allowed)
 }

@@ -19,7 +19,7 @@ import com.engine.drawables.shapes.IDrawableShape
  *   value of the origin.
  * @see Shape2D
  */
-interface IGameShape2D : Shape2D, IDrawableShape, ICopyable, ICardinallyRotatableShape2D {
+interface IGameShape2D : Shape2D, IDrawableShape, ICopyable<IGameShape2D>, ICardinallyRotatableShape2D {
 
     var originX: Float
     var originY: Float

@@ -174,9 +174,7 @@ class EventsManager(
                 }
             }
         }
-
         events.clear()
-
         running = false
     }
 }

@@ -73,6 +73,14 @@ interface IGameEntity : IPropertizable, Initializable, IPrintable {
     fun addComponent(c: IGameComponent)
 
     /**
+     * Adds a collection of [IGameComponent]s to this [IGameEntity].
+     *
+     * @param components The collection of [IGameComponent]s to add.
+     * @see addComponent
+     */
+    fun addComponents(components: Iterable<IGameComponent>) = components.forEach { addComponent(it) }
+
+    /**
      * Gets a [IGameComponent] from this [IGameEntity].
      *
      * @param c The [KClass] of the [IGameComponent] to get.

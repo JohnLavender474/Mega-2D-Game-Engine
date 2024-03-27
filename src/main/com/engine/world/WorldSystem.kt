@@ -1,10 +1,11 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
-import com.engine.common.interfaces.Updatable
+import com.engine.common.GameLogger
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.graph.IGraphMap
@@ -45,33 +46,35 @@ import kotlin.math.abs
  * inside the value [Set<String>], or else vice versa, will NOT change the result. If the
  * [contactFilterMap] is null, then the [IContactListener] will be notified of ALL contacts.
  *
- * The [preProcess] function is run for each [Body] directly after the body's own [Body.preProcess]
+ * The [preProcess] function is run for each [Body] directly after the fixtureBody's own [Body.preProcess]
  * function has been run. This is useful if you want to run common logic for all bodies in the
  * pre-processing stage.
  *
- * The [postProcess] function is run for each [Body] directly after the body's own
+ * The [postProcess] function is run for each [Body] directly after the fixtureBody's own
  * [Body.postProcess] function has been run. This is useful if you want to run common logic for all
  * bodies in the post-processing stage.
- *
- * In regard to fixture overlaps, if [Fixture.attachedToBody] is true for a fixture, then its
- * [Fixture.bodyRelativeShape] is used; otherwise its [Fixture.shape] is used. If the fixture is
- * attached to a body but its [Fixture.bodyRelativeShape] is null, then an exception will be thrown.
  */
 class WorldSystem(
     private val contactListener: IContactListener,
     private val worldGraphSupplier: () -> IGraphMap?,
     private val fixedStep: Float,
     private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
-    private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null
+    private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
+    var debug: Boolean = false
 ) : GameSystem(BodyComponent::class) {
 
     companion object {
         const val TAG = "WorldSystem"
+        private const val MAX_DEBUG_TICKS = 60
     }
 
     internal var priorContactSet = OrderedSet<Contact>()
     internal var currentContactSet = OrderedSet<Contact>()
     internal var accumulator = 0f
+
+    private val printDebugStatements: Boolean
+        get() = debug && debugTicks == MAX_DEBUG_TICKS
+    private var debugTicks = 0
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
@@ -99,87 +102,66 @@ class WorldSystem(
      * @param delta the time in seconds since the last frame
      */
     internal fun cycle(entities: ImmutableCollection<IGameEntity>, delta: Float) {
-        preProcess(entities, delta)
+        if (debug) debugTicks++
+        val bodies = Array<Body>()
+        entities.forEach {
+            val body = it.getComponent(BodyComponent::class)!!.body
+            bodies.add(body)
+        }
+        preProcess(bodies, delta)
         worldGraphSupplier()!!.reset()
-        entities.forEach { processPhysicsAndGraph(it, delta) }
-        entities.forEach { processContactsAndCollisions(it) }
+        bodies.forEach { processPhysicsAndGraph(it, delta) }
+        bodies.forEach { processContactsAndCollisions(it) }
+        if (printDebugStatements)
+            GameLogger.debug(TAG, "current contacts = $currentContactSet")
         processContacts()
-        postProcess(entities, delta)
+        postProcess(bodies, delta)
+        if (debugTicks >= MAX_DEBUG_TICKS) debugTicks = 0
     }
 
     /**
-     * Pre-processes the entities. This method is called by the [cycle] method. This method is
-     * responsible for resetting the [IGraphMap] and the [PhysicsData] of all bodies, and updating the
-     * [Updatable]s of all bodies.
+     * Pre-processes the bodies.
      *
-     * @param entities the [Collection] of [IGameEntity]s to process
+     * @param bodies the array of bodies to run through the pre-process stage
      * @param delta the time in seconds since the last frame
      */
-    internal fun preProcess(entities: ImmutableCollection<IGameEntity>, delta: Float) {
-        entities.forEach { entity ->
-            entity.getComponent(BodyComponent::class)?.body?.let { body ->
-                body.previousBounds.set(body.rotatedBounds)
-                body.preProcess.values().forEach { it.update(delta) }
-            }
-        }
+    internal fun preProcess(bodies: Array<Body>, delta: Float) {
+        bodies.forEach { body -> body.preProcess.values().forEach { it.update(delta) } }
     }
 
     /**
-     * Processes the physics and graph for the given entity.
+     * Processes the physics and graph for the given fixtureBody.
      *
-     * @param entity the entity to process
+     * @param body the fixtureBody to process
      * @param delta the time in seconds since the last frame
      */
-    internal fun processPhysicsAndGraph(entity: IGameEntity, delta: Float) {
-        val worldGraph =
-            worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
-
-        entity.getComponent(BodyComponent::class)?.body?.let { body ->
-            updatePhysics(body, delta)
-            updateFixturePositions(body)
-
-            worldGraph.add(body, body.rotatedBounds)
-
-            body.fixtures.forEach { (_, fixture) ->
-                val shape =
-                    if (fixture.attachedToBody)
-                        fixture.bodyRelativeShape
-                            ?: throw IllegalStateException(
-                                "Fixture is attached to body but body relative shape is null. " +
-                                        "Fixture: $fixture. Entity: $entity"
-                            )
-                    else fixture.shape
-
-                worldGraph.add(fixture, shape)
-            }
+    internal fun processPhysicsAndGraph(body: Body, delta: Float) {
+        val worldGraph = worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
+        updatePhysics(body, delta)
+        worldGraph.add(body, body.rotatedBounds)
+        body.fixtures.forEach { (_, fixture) ->
+            worldGraph.add(fixture, fixture.getShape())
         }
     }
 
     /**
-     * Processes the contacts and collisions for the given entity.
+     * Processes the contacts and collisions for the given fixtureBody.
      *
-     * @param entity the entity to process
+     * @param body the fixtureBody to process
      */
-    internal fun processContactsAndCollisions(entity: IGameEntity) {
-        entity.getComponent(BodyComponent::class)?.body?.let { body ->
-            checkForContacts(body)
-            resolveCollisions(body)
-        }
+    internal fun processContactsAndCollisions(body: Body) {
+        checkForContacts(body)
+        resolveCollisions(body)
     }
 
     /**
-     * Post-processes the entities. This method is called by the [cycle] method. This method is
-     * responsible for notifying the [IContactListener] of any contacts that occur.
+     * Post-processes the bodies.
      *
-     * @param entities the [Collection] of [IGameEntity]s to process
+     * @param bodies the bodies to process
      * @param delta the time in seconds since the last frame
      */
-    internal fun postProcess(entities: ImmutableCollection<IGameEntity>, delta: Float) {
-        entities.forEach { entity ->
-            entity.getComponent(BodyComponent::class)?.body?.let { body ->
-                body.postProcess.values().forEach { it.update(delta) }
-            }
-        }
+    internal fun postProcess(bodies: Array<Body>, delta: Float) {
+        bodies.forEach { body -> body.postProcess.values().forEach { it.update(delta) } }
     }
 
     /** Processes and updates the [Contact] sets. */
@@ -198,7 +180,7 @@ class WorldSystem(
     }
 
     /**
-     * Updates the physics of the given body.
+     * Updates the physics of the given fixtureBody.
      *
      * @param body the [Body] to update the physics of
      * @param delta the time in seconds since the last frame
@@ -215,33 +197,19 @@ class WorldSystem(
             if (it.gravityOn) it.velocity.add(it.gravity)
 
             // clamp the x velocity
-            @Suppress("DuplicatedCode")
-            if (it.velocity.x > 0f && it.velocity.x > abs(it.velocityClamp.x))
-                it.velocity.x = abs(it.velocityClamp.x)
-            else if (it.velocity.x < 0f && it.velocity.x < -abs(it.velocityClamp.x))
-                it.velocity.x = -abs(it.velocityClamp.x)
+            @Suppress("DuplicatedCode") if (it.velocity.x > 0f && it.velocity.x > abs(it.velocityClamp.x)) it.velocity.x =
+                abs(it.velocityClamp.x)
+            else if (it.velocity.x < 0f && it.velocity.x < -abs(it.velocityClamp.x)) it.velocity.x =
+                -abs(it.velocityClamp.x)
 
             // clamp the y velocity
-            @Suppress("DuplicatedCode")
-            if (it.velocity.y > 0f && it.velocity.y > abs(it.velocityClamp.y))
-                it.velocity.y = abs(it.velocityClamp.y)
-            else if (it.velocity.y < 0f && it.velocity.y < -abs(it.velocityClamp.y))
-                it.velocity.y = -abs(it.velocityClamp.y)
+            @Suppress("DuplicatedCode") if (it.velocity.y > 0f && it.velocity.y > abs(it.velocityClamp.y)) it.velocity.y =
+                abs(it.velocityClamp.y)
+            else if (it.velocity.y < 0f && it.velocity.y < -abs(it.velocityClamp.y)) it.velocity.y =
+                -abs(it.velocityClamp.y)
 
             body.x += it.velocity.x * delta
             body.y += it.velocity.y * delta
-        }
-    }
-
-    /**
-     * Updates the positions of the given body's fixtures.
-     *
-     * @param body the [Body] to update the positions of the fixtures of
-     */
-    internal fun updateFixturePositions(body: Body) {
-        body.fixtures.forEach { (_, fixture) ->
-            if (!fixture.attachedToBody) return@forEach
-            fixture.setBodyRelativeShape(body)
         }
     }
 
@@ -255,36 +223,43 @@ class WorldSystem(
      * @param fixture2 the second [Fixture] to filter
      * @return whether the given fixtures should be filtered
      */
-    internal fun filterContact(fixture1: Fixture, fixture2: Fixture) =
-        (fixture1 != fixture2) &&
-                (contactFilterMap?.get(fixture1.fixtureLabel)?.contains(fixture2.fixtureLabel) != false ||
-                        contactFilterMap[fixture2.fixtureLabel]?.contains(fixture1.fixtureLabel) != false)
+    internal fun filterContact(fixture1: IFixture, fixture2: IFixture) =
+        (fixture1 != fixture2) && (
+                contactFilterMap?.get(fixture1.getFixtureType())?.contains(
+                    fixture2.getFixtureType()
+                ) != false || contactFilterMap[fixture2.getFixtureType()]?.contains(
+                    fixture1.getFixtureType()
+                ) != false)
 
     /**
-     * Checks for contacts with the given body.
+     * Checks for contacts with the given fixtureBody.
      *
      * @param body the [Body] to check for contacts
      */
     internal fun checkForContacts(body: Body) {
-        val worldGraph =
-            worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
+        val worldGraph = worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
 
         body.fixtures.forEach { (_, fixture) ->
-            if (fixture.active && contactFilterMap?.containsKey(fixture.fixtureLabel) != false) {
-                val overlapping = ObjectSet<Fixture>()
+            if (fixture.isActive() && contactFilterMap?.containsKey(fixture.getFixtureType()) != false) {
+                if (printDebugStatements)
+                    GameLogger.debug(TAG, "checking for contacts with fixture = $fixture")
 
-                val shape =
-                    if (fixture.attachedToBody)
-                        (fixture.bodyRelativeShape
-                            ?: throw IllegalStateException(
-                                "Fixture is attached to body but body relative shape is null. " +
-                                        "Fixture: $fixture. Entity: $body"
-                            ))
-                    else fixture.shape
+                val overlapping = ObjectSet<IFixture>()
 
-                worldGraph.get(shape).filterIsInstance<Fixture>().forEach {
-                    if (it.active && filterContact(fixture, it) && fixture.overlaps(it)) overlapping.add(it)
+                val worldGraphResults = worldGraph.get(fixture.getShape())
+                if (printDebugStatements)
+                    GameLogger.debug(TAG, "world graph results = $worldGraphResults")
+
+                worldGraphResults.forEach {
+                    if (it is IFixture &&
+                        it.isActive() &&
+                        filterContact(fixture, it) &&
+                        fixture.getShape().overlaps(it.getShape())
+                    ) overlapping.add(it)
                 }
+
+                if (printDebugStatements)
+                    GameLogger.debug(TAG, "overlapping fixtures = $overlapping")
 
                 overlapping.forEach { o -> currentContactSet.add(Contact(fixture, o)) }
             }
@@ -292,16 +267,17 @@ class WorldSystem(
     }
 
     /**
-     * Resolves the collisions of the given body. This method is responsible for resolving the
-     * collisions of the given body and notifying the [ICollisionHandler] of any collisions that
-     * occur.
+     * Resolves the collisions of the given fixtureBody. This method is responsible for resolving the collisions of the given
+     * fixtureBody and notifying the [ICollisionHandler] of any collisions that occur.
      *
      * @param body the [Body] to resolve the collisions of
      */
     internal fun resolveCollisions(body: Body) {
-        worldGraphSupplier()!!.get(body.rotatedBounds).filterIsInstance<Body>().forEach {
-            if (it != body && it.rotatedBounds.overlaps(body as Rectangle))
-                collisionHandler.handleCollision(body, it)
+        worldGraphSupplier()!!.get(body.rotatedBounds).forEach {
+            if (it is Body &&
+                it != body &&
+                it.rotatedBounds.overlaps(body as Rectangle)
+            ) collisionHandler.handleCollision(body, it)
         }
     }
 }

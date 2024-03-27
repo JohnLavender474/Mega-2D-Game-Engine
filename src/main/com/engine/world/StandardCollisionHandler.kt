@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Rectangle
 /**
  * A collision handler that handles collisions between bodies. This collision handler is used by
  * default in the [WorldSystem]. This collision handler is stateless. This collision handler handles
- * collisions by moving the dynamic body out of the static body and applying the friction value of
+ * collisions by moving the dynamic fixtureBody out of the static fixtureBody and applying the friction value of
  * [PhysicsData.frictionToApply] from [Body.physics] to [PhysicsData.frictionOnSelf] of the dynamic
- * body's [Body.physics].
+ * fixtureBody's [Body.physics].
  *
  * @see WorldSystem
  * @see Body
@@ -18,12 +18,12 @@ object StandardCollisionHandler : ICollisionHandler {
 
     /**
      * Handles a collision between two bodies. This collision handler handles collisions by moving the
-     * dynamic body out of the static body and applying the friction value of
+     * dynamic fixtureBody out of the static fixtureBody and applying the friction value of
      * [PhysicsData.frictionToApply] from [Body.physics] to [PhysicsData.frictionOnSelf] of the
-     * dynamic body's [Body.physics].
+     * dynamic fixtureBody's [Body.physics].
      *
-     * @param body1 The first body in the collision.
-     * @param body2 The second body in the collision.
+     * @param body1 The first fixtureBody in the collision.
+     * @param body2 The second fixtureBody in the collision.
      * @see ICollisionHandler.handleCollision
      */
     override fun handleCollision(body1: Body, body2: Body): Boolean {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.engine.IGame2D
 import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
+import com.engine.common.objects.props
 import com.engine.screens.BaseScreen
 import com.engine.screens.IScreen
 import com.engine.screens.levels.tiledmap.builders.ITiledMapLayerBuilder
@@ -24,7 +25,7 @@ import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
  *   [TiledMapLoadResult] and the [SpriteBatch]. This is set in [show]. This is used to render the
  *   tiled map and should be called somewhere in the deriving class.
  */
-abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties) :
+abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props()) :
     BaseScreen(game, properties) {
 
     companion object {

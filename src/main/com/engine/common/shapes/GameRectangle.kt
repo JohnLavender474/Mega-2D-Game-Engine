@@ -172,7 +172,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
         return if (useNewShape) rotatedRectangle else set(rotatedRectangle)
     }
 
-    override fun setSize(sizeXY: Float) = super<Rectangle>.setSize(sizeXY) as GameRectangle
+    override fun setSize(sizeXY: Float) = super.setSize(sizeXY) as GameRectangle
 
     override fun setSize(width: Float, height: Float) = super.setSize(width, height) as GameRectangle
 
@@ -185,9 +185,9 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
 
     final override fun set(rect: Rectangle) = super.set(rect) as GameRectangle
 
-    override fun setX(x: Float) = super<Rectangle>.setX(x) as GameRectangle
+    override fun setX(x: Float) = super.setX(x) as GameRectangle
 
-    override fun setY(y: Float) = super<Rectangle>.setY(y) as GameRectangle
+    override fun setY(y: Float) = super.setY(y) as GameRectangle
 
     override fun setWidth(width: Float) = super.setWidth(width) as GameRectangle
 
@@ -257,7 +257,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
 
     override fun getBoundingRectangle() = GameRectangle(this)
 
-    override fun getCenter(): Vector2 = super<Rectangle>.getCenter(Vector2())
+    override fun getCenter(): Vector2 = super.getCenter(Vector2())
 
     override fun setCenter(centerX: Float, centerY: Float): GameRectangle {
         setCenterX(centerX)
@@ -274,7 +274,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      * @return The modified [GameRectangle].
      */
     fun setCenterX(centerX: Float): GameRectangle {
-        super<Rectangle>.setCenter(centerX, getCenter().y)
+        super.setCenter(centerX, getCenter().y)
         return this
     }
 

@@ -22,20 +22,20 @@ abstract class AbstractBehavior : Updatable, Resettable {
      * @param delta The time in seconds since the last frame.
      * @return Whether this [AbstractBehavior] should be active.
      */
-    protected abstract fun evaluate(delta: Float): Boolean
+    abstract fun evaluate(delta: Float): Boolean
 
     /** Initializes this [AbstractBehavior]. This is called when this [AbstractBehavior] becomes active. */
-    protected abstract fun init()
+    abstract fun init()
 
     /**
      * Performs the action of this [AbstractBehavior].
      *
      * @param delta The time in seconds since the last frame.
      */
-    protected abstract fun act(delta: Float)
+    abstract fun act(delta: Float)
 
     /** Ends this [AbstractBehavior]. This is called when this [AbstractBehavior] becomes inactive. */
-    protected abstract fun end()
+    abstract fun end()
 
     /**
      * Forces this [AbstractBehavior] to quit. This will force this [AbstractBehavior] to disregard the result of its

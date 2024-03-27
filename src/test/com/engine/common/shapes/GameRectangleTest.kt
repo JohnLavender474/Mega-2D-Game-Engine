@@ -13,6 +13,14 @@ class GameRectangleTest :
 
             beforeEach { gameRectangle = GameRectangle(1f, 2f, 3f, 4f) }
 
+            it("should contain the point") {
+                gameRectangle.contains(Vector2(2f, 3f)) shouldBe true
+            }
+
+            it("should not contain the point") {
+                gameRectangle.contains(Vector2(10f, 10f)) shouldBe false
+            }
+
             it("should get the position values") {
                 gameRectangle.getX() shouldBe 1f
                 gameRectangle.getY() shouldBe 2f

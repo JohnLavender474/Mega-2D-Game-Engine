@@ -32,7 +32,7 @@ class StandardCollisionHandlerTest :
                 StandardCollisionHandler.handleCollision(dynamicBody, staticBody) shouldBe false
             }
 
-            it("should handle collision by pushing dynamic body down") {
+            it("should handle collision by pushing dynamic fixtureBody down") {
                 dynamicBody.set(0f, 0f, 5f, 5f)
                 staticBody.set(0f, 2f, 5f, 5f)
 
@@ -47,7 +47,7 @@ class StandardCollisionHandlerTest :
                 staticBody.physics.frictionOnSelf shouldBe Vector2(1f, 1f)
             }
 
-            it("should handle collision by pushing dynamic body left") {
+            it("should handle collision by pushing dynamic fixtureBody left") {
                 dynamicBody.set(0f, 0f, 5f, 5f)
                 staticBody.set(3f, 0f, 5f, 5f)
 

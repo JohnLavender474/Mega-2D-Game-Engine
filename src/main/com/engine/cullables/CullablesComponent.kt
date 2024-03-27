@@ -1,6 +1,6 @@
 package com.engine.cullables
 
-import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
 
@@ -11,18 +11,26 @@ import com.engine.entities.IGameEntity
  */
 class CullablesComponent(
     override val entity: IGameEntity,
-    val cullables: Array<ICullable> = Array()
+    val cullables: ObjectMap<String, ICullable> = ObjectMap()
 ) : IGameComponent {
-
-    /** @see [CullablesComponent(entity: IGameEntity, cullables: Array<ICullable>)] */
-    constructor(entity: IGameEntity, vararg cullables: ICullable) : this(entity, Array(cullables))
 
     /**
      * Adds a [ICullable] to the list of cullables.
      *
      * @param cullable The cullable to add.
      */
-    fun add(cullable: ICullable) = cullables.add(cullable)
+    fun put(key: String, cullable: ICullable) {
+        cullables.put(key, cullable)
+    }
 
-    override fun reset() = cullables.forEach { it.reset() }
+    /**
+     * Removes a [ICullable] from the list of cullables.
+     *
+     * @param key The key of the cullable to remove.
+     */
+    fun remove(key: String) {
+        cullables.remove(key)
+    }
+
+    override fun reset() = cullables.values().forEach { it.reset() }
 }

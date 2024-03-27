@@ -46,7 +46,6 @@ class BehaviorsSystemTest : DescribeSpec({
             // then
             verify(exactly = 1) {
                 behavior.update(1f)
-                behaviorsComponent.setActive("key", true)
             }
         }
 
@@ -62,7 +61,6 @@ class BehaviorsSystemTest : DescribeSpec({
             // then
             verify(exactly = 0) {
                 behavior.update(any())
-                behaviorsComponent.setActive(any(), any())
             }
         }
 

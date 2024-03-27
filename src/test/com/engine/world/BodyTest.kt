@@ -17,7 +17,7 @@ class BodyTest :
         describe("Body") {
             val bodyType = BodyType.ABSTRACT
             val physicsData = PhysicsData()
-            val fixtures = gdxArrayOf<Pair<Any, Fixture>>()
+            val fixtures = gdxArrayOf<Pair<Any, IFixture>>()
             val props = Properties()
             val body = Body(bodyType, physicsData, fixtures, properties = props)
 
@@ -35,16 +35,10 @@ class BodyTest :
                 body.y shouldBe 0f
                 body.width shouldBe 0f
                 body.height shouldBe 0f
-                body.previousBounds shouldBe GameRectangle()
                 body.hashCode() shouldBe System.identityHashCode(body)
             }
 
-            it("should return previous bounds correctly") {
-                val previousBounds = body.getPreviousBounds()
-                previousBounds shouldBe GameRectangle()
-            }
-
-            it("should check if it has a given body type correctly") {
+            it("should check if it has a given fixtureBody type correctly") {
                 body.isBodyType(bodyType) shouldBe true
             }
 
@@ -73,57 +67,53 @@ class BodyTest :
                 body1.hashCode() shouldNotBe body2.hashCode()
             }
 
-            it("should set fixtures relative to body") {
+            it("should set fixtures relative to fixtureBody") {
                 body.setSize(10f)
                 body.setCenter(0f, 0f)
 
-                val bottomFixture = Fixture(GameRectangle().setSize(1f), "bottom")
+                val bottomFixture = Fixture(body, "bottom", GameRectangle().setSize(1f))
                 bottomFixture.offsetFromBodyCenter.y = -5f
                 body.addFixture(bottomFixture)
 
-                val topFixture = Fixture(GameRectangle().setSize(1f), "top")
+                val topFixture = Fixture(body, "top", GameRectangle().setSize(1f))
                 topFixture.offsetFromBodyCenter.y = 5f
                 body.addFixture(topFixture)
 
-                val leftFixture = Fixture(GameRectangle().setSize(1f), "left")
+                val leftFixture = Fixture(body, "left", GameRectangle().setSize(1f))
                 leftFixture.offsetFromBodyCenter.x = -5f
                 body.addFixture(leftFixture)
 
-                val rightFixture = Fixture(GameRectangle().setSize(1f), "right")
+                val rightFixture = Fixture(body, "right", GameRectangle().setSize(1f))
                 rightFixture.offsetFromBodyCenter.x = 5f
                 body.addFixture(rightFixture)
 
                 body.cardinalRotation = Direction.UP
-                body.forEachFixture { _, fixture -> fixture.setBodyRelativeShape(body) }
 
-                (bottomFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, -5f)
-                (topFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, 5f)
-                (leftFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(-5f, 0f)
-                (rightFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(5f, 0f)
+                bottomFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
+                topFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
+                leftFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
+                rightFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
 
                 body.cardinalRotation = Direction.LEFT
-                body.forEachFixture { _, fixture -> fixture.setBodyRelativeShape(body) }
 
-                (bottomFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(5f, 0f)
-                (topFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(-5f, 0f)
-                (leftFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, -5f)
-                (rightFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, 5f)
+                bottomFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
+                topFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
+                leftFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
+                rightFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
 
                 body.cardinalRotation = Direction.DOWN
-                body.forEachFixture { _, fixture -> fixture.setBodyRelativeShape(body) }
 
-                (bottomFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, 5f)
-                (topFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, -5f)
-                (leftFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(5f, 0f)
-                (rightFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(-5f, 0f)
+                bottomFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
+                topFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
+                leftFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
+                rightFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
 
                 body.cardinalRotation = Direction.RIGHT
-                body.forEachFixture { _, fixture -> fixture.setBodyRelativeShape(body) }
 
-                (bottomFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(-5f, 0f)
-                (topFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(5f, 0f)
-                (leftFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, 5f)
-                (rightFixture.bodyRelativeShape as GameRectangle).getCenter() shouldBe Vector2(0f, -5f)
+                bottomFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
+                topFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
+                leftFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
+                rightFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
             }
         }
     })

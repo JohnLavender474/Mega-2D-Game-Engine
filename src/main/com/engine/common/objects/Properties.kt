@@ -15,7 +15,7 @@ import kotlin.reflect.cast
 fun props(vararg pairs: Pair<Any, Any?>) = Properties().apply { pairs.forEach { put(it.first, it.second) } }
 
 /** A [HashMap] that stores [String] keys and [Any] type values. */
-class Properties : ICopyable {
+class Properties : ICopyable<Properties> {
 
     /** Returns the size of the properties, i.e. the number of entries. */
     val size: Int

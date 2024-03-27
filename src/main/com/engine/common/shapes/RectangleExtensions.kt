@@ -2,6 +2,7 @@ package com.engine.common.shapes
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.engine.common.extensions.isInCamera
@@ -35,3 +36,17 @@ fun Rectangle.toIntArray() =
  * @return A [GameRectangle] representing the same region as the rectangle.
  */
 fun Rectangle.toGameRectangle() = GameRectangle(this)
+
+/**
+ * Returns the position of the [Rectangle] as a [Vector2].
+ * 
+ * @return The position of the rectangle as a vector.
+ */
+fun Rectangle.getPosition() = Vector2(x, y)
+
+/**
+ * Returns the center of the [Rectangle] as a [Vector2].
+ * 
+ * @return The center of the rectangle as a vector.
+ */
+fun Rectangle.getCenter(): Vector2 = getCenter(Vector2())

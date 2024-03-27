@@ -14,8 +14,8 @@ interface ICollisionHandler {
      * Handles a collision between two bodies. Implementations of this method should be stateless.
      * Returns whether the collision was handled.
      *
-     * @param body1 The first body in the collision.
-     * @param body2 The second body in the collision.
+     * @param body1 The first fixtureBody in the collision.
+     * @param body2 The second fixtureBody in the collision.
      * @return Whether the collision was handled.
      */
     fun handleCollision(body1: Body, body2: Body): Boolean

@@ -22,7 +22,7 @@ class CullablesSystem : GameSystem(CullablesComponent::class) {
         entities.forEach { entity ->
             if (entity.dead) return
 
-            val cullables = entity.getComponent(CullablesComponent::class)?.cullables
+            val cullables = entity.getComponent(CullablesComponent::class)?.cullables?.values()
             for (cullable in cullables ?: return) {
                 if (cullable.shouldBeCulled(delta)) {
                     entity.kill(props(CAUSE_OF_DEATH_MESSAGE to "Culled by cullable: $cullable"))

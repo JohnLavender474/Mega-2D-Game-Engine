@@ -7,8 +7,9 @@ import io.kotest.matchers.shouldBe
 class ContactDescribeSpec :
     DescribeSpec({
         describe("Contact data class") {
-            val fixture1 = Fixture(GameRectangle(), "type1")
-            val fixture2 = Fixture(GameRectangle(), "type2")
+            val body = Body(BodyType.ABSTRACT)
+            val fixture1 = Fixture(body, "type1", GameRectangle())
+            val fixture2 = Fixture(body, "type2", GameRectangle())
             val contact = Contact(fixture1, fixture2)
 
             it("should have the correct initial properties") {
@@ -48,7 +49,7 @@ class ContactDescribeSpec :
             it("should check equality correctly") {
                 val sameContact = Contact(fixture1, fixture2)
                 val swappedContact = Contact(fixture2, fixture1)
-                val differentFixture = Fixture(GameRectangle(), "type3")
+                val differentFixture = Fixture(body, "type3", GameRectangle())
                 val differentContact = Contact(fixture1, differentFixture)
 
                 (contact == sameContact) shouldBe true

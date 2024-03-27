@@ -10,16 +10,17 @@ import kotlin.math.min
  * A timer that can be used to keep track of time and run [TimeMarkedRunnable]s at specific times.
  * The timer can be reset and will run the [TimeMarkedRunnable]s again.
  *
- * @param duration the duration of the timer
+ * @param _duration the duration of the timer
  */
-class Timer(val duration: Float) : Updatable, Resettable {
+class Timer(_duration: Float) : Updatable, Resettable {
 
     internal var runnables: Array<TimeMarkedRunnable> = Array()
     internal var runnableQueue = Queue<TimeMarkedRunnable>()
 
+    var duration = _duration
+        private set
     var time = 0f
         private set
-
     var justFinished = false
         private set
 
@@ -86,11 +87,20 @@ class Timer(val duration: Float) : Updatable, Resettable {
         time = 0f
         justFinished = false
         firstUpdate = true
-
         runnableQueue.clear()
         val temp = Array(runnables)
         temp.sort()
         temp.forEach { runnableQueue.addLast(it) }
+    }
+
+    /**
+     * Sets the duration and resets the timer.
+     *
+     * @param duration the duration to set the timer to
+     */
+    fun resetDuration(duration: Float) {
+        this.duration = duration
+        reset()
     }
 
     /**

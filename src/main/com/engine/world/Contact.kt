@@ -8,18 +8,18 @@ import com.badlogic.gdx.utils.ObjectSet
  * @param fixture1 the first fixture
  * @param fixture2 the second fixture
  */
-data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
+data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
 
     /**
      * Returns if the fixtures have the given labels.
      *
-     * @param fixtureLabel1 the label of the first fixture
-     * @param fixtureLabel2 the label of the second fixture
+     * @param fixtureType1 the label of the first fixture
+     * @param fixtureType2 the label of the second fixture
      * @return if the fixtures are of the given labels
      */
-    fun fixturesMatch(fixtureLabel1: Any, fixtureLabel2: Any) =
-        (fixture1.fixtureLabel == fixtureLabel1 && fixture2.fixtureLabel == fixtureLabel2) ||
-                (fixture2.fixtureLabel == fixtureLabel1 && fixture1.fixtureLabel == fixtureLabel2)
+    fun fixturesMatch(fixtureType1: Any, fixtureType2: Any) =
+        (fixture1.getFixtureType() == fixtureType1 && fixture2.getFixtureType() == fixtureType2) ||
+                (fixture2.getFixtureType() == fixtureType1 && fixture1.getFixtureType() == fixtureType2)
 
     /**
      * If [fixtureLabels1] contains the label of the first fixture and [fixtureLabels2] contains the
@@ -32,46 +32,51 @@ data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
      * @return if the fixtures are of the given labels
      */
     fun fixtureSetsMatch(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
-        (fixtureLabels1.contains(fixture1.fixtureLabel) &&
-                fixtureLabels2.contains(fixture2.fixtureLabel)) ||
-                (fixtureLabels1.contains(fixture2.fixtureLabel) &&
-                        fixtureLabels2.contains(fixture1.fixtureLabel))
+        (fixtureLabels1.contains(fixture1.getFixtureType()) && fixtureLabels2.contains(fixture2.getFixtureType())) ||
+                (fixtureLabels1.contains(fixture2.getFixtureType()) && fixtureLabels2.contains(fixture1.getFixtureType()))
 
     /**
      * Returns if at least one of the fixtures is of the given type.
      *
-     * @param fixtureLabel the label of the fixture
+     * @param fixtureType the label of the fixture
      * @return if at least one of the fixtures is of the given type
      */
-    fun oneFixtureMatches(fixtureLabel: Any) =
-        fixture1.fixtureLabel == fixtureLabel || fixture2.fixtureLabel == fixtureLabel
+    fun oneFixtureMatches(fixtureType: Any) =
+        fixture1.getFixtureType() == fixtureType || fixture2.getFixtureType() == fixtureType
 
     /**
-     * If one of the fixtures has the [fixtureLabel], then the fixture with the [fixtureLabel] is
-     * returned as the first element in the pair. If neither of the fixtures has the [fixtureLabel],
+     * If one of the fixtures has the [fixtureType], then the fixture with the [fixtureType] is
+     * returned as the first element in the pair. If neither of the fixtures has the [fixtureType],
      * then null is returned.
      *
-     * @param fixtureLabel the type of the fixture
-     * @return the fixture with the [fixtureLabel] as the first element in the pair, or null if
-     *   neither of the fixtures has the [fixtureLabel]
+     * @param fixtureType the type of the fixture
+     * @return the fixture with the [fixtureType] as the first element in the pair, or null if
+     *   neither of the fixtures has the [fixtureType]
      */
-    fun getFixturesIfOneMatches(fixtureLabel: Any) =
-        if (fixture1.fixtureLabel == fixtureLabel) Pair(fixture1, fixture2)
-        else if (fixture2.fixtureLabel == fixtureLabel) Pair(fixture2, fixture1) else null
+    fun getFixturesIfOneMatches(fixtureType: Any) =
+        when (fixtureType) {
+            fixture1.getFixtureType() -> Pair(fixture1, fixture2)
+            fixture2.getFixtureType() -> Pair(fixture2, fixture1)
+            else -> null
+        }
 
     /**
-     * Gets the fixtures in order of [fixtureLabel1] and [fixtureLabel2]. If the fixtures are not of
+     * Gets the fixtures in order of [fixtureType1] and [fixtureType2]. If the fixtures are not of
      * the given types, then null is returned.
      *
-     * @param fixtureLabel1 the type of the first fixture
-     * @param fixtureLabel2 the type of the second fixture
-     * @return the fixtures in order of [fixtureLabel1] and [fixtureLabel2], or null if the fixtures
+     * @param fixtureType1 the type of the first fixture
+     * @param fixtureType2 the type of the second fixture
+     * @return the fixtures in order of [fixtureType1] and [fixtureType2], or null if the fixtures
      */
-    fun getFixturesInOrder(fixtureLabel1: Any, fixtureLabel2: Any) =
-        if (fixture1.fixtureLabel == fixtureLabel1 && fixture2.fixtureLabel == fixtureLabel2)
-            Pair(fixture1, fixture2)
-        else if (fixture2.fixtureLabel == fixtureLabel1 && fixture1.fixtureLabel == fixtureLabel2)
-            Pair(fixture2, fixture1)
+    fun getFixturesInOrder(fixtureType1: Any, fixtureType2: Any) =
+        if (fixture1.getFixtureType() == fixtureType1 && fixture2.getFixtureType() == fixtureType2) Pair(
+            fixture1,
+            fixture2
+        )
+        else if (fixture2.getFixtureType() == fixtureType1 && fixture1.getFixtureType() == fixtureType2) Pair(
+            fixture2,
+            fixture1
+        )
         else null
 
     /**
@@ -88,14 +93,20 @@ data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
      *   are not of the given types
      */
     fun getFixtureSetsInOrder(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
-        if (fixtureLabels1.contains(fixture1.fixtureLabel) &&
-            fixtureLabels2.contains(fixture2.fixtureLabel)
+        if (fixtureLabels1.contains(fixture1.getFixtureType()) &&
+            fixtureLabels2.contains(fixture2.getFixtureType())
         )
-            Pair(fixture1, fixture2)
-        else if (fixtureLabels1.contains(fixture2.fixtureLabel) &&
-            fixtureLabels2.contains(fixture1.fixtureLabel)
+            Pair(
+                fixture1,
+                fixture2
+            )
+        else if (fixtureLabels1.contains(fixture2.getFixtureType()) &&
+            fixtureLabels2.contains(fixture1.getFixtureType())
         )
-            Pair(fixture2, fixture1)
+            Pair(
+                fixture2,
+                fixture1
+            )
         else null
 
     /**
@@ -106,9 +117,8 @@ data class Contact(val fixture1: Fixture, val fixture2: Fixture) {
      * @return true if the given object is a [Contact] containing the same two fixtures
      */
     override fun equals(other: Any?) =
-        other is Contact &&
-                ((fixture1 == other.fixture1 && fixture2 == other.fixture2) ||
-                        (fixture1 == other.fixture2 && fixture2 == other.fixture1))
+        other is Contact && ((fixture1 == other.fixture1 && fixture2 == other.fixture2) ||
+                (fixture1 == other.fixture2 && fixture2 == other.fixture1))
 
     override fun hashCode() = 49 + 7 * fixture1.hashCode() + 7 * fixture2.hashCode()
 

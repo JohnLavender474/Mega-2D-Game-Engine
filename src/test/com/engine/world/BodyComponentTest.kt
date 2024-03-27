@@ -12,7 +12,7 @@ class BodyComponentTest :
 
             it("should have the correct initial properties") { bodyComponent.body shouldBe mockBody }
 
-            it("should reset the body when reset() is called") {
+            it("should reset the fixtureBody when reset() is called") {
                 every { mockBody.reset() } just Runs
                 bodyComponent.reset()
                 verify { mockBody.reset() }

@@ -4,18 +4,18 @@ import com.badlogic.gdx.math.Vector2
 import com.engine.common.interfaces.Resettable
 
 /**
- * Physics data for a [Body]. Contains information about the physics of the body.
+ * Physics data for a [Body]. Contains information about the physics of the fixtureBody.
  *
- * @param gravity The gravity to apply to the body.
- * @param velocity The velocity of the body.
- * @param velocityClamp The maximum velocity of the body.
+ * @param gravity The gravity to apply to the fixtureBody.
+ * @param velocity The velocity of the fixtureBody.
+ * @param velocityClamp The maximum velocity of the fixtureBody.
  * @param frictionToApply The friction to apply to other bodies when colliding with them.
- * @param frictionOnSelf The friction to apply to this body in the next [WorldSystem] update.
- * @param defaultFrictionOnSelf The default friction to apply to this body. Value of
+ * @param frictionOnSelf The friction to apply to this fixtureBody in the next [WorldSystem] update.
+ * @param defaultFrictionOnSelf The default friction to apply to this fixtureBody. Value of
  *   [frictionOnSelf] is reset to this value at the end of each [WorldSystem] update.
- * @param gravityOn Whether gravity is applied to this body.
- * @param collisionOn Whether collisions are applied to this body.
- * @param takeFrictionFromOthers Whether this body takes friction from other bodies.
+ * @param gravityOn Whether gravity is applied to this fixtureBody.
+ * @param collisionOn Whether collisions are applied to this fixtureBody.
+ * @param takeFrictionFromOthers Whether this fixtureBody takes friction from other bodies.
  * @see Body
  */
 class PhysicsData(

@@ -13,26 +13,31 @@ class FixtureTest :
             val offset = Vector2(5f, 5f)
             val body = Body(BodyType.DYNAMIC)
 
-            val fixture = Fixture(shape, fixtureLabel, offsetFromBodyCenter = offset)
+            val fixture = Fixture(body, fixtureLabel, shape, offsetFromBodyCenter = offset)
 
             it("should have the correct initial properties") {
-                fixture.shape shouldBe shape
-                fixture.fixtureLabel shouldBe fixtureLabel
+                fixture.rawShape shouldBe shape
+                fixture.type shouldBe fixtureLabel
                 fixture.active shouldBe true
                 fixture.attachedToBody shouldBe true
                 fixture.offsetFromBodyCenter shouldBe offset
             }
 
             it("should overlap with another fixture") {
-                fixture.setBodyRelativeShape(body)
-                val otherFixture = Fixture(shape, "otherType")
-                otherFixture.setBodyRelativeShape(body)
+                val otherFixture = Fixture(body, "otherType", shape)
                 fixture.overlaps(otherFixture) shouldBe true
             }
 
             it("should overlap with a shape") {
-                fixture.setBodyRelativeShape(body)
                 fixture.overlaps(shape) shouldBe true
+            }
+
+            it("should return the correct shape") {
+                val bodyCenter = body.rotatedBounds.getCenter()
+                val expectedShape = shape.copy().setCenter(bodyCenter).translation(offset)
+                val actualShape = fixture.getShape()
+
+                actualShape shouldBe expectedShape
             }
         }
     })

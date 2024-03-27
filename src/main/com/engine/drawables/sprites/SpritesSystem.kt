@@ -3,7 +3,6 @@ package com.engine.drawables.sprites
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.common.objects.ImmutableCollection
 import com.engine.drawables.IDrawable
-import com.engine.drawables.sorting.IComparableDrawable
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 

@@ -3,7 +3,7 @@ package com.engine.animations
 import com.badlogic.gdx.utils.Array
 import com.engine.common.GameLogger
 import com.engine.components.IGameComponent
-import com.engine.drawables.sprites.ISprite
+import com.engine.drawables.sprites.GameSprite
 import com.engine.entities.IGameEntity
 import com.engine.entities.contracts.ISpriteEntity
 
@@ -15,7 +15,7 @@ import com.engine.entities.contracts.ISpriteEntity
  */
 class AnimationsComponent(
     override val entity: IGameEntity,
-    val animators: Array<Pair<() -> ISprite, IAnimator>> = Array()
+    val animators: Array<Pair<() -> GameSprite, IAnimator>> = Array()
 ) : IGameComponent {
 
     companion object {
@@ -32,10 +32,10 @@ class AnimationsComponent(
      */
     constructor(
         entity: IGameEntity,
-        spriteSupplier: () -> ISprite,
+        spriteSupplier: () -> GameSprite,
         animator: IAnimator
     ) : this(
-        entity, Array<Pair<() -> ISprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
+        entity, Array<Pair<() -> GameSprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
 
     /**
      * Convenience constructor if the entity is a [ISpriteEntity] where only the first sprite needs to

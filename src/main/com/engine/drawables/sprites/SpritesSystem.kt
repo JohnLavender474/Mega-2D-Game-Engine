@@ -1,40 +1,26 @@
 package com.engine.drawables.sprites
 
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.common.objects.ImmutableCollection
-import com.engine.drawables.IDrawable
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /**
- * A system that can be used to gather the sprites to be rendered. The collection passed to the
- * constructor is used to store the sprites to be rendered. The collection is supplied by the
- * provided supplier. The collection holds [IDrawable<Batch>] objects which means that any object
- * that implements [IDrawable<Batch>] can be added to the collection. It is guaranteed that all
- * elements collected through this system will implement [ISprite].
+ * A system that can be used to gather the sprites to be rendered. This system will collect the sprites
+ * from the entities that have a [SpritesComponent] and pass them to the provided [spritesCollector].
  *
- * @param spritesCollectionSupplier the supplier that supplies the collection to collect sprites into.
+ * @param spritesCollector the function that should collect the sprites to be drawn
  */
-open class SpritesSystem(protected val spritesCollectionSupplier: () -> MutableCollection<IDrawable<Batch>>) :
+open class SpritesSystem(protected open val spritesCollector: (GameSprite) -> Unit) :
     GameSystem(SpritesComponent::class) {
-
-    /**
-     * Creates a [SpritesSystem] where the provided [MutableCollection] is used to store the sprites to
-     * be rendered.
-     *
-     * @param sprites the collection to store the sprites to be rendered
-     */
-    constructor(sprites: MutableCollection<IDrawable<Batch>>) : this({ sprites })
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
 
         // collect the sprites into the supplied collection
-        val sprites = spritesCollectionSupplier()
         entities.forEach { entity ->
             val spritesComponent = entity.getComponent(SpritesComponent::class)
             spritesComponent?.update(delta)
-            spritesComponent?.sprites?.values()?.forEach { sprite -> sprites.add(sprite) }
+            spritesComponent?.sprites?.values()?.forEach { sprite -> spritesCollector.invoke(sprite) }
         }
     }
 }

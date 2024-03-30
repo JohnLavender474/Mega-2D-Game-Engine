@@ -3,7 +3,7 @@ package com.engine.animations
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.GameLogger
 import com.engine.common.extensions.objectMapOf
-import com.engine.drawables.sprites.ISprite
+import com.engine.drawables.sprites.GameSprite
 
 /**
  * An animator that can be used to animate a sprite. The animator is created with a key supplier
@@ -41,7 +41,7 @@ class Animator(
     var currentKey: String? = null
         private set
 
-    override fun animate(sprite: ISprite, delta: Float) {
+    override fun animate(sprite: GameSprite, delta: Float) {
         val nextKey = keySupplier()
 
         // if the key has changed, then reset the current animation before setting the key

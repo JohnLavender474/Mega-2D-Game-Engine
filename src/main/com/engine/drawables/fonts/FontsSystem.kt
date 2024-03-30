@@ -1,28 +1,17 @@
 package com.engine.drawables.fonts
 
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.engine.common.objects.ImmutableCollection
-import com.engine.drawables.IDrawable
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /**
- * A system that can be used to gather the fonts to be rendered. The collection passed to the constructor
- * is used to store the fonts to be rendered. The collection is supplied by the provided supplier. The
- * collection holds [IDrawable<Batch>] objects which means that any object that implements [IDrawable<Batch>]
- * can be added to the collection. It is guaranteed that all elements collected through this system will
- * be [BitmapFontHandle] instances.
+ * A system that can be used to gather the fonts to be rendered. This system will collect the fonts from
+ * the entities that have a [FontsComponent] and pass them to the provided [fontsCollector].
+ *
+ * @param fontsCollector the function that should collect the fonts to be drawn
  */
-open class FontsSystem(protected val fontsCollectionSupplier: () -> MutableCollection<IDrawable<Batch>>) :
+open class FontsSystem(protected open val fontsCollector: (BitmapFontHandle) -> Unit) :
     GameSystem(FontsComponent::class) {
-
-    /**
-     * Creates a [FontsSystem] where the provided [MutableCollection] is used to store the fonts to be
-     * rendered.
-     *
-     * @param fonts the collection to store the fonts to be rendered
-     */
-    constructor(fonts: MutableCollection<IDrawable<Batch>>) : this({ fonts })
 
     /**
      * Processes the fonts to be rendered. If the system is off, nothing happens. The fonts are collected
@@ -35,11 +24,10 @@ open class FontsSystem(protected val fontsCollectionSupplier: () -> MutableColle
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
 
-        val fonts = fontsCollectionSupplier()
         entities.forEach { entity ->
             val fontsComponent = entity.getComponent(FontsComponent::class)
             fontsComponent?.update(delta)
-            fontsComponent?.fonts?.values()?.forEach { font -> fonts.add(font) }
+            fontsComponent?.fonts?.values()?.forEach { font -> fontsCollector.invoke(font) }
         }
     }
 

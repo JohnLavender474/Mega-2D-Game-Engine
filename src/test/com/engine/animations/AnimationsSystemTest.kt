@@ -3,7 +3,7 @@ package com.engine.animations
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.objects.Properties
-import com.engine.drawables.sprites.ISprite
+import com.engine.drawables.sprites.GameSprite
 import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.*
@@ -12,7 +12,7 @@ class AnimationsSystemTest :
     DescribeSpec({
         describe("AnimationSystem") {
             lateinit var entity: GameEntity
-            lateinit var mockSprite: ISprite
+            lateinit var mockSprite: GameSprite
             lateinit var mockAnimator: IAnimator
             lateinit var animationsComponent: AnimationsComponent
             lateinit var animationsSystem: AnimationsSystem
@@ -33,7 +33,7 @@ class AnimationsSystemTest :
                 mockAnimator = mockk {
                     every { animate(any(), any()) } answers
                             {
-                                val sprite = arg<ISprite>(0)
+                                val sprite = arg<GameSprite>(0)
                                 sprite.setRegion(TextureRegion())
                             }
                 }

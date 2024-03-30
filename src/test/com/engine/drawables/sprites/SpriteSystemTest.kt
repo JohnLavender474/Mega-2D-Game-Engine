@@ -1,8 +1,6 @@
 package com.engine.drawables.sprites
 
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.OrderedMap
-import com.engine.drawables.IDrawable
 import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContain
@@ -18,7 +16,7 @@ class SpriteSystemTest :
             lateinit var mockSprite3: GameSprite
             lateinit var mockSpritesComponent: SpritesComponent
             lateinit var entity: GameEntity
-            lateinit var spritesQueue: TreeSet<IDrawable<Batch>>
+            lateinit var spritesQueue: TreeSet<GameSprite>
             lateinit var spritesSystem: SpritesSystem
 
             beforeEach {
@@ -28,7 +26,7 @@ class SpriteSystemTest :
                 mockSprite2 = spyk(GameSprite())
                 mockSprite3 = spyk(GameSprite())
 
-                val map = OrderedMap<String, ISprite>()
+                val map = OrderedMap<String, GameSprite>()
                 map.put("1", mockSprite1)
                 map.put("2", mockSprite2)
                 map.put("3", mockSprite3)
@@ -42,7 +40,7 @@ class SpriteSystemTest :
                 entity.dead = false
 
                 spritesQueue = TreeSet()
-                spritesSystem = SpritesSystem(spritesQueue)
+                spritesSystem = SpritesSystem { spritesQueue.add(it) }
                 spritesSystem.on = true
                 spritesSystem.add(entity)
             }

@@ -47,7 +47,7 @@ class SpriteMatrix(
     var modelHeight: Float,
     rows: Int,
     columns: Int
-) : IDrawable<Batch>, Matrix<ISprite>(rows, columns) {
+) : IDrawable<Batch>, Matrix<GameSprite>(rows, columns) {
 
     init {
         for (x in 0 until columns) {

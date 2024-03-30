@@ -57,3 +57,10 @@ fun Sprite.setPosition(p: Vector2, pos: Position, xOffset: Float, yOffset: Float
  * @param size the size to set
  */
 fun Sprite.setSize(size: Float) = setSize(size, size)
+
+/**
+ * Sets the center of this sprite to the specified center.
+ *
+ * @param center the center to set
+ */
+fun Sprite.setCenter(center: Vector2) = setCenter(center.x, center.y)

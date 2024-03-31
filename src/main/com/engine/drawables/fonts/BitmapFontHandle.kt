@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.interfaces.Initializable
-import com.engine.drawables.IDrawable
+import com.engine.drawables.sorting.DrawingPriority
+import com.engine.drawables.sorting.DrawingSection
+import com.engine.drawables.sorting.IComparableDrawable
 
 /**
  * A class that represents a bitmap font. The text is centered by default on the position by default.
@@ -35,7 +37,8 @@ class BitmapFontHandle(
     var centerX: Boolean = true,
     var centerY: Boolean = true,
     private val fontSource: String? = null,
-) : Initializable, IDrawable<Batch> {
+    override val priority: DrawingPriority = DrawingPriority(DrawingSection.FOREGROUND, 0),
+) : Initializable, IComparableDrawable<Batch> {
 
     private val layout: GlyphLayout = GlyphLayout()
 

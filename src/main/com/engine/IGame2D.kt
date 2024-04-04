@@ -30,7 +30,7 @@ interface IGame2D : ApplicationListener {
     var assMan: AssetManager
     var eventsMan: IEventsManager
 
-    var gameEngine: IGameEngine
+    var engine: IGameEngine
 
     var paused: Boolean
 

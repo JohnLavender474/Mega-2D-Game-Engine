@@ -1,5 +1,6 @@
 package com.engine
 
+import com.badlogic.gdx.utils.Array
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
@@ -24,4 +25,16 @@ interface IGameEngine : Updatable, Resettable {
      * @return whether the [GameEntity] was spawned
      */
     fun spawn(entity: IGameEntity, spawnProps: Properties): Boolean
+
+    /**
+     * Spawns multiple [GameEntity]s with the given [Properties].
+     *
+     * @param entries the [GameEntity]s to spawn with their [Properties]
+     * @return an [Array] of whether each [GameEntity] was spawned
+     */
+    fun spawn(vararg entries: Pair<IGameEntity, Properties>): Array<Boolean> {
+        val results = Array<Boolean>()
+        for ((entity, spawnProps) in entries) results.add(spawn(entity, spawnProps))
+        return results
+    }
 }

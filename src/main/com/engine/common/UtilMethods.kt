@@ -15,6 +15,13 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
+ * Generates a random boolean value.
+ *
+ * @return A random boolean value.
+ */
+fun getRandomBool() = getRandom(0, 1) == 1
+
+/**
  * Generates a random integer within the specified range.
  *
  * @param min The minimum value (inclusive).

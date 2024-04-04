@@ -16,7 +16,7 @@ interface IDamageable {
      * @param damager the [IDamager] that is dealing damage to this [IDamageable]
      * @return true if this [IDamageable] can take damage from the [IDamager], otherwise false
      */
-    fun canBeDamagedBy(damager: IDamager): Boolean
+    fun canBeDamagedBy(damager: IDamager): Boolean = false
 
     /**
      * Take damage from the [IDamager]. Return true if damage was taken, otherwise false.
@@ -24,5 +24,5 @@ interface IDamageable {
      * @param damager the [IDamager] that is dealing damage to this [IDamageable]
      * @return true if damage was taken, otherwise false
      */
-    fun takeDamageFrom(damager: IDamager): Boolean
+    fun takeDamageFrom(damager: IDamager): Boolean = false
 }

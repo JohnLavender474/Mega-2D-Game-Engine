@@ -33,7 +33,7 @@ abstract class Game2D : IGame2D, Game() {
     override lateinit var controllerPoller: IControllerPoller
     override lateinit var assMan: AssetManager
     override lateinit var eventsMan: IEventsManager
-    override lateinit var gameEngine: IGameEngine
+    override lateinit var engine: IGameEngine
 
     override var paused = false
 

@@ -13,12 +13,12 @@ interface IDamager {
      * @param damageable the [IDamageable] that is being damaged by this [IDamager]
      * @return true if this [IDamager] can deal damage to the [IDamageable], otherwise false
      */
-    fun canDamage(damageable: IDamageable): Boolean
+    fun canDamage(damageable: IDamageable): Boolean = true
 
     /**
      * Called when this [IDamager] deals damage to the [IDamageable].
      *
      * @param damageable the [IDamageable] that is being damaged by this [IDamager]
      */
-    fun onDamageInflictedTo(damageable: IDamageable)
+    fun onDamageInflictedTo(damageable: IDamageable) {}
 }

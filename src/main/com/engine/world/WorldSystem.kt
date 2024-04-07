@@ -53,6 +53,13 @@ import kotlin.math.abs
  * The [postProcess] function is run for each [Body] directly after the fixtureBody's own
  * [Body.postProcess] function has been run. This is useful if you want to run common logic for all
  * bodies in the post-processing stage.
+ *
+ * @property contactListener the [IContactListener] to notify of contacts
+ * @property worldGraphSupplier the supplier for the [IGraphMap] to use
+ * @property fixedStep the fixed step to update the physics
+ * @property collisionHandler the [ICollisionHandler] to resolve collisions
+ * @property contactFilterMap the optional [ObjectMap] to filter contacts
+ * @property debug whether to print debug statements
  */
 class WorldSystem(
     private val contactListener: IContactListener,
@@ -79,9 +86,26 @@ class WorldSystem(
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
         accumulator += delta
-        while (accumulator >= fixedStep) {
-            accumulator -= fixedStep
-            cycle(entities, fixedStep)
+        if (accumulator >= fixedStep) {
+            val bodies = Array<Body>()
+            entities.forEach {
+                val body = it.getComponent(BodyComponent::class)!!.body
+                bodies.add(body)
+            }
+
+            while (accumulator >= fixedStep) {
+                accumulator -= fixedStep
+                cycle(bodies, fixedStep)
+            }
+
+            val worldGraph = worldGraphSupplier()!!
+            worldGraph.reset()
+            bodies.forEach { body ->
+                worldGraph.add(body, body.rotatedBounds)
+                body.fixtures.forEach { (_, fixture) ->
+                    worldGraph.add(fixture, fixture.getShape())
+                }
+            }
         }
     }
 
@@ -98,22 +122,16 @@ class WorldSystem(
      * responsible for updating the positions of all bodies, resolving collisions, and notifying the
      * [IContactListener] of any contacts that occur.
      *
-     * @param entities the [Collection] of [IGameEntity]s to process
+     * @param bodies the array of bodies to cycle through
      * @param delta the time in seconds since the last frame
      */
-    internal fun cycle(entities: ImmutableCollection<IGameEntity>, delta: Float) {
+    internal fun cycle(bodies: Array<Body>, delta: Float) {
         if (debug) debugTicks++
-        val bodies = Array<Body>()
-        entities.forEach {
-            val body = it.getComponent(BodyComponent::class)!!.body
-            bodies.add(body)
-        }
         preProcess(bodies, delta)
         worldGraphSupplier()!!.reset()
         bodies.forEach { processPhysicsAndGraph(it, delta) }
         bodies.forEach { processContactsAndCollisions(it) }
-        if (printDebugStatements)
-            GameLogger.debug(TAG, "current contacts = $currentContactSet")
+        if (printDebugStatements) GameLogger.debug(TAG, "current contacts = $currentContactSet")
         processContacts()
         postProcess(bodies, delta)
         if (debugTicks >= MAX_DEBUG_TICKS) debugTicks = 0
@@ -197,13 +215,13 @@ class WorldSystem(
             if (it.gravityOn) it.velocity.add(it.gravity)
 
             // clamp the x velocity
-            @Suppress("DuplicatedCode") if (it.velocity.x > 0f && it.velocity.x > abs(it.velocityClamp.x)) it.velocity.x =
+            if (it.velocity.x > 0f && it.velocity.x > abs(it.velocityClamp.x)) it.velocity.x =
                 abs(it.velocityClamp.x)
             else if (it.velocity.x < 0f && it.velocity.x < -abs(it.velocityClamp.x)) it.velocity.x =
                 -abs(it.velocityClamp.x)
 
             // clamp the y velocity
-            @Suppress("DuplicatedCode") if (it.velocity.y > 0f && it.velocity.y > abs(it.velocityClamp.y)) it.velocity.y =
+            if (it.velocity.y > 0f && it.velocity.y > abs(it.velocityClamp.y)) it.velocity.y =
                 abs(it.velocityClamp.y)
             else if (it.velocity.y < 0f && it.velocity.y < -abs(it.velocityClamp.y)) it.velocity.y =
                 -abs(it.velocityClamp.y)
@@ -224,12 +242,11 @@ class WorldSystem(
      * @return whether the given fixtures should be filtered
      */
     internal fun filterContact(fixture1: IFixture, fixture2: IFixture) =
-        (fixture1 != fixture2) && (
-                contactFilterMap?.get(fixture1.getFixtureType())?.contains(
-                    fixture2.getFixtureType()
-                ) != false || contactFilterMap[fixture2.getFixtureType()]?.contains(
-                    fixture1.getFixtureType()
-                ) != false)
+        (fixture1 != fixture2) && (contactFilterMap?.get(fixture1.getFixtureType())?.contains(
+            fixture2.getFixtureType()
+        ) != false || contactFilterMap[fixture2.getFixtureType()]?.contains(
+            fixture1.getFixtureType()
+        ) != false)
 
     /**
      * Checks for contacts with the given fixtureBody.
@@ -241,25 +258,20 @@ class WorldSystem(
 
         body.fixtures.forEach { (_, fixture) ->
             if (fixture.isActive() && contactFilterMap?.containsKey(fixture.getFixtureType()) != false) {
-                if (printDebugStatements)
-                    GameLogger.debug(TAG, "checking for contacts with fixture = $fixture")
+                if (printDebugStatements) GameLogger.debug(TAG, "checking for contacts with fixture = $fixture")
 
                 val overlapping = ObjectSet<IFixture>()
 
                 val worldGraphResults = worldGraph.get(fixture.getShape())
-                if (printDebugStatements)
-                    GameLogger.debug(TAG, "world graph results = $worldGraphResults")
+                if (printDebugStatements) GameLogger.debug(TAG, "world graph results = $worldGraphResults")
 
                 worldGraphResults.forEach {
-                    if (it is IFixture &&
-                        it.isActive() &&
-                        filterContact(fixture, it) &&
-                        fixture.getShape().overlaps(it.getShape())
+                    if (it is IFixture && it.isActive() && filterContact(fixture, it) && fixture.getShape()
+                            .overlaps(it.getShape())
                     ) overlapping.add(it)
                 }
 
-                if (printDebugStatements)
-                    GameLogger.debug(TAG, "overlapping fixtures = $overlapping")
+                if (printDebugStatements) GameLogger.debug(TAG, "overlapping fixtures = $overlapping")
 
                 overlapping.forEach { o -> currentContactSet.add(Contact(fixture, o)) }
             }
@@ -273,11 +285,12 @@ class WorldSystem(
      * @param body the [Body] to resolve the collisions of
      */
     internal fun resolveCollisions(body: Body) {
-        worldGraphSupplier()!!.get(body.rotatedBounds).forEach {
-            if (it is Body &&
-                it != body &&
-                it.rotatedBounds.overlaps(body as Rectangle)
-            ) collisionHandler.handleCollision(body, it)
+        val worldGraph = worldGraphSupplier()!!
+        worldGraph.get(body.rotatedBounds).forEach {
+            if (it is Body && it != body && it.rotatedBounds.overlaps(body as Rectangle)) collisionHandler.handleCollision(
+                body,
+                it
+            )
         }
     }
 }

@@ -15,6 +15,11 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
+ * A [Random] instance with the seed being [System.currentTimeMillis].
+ */
+val random = Random(System.currentTimeMillis())
+
+/**
  * Generates a random boolean value.
  *
  * @return A random boolean value.
@@ -29,7 +34,7 @@ fun getRandomBool() = getRandom(0, 1) == 1
  * @return A random integer between min and max (inclusive).
  */
 fun getRandom(min: Int, max: Int): Int {
-    return Random(System.currentTimeMillis()).nextInt(max + 1 - min) + min
+    return random.nextInt(max + 1 - min) + min
 }
 
 /**
@@ -68,10 +73,10 @@ fun <T> mask(o1: T, o2: T, p1: Predicate<T>, p2: Predicate<T>): Boolean {
  *
  * @param toBePushed The rectangle to be pushed.
  * @param other The rectangle to be pushed against.
- * @param overlap The rectangle to store the overlap in.
+ * @param overlap The rectangle to store the overlap in. Optional.
  * @return The direction from start to target, or null if the two rectangles do not overlap.
  */
-fun getOverlapPushDirection(toBePushed: Rectangle, other: Rectangle, overlap: Rectangle) =
+fun getOverlapPushDirection(toBePushed: Rectangle, other: Rectangle, overlap: Rectangle = Rectangle()) =
     if (Intersector.intersectRectangles(toBePushed, other, overlap)) {
         if (overlap.width > overlap.height) if (toBePushed.y > other.y) Direction.UP else Direction.DOWN
         else if (toBePushed.x > other.x) Direction.RIGHT else Direction.LEFT

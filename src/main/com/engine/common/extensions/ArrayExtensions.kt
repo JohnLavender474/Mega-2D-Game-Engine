@@ -79,3 +79,22 @@ fun <T> Array<T>.processAndFilter(process: (T) -> Unit, filter: (T) -> Boolean):
     }
     return array
 }
+
+/**
+ * Gets the specified amount of random elements from the array. Each element is from a unique index.
+ *
+ * @param amount the amount of random elements to fetch
+ * @return an array of random elements from unique indices
+ */
+fun <T> Array<T>.getRandomElements(amount: Int): Array<T> {
+    require(amount >= 0) { "Number of indices must not be negative." }
+    require(amount <= size) { "Number of indices must not exceed the size of the array." }
+
+    if (amount == 0) return Array()
+
+    val copy = Array(this)
+    copy.shuffle()
+    copy.truncate(amount)
+
+    return copy
+}

@@ -14,6 +14,10 @@ import kotlin.math.min
  */
 class Timer(_duration: Float) : Updatable, Resettable {
 
+    companion object {
+        const val DEFAULT_TIME = 1f
+    }
+
     internal var runnables: Array<TimeMarkedRunnable> = Array()
     internal var runnableQueue = Queue<TimeMarkedRunnable>()
 
@@ -28,6 +32,11 @@ class Timer(_duration: Float) : Updatable, Resettable {
     var runOnFinished: (() -> Unit)? = null
 
     private var firstUpdate = true
+
+    /**
+     * Creates a [Timer] with the default time of 1.
+     */
+    constructor() : this(DEFAULT_TIME)
 
     /**
      * Creates a [Timer] with the given [duration] and [runnables]. The [runnables] will be sorted by

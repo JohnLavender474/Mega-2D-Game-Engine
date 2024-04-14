@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.engine.common.enums.Direction
+import com.engine.common.shapes.IGameShape2D
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
@@ -35,6 +36,17 @@ fun getRandomBool() = getRandom(0, 1) == 1
  */
 fun getRandom(min: Int, max: Int): Int {
     return random.nextInt(max + 1 - min) + min
+}
+
+/**
+ * Generates a random float within the specified range.
+ *
+ * @param min The minimum value (inclusive).
+ * @param max The maximum value (inclusive).
+ * @return A random float between min and max (inclusive).
+ */
+fun getRandom(min: Float, max: Float): Float {
+    return random.nextFloat() * (max - min) + min
 }
 
 /**
@@ -69,18 +81,26 @@ fun <T> mask(o1: T, o2: T, p1: Predicate<T>, p2: Predicate<T>): Boolean {
 }
 
 /**
- * Determines the single most direction from the start to the target based on their positions.
+ * Determines the single most direction from the [other] shape to the [toBePushed] shape based on their bounds. In other
+ * words, this method determines in which direction the [toBePushed] shape should be pushed to resolve the overlap with
+ * the [other] shape based on the overlap of their bounding rectangles via [IGameShape2D.getBoundingRectangle].
  *
- * @param toBePushed The rectangle to be pushed.
- * @param other The rectangle to be pushed against.
+ * @param toBePushed The shape to be pushed.
+ * @param other The shape to be pushed against.
  * @param overlap The rectangle to store the overlap in. Optional.
  * @return The direction from start to target, or null if the two rectangles do not overlap.
  */
-fun getOverlapPushDirection(toBePushed: Rectangle, other: Rectangle, overlap: Rectangle = Rectangle()) =
-    if (Intersector.intersectRectangles(toBePushed, other, overlap)) {
-        if (overlap.width > overlap.height) if (toBePushed.y > other.y) Direction.UP else Direction.DOWN
-        else if (toBePushed.x > other.x) Direction.RIGHT else Direction.LEFT
+fun getOverlapPushDirection(
+    toBePushed: IGameShape2D, other: IGameShape2D, overlap: Rectangle = Rectangle()
+): Direction? {
+    val toBePushedBounds = toBePushed.getBoundingRectangle()
+    val otherBounds = other.getBoundingRectangle()
+    return if (Intersector.intersectRectangles(toBePushedBounds, otherBounds, overlap)) {
+        if (overlap.width > overlap.height) {
+            if (toBePushedBounds.y > otherBounds.y) Direction.UP else Direction.DOWN
+        } else if (toBePushedBounds.x > otherBounds.x) Direction.RIGHT else Direction.LEFT
     } else null
+}
 
 /**
  * Determines the single most direction from the start to the target based on their positions.

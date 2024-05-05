@@ -1,6 +1,8 @@
 package com.engine.common.extensions
 
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.FloatArray
+import com.badlogic.gdx.utils.IntArray
 
 /**
  * Creates an [Array] from the given elements.
@@ -97,4 +99,28 @@ fun <T> Array<T>.getRandomElements(amount: Int): Array<T> {
     copy.truncate(amount)
 
     return copy
+}
+
+/**
+ * Creates a [FloatArray] from the given elements.
+ *
+ * @param elements the elements to add to the [FloatArray]
+ * @return the [FloatArray] created from the given elements
+ */
+fun gdxFloatArrayOf(vararg elements: Float): FloatArray {
+    val array = FloatArray()
+    elements.forEach { array.add(it) }
+    return array
+}
+
+/**
+ * Creates an [IntArray] from the given elements.
+ *
+ * @param elements the elements to add to the [IntArray]
+ * @return the [IntArray] created from the given elements
+ */
+fun gdxIntArrayOf(vararg elements: Int): IntArray {
+    val array = IntArray()
+    elements.forEach { array.add(it) }
+    return array
 }

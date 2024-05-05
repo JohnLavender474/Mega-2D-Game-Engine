@@ -5,18 +5,19 @@ import com.badlogic.gdx.graphics.Color.RED
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
+import com.badlogic.gdx.utils.FloatArray
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Direction
 import com.engine.common.enums.Position
+import com.engine.common.extensions.gdxArrayOf
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 /**
- * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to
- * represent a rectangle in a game.
+ * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to represent a rectangle in a game.
  *
  * @see Rectangle
  * @see PositionalGameShape2D
@@ -130,17 +131,35 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     }
 
     /**
-     * Returns a list of [GameLine]s that make up this [GameRectangle].
+     * Returns an array of [GameLine]s that make up this [GameRectangle].
      *
-     * @return A list of [GameLine]s that make up this [GameRectangle].
+     * @return An array of [GameLine]s that make up this [GameRectangle].
      */
     fun getAsLines() =
-        listOf(
+        gdxArrayOf(
             GameLine(getTopLeftPoint(), getTopRightPoint()),
             GameLine(getBottomLeftPoint(), getBottomRightPoint()),
             GameLine(getBottomLeftPoint(), getTopLeftPoint()),
             GameLine(getBottomRightPoint(), getTopRightPoint())
         )
+
+    /**
+     * Returns an array of vertices that make up this [GameRectangle].
+     *
+     * @return An array of vertices that make up this [GameRectangle].
+     */
+    fun getVertices(): FloatArray {
+        val vertices = FloatArray(8)
+        vertices[0] = x
+        vertices[1] = y
+        vertices[2] = x + width
+        vertices[3] = y
+        vertices[4] = x + width
+        vertices[5] = y + height
+        vertices[6] = x
+        vertices[7] = y + height
+        return vertices
+    }
 
     /**
      * Creates a new [GameRectangle] based on this instance and sets its rotation based on the given
@@ -246,12 +265,13 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     override fun overlaps(other: IGameShape2D) =
         when (other) {
             is GameRectangle -> Intersector.overlaps(this, other)
-            is GameCircle -> Intersector.overlaps(other.libGdxCircle, this)
+            is GameCircle -> Intersector.overlaps(other.libgdxCircle, this)
             is GameLine -> {
                 val (worldPoint1, worldPoint2) = other.getWorldPoints()
                 Intersector.intersectSegmentRectangle(worldPoint1, worldPoint2, this)
             }
 
+            is GamePolygon -> Intersector.intersectPolygons(toPolygon().transformedVertices, other.transformedVertices)
             else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
         }
 
@@ -285,7 +305,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      * @return The modified [GameRectangle].
      */
     fun setCenterY(centerY: Float): GameRectangle {
-        super<Rectangle>.setCenter(getCenter().x, centerY)
+        super.setCenter(getCenter().x, centerY)
         return this
     }
 
@@ -484,9 +504,16 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      */
     fun getBottomRightPoint(): Vector2 = Vector2(this.x + this.width, this.y)
 
-    override fun equals(other: Any?) = other is Rectangle && super<Rectangle>.equals(other)
+    /**
+     * Converts this [GameRectangle] to a [GamePolygon].
+     *
+     * @return The [GamePolygon] created from this [GameRectangle].
+     */
+    fun toPolygon() = GamePolygon(getVertices())
 
-    override fun hashCode() = super<Rectangle>.hashCode()
+    override fun equals(other: Any?) = other is Rectangle && super.equals(other)
 
-    override fun toString() = super<Rectangle>.toString()
+    override fun hashCode() = super.hashCode()
+
+    override fun toString() = super.toString()
 }

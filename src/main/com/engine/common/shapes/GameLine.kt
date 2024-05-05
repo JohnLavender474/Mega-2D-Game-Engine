@@ -133,6 +133,26 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
     constructor() : this(0f, 0f, 0f, 0f)
 
     /**
+     * Returns the vertices of this line as a float array. The vertices are the local points of this line.
+     *
+     * @return The vertices of this line.
+     */
+    fun getVertices(): FloatArray {
+        return floatArrayOf(localPoint1.x, localPoint1.y, localPoint2.x, localPoint2.y)
+    }
+
+    /**
+     * Returns the transformed vertices of this line as a float array. The vertices are the world points
+     * of this line.
+     *
+     * @return The transformed vertices of this line.
+     */
+    fun getTransformedVertcies(): FloatArray {
+        val (_worldPoint1, _worldPoint2) = getWorldPoints()
+        return floatArrayOf(_worldPoint1.x, _worldPoint1.y, _worldPoint2.x, _worldPoint2.y)
+    }
+
+    /**
      * Sets this line to the provided [GameLine]. This sets the [position], [originX], [originY],
      * [localPoint1], and [localPoint2].
      *
@@ -579,6 +599,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
                 )
             }
 
+            is GamePolygon -> Intersector.intersectLinePolygon(worldPoint1, worldPoint2, other.libgdxPolygon)
             else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
         }
     }

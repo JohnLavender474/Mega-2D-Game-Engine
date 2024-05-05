@@ -9,7 +9,8 @@ import io.kotest.matchers.shouldBe
 class GameRectangleTest :
     DescribeSpec({
         describe("GameRectangle class") {
-            var gameRectangle = GameRectangle(1f, 2f, 3f, 4f)
+
+            lateinit var gameRectangle: GameRectangle
 
             beforeEach { gameRectangle = GameRectangle(1f, 2f, 3f, 4f) }
 

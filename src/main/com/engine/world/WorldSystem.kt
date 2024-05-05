@@ -266,8 +266,8 @@ class WorldSystem(
                 if (printDebugStatements) GameLogger.debug(TAG, "world graph results = $worldGraphResults")
 
                 worldGraphResults.forEach {
-                    if (it is IFixture && it.isActive() && filterContact(fixture, it) && fixture.getShape()
-                            .overlaps(it.getShape())
+                    if (it is IFixture && it.isActive() && filterContact(fixture, it) &&
+                        fixture.getShape().overlaps(it.getShape())
                     ) overlapping.add(it)
                 }
 

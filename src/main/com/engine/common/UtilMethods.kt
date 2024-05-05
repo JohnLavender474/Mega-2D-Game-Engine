@@ -21,6 +21,31 @@ import kotlin.math.sqrt
 val random = Random(System.currentTimeMillis())
 
 /**
+ * Checks if all the conditions are true.
+ *
+ * @param conditions The conditions to check.
+ * @return `true` if all conditions are true, otherwise `false`.
+ */
+fun allAreTrue(vararg conditions: Boolean) = conditions.all { it }
+
+/**
+ * Checks if any of the conditions are true.
+ *
+ * @param conditions The conditions to check.
+ * @return `true` if any condition is true, otherwise `false`.
+ */
+fun anyIsTrue(vararg conditions: Boolean) = conditions.any { it }
+
+/**
+ * Checks if the specified amount of conditions are true.
+ *
+ * @param amount The amount of conditions to check.
+ * @param conditions The conditions to check.
+ * @return `true` if the specified amount of conditions are true, otherwise `false`.
+ */
+fun amountIsTrue(amount: Int, vararg conditions: Boolean) = conditions.count { it } == amount
+
+/**
  * Generates a random boolean value.
  *
  * @return A random boolean value.
@@ -112,7 +137,7 @@ fun getOverlapPushDirection(
 fun getSingleMostDirectionFromStartToTarget(start: Vector2, target: Vector2): Direction {
     val x = target.x - start.x
     val y = target.y - start.y
-    return if (abs(x.toDouble()) > abs(y.toDouble())) {
+    return if (abs(x) > abs(y)) {
         if (x > 0) Direction.RIGHT else Direction.LEFT
     } else {
         if (y > 0) Direction.UP else Direction.DOWN

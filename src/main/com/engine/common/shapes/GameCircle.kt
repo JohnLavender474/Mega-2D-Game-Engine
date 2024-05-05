@@ -36,7 +36,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
         }
     }
 
-    val libGdxCircle: Circle
+    val libgdxCircle: Circle
 
     override var originX = 0f
     override var originY = 0f
@@ -45,7 +45,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
     override var shapeType: ShapeType = Line
 
     init {
-        libGdxCircle = Circle(x, y, radius)
+        libgdxCircle = Circle(x, y, radius)
     }
 
     /** Creates a circle with the center at [0,0] and a radius of 0. */
@@ -79,7 +79,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      *
      * @return The radius of the circle.
      */
-    fun getRadius() = libGdxCircle.radius
+    fun getRadius() = libgdxCircle.radius
 
     /**
      * Sets the radius of the circle.
@@ -88,7 +88,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This circle.
      */
     fun setRadius(radius: Float): GameCircle {
-        libGdxCircle.radius = radius
+        libgdxCircle.radius = radius
         return this
     }
 
@@ -97,21 +97,21 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      *
      * @return The area of the circle.
      */
-    fun getArea() = libGdxCircle.area()
+    fun getArea() = libgdxCircle.area()
 
     /**
      * Gets the circumference of the circle.
      *
      * @return The circumference of the circle.
      */
-    fun getCircumference() = libGdxCircle.circumference()
+    fun getCircumference() = libgdxCircle.circumference()
 
     /**
      * Returns a copy of this circle.
      *
      * @return A copy of this circle.
      */
-    override fun copy() = GameCircle(libGdxCircle.x, libGdxCircle.y, libGdxCircle.radius)
+    override fun copy() = GameCircle(libgdxCircle.x, libgdxCircle.y, libgdxCircle.radius)
 
     /**
      * Checks if this circle overlaps with another [IGameShape2D]. If the other shape is a
@@ -123,8 +123,8 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      */
     override fun overlaps(other: IGameShape2D) =
         when (other) {
-            is GameCircle -> libGdxCircle.overlaps(other.libGdxCircle)
-            is GameRectangle -> Intersector.overlaps(libGdxCircle, other)
+            is GameCircle -> libgdxCircle.overlaps(other.libgdxCircle)
+            is GameRectangle -> Intersector.overlaps(libgdxCircle, other)
             is GameLine -> {
                 val (worldPoint1, worldPoint2) = other.getWorldPoints()
                 Intersector.intersectSegmentCircle(
@@ -132,6 +132,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
                 )
             }
 
+            is GamePolygon -> ShapeUtils.overlaps(this.libgdxCircle, other.libgdxPolygon)
             else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
         }
 
@@ -140,7 +141,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      *
      * @return The bounding rectangle of this circle.
      */
-    override fun getBoundingRectangle() = libGdxCircle.getBoundingRectangle()
+    override fun getBoundingRectangle() = libgdxCircle.getBoundingRectangle()
 
     /**
      * Sets the least x-coordinate.
@@ -149,7 +150,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     override fun setX(x: Float): IGameShape2D {
-        libGdxCircle.x = x - getRadius()
+        libgdxCircle.x = x - getRadius()
         return this
     }
 
@@ -160,7 +161,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     override fun setY(y: Float): IGameShape2D {
-        libGdxCircle.y = y - getRadius()
+        libgdxCircle.y = y - getRadius()
         return this
     }
 
@@ -169,14 +170,14 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      *
      * @return The least x-coordinatek.
      */
-    override fun getX() = libGdxCircle.x - getRadius()
+    override fun getX() = libgdxCircle.x - getRadius()
 
     /**
      * Gets the least y-coordinate.
      *
      * @return The least y-coordinate.
      */
-    override fun getY() = libGdxCircle.y - getRadius()
+    override fun getY() = libgdxCircle.y - getRadius()
 
     /**
      * Sets the x-coordinate of the right-most coordinate.
@@ -185,7 +186,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     fun setMaxX(maxX: Float): IGameShape2D {
-        libGdxCircle.x = maxX - getRadius()
+        libgdxCircle.x = maxX - getRadius()
         return this
     }
 
@@ -196,7 +197,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     fun setMaxY(maxY: Float): IGameShape2D {
-        libGdxCircle.y = maxY - getRadius()
+        libgdxCircle.y = maxY - getRadius()
         return this
     }
 
@@ -205,14 +206,14 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      *
      * @return The x-coordinate of the top-right corner coordinate.
      */
-    override fun getMaxX() = libGdxCircle.x + getRadius()
+    override fun getMaxX() = libgdxCircle.x + getRadius()
 
     /**
      * Gets the y-coordinate of the top-right corner coordinate of the bounding rectangle.
      *
      * @return The y-coordinate of the top-right corner coordinate.
      */
-    override fun getMaxY() = libGdxCircle.y + getRadius()
+    override fun getMaxY() = libgdxCircle.y + getRadius()
 
     /**
      * Gets the center of the circle.
@@ -237,7 +238,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     override fun setCenter(centerX: Float, centerY: Float): IGameShape2D {
-        libGdxCircle.setPosition(centerX, centerY)
+        libgdxCircle.setPosition(centerX, centerY)
         return this
     }
 
@@ -248,7 +249,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     fun setCenterX(centerX: Float): IGameShape2D {
-        libGdxCircle.x = centerX
+        libgdxCircle.x = centerX
         return this
     }
 
@@ -259,7 +260,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     fun setCenterY(centerY: Float): IGameShape2D {
-        libGdxCircle.y = centerY
+        libgdxCircle.y = centerY
         return this
     }
 
@@ -271,8 +272,8 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @return This shape.
      */
     override fun translation(translateX: Float, translateY: Float): IGameShape2D {
-        libGdxCircle.x += translateX
-        libGdxCircle.y += translateY
+        libgdxCircle.x += translateX
+        libgdxCircle.y += translateY
         return this
     }
 
@@ -282,7 +283,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @param point The point to check.
      * @return `true` if this circle contains the given point, `false` otherwise.
      */
-    override fun contains(point: Vector2) = libGdxCircle.contains(point)
+    override fun contains(point: Vector2) = libgdxCircle.contains(point)
 
     /**
      * Checks if this circle contains the given point.
@@ -291,7 +292,7 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
      * @param y The y-coordinate of the point to check.
      * @return `true` if this circle contains the given point, `false` otherwise.
      */
-    override fun contains(x: Float, y: Float) = libGdxCircle.contains(x, y)
+    override fun contains(x: Float, y: Float) = libgdxCircle.contains(x, y)
 
     /**
      * Draws this shape using the given [ShapeRenderer].
@@ -301,22 +302,22 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
     override fun draw(drawer: ShapeRenderer) {
         drawer.set(shapeType)
         drawer.color = color
-        drawer.circle(libGdxCircle.x, libGdxCircle.y, libGdxCircle.radius)
+        drawer.circle(libgdxCircle.x, libgdxCircle.y, libgdxCircle.radius)
     }
 
     /**
-     * Checks if this circle is equal to the given object. This checks if the composed [libGdxCircle]s
+     * Checks if this circle is equal to the given object. This checks if the composed [libgdxCircle]s
      * are equal.
      *
      * @param other The object to check for equality.
      * @return `true` if this circle is equal to the given object, `false` otherwise.
      */
-    override fun equals(other: Any?) = other is GameCircle && libGdxCircle == other.libGdxCircle
+    override fun equals(other: Any?) = other is GameCircle && libgdxCircle == other.libgdxCircle
 
     /**
-     * Gets the hash code of this circle. Returns the hashcode of [libGdxCircle].
+     * Gets the hash code of this circle. Returns the hashcode of [libgdxCircle].
      *
      * @return The hash code of this circle.
      */
-    override fun hashCode() = libGdxCircle.hashCode()
+    override fun hashCode() = libgdxCircle.hashCode()
 }

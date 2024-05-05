@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.Vector2
 import com.engine.drawables.sorting.DrawingPriority
 import com.engine.drawables.sorting.DrawingSection
 import com.engine.drawables.sorting.IComparableDrawable
@@ -61,6 +62,24 @@ class GameSprite(
         setTexture(texture)
         setPosition(x, y)
         setSize(width, height)
+    }
+
+    /**
+     * Returns the center of this [GameSprite].
+     *
+     * @return the center of this [GameSprite]
+     */
+    fun getCenter(): Vector2 {
+        return Vector2(x + width / 2, y + height / 2)
+    }
+
+    /**
+     * Gets the position of this [GameSprite].
+     *
+     * @return the position of this [GameSprite]
+     */
+    fun getPosition(): Vector2 {
+        return Vector2(x, y)
     }
 
     override fun draw(drawer: Batch) {

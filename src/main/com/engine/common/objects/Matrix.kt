@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.OrderedMap
 class MatrixIterator<T>(private val matrix: Matrix<T>) : MutableIterator<T> {
     var rowIndex = 0
         private set
-
     var columnIndex = -1
         private set
 
@@ -81,14 +80,16 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     }
 
     /**
-     * Returns the element at the specified row and column. This method throws an
-     * [IndexOutOfBoundsException] if the specified row or column is out of bounds. This method
-     * returns null if there is no element
+     * Returns the element at the specified row and column. This method throws an [IndexOutOfBoundsException] if the
+     * specified row or column is out of bounds. This method returns null if there is no element
+     *
+     * @return the element at the specified row and column, or null if there is no element
+     * @throws IndexOutOfBoundsException if the specified row or column is out of bounds
      */
     operator fun get(column: Int, row: Int): T? {
         // Indexes must be within bounds
-        if (isColumnOutOfBounds(column)) throw IndexOutOfBoundsException("Column index $column is out of shape")
-        if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of shape")
+        if (isColumnOutOfBounds(column)) throw IndexOutOfBoundsException("Column index $column is out of bounds")
+        if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of bounds")
 
         return matrixMap[column pairTo row]
     }
@@ -102,8 +103,8 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     operator fun set(column: Int, row: Int, element: T?): T? {
         // Indexes must be within bounds
         if (isColumnOutOfBounds(column))
-            throw IndexOutOfBoundsException("Column index $column is out of shape")
-        if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of shape")
+            throw IndexOutOfBoundsException("Column index $column is out of bounds")
+        if (isRowOutOfBounds(row)) throw IndexOutOfBoundsException("Row index $row is out of bounds")
 
         // Convert row and column index to index pair
         val indexPair = column pairTo row

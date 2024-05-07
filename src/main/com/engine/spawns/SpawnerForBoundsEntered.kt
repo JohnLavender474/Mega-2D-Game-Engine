@@ -1,17 +1,15 @@
 package com.engine.spawns
 
-import com.badlogic.gdx.math.Rectangle
-import com.engine.common.GameLogger
-import com.engine.common.shapes.GameRectangle
+import com.engine.common.shapes.IGameShape2D
 
 /**
- * Spawns an entity when the bounds of this spawner and the bounds of another object overlap for the
+ * Spawns an entity when the shape of this spawner and the shape of another object overlap for the
  * first time.
  */
 class SpawnerForBoundsEntered(
     private val spawnSupplier: () -> Spawn,
-    private val thisBounds: () -> GameRectangle,
-    private val otherBounds: () -> GameRectangle,
+    private val thisBounds: () -> IGameShape2D,
+    private val otherBounds: () -> IGameShape2D,
     shouldBeCulled: (Float) -> Boolean = { false },
     onCull: () -> Unit = {},
     respawnable: Boolean = true
@@ -27,20 +25,16 @@ class SpawnerForBoundsEntered(
         if (!super.test(delta)) return false
 
         val wasEntered = isEntered
-        isEntered = thisBounds().overlaps(otherBounds() as Rectangle)
-        if (!wasEntered && isEntered) {
-            spawn = spawnSupplier()
-            GameLogger.debug(TAG, "test(): Spawning: $spawn")
-        }
+        isEntered = thisBounds().overlaps(otherBounds())
+        if (!wasEntered && isEntered) spawn = spawnSupplier()
 
         return spawned
     }
 
     override fun reset() {
         super.reset()
-        GameLogger.debug(TAG, "reset(): Resetting spawner: $this")
         isEntered = false
     }
 
-    override fun toString() = "SpawnerForBoundsEntered"
+    override fun toString() = TAG
 }

@@ -60,6 +60,14 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
     constructor(center: Vector2, radius: Float) : this(center.x, center.y, radius)
 
     /**
+     * Creates a game circle with the given [Circle].
+     *
+     * @param circle The circle to copy.
+     * @return A new [GameCircle] with the given [Circle].
+     */
+    constructor(circle: Circle) : this(circle.x, circle.y, circle.radius)
+
+    /**
      * Returns a new [GameCircle] with the given cardinal rotation.
      *
      * @param direction The cardinal rotation to rotate this shape by.

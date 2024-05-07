@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Vector2
-import com.engine.common.enums.Direction
 import com.badlogic.gdx.utils.FloatArray
+import com.engine.common.enums.Direction
+import com.engine.common.objects.Matrix
+import kotlin.math.roundToInt
 
 /**
  * A polygon is defined as vertices that may or may not create a connected shape.
@@ -109,8 +111,10 @@ class GamePolygon() : IGameShape2D {
      *
      * @param polygon The polygon from which to copy
      */
-    constructor(polygon: GamePolygon): this() {
+    constructor(polygon: GamePolygon) : this() {
         localVertices = FloatArray(polygon.localVertices)
+        setX(polygon.getX())
+        setY(polygon.getY())
         scaleX = polygon.scaleX
         scaleY = polygon.scaleY
         originX = polygon.originX
@@ -126,13 +130,48 @@ class GamePolygon() : IGameShape2D {
      *
      * @param polygon The polygon from which to copy
      */
-    constructor(polygon: Polygon): this() {
+    constructor(polygon: Polygon) : this() {
         localVertices = FloatArray(polygon.vertices)
+        setX(polygon.x)
+        setY(polygon.y)
         scaleX = polygon.scaleX
         scaleY = polygon.scaleY
         originX = polygon.originX
         originY = polygon.originY
         rotation = polygon.rotation
+    }
+
+    /**
+     * Sets the local vertices of the polygon to be the same as the given vertices. The vertices are copied to prevent
+     * external modification. The scale, origin, and rotation are also set to values as the given polygon.
+     *
+     * @param polygon The polygon from which to copy
+     * @return This polygon for chaining
+     */
+    fun set(polygon: GamePolygon): GamePolygon {
+        color = polygon.color
+        shapeType = polygon.shapeType
+        return set(polygon.libgdxPolygon)
+    }
+
+    /**
+     * Sets the local vertices of the polygon to be the same as the given polygon. The local vertices are copied to
+     * prevent external modification. The scale, origin, and rotation are also set to the same values as the given
+     * polygon.
+     *
+     * @param polygon The polygon from which to copy
+     * @return This polygon for chaining
+     */
+    fun set(polygon: Polygon): GamePolygon {
+        localVertices = FloatArray(polygon.vertices)
+        setX(polygon.x)
+        setY(polygon.y)
+        scaleX = polygon.scaleX
+        scaleY = polygon.scaleY
+        originX = polygon.originX
+        originY = polygon.originY
+        rotation = polygon.rotation
+        return this
     }
 
     override fun overlaps(other: IGameShape2D): Boolean {
@@ -271,5 +310,7 @@ class GamePolygon() : IGameShape2D {
      *
      * @param centroid The vector to hold the centroid value
      */
-    fun getCentroid(centroid: Vector2) = libgdxPolygon.getCentroid(centroid)
+    fun getCentroid(centroid: Vector2): Vector2 = libgdxPolygon.getCentroid(centroid)
+
+    override fun toString() = "GamePolygon(vertices=$transformedVertices)"
 }

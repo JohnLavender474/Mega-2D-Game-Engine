@@ -150,14 +150,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      */
     fun getVertices(): FloatArray {
         val vertices = FloatArray(8)
-        vertices[0] = x
-        vertices[1] = y
-        vertices[2] = x + width
-        vertices[3] = y
-        vertices[4] = x + width
-        vertices[5] = y + height
-        vertices[6] = x
-        vertices[7] = y + height
+        vertices.addAll(x, y, x + width, y, x + width, y + height, x, y + height)
         return vertices
     }
 

@@ -1,6 +1,7 @@
 package com.engine.controller.polling
 
 import com.badlogic.gdx.utils.Array
+import com.engine.common.extensions.toGdxArray
 import com.engine.common.interfaces.IActivatable
 import com.engine.controller.buttons.ButtonStatus
 

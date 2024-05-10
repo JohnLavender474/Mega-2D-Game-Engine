@@ -45,6 +45,37 @@ class BitmapFontHandle(
     private var font: BitmapFont = BitmapFont()
     private var initialized = false
 
+    /**
+     * A constructor that takes a string for the text. The font size is given in pixels. The text is centered
+     * by default on the position by default. The font can be initialized with a custom font source. The font
+     * source is a path to a .ttf file. If the font source is null, then the standard font for [BitmapFont]
+     * is used. The font source can either be loaded by calling [init], or else the source will be lazily
+     * loaded the first time [draw] is called. If the font has already been initialized, then calling [init]
+     * does nothing.
+     *
+     * @param text the text
+     * @param fontSize the size in pixels of the font. The default is 10. This is ignored if the font
+     *   source is null.
+     * @param position the position of the text
+     * @param centerX whether the text should be centered on the x position or instead the x placed at
+     *   the left; default is true
+     * @param centerY whether the text should be centered on the y position or instead placed at the
+     *   bottom; default is true
+     * @param fontSource the source of the font; if this is null, then the standard font for
+     *   [BitmapFont] is used; default is null
+     * @param priority the priority of the drawable; default is [DrawingPriority] with section [DrawingSection.FOREGROUND]
+     *   and layer 0
+     */
+    constructor(
+        text: String,
+        fontSize: Int = 10,
+        position: Vector2 = Vector2(),
+        centerX: Boolean = true,
+        centerY: Boolean = true,
+        fontSource: String? = null,
+        priority: DrawingPriority = DrawingPriority(DrawingSection.FOREGROUND, 0),
+    ) : this({ text }, fontSize, position, centerX, centerY, fontSource, priority)
+
     override fun init() {
         initialized = true
         if (fontSource == null) return

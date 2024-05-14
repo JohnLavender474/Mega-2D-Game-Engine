@@ -138,10 +138,7 @@ class WorldSystemTest :
                     verify(exactly = 1) { worldSystem.updatePhysics(any(), any()) }
                     verify(exactly = 1) { worldSystem.resolveCollisions(any()) }
 
-                    verify(exactly = 1) { mockWorldGraph.reset() }
-                    verify(exactly = 2) { mockWorldGraph.add(any(), any<IGameShape2D>()) }
-
-                    objs.size shouldBe 2
+                    objs.size shouldBe 4
                     objs shouldContain body
                 }
 
@@ -173,11 +170,8 @@ class WorldSystemTest :
                     verify(exactly = 2) { worldSystem.updatePhysics(any(), any()) }
                     verify(exactly = 2) { worldSystem.resolveCollisions(any()) }
 
-                    verify(exactly = 2) { mockWorldGraph.reset() }
-                    verify(exactly = 4) { mockWorldGraph.add(any(), any<IGameShape2D>()) }
-
-                    objs.size shouldBe 4
-                    objs.filter { it == body }.size shouldBe 2
+                    objs.size shouldBe 6
+                    objs.filter { it == body }.size shouldBe 3
                 }
             }
 

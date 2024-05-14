@@ -10,7 +10,20 @@ abstract class BaseScreen(
     override val properties: Properties = Properties()
 ) : IScreen {
 
-    override fun show() {}
+    protected open var initialized = false
+
+    override fun init() {}
+
+    /**
+     * Shows the screen. If [initialized] is false, then [init] will be called and [initialized] will be set to true.
+     * If [initialized] is true, then [init] is not called.
+     */
+    override fun show() {
+        if (!initialized) {
+            init()
+            initialized = true
+        }
+    }
 
     override fun render(delta: Float) {}
 

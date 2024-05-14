@@ -2,6 +2,7 @@ package com.engine.screens
 
 import com.badlogic.gdx.Screen
 import com.engine.common.interfaces.IPropertizable
+import com.engine.common.interfaces.Initializable
 import com.engine.events.IEventListener
 
 /**
@@ -11,4 +12,4 @@ import com.engine.events.IEventListener
  * @see Screen
  * @see IEventListener
  */
-interface IScreen : Screen, IEventListener, IPropertizable
+interface IScreen : Screen, Initializable, IEventListener, IPropertizable

@@ -52,7 +52,7 @@ class SpriteMatrix(
     init {
         for (x in 0 until columns) {
             for (y in 0 until rows) {
-                val sprite = GameSprite(model, priority)
+                val sprite = GameSprite(model, priority.copy())
                 sprite.setSize(modelWidth, modelHeight)
                 sprite.setPosition(x * modelWidth, y * modelHeight)
                 this[x, y] = sprite

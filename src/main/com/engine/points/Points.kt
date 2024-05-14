@@ -39,4 +39,20 @@ class Points(var min: Int, var max: Int, current: Int) {
 
     /** Sets the current stat to the min stat. */
     fun setToMin() = set(min)
+
+    /**
+     * Returns true if the current stat is equal to the min stat. This method returns true if the current stat
+     * is equal to the min stat, false otherwise.
+     *
+     * @return True if the current stat is equal to the min stat, false otherwise.
+     */
+    fun isMin() = current == min
+
+    /**
+     * Returns true if the current stat is equal to the max stat. This method returns true if the current stat
+     * is equal to the max stat, false otherwise.
+     *
+     * @return True if the current stat is equal to the max stat, false otherwise.
+     */
+    fun isMax() = current == max
 }

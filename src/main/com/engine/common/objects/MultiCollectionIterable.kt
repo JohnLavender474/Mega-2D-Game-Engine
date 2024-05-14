@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array
  *
  * @param multiCollectionIterable A MultiCollectionIterable containing the collections to iterate over.
  */
-class MultiCollectionIterator<T>(internal val multiCollectionIterable: MultiCollectionIterable<T>) : Iterator<T> {
+class MultiCollectionIterator<T>(private val multiCollectionIterable: MultiCollectionIterable<T>) : Iterator<T> {
 
     private var outerIndex = 0
     private var currentInnerIterator: Iterator<T>? = null
@@ -61,4 +61,23 @@ class MultiCollectionIterable<T>(internal val iterables: Array<Iterable<T>>) : I
      * @return A MultiCollectionIterator instance.
      */
     override fun iterator() = MultiCollectionIterator(this)
+
+    /**
+     * Iterates over the collections and executes the given action for each element. The action receives the outer index,
+     * inner index, and the value of the element. The outer index is the index of the value in the entire sequence of
+     * elements, and the inner index is the index of the value in the current collection.
+     *
+     * @param action The action to execute for each element.
+     */
+    fun forEach(action: (outerIndex: Int, innerIndex: Int, value: T) -> Unit) {
+        var outerIndex = 0
+        iterables.forEach {
+            var innerIndex = 0
+            it.forEach { value ->
+                action(outerIndex, innerIndex, value)
+                innerIndex++
+                outerIndex++
+            }
+        }
+    }
 }

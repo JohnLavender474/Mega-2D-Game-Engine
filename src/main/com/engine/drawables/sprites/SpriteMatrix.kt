@@ -2,6 +2,7 @@ package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.Vector2
 import com.engine.common.objects.Matrix
 import com.engine.drawables.IDrawable
 import com.engine.drawables.sorting.DrawingPriority
@@ -80,6 +81,15 @@ class SpriteMatrix(
     fun translate(x: Float, y: Float) = forEach { _, _, sprite ->
         (sprite as GameSprite).translate(x, y)
     }
+
+    /**
+     * Sets the position of the matrix. The position of the first sprite is set to the specified
+     * position. The position of the other sprites are set relative to the first sprite based on their
+     * x and y coordinates and also the model width and height.
+     *
+     * @param startPosition The position of the first sprite.
+     */
+    fun setPosition(startPosition: Vector2) = setPosition(startPosition.x, startPosition.y)
 
     /**
      * Sets the position of the matrix. The position of the first sprite is set to the specified

@@ -7,6 +7,13 @@ import com.engine.common.enums.Position
 /**
  * Sets the position of this sprite to the specified position.
  *
+ * @param position the position to set
+ */
+fun Sprite.setPosition(position: Vector2) = setPosition(position.x, position.y)
+
+/**
+ * Sets the position of this sprite to the specified position.
+ *
  * @param p the position to set
  * @param pos the position to set this sprite to
  */

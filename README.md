@@ -4,6 +4,9 @@
 
 Welcome to the 2D Game Engine, a Kotlin-based game development library built on the popular LibGDX framework. This
 library follows an Entity-Component-System (ECS) design, providing extensibility and flexibility for game development.
+Although this library is compatible with a Java-based game, it is HIGHLY recommended that you use Kotlin instead for
+your game development. This library is designed with Kotlin in mind foremost. No guarantee is made as to the compatibility
+and convenience of this library when used in a Java game project.
 
 ## Getting Started
 

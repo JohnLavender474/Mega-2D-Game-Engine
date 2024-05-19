@@ -60,7 +60,8 @@ abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props
      *
      * @throws IllegalStateException if the [tmxMapSource] is not set
      */
-    override fun show() =
+    override fun show() {
+        super.show()
         tmxMapSource?.let {
             tiledMapLoadResult = TiledMapLevelLoader.load(it)
             GameLogger.debug(TAG, "show(): tiledMapLoadResult = $tiledMapLoadResult")
@@ -70,6 +71,7 @@ abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props
             buildLevel(returnProps)
             tiledMapLevelRenderer = TiledMapLevelRenderer(tiledMapLoadResult!!.map, game.batch)
         } ?: throw IllegalStateException("Tmx map source must be set before calling show()")
+    }
 
     /** Disposes the tiled map. */
     override fun dispose() {

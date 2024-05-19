@@ -16,10 +16,14 @@ import com.engine.events.IEventsManager
 import com.engine.screens.IScreen
 
 /**
- * Implementation of [IGame2D] that also derives [Game].
+ * Implementation of [IGame2D] that also derives [Game]. The following fields must be initialized in the overriding
+ * class's [create] method: [shapeRenderer], [batch], [buttons], [controllerPoller], [assMan], [eventsMan], and
+ * [engine]. These fields use the lateinit keyword to avoid nullability and to allow them to be initialized in
+ * the [create] method rather than in the constructor.
  *
- * @see IGame2D
- * @see Game
+ * @see IGame2D the interface for the game object; if this implementation does not suit your needs, then you can
+ * opt to implement the interface instead in your own class, or forego this entirely and use the LibGDX [Game] class
+ * @see Game the LibGDX game class
  */
 abstract class Game2D : IGame2D, Game() {
 
@@ -34,17 +38,14 @@ abstract class Game2D : IGame2D, Game() {
     override lateinit var assMan: AssetManager
     override lateinit var eventsMan: IEventsManager
     override lateinit var engine: IGameEngine
-
-    override var paused = false
-
     override val screens = ObjectMap<String, IScreen>()
     override val viewports = ObjectMap<String, Viewport>()
     override val currentScreen: IScreen?
         get() = currentScreenKey?.let { screens[it] }
-
     override val properties = Properties()
+    override var paused = false
 
-    var currentScreenKey: String? = null
+    private var currentScreenKey: String? = null
 
     /**
      * Hides the old screen and removes it from the events manager. After that, if there is a screen

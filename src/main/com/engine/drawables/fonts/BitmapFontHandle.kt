@@ -36,12 +36,12 @@ class BitmapFontHandle(
     val position: Vector2 = Vector2(),
     var centerX: Boolean = true,
     var centerY: Boolean = true,
+    var hidden: Boolean = false,
     private val fontSource: String? = null,
     override val priority: DrawingPriority = DrawingPriority(DrawingSection.FOREGROUND, 0),
 ) : Initializable, IComparableDrawable<Batch> {
 
     private val layout: GlyphLayout = GlyphLayout()
-
     private var font: BitmapFont = BitmapFont()
     private var initialized = false
 
@@ -72,9 +72,10 @@ class BitmapFontHandle(
         position: Vector2 = Vector2(),
         centerX: Boolean = true,
         centerY: Boolean = true,
+        hidden: Boolean = false,
         fontSource: String? = null,
         priority: DrawingPriority = DrawingPriority(DrawingSection.FOREGROUND, 0),
-    ) : this({ text }, fontSize, position, centerX, centerY, fontSource, priority)
+    ) : this({ text }, fontSize, position, centerX, centerY, hidden, fontSource, priority)
 
     override fun init() {
         initialized = true
@@ -90,6 +91,7 @@ class BitmapFontHandle(
 
     override fun draw(drawer: Batch) {
         if (!initialized) init()
+        if (hidden) return
 
         layout.setText(font, textSupplier())
         val x: Float = if (centerX) position.x - layout.width / 2f else position.x

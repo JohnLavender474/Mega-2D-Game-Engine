@@ -52,22 +52,6 @@ class AnimationsComponent(
     ) : this(entity, { spriteSupplier.get() }, animator)
 
     /**
-     * Convenience constructor if using Java [Supplier] to supply the sprites.
-     *
-     * @param entity the entity that contains the sprite to animate
-     * @param animators the animators that are used to animate the respective sprites
-     */
-    constructor(
-        entity: IGameEntity,
-        animators: Array<Pair<Supplier<GameSprite>, IAnimator>> = Array()
-    ) : this(
-        entity,
-        Array<Pair<() -> GameSprite, IAnimator>>().apply {
-            animators.forEach { add(Pair(it.first::get, it.second)) }
-        }
-    )
-
-    /**
      * Convenience constructor if the entity is a [ISpritesEntity] where only the first sprite needs to
      * be animated. The first sprite is [ISpritesEntity.firstSprite] which CANNOT BE NULL. This sprite
      * is animated using the specified animator.

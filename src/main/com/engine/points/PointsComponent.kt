@@ -19,25 +19,6 @@ class PointsComponent(
     /**
      * The points component. Contains all the points for an entity.
      *
-     * @param entity The entity.
-     * @param pointsMap The pointsMap.
-     * @param pointsListeners The pointsListeners.
-     */
-    constructor(
-        entity: IGameEntity,
-        pointsMap: ObjectMap<Any, Points>,
-        pointsListeners: ObjectMap<Any, Consumer<Points>>
-    ) : this(
-        entity,
-        pointsMap,
-        ObjectMap<Any, (Points) -> Unit>().apply {
-            pointsListeners.forEach { put(it.key, it.value::accept) }
-        }
-    )
-
-    /**
-     * The points component. Contains all the points for an entity.
-     *
      * @param _points The pointsMap.
      */
     constructor(
@@ -110,6 +91,14 @@ class PointsComponent(
      * @return The previous listener mapped to the given key if any.
      */
     fun putListener(key: Any, listener: (Points) -> Unit) = pointsListeners.put(key, listener)
+
+    /**
+     * Adds the given listener to the [Points] mapped to the given key.
+     *
+     * @param key The key of the [Points].
+     * @param listener The listener.
+     */
+    fun putListener(key: Any, listener: Consumer<Points>) = putListener(key, listener::accept)
 
     /**
      * Removes the listener mapped to the given key.

@@ -41,8 +41,8 @@ class EventsManager(
      * @param debugListenerFilter The filter for [IEventListener]s to debug.
      */
     constructor(
-        debugEventFilter: Predicate<Event> = Predicate<Event> { true },
-        debugListenerFilter: Predicate<IEventListener> = Predicate<IEventListener> { true }
+        debugEventFilter: Predicate<Event>,
+        debugListenerFilter: Predicate<IEventListener>
     ) : this(
         { debugEventFilter.test(it) },
         { debugListenerFilter.test(it) }

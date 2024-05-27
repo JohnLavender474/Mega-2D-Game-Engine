@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedMap
+import java.util.function.Consumer
 
 /**
  * This iterator iterates through the elements of the Matrix beginning at index [0, 0] and moving to
@@ -190,6 +191,14 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     fun forEach(action: ((Int, Int, T?) -> Unit)) {
         for (x in 0 until columns) for (y in 0 until rows) action(x, y, this[x, y])
     }
+
+    /**
+     * Convenience method to apply the action to each element of the matrix including null elements.
+     *
+     * @param action the action to apply to each element
+     * @see forEach
+     */
+    fun forEach(action: Consumer<Triple<Int, Int, T?>>) = forEach { x, y, t -> action.accept(Triple(x, y, t)) }
 
     override fun contains(element: T) = elementToIndexMap.containsKey(element)
 

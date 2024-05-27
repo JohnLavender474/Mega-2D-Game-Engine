@@ -3,6 +3,7 @@ package com.engine.audio
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
+import java.util.function.Consumer
 
 /**
  * A [GameSystem] that processes [AudioComponent]s. It handles sounds and music requested to be
@@ -27,6 +28,29 @@ class AudioSystem(
     var stopSoundsWhenOff: Boolean = true,
     var stopMusicWhenOff: Boolean = true
 ) : GameSystem(AudioComponent::class) {
+
+    /**
+     * Convenience constructor that takes [Consumer]s for sound and music requests and stoppers.
+     */
+    constructor(
+        soundRequestProcessor: Consumer<SoundRequest>,
+        musicRequestProcessor: Consumer<MusicRequest>,
+        soundStopper: Consumer<Any>,
+        musicStopper: Consumer<Any>,
+        playSoundsWhenOff: Boolean = false,
+        playMusicWhenOff: Boolean = false,
+        stopSoundsWhenOff: Boolean = true,
+        stopMusicWhenOff: Boolean = true
+    ) : this(
+        { soundRequestProcessor.accept(it) },
+        { musicRequestProcessor.accept(it) },
+        { soundStopper.accept(it) },
+        { musicStopper.accept(it) },
+        playSoundsWhenOff,
+        playMusicWhenOff,
+        stopSoundsWhenOff,
+        stopMusicWhenOff
+    )
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         entities.forEach { entity ->

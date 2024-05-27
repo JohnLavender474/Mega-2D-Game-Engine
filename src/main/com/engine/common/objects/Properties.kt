@@ -72,6 +72,15 @@ class Properties : ICopyable<Properties> {
     fun <T : Any> get(key: Any, type: KClass<T>) = props.get(key)?.let { type.cast(it) }
 
     /**
+     * Gets a property and casts it.
+     *
+     * @param key The key of the property.
+     * @param type The type to cast the property to.
+     * @return The property cast to the given type.
+     */
+    fun <T : Any> get(key: Any, type: Class<T>) = props.get(key)?.let { type.cast(it) }
+
+    /**
      * Puts a property into this [Properties] instance.
      *
      * @param key The key of the property.

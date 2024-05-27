@@ -7,8 +7,7 @@ import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.FloatArray
 import com.engine.common.enums.Direction
-import com.engine.common.objects.Matrix
-import kotlin.math.roundToInt
+import java.util.function.BiPredicate
 
 /**
  * A polygon is defined as vertices that may or may not create a connected shape.
@@ -29,6 +28,19 @@ class GamePolygon() : IGameShape2D {
          */
         fun setOverlapExtension(overlapExtension: (GamePolygon, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
+        }
+
+        /**
+         * Sets the overlap extension function to the given function. This function will be called when
+         * [GameRectangle.overlaps] is called with a [IGameShape2D] that is not a [GameRectangle] or
+         * [GameLine]. This function should return true if the given [IGameShape2D] overlaps this
+         * [GameRectangle] and false otherwise.
+         *
+         * @param overlapExtension The function to call when [GameRectangle.overlaps] is called with a
+         *  [IGameShape2D] that is not a [GameRectangle] or [GameLine].
+         */
+        fun setOverlapExtension(overlapExtension: BiPredicate<GamePolygon, IGameShape2D>) {
+            setOverlapExtension { polygon, shape -> overlapExtension.test(polygon, shape) }
         }
     }
 

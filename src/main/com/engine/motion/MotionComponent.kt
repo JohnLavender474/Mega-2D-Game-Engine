@@ -6,6 +6,7 @@ import com.engine.common.interfaces.Resettable
 import com.engine.common.shapes.IGameShape2D
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
+import java.util.function.BiConsumer
 
 /**
  * A component that holds a list of [IMotion]s and a list of functions that are called when the
@@ -25,6 +26,24 @@ class MotionComponent(override val entity: IGameEntity) : IGameComponent {
         val function: (Vector2, Float) -> Unit,
         var onReset: (() -> Unit)? = null
     ) : Resettable {
+
+        /**
+         * A definition of a [IMotion] and function pair. The function is called when the [IMotion] is
+         * updated and a value has been obtained from [IMotion.getMotionValue].
+         *
+         * @param motion the [IMotion]
+         * @param function the function
+         * @param onReset the function to call when the motion is reset
+         */
+        constructor(
+            motion: IMotion,
+            function: BiConsumer<Vector2, Float>,
+            onReset: Runnable? = null
+        ) : this(
+            motion,
+            { vector, value -> function.accept(vector, value) },
+            { onReset?.run() }
+        )
 
         override fun reset() {
             motion.reset()

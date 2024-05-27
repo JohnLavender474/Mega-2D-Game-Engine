@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.OrderedSet
 import com.engine.common.GameLogger
 import com.engine.common.extensions.putIfAbsentAndGet
 import java.util.*
+import java.util.function.Predicate
 
 /**
  * A manager for [Event]s and [IEventListener]s. [Event]s are submitted to the [EventsManager] and
@@ -32,6 +33,20 @@ class EventsManager(
         private set
 
     private var setToClearListeners = false
+
+    /**
+     * Creates an [EventsManager] with the given [debugEventFilter] and [debugListenerFilter].
+     *
+     * @param debugEventFilter The filter for [Event]s to debug.
+     * @param debugListenerFilter The filter for [IEventListener]s to debug.
+     */
+    constructor(
+        debugEventFilter: Predicate<Event> = Predicate<Event> { true },
+        debugListenerFilter: Predicate<IEventListener> = Predicate<IEventListener> { true }
+    ) : this(
+        { debugEventFilter.test(it) },
+        { debugListenerFilter.test(it) }
+    )
 
     /**
      * Submits an [Event] to this [EventsManager]. If the [EventsManager] is not running, the [Event]

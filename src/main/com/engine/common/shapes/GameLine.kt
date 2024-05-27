@@ -11,6 +11,7 @@ import com.engine.common.enums.Direction
 import com.engine.common.extensions.gdxArrayOf
 import com.engine.common.interfaces.IRotatable
 import com.engine.common.interfaces.IScalable
+import java.util.function.BiPredicate
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -34,6 +35,16 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
          */
         fun setOverlapExtension(overlapExtension: (GameLine, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
+        }
+
+        /**
+         * Sets the overlap extension function to the given function. This function will be called when
+         * [GameLine.overlaps] is called with a [IGameShape2D] that is not a [GameRectangle] or [GameLine].
+         *
+         * @param overlapExtension The function to call when [GameLine.overlaps] is called with a
+         */
+        fun setOverlapExtension(overlapExtension: BiPredicate<GameLine, IGameShape2D>) {
+            OVERLAP_EXTENSION = overlapExtension::test
         }
     }
 

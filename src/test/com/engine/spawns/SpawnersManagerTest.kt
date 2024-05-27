@@ -109,8 +109,8 @@ class SpawnsManagerTest :
                 verify(exactly = 1) { spawner2.get() }
                 verify(exactly = 1) { spawner3.get() }
 
-                spawnsManager.spawns.size shouldBe 3
-                spawnsManager.spawners.size shouldBe 3
+                spawnsManager._spawns.size shouldBe 3
+                spawnsManager._spawners.size shouldBe 3
 
                 spawner1.spawned = true
                 spawner2.spawned = true
@@ -126,8 +126,8 @@ class SpawnsManagerTest :
                 verify(exactly = 1) { spawner2.get() }
                 verify(exactly = 1) { spawner3.get() }
 
-                spawnsManager.spawns.size shouldBe 3
-                spawnsManager.spawners.size shouldBe 3
+                spawnsManager._spawns.size shouldBe 3
+                spawnsManager._spawners.size shouldBe 3
             }
 
             it("should re-add spawns") {
@@ -150,8 +150,8 @@ class SpawnsManagerTest :
                 verify(exactly = 1) { spawner2.get() }
                 verify(exactly = 1) { spawner3.get() }
 
-                spawnsManager.spawns.size shouldBe 3
-                spawnsManager.spawners.size shouldBe 3
+                spawnsManager._spawns.size shouldBe 3
+                spawnsManager._spawners.size shouldBe 3
 
                 spawnsManager.update(deltaTime)
 
@@ -163,8 +163,8 @@ class SpawnsManagerTest :
                 verify(exactly = 2) { spawner2.get() }
                 verify(exactly = 2) { spawner3.get() }
 
-                spawnsManager.spawns.size shouldBe 6
-                spawnsManager.spawners.size shouldBe 3
+                spawnsManager._spawns.size shouldBe 6
+                spawnsManager._spawners.size shouldBe 3
             }
 
             it("should reset correctly") {
@@ -189,8 +189,8 @@ class SpawnsManagerTest :
 
                 spawnsManager.reset()
 
-                spawnsManager.spawns.size shouldBe 0
-                spawnsManager.spawners.size shouldBe 0
+                spawnsManager._spawns.size shouldBe 0
+                spawnsManager._spawners.size shouldBe 0
             }
         }
     })

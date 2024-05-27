@@ -1,5 +1,7 @@
 package com.engine.cullables
 
+import java.util.function.Predicate
+
 /**
  * A convenience implementation of [ICullable].
  *
@@ -10,6 +12,20 @@ class Cullable(
     private val shouldBeCulledFunction: (Float) -> Boolean,
     private val resetFunction: () -> Unit
 ) : ICullable {
+
+    /**
+     * Constructor that takes lambdas for each of the cullable methods.
+     *
+     * @param shouldBeCulledFunction Lambda to be called when the object should be culled.
+     * @param resetFunction Lambda to be called when the object should be reset.
+     */
+    constructor(
+        shouldBeCulledFunction: Predicate<Float>,
+        resetFunction: Runnable
+    ) : this(
+        shouldBeCulledFunction::test,
+        resetFunction::run
+    )
 
     override fun shouldBeCulled(delta: Float) = shouldBeCulledFunction(delta)
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array
 import com.engine.common.extensions.toGdxArray
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
+import java.util.function.Supplier
 
 /**
  * A [DrawableShapesComponent] is a [IGameComponent] that contains an of suppliers for
@@ -33,6 +34,28 @@ class DrawableShapesComponent(
         entity: IGameEntity,
         vararg shapeSuppliers: () -> IDrawableShape?
     ) : this(entity, Array(shapeSuppliers))
+
+    /**
+     * Creates a [DrawableShapesComponent] with the given [IDrawableShape] suppliers.
+     *
+     * @param entity the [IGameEntity] that this [DrawableShapesComponent] belongs to
+     * @param prodShapeSuppliers the suppliers for [IDrawableShape]s that can be drawn in the production
+     *  release of the game
+     * @param debugShapeSuppliers the suppliers for [IDrawableShape]s that can be drawn in the debug
+     *  release of the game
+     * @param debug whether the debug shapes should be drawn when the game is in debug mode
+     */
+    constructor(
+        entity: IGameEntity,
+        prodShapeSuppliers: Array<Supplier<IDrawableShape?>> = Array(),
+        debugShapeSuppliers: Array<Supplier<IDrawableShape?>> = Array(),
+        debug: Boolean = false
+    ) : this(
+        entity,
+        prodShapeSuppliers.map { it::get }.toGdxArray(),
+        debugShapeSuppliers.map { it::get }.toGdxArray(),
+        debug
+    )
 
     /**
      * Creates a [DrawableShapesComponent] with the given [IDrawableShape]s.

@@ -5,13 +5,14 @@ import com.badlogic.gdx.graphics.Color.RED
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
-import com.badlogic.gdx.utils.FloatArray
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.FloatArray
 import com.engine.common.enums.Direction
 import com.engine.common.enums.Position
 import com.engine.common.extensions.gdxArrayOf
+import java.util.function.BiPredicate
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -38,6 +39,19 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
          */
         fun setOverlapExtension(overlapExtension: (GameRectangle, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
+        }
+
+        /**
+         * Sets the overlap extension function to the given function. This function will be called when
+         * [GameRectangle.overlaps] is called with a [IGameShape2D] that is not a [GameRectangle] or
+         * [GameLine]. This function should return true if the given [IGameShape2D] overlaps this
+         * [GameRectangle] and false otherwise.
+         *
+         * @param overlapExtension The function to call when [GameRectangle.overlaps] is called with a
+         *  [IGameShape2D] that is not a [GameRectangle] or [GameLine].
+         */
+        fun setOverlapExtension(overlapExtension: BiPredicate<GameRectangle, IGameShape2D>) {
+            setOverlapExtension { rect, shape -> overlapExtension.test(rect, shape) }
         }
 
         /**

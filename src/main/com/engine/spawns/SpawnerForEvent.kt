@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectSet
 import com.engine.events.Event
 import com.engine.events.IEventListener
+import java.util.function.Predicate
+import java.util.function.Supplier
 
 /** Spawns an entity when an event is fired. */
 class SpawnerForEvent(
@@ -16,6 +18,32 @@ class SpawnerForEvent(
 ) : Spawner(shouldBeCulled, onCull, respawnable), IEventListener {
 
     private val events = Array<Event>()
+
+    /**
+     * Constructor for a [SpawnerForEvent].
+     *
+     * @param predicate the predicate to determine if the event should spawn
+     * @param spawnSupplier the supplier for the spawn
+     * @param eventKeyMask the set of event keys to listen for
+     * @param shouldBeCulled the predicate to determine if the spawn should be culled
+     * @param onCull the action to take when the spawn is culled
+     * @param respawnable if the spawner should be considered again for spawning after the first spawn
+     */
+    constructor(
+        predicate: Predicate<Event>,
+        spawnSupplier: Supplier<Spawn>,
+        eventKeyMask: ObjectSet<Any> = ObjectSet(),
+        shouldBeCulled: Supplier<Boolean> = Supplier { false },
+        onCull: Runnable = Runnable {},
+        respawnable: Boolean = true
+    ) : this(
+        { predicate.test(it) },
+        { spawnSupplier.get() },
+        eventKeyMask,
+        { shouldBeCulled.get() },
+        { onCull.run() },
+        respawnable
+    )
 
     override fun test(delta: Float): Boolean {
         if (!super.test(delta)) return false

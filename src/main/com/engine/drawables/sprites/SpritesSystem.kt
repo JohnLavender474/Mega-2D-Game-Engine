@@ -3,6 +3,7 @@ package com.engine.drawables.sprites
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
+import java.util.function.Consumer
 
 /**
  * A system that can be used to gather the sprites to be rendered. This system will collect the sprites
@@ -12,6 +13,13 @@ import com.engine.systems.GameSystem
  */
 open class SpritesSystem(protected open val spritesCollector: (GameSprite) -> Unit) :
     GameSystem(SpritesComponent::class) {
+
+    /**
+     * Creates a [SpritesSystem] with the given [spritesCollector].
+     *
+     * @param spritesCollector the function that should collect the sprites to be drawn
+     */
+    constructor(spritesCollector: Consumer<GameSprite>, ) : this(spritesCollector::accept)
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return

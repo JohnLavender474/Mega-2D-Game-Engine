@@ -19,8 +19,8 @@ class SpawnsManager : Updatable, Resettable {
         const val TAG = "SpawnsManager"
     }
 
-    internal val spawns = Array<Spawn>()
-    internal val spawners = Array<ISpawner>()
+    internal val _spawns = Array<Spawn>()
+    internal val _spawners = Array<ISpawner>()
 
     /**
      * Returns an array of the [Spawn]s that were spawned since the last update, and then clears the
@@ -29,8 +29,8 @@ class SpawnsManager : Updatable, Resettable {
      * @return the [Spawn]s that were spawned since the last update.
      */
     fun getSpawnsAndClear(): Array<Spawn> {
-        val spawnsToReturn = Array(spawns)
-        spawns.clear()
+        val spawnsToReturn = Array(_spawns)
+        _spawns.clear()
         return spawnsToReturn
     }
 
@@ -42,8 +42,8 @@ class SpawnsManager : Updatable, Resettable {
      */
     fun setSpawners(spawners: Array<ISpawner>) {
         GameLogger.debug(TAG, "setSpawners(): Setting spawners: $spawners")
-        this.spawners.clear()
-        this.spawners.addAll(spawners)
+        this._spawners.clear()
+        this._spawners.addAll(spawners)
     }
 
     /**
@@ -54,7 +54,7 @@ class SpawnsManager : Updatable, Resettable {
      * @param delta the time in seconds since the last update.
      */
     override fun update(delta: Float) {
-        val iter = spawners.iterator()
+        val iter = _spawners.iterator()
 
         while (iter.hasNext()) {
             val spawner = iter.next()
@@ -69,7 +69,7 @@ class SpawnsManager : Updatable, Resettable {
             if (spawner.test(delta)) {
                 val spawn = spawner.get()
                 GameLogger.debug(TAG, "update(): Spawning entity: $spawn")
-                spawns.add(spawn)
+                _spawns.add(spawn)
 
                 if (!spawner.respawnable) {
                     spawner.reset()
@@ -83,7 +83,7 @@ class SpawnsManager : Updatable, Resettable {
     /** Clears the [ISpawner]s and [Spawn]s. */
     override fun reset() {
         GameLogger.debug(TAG, "reset(): Clearing spawners and spawns")
-        spawners.clear()
-        spawns.clear()
+        _spawners.clear()
+        _spawns.clear()
     }
 }

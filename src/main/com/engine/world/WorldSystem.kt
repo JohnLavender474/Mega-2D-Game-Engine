@@ -10,6 +10,7 @@ import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.graph.IGraphMap
 import com.engine.systems.GameSystem
+import java.util.function.Supplier
 import kotlin.math.abs
 
 /**
@@ -82,6 +83,32 @@ class WorldSystem(
     private val printDebugStatements: Boolean
         get() = debug && debugTicks == MAX_DEBUG_TICKS
     private var debugTicks = 0
+
+    /**
+     * Constructs a [WorldSystem] with the given parameters.
+     *
+     * @param contactListener the [IContactListener] to notify of contacts
+     * @param worldGraphSupplier the supplier for the [IGraphMap] to use
+     * @param fixedStep the fixed step to update the physics
+     * @param collisionHandler the [ICollisionHandler] to resolve collisions
+     * @param contactFilterMap the optional [ObjectMap] to filter contacts
+     * @param debug whether to print debug statements
+     */
+    constructor(
+        contactListener: IContactListener,
+        worldGraphSupplier: Supplier<IGraphMap?>,
+        fixedStep: Float,
+        collisionHandler: ICollisionHandler = StandardCollisionHandler,
+        contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
+        debug: Boolean = false
+    ) : this(
+        contactListener,
+        { worldGraphSupplier.get() },
+        fixedStep,
+        collisionHandler,
+        contactFilterMap,
+        debug
+    )
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return

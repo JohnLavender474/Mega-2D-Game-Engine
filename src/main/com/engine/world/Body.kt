@@ -71,6 +71,13 @@ open class Body(
 
     companion object {
         const val TAG = "Body"
+
+        /**
+         * Creates a [Body] with the given [BodyType].
+         *
+         * @return a [Body] with the given [BodyType]
+         */
+        fun createBody(bodyType: BodyType) = Body(bodyType)
     }
 
     /**

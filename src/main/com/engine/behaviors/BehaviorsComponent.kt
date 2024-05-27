@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
+import java.util.function.BiFunction
 
 /** A [IGameComponent] that manages a collection of [AbstractBehavior]s. */
 open class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
@@ -91,6 +92,16 @@ open class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent
             val allowed = function.invoke(key, behavior)
             setBehaviorAllowed(key, allowed)
         }
+    }
+
+    /**
+     * Convenience method for [setBehaviorsAllowed] that accepts a [BiFunction].
+     *
+     * @param function the function which returns the value designating if the behavior should be allowed.
+     * @see [setBehaviorsAllowed]
+     */
+    fun setBehaviorsAllowed(function: BiFunction<Any, AbstractBehavior, Boolean>) {
+        setBehaviorsAllowed { key, behavior -> function.apply(key, behavior) }
     }
 
     /**

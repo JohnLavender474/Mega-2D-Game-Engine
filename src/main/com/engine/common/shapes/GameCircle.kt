@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Direction
+import java.util.function.BiPredicate
 
 /**
  * A circle that can be used in a game. This circle is a [Circle]. For convenience reasons, this
@@ -33,6 +34,19 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
          */
         fun setOverlapExtension(overlapExtension: (GameCircle, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
+        }
+
+        /**
+         * Sets the overlap extension function to the given function. This function will be called when
+         * [GameCircle.overlaps] is called with a [IGameShape2D] that is not a [GameRectangle],
+         * [GameCircle], or [GameLine]. This function should return true if the given [IGameShape2D]
+         * overlaps this [GameCircle] and false otherwise.
+         *
+         * @param overlapExtension The function to call when [GameCircle.overlaps] is called with a
+         *  [IGameShape2D] that is not a [GameRectangle], [GameCircle], or [GameLine].
+         */
+        fun setOverlapExtension(overlapExtension: BiPredicate<GameCircle, IGameShape2D>) {
+            setOverlapExtension { circle, shape -> overlapExtension.test(circle, shape) }
         }
     }
 

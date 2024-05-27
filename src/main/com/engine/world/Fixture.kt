@@ -37,6 +37,16 @@ open class Fixture(
 
     companion object {
         const val TAG = "Fixture"
+
+        /**
+         * Creates a new fixture with the given parameters.
+         *
+         * @param fixtureBody the fixtureBody to attach this fixture to
+         * @param type the type of this fixture
+         * @param rawShape the raw shape of this fixture
+         * @return a new fixture with the given parameters
+         */
+        fun createFixture(fixtureBody: Body, type: Any, rawShape: IGameShape2D) = Fixture(fixtureBody, type, rawShape)
     }
 
     override fun getBody() = fixtureBody

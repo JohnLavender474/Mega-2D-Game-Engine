@@ -6,6 +6,7 @@ import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.function.Function
 
 /**
  * A system that processes [PathfindingComponent]s. This system is responsible for calling the
@@ -31,6 +32,23 @@ class PathfindingSystem(
 
     // pathfinders are run in separate threads
     internal var execServ = Executors.newCachedThreadPool()
+
+    /**
+     * Creates a new pathfinding system.
+     *
+     * @param pathfinderFactory The factory that creates the pathfinder for the pathfinding component.
+     * @param timeout The timeout for the pathfinder. If the pathfinder takes longer than this timeout,
+     *  then the pathfinder will be cancelled. If this is null, then the pathfinder will not time out.
+     *  Default is null.
+     * @param timeoutUnit The unit of the timeout. Default is null. If this is null, then the pathfinder
+     */
+    constructor(
+        pathfinderFactory: Function<PathfindingComponent, IPathfinder>,
+        timeout: Long,
+        timeoutUnit: TimeUnit
+    ) : this(
+        { pathfinderFactory.apply(it) }, timeout, timeoutUnit
+    )
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return

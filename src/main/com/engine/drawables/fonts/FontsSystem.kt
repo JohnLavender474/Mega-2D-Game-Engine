@@ -3,6 +3,7 @@ package com.engine.drawables.fonts
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
+import java.util.function.Consumer
 
 /**
  * A system that can be used to gather the fonts to be rendered. This system will collect the fonts from
@@ -12,6 +13,15 @@ import com.engine.systems.GameSystem
  */
 open class FontsSystem(protected open val fontsCollector: (BitmapFontHandle) -> Unit) :
     GameSystem(FontsComponent::class) {
+
+    /**
+     * Creates a [FontsSystem] with the given [fontsCollector].
+     *
+     * @param fontsCollector the function that should collect the fonts to be drawn
+     */
+    constructor(
+        fontsCollector: Consumer<BitmapFontHandle>
+    ) : this(fontsCollector::accept)
 
     /**
      * Processes the fonts to be rendered. If the system is off, nothing happens. The fonts are collected

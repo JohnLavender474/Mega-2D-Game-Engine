@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.GameLogger
 import com.engine.common.extensions.objectMapOf
 import com.engine.drawables.sprites.GameSprite
+import java.util.function.Supplier
 
 /**
  * An animator that can be used to animate a sprite. The animator is created with a key supplier
@@ -34,6 +35,17 @@ class Animator(
      * @param animation the animation to animate the sprite with
      */
     constructor(animation: IAnimation) : this({ DEFAULT_KEY }, objectMapOf(DEFAULT_KEY to animation))
+
+    /**
+     * Convenience constructor if using Java [Supplier] to supply the key.
+     *
+     * @param keySupplier the key supplier that is used to determine which animation to play
+     * @param animations the animations that are used to animate the sprite
+     */
+    constructor(keySupplier: Supplier<String>, animations: ObjectMap<String, IAnimation>) : this(
+        { keySupplier.get() },
+        animations
+    )
 
     val currentAnimation: IAnimation?
         get() = if (currentKey != null) animations[currentKey] else null

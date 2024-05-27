@@ -3,6 +3,9 @@ package com.engine.common.extensions
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.FloatArray
 import com.badlogic.gdx.utils.IntArray
+import com.badlogic.gdx.utils.Predicate
+import java.util.function.Consumer
+import java.util.function.Function
 
 /**
  * Creates an [Array] from the given elements.
@@ -52,6 +55,15 @@ fun <T> Array<T>.filter(predicate: (T) -> Boolean): Array<T> {
 }
 
 /**
+ * Convenience method that accepts a [Predicate] to filter the elements of the array.
+ *
+ * @param predicate The filter condition to apply to each element.
+ * @return A new array containing only the elements that satisfy the [predicate].
+ * @see filter
+ */
+fun <T> Array<T>.filter(predicate: Predicate<T>) = filter(predicate::evaluate)
+
+/**
  * Transforms the elements of the array using the provided [transform] function.
  *
  * @param transform The transformation function to apply to each element.
@@ -62,6 +74,15 @@ fun <T, R> Array<T>.map(transform: (T) -> R): Array<R> {
     forEach { array.add(transform(it)) }
     return array
 }
+
+/**
+ * Convenience method that accepts a [Function] to transform the elements of the array.
+ *
+ * @param transform The transformation function to apply to each element.
+ * @return A new array containing the transformed elements.
+ * @see map
+ */
+fun <T, R> Array<T>.map(transform: Function<T, R>) = map(transform::apply)
 
 /**
  * Processes and filters the elements of the array based on the given [process] and [filter] functions.
@@ -81,6 +102,17 @@ fun <T> Array<T>.processAndFilter(process: (T) -> Unit, filter: (T) -> Boolean):
     }
     return array
 }
+
+/**
+ * Convenience method that accepts a [Consumer] and [Predicate] to process and filter the elements of the array.
+ *
+ * @param process The processing function to apply to each element.
+ * @param filter The filter condition to apply to each element.
+ * @return A new array containing only the elements that satisfy the [filter] condition.
+ * @see processAndFilter
+ */
+fun <T> Array<T>.processAndFilter(process: Consumer<T>, filter: Predicate<T>) =
+    processAndFilter(process::accept, filter::evaluate)
 
 /**
  * Gets the specified amount of random elements from the array. Each element is from a unique index.

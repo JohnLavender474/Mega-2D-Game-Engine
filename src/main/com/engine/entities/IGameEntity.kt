@@ -89,6 +89,14 @@ interface IGameEntity : IPropertizable, Initializable, IPrintable {
     fun <C : IGameComponent> getComponent(c: KClass<C>): C?
 
     /**
+     * Gets a [IGameComponent] from this [IGameEntity].
+     *
+     * @param c The [Class] of the [IGameComponent] to get.
+     * @return The [IGameComponent] if it exists, otherwise null.
+     */
+    fun <C : IGameComponent> getComponent(c: Class<C>) = getComponent(c.kotlin)
+
+    /**
      * Gets all the [IGameComponent]s from this [IGameEntity].
      *
      * @return All the [IGameComponent]s from this [IGameEntity].
@@ -105,12 +113,29 @@ interface IGameEntity : IPropertizable, Initializable, IPrintable {
     fun hasComponent(c: KClass<out IGameComponent>): Boolean
 
     /**
+     * Checks if this [GameEntity] has a [IGameComponent] with the given [Class].
+     *
+     * @param c The [Class] of the [IGameComponent] to check for.
+     * @return True if this [GameEntity] has a [IGameComponent] with the given [Class], otherwise
+     *  false.
+     */
+    fun hasComponent(c: Class<out IGameComponent>) = hasComponent(c.kotlin)
+
+    /**
      * Removes a [IGameComponent] from this [IGameEntity].
      *
      * @param c The [KClass] of the [IGameComponent] to remove.
      * @return The [IGameComponent] that was removed.
      */
     fun removeComponent(c: KClass<out IGameComponent>): IGameComponent?
+
+    /**
+     * Removes a [IGameComponent] from this [IGameEntity].
+     *
+     * @param c The [Class] of the [IGameComponent] to remove.
+     * @return The [IGameComponent] that was removed.
+     */
+    fun removeComponent(c: Class<out IGameComponent>) = removeComponent(c.kotlin)
 
     /** Clears all the [IGameComponent]s from this [IGameEntity]. */
     fun clearComponents()

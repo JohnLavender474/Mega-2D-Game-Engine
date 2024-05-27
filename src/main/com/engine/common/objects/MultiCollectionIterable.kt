@@ -1,6 +1,7 @@
 package com.engine.common.objects
 
 import com.badlogic.gdx.utils.Array
+import java.util.function.Consumer
 
 /**
  * Iterator for iterating over multiple collections in sequence.
@@ -80,4 +81,12 @@ class MultiCollectionIterable<T>(internal val iterables: Array<Iterable<T>>) : I
             }
         }
     }
+
+    /**
+     * Convenience method for Java interop. Iterates over the collections and executes the given action for each element.
+     *
+     * @param action The action to execute for each element.
+     */
+    fun forEach(action: Consumer<Triple<Int, Int, T>>) =
+        forEach { outerIndex, innerIndex, value -> action.accept(Triple(outerIndex, innerIndex, value)) }
 }

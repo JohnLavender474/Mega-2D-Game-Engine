@@ -3,6 +3,7 @@ package com.engine.screens.menus
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.enums.Direction
+import java.util.function.Supplier
 
 /**
  * Abstract class for menu screens. Handles navigation and selection of buttons. The first button is
@@ -20,6 +21,23 @@ abstract class MenuScreen(
     var currentButtonKey: String? = firstButtonKey
     var selectionMade = false
         private set
+
+    /**
+     * Constructor for menu screens.
+     *
+     * @param pauseSupplier a supplier for if the game is paused
+     * @param firstButtonKey the key of the first button to be selected
+     * @param buttons the map of buttons
+     */
+    constructor(
+        pauseSupplier: Supplier<Boolean>,
+        firstButtonKey: String,
+        buttons: ObjectMap<String, IMenuButton> = ObjectMap()
+    ) : this(
+        { pauseSupplier.get() },
+        firstButtonKey,
+        buttons
+    )
 
     /**
      * Gets the direction of the navigation. This is called every frame. If no navigation is made,

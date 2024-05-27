@@ -3,6 +3,7 @@ package com.engine.points
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.components.IGameComponent
 import com.engine.entities.IGameEntity
+import java.util.function.Consumer
 
 /**
  * The points component. Contains all the points for an entity.
@@ -14,6 +15,25 @@ class PointsComponent(
     val pointsMap: ObjectMap<Any, Points> = ObjectMap(),
     val pointsListeners: ObjectMap<Any, (Points) -> Unit> = ObjectMap()
 ) : IGameComponent {
+
+    /**
+     * The points component. Contains all the points for an entity.
+     *
+     * @param entity The entity.
+     * @param pointsMap The pointsMap.
+     * @param pointsListeners The pointsListeners.
+     */
+    constructor(
+        entity: IGameEntity,
+        pointsMap: ObjectMap<Any, Points>,
+        pointsListeners: ObjectMap<Any, Consumer<Points>>
+    ) : this(
+        entity,
+        pointsMap,
+        ObjectMap<Any, (Points) -> Unit>().apply {
+            pointsListeners.forEach { put(it.key, it.value::accept) }
+        }
+    )
 
     /**
      * The points component. Contains all the points for an entity.

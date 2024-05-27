@@ -1,5 +1,6 @@
 package com.engine.entities.contracts;
 
+import com.badlogic.gdx.math.Vector2;
 import com.engine.common.ClassInstanceUtils;
 import com.engine.common.interfaces.IPositional;
 import com.engine.common.interfaces.ISizable;
@@ -7,6 +8,7 @@ import com.engine.entities.IGameEntity;
 import com.engine.world.Body;
 import com.engine.world.BodyComponent;
 import kotlin.reflect.KClass;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -38,6 +40,11 @@ public interface IBodyEntity extends IGameEntity, IPositional, ISizable {
 
     default void setPosition(float x, float y) {
         getBody().setPosition(x, y);
+    }
+
+    @NotNull
+    default Vector2 getPosition() {
+        return getBody().getPosition();
     }
 
     default float getWidth() {

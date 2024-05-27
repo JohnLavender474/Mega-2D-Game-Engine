@@ -14,7 +14,6 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
-import kotlin.reflect.KClass
 
 /**
  * A [Random] instance with the seed being [System.currentTimeMillis].
@@ -104,6 +103,18 @@ fun doIfRandomMatches(min: Int, max: Int, matches: Iterable<Int>, runOnMatch: Co
  */
 fun <T> mask(o1: T, o2: T, p1: Predicate<T>, p2: Predicate<T>): Boolean {
     return p1.test(o1) && p2.test(o2) || p2.test(o1) && p1.test(o2)
+}
+
+/**
+ * Checks if two objects match specified predicates.
+ *
+ * @param o1 The first object to compare.
+ * @param o2 The second object to compare.
+ * @param p1 The first predicate to apply.
+ * @param p2 The second predicate to apply.
+ */
+fun <T> mask(o1: T, o2: T, p1: (T) -> Boolean, p2: (T) -> Boolean): Boolean {
+    return p1(o1) && p2(o2) || p2(o1) && p1(o2)
 }
 
 /**

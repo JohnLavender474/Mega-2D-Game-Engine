@@ -31,4 +31,44 @@ class ControllerComponent(
         ObjectMap<Any, () -> IButtonActuator?>().apply {
             _actuators.forEach { put(it.first, it.second) }
         })
+
+    /**
+     * Puts an actuator into the map with the given name and supplier.
+     *
+     * @param name The name of the actuator.
+     * @param actuator The supplier of the actuator.
+     */
+    fun putActuator(name: Any, actuator: () -> IButtonActuator?) {
+        actuators.put(name, actuator)
+    }
+
+    /**
+     * Puts an actuator into the map with the given name and supplier.
+     *
+     * @param name The name of the actuator.
+     * @param actuator The supplier of the actuator.
+     */
+    fun putActuator(name: Any, actuator: Supplier<IButtonActuator?>) {
+        actuators.put(name, actuator::get)
+    }
+
+    /**
+     * Puts an actuator into the map with the given name.
+     *
+     * @param name The name of the actuator.
+     * @param actuator The actuator.
+     */
+    fun putActuator(name: Any, actuator: IButtonActuator) {
+        actuators.put(name) { actuator }
+    }
+
+    /**
+     * Removes an actuator from the map with the given name.
+     *
+     * @param name The name of the actuator.
+     */
+    fun removeActuator(name: Any) {
+        actuators.remove(name)
+    }
 }
+

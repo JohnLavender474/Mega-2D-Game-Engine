@@ -46,4 +46,22 @@ class DrawableShapesComponent(
         entity: IGameEntity,
         vararg shapes: IDrawableShape?
     ) : this(entity, shapes.map { { it } }.toGdxArray())
+
+    /**
+     * Sets the debug shapes to be drawn when the game is in debug mode.
+     *
+     * @param debugShapeSuppliers whether the debug shapes should be drawn when the game is in debug mode
+     */
+    fun setDebugShapeSuppliersToJavaArray(debugShapeSuppliers: Array<Supplier<IDrawableShape?>>) {
+        this.debugShapeSuppliers = debugShapeSuppliers.map { it::get }.toGdxArray()
+    }
+
+    /**
+     * Sets the production shapes to be drawn when the game is in production mode.
+     *
+     * @param prodShapeSuppliers whether the production shapes should be drawn when the game is in production mode
+     */
+    fun setProdShapeSuppliersToJavaArray(prodShapeSuppliers: Array<Supplier<IDrawableShape?>>) {
+        this.prodShapeSuppliers = prodShapeSuppliers.map { it::get }.toGdxArray()
+    }
 }

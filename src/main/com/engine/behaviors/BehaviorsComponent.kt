@@ -143,7 +143,7 @@ open class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent
      * @param key The key of the [AbstractBehavior] to check.
      * @return If the [AbstractBehavior] with the given [key] is active.
      */
-    fun isBehaviorActive(key: Any) = behaviors.get(key).isActive()
+    fun isBehaviorActive(key: Any) = behaviors.get(key)?.isActive() ?: false
 
     /** @see [isBehaviorActive(Iterable<Any>)] */
     fun isAnyBehaviorActive(vararg keys: Any) = isAnyBehaviorActive(keys.asIterable())

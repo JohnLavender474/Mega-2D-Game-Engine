@@ -58,20 +58,20 @@ public interface IBehaviorsEntity extends IGameEntity {
     }
 
     /**
-     * Returns if all of the AbstractBehaviors with the given keys are active.
+     * Returns if all the AbstractBehaviors with the given keys are active.
      *
      * @param keys The keys of the AbstractBehaviors to check.
-     * @return If all of the AbstractBehaviors with the given keys are active.
+     * @return If all the AbstractBehaviors with the given keys are active.
      */
     default boolean areAllBehaviorsActive(Object... keys) {
         return areAllBehaviorsActive(java.util.Arrays.asList(keys));
     }
 
     /**
-     * Returns if all of the AbstractBehaviors with the given keys are active.
+     * Returns if all the AbstractBehaviors with the given keys are active.
      *
      * @param keys The keys of the AbstractBehaviors to check.
-     * @return If all of the AbstractBehaviors with the given keys are active.
+     * @return If all the AbstractBehaviors with the given keys are active.
      */
     default boolean areAllBehaviorsActive(Iterable<Object> keys) {
         return StreamSupport.stream(keys.spliterator(), false)

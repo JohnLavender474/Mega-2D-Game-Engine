@@ -80,7 +80,7 @@ interface IPropertizable {
      *
      * @param key The key of the property.
      * @param default The default value to return if the property is not found.
-     * @param type The type to cast the property to.
+     * @param type The KClass type to cast the property to.
      * @return The property, or the given default if the property is not found.
      */
     fun <T : Any> getOrDefaultProperty(key: Any, default: T, type: KClass<T>) =

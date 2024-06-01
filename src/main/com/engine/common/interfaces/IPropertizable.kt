@@ -56,6 +56,15 @@ interface IPropertizable {
     fun <T : Any> getProperty(key: Any, type: KClass<T>) = properties.get(key, type)
 
     /**
+     * Gets a property from this object's [Properties] and casts it to the given type.
+     *
+     * @param key The key of the property.
+     * @param type The type to cast the property to.
+     * @return The property cast to the given type.
+     */
+    fun <T : Any> getProperty(key: Any, type: Class<T>) = properties.get(key, type)
+
+    /**
      * Gets a property from this object's [Properties] and returns the given default if the property is not found.
      * The key of the property is the given object's [toString] value.
      *
@@ -75,6 +84,16 @@ interface IPropertizable {
      * @return The property, or the given default if the property is not found.
      */
     fun <T : Any> getOrDefaultProperty(key: Any, default: T, type: KClass<T>) =
+        properties.getOrDefault(key, default, type)
+
+    /**
+     * Gets a property from this object's [Properties] and returns the given default if the property is not found.
+     *
+     * @param key The key of the property.
+     * @param default The default value to return if the property is not found.
+     * @param type The type to cast the property to.
+     */
+    fun <T : Any> getOrDefaultProperty(key: Any, default: T, type: Class<T>): T =
         properties.getOrDefault(key, default, type)
 
     /**

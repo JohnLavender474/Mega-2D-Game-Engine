@@ -19,9 +19,7 @@ open class FontsSystem(protected open val fontsCollector: (BitmapFontHandle) -> 
      *
      * @param fontsCollector the function that should collect the fonts to be drawn
      */
-    constructor(
-        fontsCollector: Consumer<BitmapFontHandle>
-    ) : this(fontsCollector::accept)
+    constructor(fontsCollector: Consumer<BitmapFontHandle>) : this(fontsCollector::accept)
 
     /**
      * Processes the fonts to be rendered. If the system is off, nothing happens. The fonts are collected

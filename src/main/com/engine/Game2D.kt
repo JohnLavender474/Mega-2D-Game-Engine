@@ -96,14 +96,9 @@ abstract class Game2D : IGame2D, Game() {
      * screen; and updates all the viewports contained in [viewports]
      */
     override fun render() {
-        Gdx.gl20.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.graphics.gL20.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
         val delta = Gdx.graphics.deltaTime
-
         controllerPoller.run()
         eventsMan.run()
-
         currentScreen?.render(delta)
         viewports.values().forEach { it.apply() }
     }

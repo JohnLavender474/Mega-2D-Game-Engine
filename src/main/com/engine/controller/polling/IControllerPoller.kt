@@ -1,7 +1,7 @@
 package com.engine.controller.polling
 
 import com.badlogic.gdx.utils.Array
-import com.engine.common.extensions.toGdxArray
+import com.badlogic.gdx.utils.ObjectMap
 import com.engine.common.interfaces.IActivatable
 import com.engine.controller.buttons.ButtonStatus
 
@@ -127,4 +127,12 @@ interface IControllerPoller : IActivatable, Runnable {
      * @return If any of the buttons mapped to the given [keys] are released.
      */
     fun isAnyReleased(keys: Array<Any>) = keys.any { isReleased(it) }
+
+    /**
+     * Returns if all the entries in the given [map] match the status of the buttons.
+     *
+     * @param map The map of buttons and their expected statuses.
+     * @return If all the entries in the given [map] match the status of the buttons.
+     */
+    fun allMatch(map: ObjectMap<Any, ButtonStatus>) = map.all { getStatus(it.key) == it.value }
 }

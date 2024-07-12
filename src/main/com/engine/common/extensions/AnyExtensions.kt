@@ -1,5 +1,23 @@
 package com.engine.common.extensions
 
+import kotlin.reflect.KClass
+
+/**
+ * Returns if this object's class matches any of the provided classes.
+ *
+ * @param clazzes the classes to compare to
+ * @return if this object's class matches any of the provided classes
+ */
+fun Any.isAny(vararg clazzes: KClass<out Any>): Boolean = clazzes.any { it.isInstance(this) }
+
+/**
+ * Returns if this object's class matches any of the provided classes.
+ *
+ * @param clazzes the classes to compare to
+ * @return if this object's class matches any of the provided classes
+ */
+fun Any.isAny(vararg clazzes: Class<out Any>): Boolean = clazzes.any { it.isInstance(this) }
+
 /**
  * Checks if the current object equals any of the provided varargs or within the Iterable.
  *

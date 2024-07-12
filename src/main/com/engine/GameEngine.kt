@@ -8,6 +8,7 @@ import com.engine.common.objects.Properties
 import com.engine.common.objects.props
 import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
+import java.util.function.Consumer
 
 /**
  * The main class of the game. It contains all of the [IGameSystem]s and [IGameEntity]s.
@@ -32,6 +33,20 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
      * @param systems the [IGameSystem]s to add to this [GameEngine]
      */
     constructor(vararg systems: IGameSystem) : this(systems.asIterable())
+
+    /**
+     * Performs the action on each entity.
+     *
+     * @param action the action to perform
+     */
+    fun forEachEntity(action: (IGameEntity) -> Unit) = entities.forEach { action(it) }
+
+    /**
+     * Performs the action on each entity.
+     *
+     * @param action the action to perform
+     */
+    fun forEachEntity(action: Consumer<IGameEntity>) = entities.forEach { action.accept(it) }
 
     /**
      * Finds all [IGameEntity]s that match the given [predicate] and returns them as an [OrderedSet].

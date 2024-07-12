@@ -183,6 +183,34 @@ class Properties : ICopyable<Properties> {
         type.cast(if (containsKey(key)) get(key, type) else defaultValue)
 
     /**
+     * Gets a property from this [Properties] instance. If no property is mapped to the given [key],
+     * then the [defaultValue] is returned instead.
+     *
+     * @param key The key of the property.
+     * @param defaultValue The default value of the property. Cannot be null.
+     * @param type The type to cast the property to.
+     * @return The property, or the default value if no property is mapped to the given key.
+     */
+    fun <T : Any> getOrDefaultNotNull(key: Any, defaultValue: Any, type: KClass<T>): T {
+        val value = get(key)
+        return if (value != null) type.cast(value) else type.cast(defaultValue)
+    }
+
+    /**
+     * Gets a property from this [Properties] instance. If no property is mapped to the given [key],
+     * then the [defaultValue] is returned instead.
+     *
+     * @param key The key of the property.
+     * @param defaultValue The default value of the property. Cannot be null.
+     * @param type The type to cast the property to.
+     * @return The property, or the default value if no property is mapped to the given key.
+     */
+    fun <T: Any> getOrDefaultNotNull(key: Any, defaultValue: Any, type: Class<T>): T {
+        val value = get(key)
+        return if (value != null) type.cast(value) else type.cast(defaultValue)
+    }
+
+    /**
      * Gets a property from this [Properties] instance. If the property is null then an exception is
      * thrown.
      *

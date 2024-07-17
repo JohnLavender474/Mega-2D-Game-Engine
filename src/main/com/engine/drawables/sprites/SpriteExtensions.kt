@@ -1,9 +1,9 @@
 package com.engine.drawables.sprites
 
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Position
-import com.engine.common.shapes.GameRectangle
 
 /**
  * Sets the position of this sprite to the specified position.
@@ -67,15 +67,15 @@ fun Sprite.setPosition(p: Vector2, pos: Position, xOffset: Float, yOffset: Float
 fun Sprite.setSize(size: Float) = setSize(size, size)
 
 /**
+ * Sets the bounds of this sprite to the specified bounds.
+ *
+ * @param bounds the bounds to set
+ */
+fun Sprite.setBounds(bounds: Rectangle) = setBounds(bounds.x, bounds.y, bounds.width, bounds.height)
+
+/**
  * Sets the center of this sprite to the specified center.
  *
  * @param center the center to set
  */
 fun Sprite.setCenter(center: Vector2) = setCenter(center.x, center.y)
-
-/**
- * Sets the bounds of this sprite to the specified bounds.
- *
- * @param bounds the bounds to set
- */
-fun Sprite.setBounds(bounds: GameRectangle) = setBounds(bounds.x, bounds.y, bounds.width, bounds.height)

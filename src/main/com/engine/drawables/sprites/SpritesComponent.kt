@@ -12,14 +12,16 @@ import com.engine.entities.IGameEntity
  *
  * @param sprites The sprites.
  */
-class SpritesComponent(override val entity: IGameEntity, var sprites: OrderedMap<String, GameSprite> = OrderedMap()) :
+class SpritesComponent(
+    override val entity: IGameEntity,
+    val sprites: OrderedMap<String, GameSprite> = OrderedMap(),
+    val updatables: ObjectMap<String, UpdateFunction<GameSprite>> = ObjectMap()
+) :
     IGameComponent, Updatable {
 
     companion object {
         const val SPRITE = "sprite"
     }
-
-    internal val updatables = ObjectMap<String, UpdateFunction<GameSprite>>()
 
     /**
      * Creates a [SpritesComponent] with the given [sprites].

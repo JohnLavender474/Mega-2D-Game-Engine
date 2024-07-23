@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 import com.engine.common.objects.Properties
+import com.engine.common.objects.props
 import com.engine.entities.GameEntity
 import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
@@ -16,6 +17,14 @@ interface IGameEngine : Updatable, Resettable {
 
     /** The [IGameSystem]s in this [IGameEngine]. */
     val systems: Iterable<IGameSystem>
+
+    /**
+     * Spawns a [GameEntity] with an empty [Properties] instance.
+     *
+     * @param entity the [GameEntity] to spawn
+     * @return whether the [GameEntity] was spawned
+     */
+    fun spawn(entity: IGameEntity) = spawn(entity, props())
 
     /**
      * Spawns a [GameEntity] with the given [Properties].

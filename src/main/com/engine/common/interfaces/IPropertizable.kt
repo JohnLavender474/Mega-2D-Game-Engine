@@ -1,6 +1,8 @@
 package com.engine.common.interfaces
 
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.Predicate
 import com.engine.common.objects.Properties
 import kotlin.reflect.KClass
 
@@ -45,6 +47,22 @@ interface IPropertizable {
      * @return The property.
      */
     fun getProperty(key: Any) = properties.get(key)
+
+    /**
+     * Gets all the properties from this object's [Properties] where the key matches the given predicate.
+     *
+     * @param keyPredicate The predicate to match the keys.
+     * @return The properties that match the predicate.
+     */
+    fun getAllMatchingProperties(keyPredicate: Predicate<Any>) = properties.getAllMatching(keyPredicate)
+
+    /**
+     * Gets all the properties from this object's [Properties] where the key matches the given predicate.
+     *
+     * @param keyPredicate The predicate to match the keys.
+     * @return The properties that match the predicate.
+     */
+    fun getAllMatchingProperties(keyPredicate: (Any) -> Boolean) = properties.getAllMatching(keyPredicate)
 
     /**
      * Gets a property from this object's [Properties] and casts it to the given type.

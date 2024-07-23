@@ -9,7 +9,7 @@ import com.engine.common.interfaces.Resettable
  *
  * @param T the type of elements in this loop
  */
-class Loop<T> : Resettable {
+class Loop<T> : Iterable<T>, Resettable {
 
     private var array = Array<T>()
     private var index = 0
@@ -86,6 +86,16 @@ class Loop<T> : Resettable {
         return array[index]
     }
 
+    /**
+     * Returns the iterator of the internal backing array.
+     *
+     * @return the iterator of the internal backing array
+     */
+    override fun iterator() = array.iterator()
+
+    /**
+     * Resets the index of this loop to 0. This sets the loop to the first element.
+     */
     override fun reset() {
         index = 0
     }

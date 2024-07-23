@@ -6,10 +6,10 @@ import com.engine.drawables.IDrawable
  * A [DrawingPriority] is used to sort [IDrawable]s by priority.
  *
  * @param section the [DrawingSection] of the [IDrawable]
- * @param priority the priority of the [IDrawable]
+ * @param value the priority of the [IDrawable]
  * @see DrawingSection
  */
-data class DrawingPriority(var section: DrawingSection, var priority: Int) :
+data class DrawingPriority(var section: DrawingSection, var value: Int) :
     Comparable<DrawingPriority> {
 
     /**
@@ -21,11 +21,11 @@ data class DrawingPriority(var section: DrawingSection, var priority: Int) :
      */
     override fun compareTo(other: DrawingPriority): Int {
         val sectionCompare = section.compareTo(other.section)
-        return if (sectionCompare == 0) priority.compareTo(other.priority) else sectionCompare
+        return if (sectionCompare == 0) value.compareTo(other.value) else sectionCompare
     }
 
     override fun equals(other: Any?) =
-        other is DrawingPriority && section == other.section && priority == other.priority
+        other is DrawingPriority && section == other.section && value == other.value
 
-    override fun hashCode() = 31 * section.hashCode() + priority
+    override fun hashCode() = 31 * section.hashCode() + value
 }

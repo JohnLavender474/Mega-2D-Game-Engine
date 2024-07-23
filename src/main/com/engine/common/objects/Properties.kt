@@ -1,6 +1,8 @@
 package com.engine.common.objects
 
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.Predicate
 import com.engine.common.extensions.putIfAbsentAndGet
 import com.engine.common.interfaces.ICopyable
 import kotlin.reflect.KClass
@@ -150,6 +152,30 @@ class Properties : ICopyable<Properties> {
     fun isProperty(key: Any, value: Any) = props.get(key) == value
 
     /**
+     * Gets all the properties from this [Properties] instance where the key matches the given predicate.
+     *
+     * @param keyPredicate The predicate to match.
+     * @return An array of properties where the key matches the given predicate.
+     */
+    fun getAllMatching(keyPredicate: (Any) -> Boolean): Array<Pair<Any, Any?>> {
+        val matching = Array<Pair<Any, Any?>>()
+        forEach { key, value -> if (keyPredicate(key)) matching.add(Pair(key, value)) }
+        return matching
+    }
+
+    /**
+     * Gets all the properties from this [Properties] instance where the key matches the given predicate.
+     *
+     * @param keyPredicate The predicate to match.
+     * @return An array of properties where the key matches the given predicate.
+     */
+    fun getAllMatching(keyPredicate: Predicate<Any>): Array<Pair<Any, Any?>> {
+        val matching = Array<Pair<Any, Any?>>()
+        forEach { key, value -> if (keyPredicate.evaluate(key)) matching.add(Pair(key, value)) }
+        return matching
+    }
+
+    /**
      * Gets a property from this [Properties] instance. If no property is mapped to the given [key],
      * then the [defaultValue] is returned instead.
      *
@@ -179,7 +205,7 @@ class Properties : ICopyable<Properties> {
      * @param defaultValue The default value of the property. Cannot be null.
      * @param type The type to cast the property to.
      */
-    fun <T : Any> getOrDefault(key: Any, defaultValue: Any, type: Class<T>) =
+    fun <T : Any> getOrDefault(key: Any, defaultValue: Any, type: Class<T>): T =
         type.cast(if (containsKey(key)) get(key, type) else defaultValue)
 
     /**

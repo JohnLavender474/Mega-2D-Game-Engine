@@ -60,6 +60,17 @@ fun Sprite.setPosition(p: Vector2, pos: Position, xOffset: Float, yOffset: Float
 }
 
 /**
+ * Sets the position of this sprite to the specified position and offsets it by the specified
+ * amount. The offset is applied after the position is set. The offset is applied to the x and y
+ * coordinates.
+ *
+ * @param p the position to set
+ * @param pos the position to set this sprite to
+ * @param offset the offset
+ */
+fun Sprite.setPosition(p: Vector2, pos: Position, offset: Vector2) = setPosition(p, pos, offset.x, offset.y)
+
+/**
  * Sets the size of this sprite to the specified size.
  *
  * @param size the size to set

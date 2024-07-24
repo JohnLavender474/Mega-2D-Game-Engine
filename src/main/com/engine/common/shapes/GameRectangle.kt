@@ -12,10 +12,9 @@ import com.badlogic.gdx.utils.FloatArray
 import com.engine.common.enums.Direction
 import com.engine.common.enums.Position
 import com.engine.common.extensions.gdxArrayOf
+import com.engine.common.objects.Matrix
 import java.util.function.BiPredicate
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 
 /**
  * A [GameRectangle] is a [Rectangle] that implements [PositionalGameShape2D]. It is used to represent a rectangle in a game.
@@ -517,6 +516,82 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      * @return The [GamePolygon] created from this [GameRectangle].
      */
     fun toPolygon() = GamePolygon(getVertices())
+
+    /**
+     * Returns the dimensions that this [GameRectangle] can be split into based on the given [size].
+     * The rows and columns are rounded to the nearest integer.
+     *
+     * @param size The size of the cells to split this [GameRectangle] into.
+     * @return A [Pair] of the rows and columns that this [GameRectangle] can be split into.
+     */
+    fun getSplitDimensions(size: Float) = getSplitDimensions(size, size)
+
+    /**
+     * Returns the rows and columns that this [GameRectangle] can be split into based on the given
+     * [rectWidth] and [rectHeight]. The rows and columns are rounded to the nearest integer.
+     *
+     * @param rectWidth The width of the cells to split this [GameRectangle] into.
+     * @param rectHeight The height of the cells to split this [GameRectangle] into.
+     * @return A [Pair] of the rows and columns that this [GameRectangle] can be split into.
+     */
+    fun getSplitDimensions(rectWidth: Float, rectHeight: Float): Pair<Int, Int> {
+        val rows = (height / rectHeight).roundToInt()
+        val columns = (width / rectWidth).roundToInt()
+        return Pair(rows, columns)
+    }
+
+    /**
+     * Splits this [GameRectangle] into the given number of rows and columns and returns a [Matrix] of
+     * [GameRectangle]s representing the cells.
+     *
+     * @param rowsAndColumns The number of rows and columns to split this [GameRectangle] into.
+     * @return A [Matrix] of [GameRectangle]s representing the cells.
+     */
+    fun splitIntoCells(rowsAndColumns: Int) = splitIntoCells(rowsAndColumns, rowsAndColumns)
+
+    /**
+     * Splits this [GameRectangle] into the given number of rows and columns and returns a [Matrix] of
+     * [GameRectangle]s representing the cells.
+     *
+     * @param rows The number of rows to split this [GameRectangle] into.
+     * @param columns The number of columns to split this [GameRectangle] into.
+     * @return A [Matrix] of [GameRectangle]s representing the cells.
+     */
+    fun splitIntoCells(rows: Int, columns: Int): Matrix<GameRectangle> {
+        val cellWidth = ceil(width / columns).toInt()
+        val cellHeight = ceil(height / rows).toInt()
+        val cells = Matrix<GameRectangle>(rows, columns)
+        for (row in 0 until rows) {
+            for (column in 0 until columns) {
+                val cell = GameRectangle(x + column * cellWidth, y + row * cellHeight, cellWidth, cellHeight)
+                cells[column, row] = cell
+            }
+        }
+        return cells
+    }
+
+    /**
+     * Splits this [GameRectangle] into cells of the given size and returns a [Matrix] of [GameRectangle]s
+     * representing the cells.
+     *
+     * @param size The size of the cells to split this [GameRectangle] into.
+     * @return A [Matrix] of [GameRectangle]s representing the cells.
+     */
+    fun splitByCellSize(size: Float) = splitByCellSize(size, size)
+
+    /**
+     * Splits this [GameRectangle] into cells of the given width and height and returns a [Matrix] of
+     * [GameRectangle]s representing the cells.
+     *
+     * @param rectWidth The width of the cells to split this [GameRectangle] into.
+     * @param rectHeight The height of the cells to split this [GameRectangle] into.
+     * @return A [Matrix] of [GameRectangle]s representing the cells.
+     */
+    fun splitByCellSize(rectWidth: Float, rectHeight: Float): Matrix<GameRectangle> {
+        val rows = ceil(height / rectHeight).roundToInt()
+        val columns = ceil(width / rectWidth).roundToInt()
+        return splitIntoCells(rows, columns)
+    }
 
     override fun equals(other: Any?) = other is Rectangle && super.equals(other)
 

@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedMap
-import java.util.function.Consumer
 
 /**
  * This iterator iterates through the elements of the Matrix beginning at index [0, 0] and moving to
@@ -81,7 +80,21 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     }
 
     /**
-     * Returns the element at the specified row and column. This method throws an [IndexOutOfBoundsException] if the
+     * Creates a [Matrix] with the specified number of rows and columns, and then initializes each
+     * element with the specified initializer where the first integer is the column and the second is
+     * the row. The initializer is called for each cell in the matrix.
+     *
+     * @param rows the number of rows
+     * @param columns the number of columns
+     * @param initializer the initializer to use for each element
+     * @param T the type of element in the Matrix
+     */
+    constructor(rows: Int, columns: Int, initializer: (Int, Int) -> T) : this(rows, columns) {
+        for (x in 0 until columns) for (y in 0 until rows) set(x, y, initializer(x, y))
+    }
+
+    /**
+     * Returns the element at the specified column and row. This method throws an [IndexOutOfBoundsException] if the
      * specified row or column is out of bounds. This method returns null if there is no element
      *
      * @return the element at the specified row and column, or null if there is no element
@@ -96,7 +109,7 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     }
 
     /**
-     * Sets the element at the specified x and row to the specified element. The x is equivalent to
+     * Sets the element at the specified column and row to the specified element. The x is equivalent to
      * the column, and the row is equivalent to the row. This method returns the old value at the
      * specified x and row. If the specified element is null, then the element at the x and row is
      * removed.

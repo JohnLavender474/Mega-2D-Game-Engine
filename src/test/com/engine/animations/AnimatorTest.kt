@@ -24,10 +24,30 @@ class AnimatorTest :
 
                 override fun getDuration() = duration
 
+                override fun setFrameDuration(frameDuration: Float) {
+                    // TODO: do nothing
+                }
+
+                override fun setFrameDuration(index: Int, frameDuration: Float) {
+                    // TODO: do nothing
+                }
+
                 override fun isLooping() = looping
 
                 override fun setLooping(loop: Boolean) {
                     looping = loop
+                }
+
+                override fun reversed(): IAnimation {
+                    return this
+                }
+
+                override fun slice(start: Int, end: Int): IAnimation {
+                    return this
+                }
+
+                override fun copy(): IAnimation {
+                    return this
                 }
 
                 override fun update(delta: Float) {}

@@ -14,17 +14,33 @@ import java.util.function.Supplier
  *
  * @param keySupplier the key supplier that is used to determine which animation to play
  * @param animations the animations that are used to animate the sprite
+ * @param updateScalar the scalar that is used to speed up or slow down the current animation; default is 1.0f
  * @see IAnimator
  */
 class Animator(
     val keySupplier: () -> String?,
     val animations: ObjectMap<String, IAnimation>,
+    var updateScalar: Float = 1f
 ) : IAnimator {
 
     companion object {
         const val TAG = "Animator"
         const val DEFAULT_KEY = "Default"
     }
+
+    /**
+     * The current animation that is being played. This value is determined by the current key. If
+     * the current key is null, then the current animation is also null.
+     */
+    val currentAnimation: IAnimation?
+        get() = if (currentKey != null) animations[currentKey] else null
+
+    /**
+     * The current key that is used to determine which animation to play. Private setter to prevent
+     * external modification.
+     */
+    var currentKey: String? = null
+        private set
 
     /**
      * Convenience constructor if only one animation is needed. Creates an animator with the specified
@@ -47,12 +63,6 @@ class Animator(
         animations
     )
 
-    val currentAnimation: IAnimation?
-        get() = if (currentKey != null) animations[currentKey] else null
-
-    var currentKey: String? = null
-        private set
-
     override fun animate(sprite: GameSprite, delta: Float) {
         val nextKey = keySupplier()
 
@@ -67,13 +77,17 @@ class Animator(
         if (currentKey != nextKey) currentAnimation?.reset()
 
         currentAnimation?.let {
-            it.update(delta)
+            it.update(delta * updateScalar)
             it.getCurrentRegion()?.let { region -> sprite.setRegion(region) }
         }
     }
 
+    /**
+     * Resets the current key, all animations, and resets the update scalar to 1.0f.
+     */
     override fun reset() {
         currentKey = null
+        updateScalar = 1f
         animations.values().forEach { it.reset() }
     }
 }

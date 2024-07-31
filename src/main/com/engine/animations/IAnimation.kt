@@ -1,11 +1,12 @@
 package com.engine.animations
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.engine.common.interfaces.ICopyable
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 
 /** An animation that can be used to animate a texture region. */
-interface IAnimation : Updatable, Resettable {
+interface IAnimation : ICopyable<IAnimation>, Updatable, Resettable {
 
     /**
      * Returns the current texture region of this animation.
@@ -22,11 +23,25 @@ interface IAnimation : Updatable, Resettable {
     fun isFinished(): Boolean
 
     /**
-     * Returns the duration of this animation.
+     * Returns the total duration of this animation.
      *
-     * @return the duration of this animation
+     * @return the total duration of this animation
      */
     fun getDuration(): Float
+
+    /**
+     * Sets the duration of each frame of this animation.
+     *
+     * @param frameDuration the duration of each frame of this animation
+     */
+    fun setFrameDuration(frameDuration: Float)
+
+    /**
+     * Sets the duration of the frame at the specified [index] of this animation.
+     *
+     * @param index the index of the frame
+     */
+    fun setFrameDuration(index: Int, frameDuration: Float)
 
     /**
      * Returns whether this animation is looping.
@@ -42,4 +57,21 @@ interface IAnimation : Updatable, Resettable {
      * @return this animation for chaining
      */
     fun setLooping(loop: Boolean)
+
+    /**
+     * Creates a new reversed animation from this animation and returns it.
+     *
+     * @return the reversed animation
+     */
+    fun reversed(): IAnimation
+
+    /**
+     * Creates a new sliced animation from the specified [start] index (inclusive) to the specified [end] index
+     * (exclusive) and returns it.
+     *
+     * @param start the start index (inclusive)
+     * @param end the end index (exclusive)
+     * @return the sliced animation
+     */
+    fun slice(start: Int, end: Int): IAnimation
 }

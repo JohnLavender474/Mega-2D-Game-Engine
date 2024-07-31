@@ -16,7 +16,7 @@ import com.engine.drawables.sprites.splitAndFlatten
 class Animation : IAnimation {
 
     internal val animation: Array<TextureRegion>
-    internal val durations: Array<Float>
+    internal val frameDurations: Array<Float>
 
     private var loop = true
 
@@ -50,15 +50,11 @@ class Animation : IAnimation {
      * @param region the texture region to animate
      * @param rows the number of rows to split the texture region into
      * @param columns the number of columns to split the texture region into
-     * @param duration the duration to display each split region
+     * @param frameDuration the duration to display each split region
      */
     constructor(
-        region: TextureRegion,
-        rows: Int,
-        columns: Int,
-        duration: Float,
-        loop: Boolean = true
-    ) : this(region, rows, columns, gdxFilledArrayOf(rows * columns, duration), loop)
+        region: TextureRegion, rows: Int, columns: Int, frameDuration: Float, loop: Boolean = true
+    ) : this(region, rows, columns, gdxFilledArrayOf(rows * columns, frameDuration), loop)
 
     /**
      * Creates an animation with the specified texture region, rows, columns, and duration. The
@@ -67,24 +63,18 @@ class Animation : IAnimation {
      * @param region the texture region to animate
      * @param rows the number of rows to split the texture region into
      * @param columns the number of columns to split the texture region into
-     * @param durations the durations to display each split region
+     * @param frameDurations the durations to display each split region
      */
     constructor(
-        region: TextureRegion,
-        rows: Int,
-        columns: Int,
-        durations: Array<Float>,
-        loop: Boolean = true
+        region: TextureRegion, rows: Int, columns: Int, frameDurations: Array<Float>, loop: Boolean = true
     ) {
         if (rows <= 0) throw IllegalArgumentException("The number of rows must be greater than 0")
         if (columns <= 0) throw IllegalArgumentException("The number of columns must be greater than 0")
-        if (durations.size != rows * columns)
-            throw IllegalArgumentException(
-                "The number of durations must equal the number of rows times the number of columns. " +
-                        "Expected ${rows * columns} durations but found ${durations.size} durations."
-            )
+        if (frameDurations.size != rows * columns) throw IllegalArgumentException(
+            "The number of durations must equal the number of rows times the number of columns. " + "Expected ${rows * columns} durations but found ${frameDurations.size} durations."
+        )
 
-        this.durations = durations
+        this.frameDurations = frameDurations
         this.animation = region.splitAndFlatten(rows, columns)
         this.loop = loop
     }
@@ -98,11 +88,11 @@ class Animation : IAnimation {
      */
     constructor(animation: Animation, reverse: Boolean = false) {
         this.animation = Array(animation.animation)
-        this.durations = Array(animation.durations)
+        this.frameDurations = Array(animation.frameDurations)
         loop = animation.loop
         if (reverse) {
             this.animation.reverse()
-            this.durations.reverse()
+            this.frameDurations.reverse()
         }
     }
 
@@ -110,7 +100,18 @@ class Animation : IAnimation {
 
     override fun isFinished() = !loop && elapsedTime >= getDuration()
 
-    override fun getDuration() = durations.sum()
+    override fun getDuration() = frameDurations.sum()
+
+    override fun setFrameDuration(frameDuration: Float) {
+        for (i in 0 until frameDurations.size) frameDurations[i] = frameDuration
+    }
+
+    override fun setFrameDuration(index: Int, frameDuration: Float) {
+        if (index < 0 || index >= frameDurations.size) throw IllegalArgumentException(
+            "The index must be greater than or equal to 0 and less than the size of the animation"
+        )
+        frameDurations[index] = frameDuration
+    }
 
     override fun isLooping() = loop
 
@@ -146,8 +147,8 @@ class Animation : IAnimation {
         // than the duration of the current region
         var currentLoopDuration = elapsedTime
         var tempIndex = 0
-        while (tempIndex < animation.size && currentLoopDuration > durations[tempIndex]) {
-            currentLoopDuration -= durations[tempIndex]
+        while (tempIndex < animation.size && currentLoopDuration > frameDurations[tempIndex]) {
+            currentLoopDuration -= frameDurations[tempIndex]
             tempIndex++
         }
         currentIndex = tempIndex
@@ -162,10 +163,22 @@ class Animation : IAnimation {
         elapsedTime = 0f
     }
 
-    /**
-     * Returns a new reversed animation from this one.
-     *
-     * @return a new reversed animation from this one
-     */
-    fun reversed() = Animation(this, true)
+    override fun copy() = Animation(this)
+
+    override fun reversed() = Animation(this, true)
+
+    override fun slice(start: Int, end: Int): IAnimation {
+        if (start < 0 || start >= animation.size) throw IllegalArgumentException("The start index must be greater than or equal to 0 and less than the size of the animation")
+        if (end < 0 || end > animation.size) throw IllegalArgumentException("The end index must be greater than or equal to 0 and less than or equal to the size of the animation")
+        if (start >= end) throw IllegalArgumentException("The start index must be less than the end index")
+
+        val newAnimation = Animation(this)
+        newAnimation.animation.clear()
+        newAnimation.frameDurations.clear()
+        for (i in start until end) {
+            newAnimation.animation.add(animation[i])
+            newAnimation.frameDurations.add(frameDurations[i])
+        }
+        return newAnimation
+    }
 }

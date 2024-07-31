@@ -164,7 +164,7 @@ class AnimationTest :
 
             it("should create an animation filled with single duration value") {
                 val _animation = Animation(mockRegion, rows, columns, 0.5f)
-                _animation.durations.size shouldBe rows * columns
+                _animation.frameDurations.size shouldBe rows * columns
             }
         }
     })

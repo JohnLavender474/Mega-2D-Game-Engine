@@ -10,3 +10,11 @@ import com.badlogic.gdx.math.Vector3
  * @return the new [Vector3]
  */
 fun Vector2.toVector3(z: Float = 0f) = Vector3(x, y, z)
+
+/**
+ * Sets the x and y values of this [Vector2] to the given value.
+ *
+ * @param value the value to set the x and y values to
+ * @return this [Vector2] for chaining
+ */
+fun Vector2.set(value: Float): Vector2 = set(value, value)

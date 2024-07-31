@@ -53,7 +53,7 @@ class AnimationsComponent(
 
     /**
      * Convenience constructor if the entity is a [ISpritesEntity] where only the first sprite needs to
-     * be animated. The first sprite is [ISpritesEntity.firstSprite] which CANNOT BE NULL. This sprite
+     * be animated. The first sprite is [ISpritesEntity.getFirstSprite] which CANNOT BE NULL. This sprite
      * is animated using the specified animator.
      *
      * @param entity the entity that contains the sprite to animate

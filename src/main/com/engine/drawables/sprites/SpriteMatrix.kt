@@ -44,8 +44,8 @@ data class SpriteMatrixParams(
 class SpriteMatrix(
     model: TextureRegion,
     priority: DrawingPriority,
-    var modelWidth: Float,
-    var modelHeight: Float,
+    private var modelWidth: Float,
+    private var modelHeight: Float,
     rows: Int,
     columns: Int
 ) : IDrawable<Batch>, Matrix<GameSprite>(rows, columns) {
@@ -101,7 +101,7 @@ class SpriteMatrix(
      */
     fun setPosition(startX: Float, startY: Float) {
         forEach { x, y, sprite ->
-            (sprite as GameSprite).setPosition(startX + (x * modelWidth), startY + (y * modelHeight))
+            sprite?.setPosition(startX + (x * modelWidth), startY + (y * modelHeight))
         }
     }
 

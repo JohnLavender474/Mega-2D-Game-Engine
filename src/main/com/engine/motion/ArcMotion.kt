@@ -12,12 +12,14 @@ import kotlin.math.pow
  * @param targetPosition the target position of the arc
  * @property speed the speed of the arc
  * @property arcFactor the arc factor of the arc
+ * @property continueBeyondTarget whether the arc should continue beyond the target position
  */
 class ArcMotion(
     startPosition: Vector2,
     targetPosition: Vector2,
     var speed: Float,
-    var arcFactor: Float
+    var arcFactor: Float,
+    var continueBeyondTarget: Boolean = false
 ) : IMotion {
 
     companion object {
@@ -25,7 +27,7 @@ class ArcMotion(
         /**
          * Computes a bezier point between the start and target positions using the given arc factor.
          *
-         * @param t the time value (should be between 0 and 1)
+         * @param t the time value
          * @param arcFactor the arc factor
          * @param startPosition the start position
          * @param targetPosition the target position
@@ -64,8 +66,15 @@ class ArcMotion(
             reset()
         }
 
+    /**
+     * The distance covered by the arc. This value is updated by the [update] method and is used to determine when the
+     * arc has reached the target position. Private setter, should only be modified internally by the class. Public
+     * access is read-only.
+     */
+    var distanceCovered = 0f
+        private set
+
     private var currentPosition = startPosition.cpy()
-    private var distanceCovered = 0f
 
     /**
      * Updates the current position of the arc. The current position is updated by moving the current position towards
@@ -81,12 +90,12 @@ class ArcMotion(
 
         distanceCovered += speed * delta
 
-        if (distanceCovered >= totalDistance) {
+        if (!continueBeyondTarget && distanceCovered >= totalDistance) {
             currentPosition = targetPosition.cpy()
             return
         }
 
-        val t = (distanceCovered / totalDistance).coerceIn(0f, 1f)
+        val t = distanceCovered / totalDistance
         currentPosition = computeBezierPoint(t, arcFactor, startPosition, targetPosition)
     }
 
@@ -103,5 +112,6 @@ class ArcMotion(
      */
     override fun reset() {
         currentPosition = startPosition.cpy()
+        distanceCovered = 0f
     }
 }

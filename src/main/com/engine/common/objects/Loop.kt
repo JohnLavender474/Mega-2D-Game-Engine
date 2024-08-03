@@ -14,6 +14,9 @@ class Loop<T> : Iterable<T>, Resettable {
     private var array = Array<T>()
     private var index = 0
 
+    /**
+     * The size of the loop.
+     */
     val size: Int
         get() = array.size
 

@@ -70,13 +70,13 @@ class ArcMotion(
     /**
      * Updates the current position of the arc. The current position is updated by moving the current position towards
      * the target position by the speed of the arc. The distance moved is determined by the speed of the arc and the
-     * delta time. If the distance moved is greater than or equal to the distance between the start and target positions,
-     * then the current position is set to the target position.
+     * delta time. If the total distance covered between [update] calls is greater than or equal to the distance
+     * between the start and target positions, then the current position is set to the target position (to prevent
+     * moving beyond the target).
      *
      * @param delta the time in seconds since the last update
      */
     override fun update(delta: Float) {
-        // Compute total distance between start and target
         val totalDistance = startPosition.dst(targetPosition)
 
         distanceCovered += speed * delta

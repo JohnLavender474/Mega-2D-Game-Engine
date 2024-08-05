@@ -1,6 +1,7 @@
 package com.engine.screens.levels.tiledmap
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.maps.tiled.TiledMap
 import com.engine.IGame2D
 import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
@@ -17,25 +18,46 @@ import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
  *
  * @param game the [IGame2D] instance to use for this [TiledMapLevelScreen]
  * @param properties the [Properties] to use for this [TiledMapLevelScreen]
- * @property tmxMapSource the source of the tiled map to load. This should be set to the level
- *   intended to be rendered each time before calling [show].
- * @property tiledMapLoadResult the [TiledMapLoadResult] that was loaded from
- *   [TiledMapLevelLoader.load]. This is set in [show].
- * @property tiledMapLevelRenderer the [TiledMapLevelRenderer] that was created from the
- *   [TiledMapLoadResult] and the [SpriteBatch]. This is set in [show]. This is used to render the
- *   tiled map and should be called somewhere in the deriving class.
+ * @property tmxMapSource the source of the tiled map to load. This should be set to the level intended to be rendered
+ *   each time before calling [show].
+ * @property tiledMapLoadResult the [TiledMapLoadResult] that was loaded from [TiledMapLevelLoader.load]. This is set
+ *   in [show].
+ * @property tiledMapLevelRenderer the [TiledMapLevelRenderer] that was created from the [TiledMapLoadResult] and the
+ *   [SpriteBatch]. This is set in [show]. This is used to render the tiled map and should be called somewhere in the
+ *   deriving class.
+ * @property tiledMap the [TiledMap] that was loaded into the [tiledMapLoadResult] after [show] is called.
  */
-abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props()) :
-    BaseScreen(game, properties) {
+abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props()) : BaseScreen(game, properties) {
 
     companion object {
         const val TAG = "TiledMapLevelScreen"
     }
 
+    /**
+     * The source of the tiled map to load. This should be set to the level intended to be rendered
+     * each time before calling [show]. After [show] is called, setting this field has no effect until
+     * the next time [show] is called.
+     */
     var tmxMapSource: String? = null
 
+    /**
+     * The result of loading a [TiledMap] using [TiledMapLevelLoader]. This is set in [show] and
+     * should be used to build the level.
+     */
     protected var tiledMapLoadResult: TiledMapLoadResult? = null
+
+    /**
+     * The [TiledMapLevelRenderer] that was created from the [tiledMapLoadResult] and the
+     * [SpriteBatch]. This is set in [show]. This is used to render the tiled map and should be
+     * called somewhere in the deriving class.
+     */
     protected var tiledMapLevelRenderer: TiledMapLevelRenderer? = null
+
+    /**
+     * The [TiledMap] that was loaded into the [tiledMapLoadResult] after [show] is called.
+     */
+    protected val tiledMap: TiledMap?
+        get() = tiledMapLoadResult?.map
 
     /**
      * The map of layer names to [ITiledMapLayerBuilder]s.
@@ -73,8 +95,8 @@ abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props
         } ?: throw IllegalStateException("Tmx map source must be set before calling show()")
     }
 
-    /** Disposes the tiled map. */
+    /** Disposes the [tiledMap] if it is not null. */
     override fun dispose() {
-        tiledMapLoadResult?.map?.dispose()
+        tiledMap?.dispose()
     }
 }

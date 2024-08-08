@@ -1,7 +1,6 @@
 package com.engine.entities
 
 import com.badlogic.gdx.utils.OrderedSet
-import com.engine.IGame2D
 import com.engine.common.interfaces.IPrintable
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.interfaces.Initializable
@@ -17,9 +16,6 @@ import kotlin.reflect.KClass
  * @see IGameComponent
  */
 interface IGameEntity : IPropertizable, Initializable, IPrintable {
-
-    /** The [IGame2D] this [IGameEntity] belongs to. */
-    val game: IGame2D
 
     /** Runnables to run when this [IGameEntity] is spawned. */
     val runnablesOnSpawn: OrderedSet<Runnable>

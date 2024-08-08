@@ -6,10 +6,10 @@ import com.engine.common.shapes.IGameShape2D
 
 /**
  * An implementation for [IFixture]. This implementation stores a shape variable labeled [rawShape] and
- * calculates the fixtureBody-relative shape in [getShape].
+ * calculates the body-relative shape in [getShape].
  *
  * @param rawShape The raw bounds of this fixture. To get the bounds of this fixture relative to the
- *   fixtureBody it is attached to, use [getShape].
+ *   body it is attached to, use [getShape].
  * @param type The type for this fixture. Used to determine how this fixture interacts with other
  *   fixtures. It can be anything (String, Int, Enum, etc.) so long as it properly implements
  *   [Any.equals] and [Any.hashCode] such that any two fixtures with the same type are considered
@@ -18,15 +18,15 @@ import com.engine.common.shapes.IGameShape2D
  *   interaction).
  * @param active Whether this fixture is active. If not active, this fixture will not be used to
  *   detect collisions.
- * @param attachedToBody Whether this fixture is attached to a fixtureBody. If not attached to a fixtureBody, this
- *   fixture will not move with the fixtureBody it is attached to.
- * @param offsetFromBodyCenter The offset of this fixture from the center of the fixtureBody it is attached
- *   to. Used to position this fixture relative to the fixtureBody it is attached to. This is the offset
- *   before the fixtureBody is rotated.
+ * @param attachedToBody Whether this fixture is attached to a body. If not attached to a body, this
+ *   fixture will not move with the body it is attached to.
+ * @param offsetFromBodyCenter The offset of this fixture from the center of the body it is attached
+ *   to. Used to position this fixture relative to the body it is attached to. This is the offset
+ *   before the body is rotated.
  * @param properties The properties of this fixture.
  */
 open class Fixture(
-    open var fixtureBody: Body,
+    open var body: Body,
     open var type: Any,
     open var rawShape: IGameShape2D,
     open var active: Boolean = true,
@@ -41,15 +41,13 @@ open class Fixture(
         /**
          * Creates a new fixture with the given parameters.
          *
-         * @param fixtureBody the fixtureBody to attach this fixture to
+         * @param body the body to attach this fixture to
          * @param type the type of this fixture
          * @param rawShape the raw shape of this fixture
          * @return a new fixture with the given parameters
          */
-        fun createFixture(fixtureBody: Body, type: Any, rawShape: IGameShape2D) = Fixture(fixtureBody, type, rawShape)
+        fun createFixture(body: Body, type: Any, rawShape: IGameShape2D) = Fixture(body, type, rawShape)
     }
-
-    override fun getBody() = fixtureBody
 
     /**
      * Fetches a copy of the body-relative shape of this fixture. The body-relative shape is recalculated each
@@ -60,20 +58,20 @@ open class Fixture(
     override fun getShape(): IGameShape2D {
         if (!attachedToBody) return rawShape
 
-        val bodyCenter = fixtureBody.rotatedBounds.getCenter()
+        val bodyCenter = body.getCenter()
         rawShape.setCenter(bodyCenter).translation(offsetFromBodyCenter)
 
         val relativeShape = rawShape.copy()
-        relativeShape.originX = if (fixtureBody.originXCenter) bodyCenter.x else fixtureBody.originX
-        relativeShape.originY = if (fixtureBody.originYCenter) bodyCenter.y else fixtureBody.originY
+        relativeShape.originX = if (body.originXCenter) bodyCenter.x else body.originX
+        relativeShape.originY = if (body.originYCenter) bodyCenter.y else body.originY
 
-        val cardinalRotation = fixtureBody.cardinalRotation
-        val bodyRelativeShape = relativeShape.getCardinallyRotatedShape(cardinalRotation, false)
+        relativeShape.color = rawShape.color
+        relativeShape.shapeType = rawShape.shapeType
 
-        bodyRelativeShape.color = rawShape.color
-        bodyRelativeShape.shapeType = rawShape.shapeType
+        val cardinalRotation = body.cardinalRotation
 
-        return bodyRelativeShape
+        return if (cardinalRotation == null) relativeShape
+        else relativeShape.getCardinallyRotatedShape(cardinalRotation, false)
     }
 
     override fun getFixtureType() = type
@@ -81,7 +79,7 @@ open class Fixture(
     override fun isActive() = active
 
     override fun copy() = Fixture(
-        fixtureBody, type, rawShape.copy(), active, attachedToBody, Vector2(offsetFromBodyCenter), properties.copy()
+        body, type, rawShape.copy(), active, attachedToBody, Vector2(offsetFromBodyCenter), properties.copy()
     )
 
     override fun toString() =

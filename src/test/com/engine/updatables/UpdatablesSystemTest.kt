@@ -16,8 +16,8 @@ class UpdatablesSystemTest :
             it("should call the update method for each updatable in each entity") {
                 val updatablesSystem = UpdatablesSystem()
 
-                val entity1 = GameEntity(mockk())
-                val entity2 = GameEntity(mockk())
+                val entity1 = GameEntity()
+                val entity2 = GameEntity()
 
                 val updatable1 = mockk<Updatable> { every { update(any()) } just Runs }
                 val updatable2 = mockk<Updatable> { every { update(any()) } just Runs }
@@ -42,7 +42,7 @@ class UpdatablesSystemTest :
                 val updatablesSystem = UpdatablesSystem()
                 updatablesSystem.on = false
 
-                val entity = GameEntity(mockk())
+                val entity = GameEntity()
 
                 val updatable = mockk<Updatable> { every { update(any()) } just Runs }
                 val updatablesComponent = UpdatablesComponent(entity, gdxArrayOf(updatable))

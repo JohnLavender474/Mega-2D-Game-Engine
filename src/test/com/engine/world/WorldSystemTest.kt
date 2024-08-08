@@ -45,7 +45,7 @@ class WorldSystemTest :
 
                 entity =
                     spyk(
-                        object : GameEntity(mockk()) {
+                        object : GameEntity() {
 
                             override fun spawn(spawnProps: Properties) {
                                 putAllProperties(spawnProps)
@@ -199,14 +199,14 @@ class WorldSystemTest :
                 val body1 = Body(BodyType.DYNAMIC)
                 val fixture1 = Fixture(body1, "Type1", GameRectangle(0f, 0f, 10f, 10f))
                 body1.addFixture(fixture1)
-                val entity1 = GameEntity(mockk())
+                val entity1 = GameEntity()
                 entity1.dead = false
                 entity1.addComponent(BodyComponent(entity1, body1))
 
                 val body2 = Body(BodyType.DYNAMIC)
                 val fixture2 = Fixture(body, "Type2", GameRectangle(5f, 5f, 15f, 15f))
                 body2.addFixture(fixture2)
-                val entity2 = GameEntity(mockk())
+                val entity2 = GameEntity()
                 entity2.dead = false
                 entity2.addComponent(BodyComponent(entity2, body2))
 
@@ -367,7 +367,7 @@ class WorldSystemTest :
                     val fixture = spyk(Fixture(_body, "Type", shape))
                     fixture.offsetFromBodyCenter = Vector2(0f, 5f)
 
-                    val _entity = GameEntity(mockk())
+                    val _entity = GameEntity()
                     val _bodyComponent = BodyComponent(entity, _body)
                     _entity.addComponent(_bodyComponent)
 

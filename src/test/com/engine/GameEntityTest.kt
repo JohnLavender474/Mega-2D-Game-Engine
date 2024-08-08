@@ -6,12 +6,11 @@ import com.engine.entities.IGameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
-import io.mockk.mockk
 
 class GameEntityTest :
     DescribeSpec({
         describe("Entity class") {
-            val entity = GameEntity(mockk())
+            val entity = GameEntity()
 
             class MockComponent(override val entity: IGameEntity) : IGameComponent
 

@@ -35,7 +35,7 @@ class SpriteSystemTest :
                     every { update(any()) } just Runs
                 }
 
-                entity = GameEntity(mockk())
+                entity = GameEntity()
                 entity.addComponent(mockSpritesComponent)
                 entity.dead = false
 

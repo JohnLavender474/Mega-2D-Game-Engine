@@ -18,7 +18,7 @@ class BehaviorsSystemTest : DescribeSpec({
         beforeEach {
             clearAllMocks()
 
-            entity = GameEntity(mockk())
+            entity = GameEntity()
 
             behavior = spyk(Behavior({ true }, { }, { }, { }))
 

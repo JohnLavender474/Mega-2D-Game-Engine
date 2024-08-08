@@ -1,12 +1,10 @@
 package com.engine.screens
 
-import com.engine.IGame2D
 import com.engine.common.objects.Properties
 import com.engine.events.Event
 
 /** A [BaseScreen] is a basic abstract implementation of [IScreen]. */
 abstract class BaseScreen(
-    protected val game: IGame2D,
     override val properties: Properties = Properties()
 ) : IScreen {
 

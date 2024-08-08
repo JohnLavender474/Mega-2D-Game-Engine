@@ -1,8 +1,8 @@
 package com.engine.screens.levels.tiledmap
 
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.tiled.TiledMap
-import com.engine.IGame2D
 import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.common.objects.props
@@ -16,7 +16,6 @@ import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
  * of [ITiledMapLayerBuilder]s. This screen is intended to be reused for multiple levels. Make sure
  * that the [tmxMapSource] is set each time to the correct level before calling [show].
  *
- * @param game the [IGame2D] instance to use for this [TiledMapLevelScreen]
  * @param properties the [Properties] to use for this [TiledMapLevelScreen]
  * @property tmxMapSource the source of the tiled map to load. This should be set to the level intended to be rendered
  *   each time before calling [show].
@@ -27,7 +26,7 @@ import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
  *   deriving class.
  * @property tiledMap the [TiledMap] that was loaded into the [tiledMapLoadResult] after [show] is called.
  */
-abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props()) : BaseScreen(game, properties) {
+abstract class TiledMapLevelScreen(private val batch: Batch, properties: Properties = props()) : BaseScreen(properties) {
 
     companion object {
         const val TAG = "TiledMapLevelScreen"
@@ -91,7 +90,7 @@ abstract class TiledMapLevelScreen(game: IGame2D, properties: Properties = props
             val layerBuilders = getLayerBuilders()
             layerBuilders.build(tiledMapLoadResult!!.map.layers, returnProps)
             buildLevel(returnProps)
-            tiledMapLevelRenderer = TiledMapLevelRenderer(tiledMapLoadResult!!.map, game.batch)
+            tiledMapLevelRenderer = TiledMapLevelRenderer(tiledMapLoadResult!!.map, batch)
         } ?: throw IllegalStateException("Tmx map source must be set before calling show()")
     }
 

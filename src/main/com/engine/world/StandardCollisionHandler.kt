@@ -41,10 +41,7 @@ object StandardCollisionHandler : ICollisionHandler {
         } else return false
 
         val overlap = Rectangle()
-        if (Intersector.intersectRectangles(
-                dynamicBody.rotatedBounds, staticBody.rotatedBounds, overlap
-            )
-        ) {
+        if (Intersector.intersectRectangles(dynamicBody.getBodyBounds(), staticBody.getBodyBounds(), overlap)) {
             if (overlap.width > overlap.height) {
                 dynamicBody.physics.frictionOnSelf.x += staticBody.physics.frictionToApply.x
 

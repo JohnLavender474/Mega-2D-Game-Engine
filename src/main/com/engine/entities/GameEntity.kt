@@ -2,7 +2,6 @@ package com.engine.entities
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedSet
-import com.engine.IGame2D
 import com.engine.common.CAUSE_OF_DEATH_MESSAGE
 import com.engine.common.CAUSE_OF_DEATH_TAG
 import com.engine.common.GameLogger
@@ -13,10 +12,8 @@ import kotlin.reflect.cast
 
 /**
  * Standard implementation for [IGameEntity].
- *
- * @param game The [IGame2D] this [GameEntity] belongs to.
  */
-open class GameEntity(override val game: IGame2D) : IGameEntity {
+open class GameEntity : IGameEntity {
 
     companion object {
         const val TAG = "GameEntity"

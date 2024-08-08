@@ -16,7 +16,7 @@ class CullablesSystemTest :
                 for (i in 0..10) {
                     val shouldCull = i % 2 == 0
 
-                    val entity = GameEntity(mockk())
+                    val entity = GameEntity()
                     val cullablesComponent = CullablesComponent(entity)
 
                     cullablesComponent.cullables.put(
@@ -49,7 +49,7 @@ class CullablesSystemTest :
                 val entities = mutableListOf<GameEntity>()
 
                 for (i in 0..10) {
-                    val entity = GameEntity(mockk())
+                    val entity = GameEntity()
                     entities.add(entity)
                 }
 

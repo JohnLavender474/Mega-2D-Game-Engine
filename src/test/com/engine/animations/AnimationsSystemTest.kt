@@ -20,7 +20,7 @@ class AnimationsSystemTest :
             beforeEach {
                 clearAllMocks()
                 entity =
-                    object : GameEntity(mockk()) {
+                    object : GameEntity() {
 
                         override fun spawn(spawnProps: Properties) {}
 

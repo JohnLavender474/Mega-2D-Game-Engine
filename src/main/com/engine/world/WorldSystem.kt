@@ -128,7 +128,7 @@ class WorldSystem(
             val worldGraph = worldGraphSupplier()!!
             worldGraph.reset()
             bodies.forEach { body ->
-                worldGraph.add(body, body.rotatedBounds)
+                worldGraph.add(body, body.getBodyBounds())
                 body.fixtures.forEach { (_, fixture) ->
                     worldGraph.add(fixture, fixture.getShape())
                 }
@@ -183,7 +183,7 @@ class WorldSystem(
     internal fun processPhysicsAndGraph(body: Body, delta: Float) {
         val worldGraph = worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
         updatePhysics(body, delta)
-        worldGraph.add(body, body.rotatedBounds)
+        worldGraph.add(body, body.getBodyBounds())
         body.fixtures.forEach { (_, fixture) ->
             worldGraph.add(fixture, fixture.getShape())
         }
@@ -313,11 +313,9 @@ class WorldSystem(
      */
     internal fun resolveCollisions(body: Body) {
         val worldGraph = worldGraphSupplier()!!
-        worldGraph.get(body.rotatedBounds).forEach {
-            if (it is Body && it != body && it.rotatedBounds.overlaps(body as Rectangle)) collisionHandler.handleCollision(
-                body,
-                it
-            )
+        worldGraph.get(body.getBodyBounds()).forEach {
+            if (it is Body && it != body && it.getBodyBounds().overlaps(body as Rectangle))
+                collisionHandler.handleCollision(body, it)
         }
     }
 }

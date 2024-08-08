@@ -15,7 +15,7 @@ class ControllerSystemTest :
                 val mockControllerPoller = mockk<IControllerPoller>()
                 val controllerSystem = ControllerSystem(mockControllerPoller)
 
-                val entity = GameEntity(mockk())
+                val entity = GameEntity()
 
                 val actuator =
                     mockk<IButtonActuator> {

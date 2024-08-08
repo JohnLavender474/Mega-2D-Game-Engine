@@ -33,7 +33,7 @@ class FixtureTest :
             }
 
             it("should return the correct shape") {
-                val bodyCenter = body.rotatedBounds.getCenter()
+                val bodyCenter = body.getBodyBounds().getCenter()
                 val expectedShape = shape.copy().setCenter(bodyCenter).translation(offset)
                 val actualShape = fixture.getShape()
 

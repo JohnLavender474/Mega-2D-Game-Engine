@@ -10,13 +10,6 @@ import com.engine.common.shapes.IGameShape2D
 interface IFixture : IPropertizable, ICopyable<IFixture> {
 
     /**
-     * Gets the fixtureBody this fixture belongs to.
-     *
-     * @return the fixtureBody this fixture belongs to
-     */
-    fun getBody(): Body
-
-    /**
      * Gets the shape of the fixture.
      *
      * @return the shape of the fixture.

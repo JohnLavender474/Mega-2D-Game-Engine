@@ -2,14 +2,15 @@ package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.objects.Properties
+import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.IGameShape2D
 
 /**
  * An implementation for [IFixture]. This implementation stores a shape variable labeled [rawShape] and
  * calculates the body-relative shape in [getShape].
  *
- * @param rawShape The raw bounds of this fixture. To get the bounds of this fixture relative to the
- *   body it is attached to, use [getShape].
+ * @param rawShape The raw bounds of this fixture. Defaults to a [GameRectangle] with size of zero. To get the bounds
+ * of this fixture relative to the body it is attached to, use [getShape].
  * @param type The type for this fixture. Used to determine how this fixture interacts with other
  *   fixtures. It can be anything (String, Int, Enum, etc.) so long as it properly implements
  *   [Any.equals] and [Any.hashCode] such that any two fixtures with the same type are considered
@@ -28,7 +29,7 @@ import com.engine.common.shapes.IGameShape2D
 open class Fixture(
     open var body: Body,
     open var type: Any,
-    open var rawShape: IGameShape2D,
+    open var rawShape: IGameShape2D = GameRectangle(),
     open var active: Boolean = true,
     open var attachedToBody: Boolean = true,
     open var offsetFromBodyCenter: Vector2 = Vector2(),

@@ -12,6 +12,7 @@ import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.IGameShape2D
 import com.engine.common.shapes.IGameShape2DSupplier
 import com.engine.entities.GameEntity
+import com.engine.entities.IGameEntity
 import com.engine.graph.IGraphMap
 import com.engine.graph.MinsAndMaxes
 import io.kotest.core.spec.style.DescribeSpec
@@ -33,12 +34,8 @@ class WorldSystemTest :
             lateinit var body: Body
             lateinit var bodyComponent: BodyComponent
 
-            val worldSystem =
-                spyk(
-                    WorldSystem(
-                        mockContactListener, mockWorldGraphSupplier, fixedStep, mockCollisionHandler
-                    )
-                )
+            lateinit var contactFilterMap: ObjectMap<Any, ObjectSet<Any>>
+            lateinit var worldSystem: WorldSystem
 
             beforeEach {
                 clearAllMocks()
@@ -70,7 +67,18 @@ class WorldSystemTest :
 
                 every { mockWorldGraph.reset() } just Runs
 
-                worldSystem.reset()
+                contactFilterMap = ObjectMap()
+
+                worldSystem =
+                    spyk(
+                        WorldSystem(
+                            mockContactListener,
+                            mockWorldGraphSupplier,
+                            fixedStep,
+                            mockCollisionHandler,
+                            contactFilterMap
+                        )
+                    )
                 worldSystem.add(entity)
 
                 clearAllMocks()
@@ -196,19 +204,33 @@ class WorldSystemTest :
             }
 
             describe("process contacts") {
-                val body1 = Body(BodyType.DYNAMIC)
-                val fixture1 = Fixture(body1, "Type1", GameRectangle(0f, 0f, 10f, 10f))
-                body1.addFixture(fixture1)
-                val entity1 = GameEntity()
-                entity1.dead = false
-                entity1.addComponent(BodyComponent(entity1, body1))
 
-                val body2 = Body(BodyType.DYNAMIC)
-                val fixture2 = Fixture(body, "Type2", GameRectangle(5f, 5f, 15f, 15f))
-                body2.addFixture(fixture2)
-                val entity2 = GameEntity()
-                entity2.dead = false
-                entity2.addComponent(BodyComponent(entity2, body2))
+                lateinit var entity1: IGameEntity
+                lateinit var entity2: IGameEntity
+
+                lateinit var body1: Body
+                lateinit var body2: Body
+
+                lateinit var fixture1: Fixture
+                lateinit var fixture2: Fixture
+
+                beforeEach {
+                    body1 = Body(BodyType.DYNAMIC)
+                    fixture1 = Fixture(body1, "Type1", GameRectangle(0f, 0f, 10f, 10f))
+                    body1.addFixture(fixture1)
+                    entity1 = GameEntity()
+                    entity1.dead = false
+                    entity1.addComponent(BodyComponent(entity1, body1))
+
+                    body2 = Body(BodyType.DYNAMIC)
+                    fixture2 = Fixture(body, "Type2", GameRectangle(5f, 5f, 15f, 15f))
+                    body2.addFixture(fixture2)
+                    entity2 = GameEntity()
+                    entity2.dead = false
+                    entity2.addComponent(BodyComponent(entity2, body2))
+
+                    contactFilterMap.put("Type1", objectSetOf("Type2"))
+                }
 
                 it("should process contacts correctly - test 1") {
                     every { mockWorldGraph.reset() } just Runs

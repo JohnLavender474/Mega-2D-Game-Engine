@@ -10,7 +10,6 @@ import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.graph.IGraphMap
 import com.engine.systems.GameSystem
-import java.util.function.Supplier
 import kotlin.math.abs
 
 /**
@@ -67,7 +66,7 @@ class WorldSystem(
     private val worldGraphSupplier: () -> IGraphMap?,
     private val fixedStep: Float,
     private val collisionHandler: ICollisionHandler = StandardCollisionHandler,
-    private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
+    private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>,
     var debug: Boolean = false
 ) : GameSystem(BodyComponent::class) {
 
@@ -83,32 +82,6 @@ class WorldSystem(
     private val printDebugStatements: Boolean
         get() = debug && debugTicks == MAX_DEBUG_TICKS
     private var debugTicks = 0
-
-    /**
-     * Constructs a [WorldSystem] with the given parameters.
-     *
-     * @param contactListener the [IContactListener] to notify of contacts
-     * @param worldGraphSupplier the supplier for the [IGraphMap] to use
-     * @param fixedStep the fixed step to update the physics
-     * @param collisionHandler the [ICollisionHandler] to resolve collisions
-     * @param contactFilterMap the optional [ObjectMap] to filter contacts
-     * @param debug whether to print debug statements
-     */
-    constructor(
-        contactListener: IContactListener,
-        worldGraphSupplier: Supplier<IGraphMap?>,
-        fixedStep: Float,
-        collisionHandler: ICollisionHandler = StandardCollisionHandler,
-        contactFilterMap: ObjectMap<Any, ObjectSet<Any>>? = null,
-        debug: Boolean = false
-    ) : this(
-        contactListener,
-        { worldGraphSupplier.get() },
-        fixedStep,
-        collisionHandler,
-        contactFilterMap,
-        debug
-    )
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
@@ -259,21 +232,19 @@ class WorldSystem(
     }
 
     /**
-     * Filters the given fixtures. This method is called by the [resolveCollisions] method. This
-     * method is responsible for filtering the given fixtures based on the [contactFilterMap]. If the
-     * [contactFilterMap] is null, then this method will return true. Otherwise, this method will
-     * return true if the [contactFilterMap] contains the given fixtures.
+     * Determines whether the given fixtures should be filtered. If there is a pairing between the fixture types of the
+     * two fixtures in [contactFilterMap], then this method will return true. Otherwise, it will return false.
      *
      * @param fixture1 the first [Fixture] to filter
      * @param fixture2 the second [Fixture] to filter
      * @return whether the given fixtures should be filtered
      */
     internal fun filterContact(fixture1: IFixture, fixture2: IFixture) =
-        (fixture1 != fixture2) && (contactFilterMap?.get(fixture1.getFixtureType())?.contains(
+        (fixture1 != fixture2) && (contactFilterMap.get(fixture1.getFixtureType())?.contains(
             fixture2.getFixtureType()
-        ) != false || contactFilterMap[fixture2.getFixtureType()]?.contains(
+        ) == true || contactFilterMap.get(fixture2.getFixtureType())?.contains(
             fixture1.getFixtureType()
-        ) != false)
+        ) == true)
 
     /**
      * Checks for contacts with the given fixtureBody.

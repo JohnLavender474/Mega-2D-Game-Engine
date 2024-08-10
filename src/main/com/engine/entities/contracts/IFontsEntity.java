@@ -38,7 +38,7 @@ public interface IFontsEntity extends IGameEntity {
     /**
      * Adds the given font to this entity with the given key.
      *
-     * @param key the key of the font
+     * @param key  the key of the font
      * @param font the font to add
      * @return the font that was added
      */
@@ -59,7 +59,7 @@ public interface IFontsEntity extends IGameEntity {
     /**
      * Puts the given function into this entity's FontsComponent with the given key.
      *
-     * @param key the key
+     * @param key      the key
      * @param function the function
      */
     default void putFontUpdateFunction(Object key, UpdateFunction<BitmapFontHandle> function) {

@@ -8,7 +8,7 @@ class BodyComponentTest :
     DescribeSpec({
         describe("BodyComponent class") {
             val mockBody = mockk<Body>()
-            val bodyComponent = BodyComponent(mockk(), mockBody)
+            val bodyComponent = BodyComponent(mockBody)
 
             it("should have the correct initial properties") { bodyComponent.body shouldBe mockBody }
 

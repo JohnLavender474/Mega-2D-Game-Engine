@@ -59,20 +59,20 @@ public interface IDrawableShapesEntity extends IGameEntity {
     }
 
     /**
-     * Sets if the DrawableShapesComponent of this IDrawableShapesEntity should draw debug shapes.
-     *
-     * @param debug if the DrawableShapesComponent of this IDrawableShapesEntity should draw debug shapes
-     */
-    default void setDebugShapes(boolean debug) {
-        getDrawableShapesComponent().setDebug(debug);
-    }
-
-    /**
      * Returns if the DrawableShapesComponent of this IDrawableShapesEntity should draw debug shapes.
      *
      * @return if the DrawableShapesComponent of this IDrawableShapesEntity should draw debug shapes
      */
     default boolean isDebugShapes() {
         return getDrawableShapesComponent().getDebug();
+    }
+
+    /**
+     * Sets if the DrawableShapesComponent of this IDrawableShapesEntity should draw debug shapes.
+     *
+     * @param debug if the DrawableShapesComponent of this IDrawableShapesEntity should draw debug shapes
+     */
+    default void setDebugShapes(boolean debug) {
+        getDrawableShapesComponent().setDebug(debug);
     }
 }

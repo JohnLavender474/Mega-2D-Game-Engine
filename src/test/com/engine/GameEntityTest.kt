@@ -2,7 +2,6 @@ package com.engine
 
 import com.engine.components.IGameComponent
 import com.engine.entities.GameEntity
-import com.engine.entities.IGameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -12,9 +11,9 @@ class GameEntityTest :
         describe("Entity class") {
             val entity = GameEntity()
 
-            class MockComponent(override val entity: IGameEntity) : IGameComponent
+            class MockComponent : IGameComponent
 
-            val mockComponent = MockComponent(entity)
+            val mockComponent = MockComponent()
 
             beforeEach {
                 clearAllMocks()

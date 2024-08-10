@@ -26,7 +26,8 @@ import com.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilders
  *   deriving class.
  * @property tiledMap the [TiledMap] that was loaded into the [tiledMapLoadResult] after [show] is called.
  */
-abstract class TiledMapLevelScreen(private val batch: Batch, properties: Properties = props()) : BaseScreen(properties) {
+abstract class TiledMapLevelScreen(private val batch: Batch, properties: Properties = props()) :
+    BaseScreen(properties) {
 
     companion object {
         const val TAG = "TiledMapLevelScreen"

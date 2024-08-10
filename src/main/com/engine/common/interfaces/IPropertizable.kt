@@ -1,6 +1,5 @@
 package com.engine.common.interfaces
 
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.Predicate
 import com.engine.common.objects.Properties

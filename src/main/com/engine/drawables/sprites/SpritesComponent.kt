@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.interfaces.Updatable
 import com.engine.common.interfaces.UpdateFunction
 import com.engine.components.IGameComponent
-import com.engine.entities.IGameEntity
 
 /**
  * A component that can be used to store sprites.
@@ -13,7 +12,6 @@ import com.engine.entities.IGameEntity
  * @param sprites The sprites.
  */
 class SpritesComponent(
-    override val entity: IGameEntity,
     val sprites: OrderedMap<String, GameSprite> = OrderedMap(),
     val updatables: ObjectMap<String, UpdateFunction<GameSprite>> = ObjectMap()
 ) :
@@ -26,26 +24,24 @@ class SpritesComponent(
     /**
      * Creates a [SpritesComponent] with the given [sprites].
      *
-     * @param entity The entity that this [SpritesComponent] belongs to.
      * @param _sprites The sprites to add to this [SpritesComponent].
      */
-    constructor(
-        entity: IGameEntity,
-        vararg _sprites: Pair<String, GameSprite>
-    ) : this(
-        entity, OrderedMap<String, GameSprite>().apply { _sprites.forEach { put(it.first, it.second) } })
+    constructor(vararg _sprites: Pair<String, GameSprite>) : this(OrderedMap<String, GameSprite>().apply {
+        _sprites.forEach {
+            put(
+                it.first,
+                it.second
+            )
+        }
+    })
 
     /**
-     * Constructs a [SpritesComponent] with the given [entity] and [sprite]. The sprite is stored with the key
+     * Constructs a [SpritesComponent] with the given [sprite]. The sprite is stored with the key
      * [SPRITE]. This constructor is useful when only one sprite is needed.
      *
-     * @param entity The entity that this [SpritesComponent] belongs to.
      * @param sprite The sprite to add to this [SpritesComponent].
      */
-    constructor(
-        entity: IGameEntity,
-        sprite: GameSprite
-    ) : this(entity, SPRITE to sprite)
+    constructor(sprite: GameSprite) : this(SPRITE to sprite)
 
     /**
      * Updates the sprites in this [SpritesComponent] using the corresponding update functions. If no

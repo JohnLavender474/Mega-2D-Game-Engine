@@ -26,12 +26,12 @@ public interface IBodyEntity extends IGameEntity, IPositional, ISizable {
         return getBody().getX();
     }
 
-    default float getY() {
-        return getBody().getY();
-    }
-
     default void setX(float x) {
         getBody().setX(x);
+    }
+
+    default float getY() {
+        return getBody().getY();
     }
 
     default void setY(float y) {
@@ -51,12 +51,12 @@ public interface IBodyEntity extends IGameEntity, IPositional, ISizable {
         return getBody().getWidth();
     }
 
-    default float getHeight() {
-        return getBody().getHeight();
-    }
-
     default void setWidth(float width) {
         getBody().setWidth(width);
+    }
+
+    default float getHeight() {
+        return getBody().getHeight();
     }
 
     default void setHeight(float height) {

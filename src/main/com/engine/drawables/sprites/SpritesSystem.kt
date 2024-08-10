@@ -19,7 +19,7 @@ open class SpritesSystem(protected open val spritesCollector: (GameSprite) -> Un
      *
      * @param spritesCollector the function that should collect the sprites to be drawn
      */
-    constructor(spritesCollector: Consumer<GameSprite>, ) : this(spritesCollector::accept)
+    constructor(spritesCollector: Consumer<GameSprite>) : this(spritesCollector::accept)
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return

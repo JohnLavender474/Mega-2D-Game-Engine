@@ -30,7 +30,7 @@ abstract class Spawner(
         shouldBeCulled: Predicate<Float> = Predicate { false },
         onCull: Runnable = Runnable {},
         respawnable: Boolean = true
-    ) : this (
+    ) : this(
         shouldBeCulled = shouldBeCulled::test,
         onCull = onCull::run,
         respawnable = respawnable

@@ -27,7 +27,7 @@ class ControllerSystemTest :
 
                 val map = ObjectMap<Any, () -> IButtonActuator?>()
                 map.put("ButtonA") { actuator }
-                val controllerComponent = ControllerComponent(entity, map)
+                val controllerComponent = ControllerComponent(map)
                 entity.addComponent(controllerComponent)
 
                 controllerSystem.add(entity)

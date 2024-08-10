@@ -39,7 +39,7 @@ class AnimationsSystemTest :
                 }
 
                 val anims = gdxArrayOf({ mockSprite } to mockAnimator)
-                animationsComponent = spyk(AnimationsComponent(entity, anims))
+                animationsComponent = spyk(AnimationsComponent(anims))
                 animationsSystem = spyk(AnimationsSystem())
 
                 entity.addComponent(animationsComponent)

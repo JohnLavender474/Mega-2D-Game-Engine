@@ -38,8 +38,10 @@ class ArcMotion(
                 ((startPosition.y + targetPosition.y) / 2f) + (arcFactor * (startPosition.x - targetPosition.x))
             )
 
-            val x = ((1 - t).pow(2) * startPosition.x) + (2 * (1 - t) * t * controlPoint.x) + (t.pow(2) * targetPosition.x)
-            val y = ((1 - t).pow(2) * startPosition.y) + (2 * (1 - t) * t * controlPoint.y) + (t.pow(2) * targetPosition.y)
+            val x =
+                ((1 - t).pow(2) * startPosition.x) + (2 * (1 - t) * t * controlPoint.x) + (t.pow(2) * targetPosition.x)
+            val y =
+                ((1 - t).pow(2) * startPosition.y) + (2 * (1 - t) * t * controlPoint.y) + (t.pow(2) * targetPosition.y)
 
             return Vector2(x, y)
         }

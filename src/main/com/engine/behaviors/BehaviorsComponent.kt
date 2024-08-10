@@ -3,11 +3,10 @@ package com.engine.behaviors
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedMap
 import com.engine.components.IGameComponent
-import com.engine.entities.IGameEntity
 import java.util.function.BiFunction
 
 /** A [IGameComponent] that manages a collection of [AbstractBehavior]s. */
-open class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent {
+open class BehaviorsComponent() : IGameComponent {
 
     val behaviors = OrderedMap<Any, AbstractBehavior>()
     val allowedBehaviors = ObjectMap<Any, Boolean>()
@@ -17,7 +16,7 @@ open class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent
      *
      * @param _behaviors The [AbstractBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(entity: IGameEntity, vararg _behaviors: Pair<Any, AbstractBehavior>) : this(entity) {
+    constructor(vararg _behaviors: Pair<Any, AbstractBehavior>) : this() {
         _behaviors.forEach { addBehavior(it.first, it.second) }
     }
 
@@ -26,7 +25,7 @@ open class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent
      *
      * @param _behaviors The [AbstractBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(entity: IGameEntity, _behaviors: Iterable<Pair<Any, AbstractBehavior>>) : this(entity) {
+    constructor(_behaviors: Iterable<Pair<Any, AbstractBehavior>>) : this() {
         _behaviors.forEach { addBehavior(it.first, it.second) }
     }
 
@@ -35,7 +34,7 @@ open class BehaviorsComponent(override val entity: IGameEntity) : IGameComponent
      *
      * @param _behaviors The [AbstractBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(entity: IGameEntity, _behaviors: OrderedMap<Any, AbstractBehavior>) : this(entity) {
+    constructor(_behaviors: OrderedMap<Any, AbstractBehavior>) : this() {
         _behaviors.forEach { addBehavior(it.key, it.value) }
     }
 

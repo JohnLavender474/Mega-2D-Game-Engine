@@ -5,14 +5,13 @@ import com.badlogic.gdx.utils.OrderedMap
 import com.engine.common.interfaces.Resettable
 import com.engine.common.shapes.IGameShape2D
 import com.engine.components.IGameComponent
-import com.engine.entities.IGameEntity
 import java.util.function.BiConsumer
 
 /**
  * A component that holds a list of [IMotion]s and a list of functions that are called when the
  * [IMotion]s are updated. The object to be moved by the motion value should be a [IGameShape2D].
  */
-class MotionComponent(override val entity: IGameEntity) : IGameComponent {
+class MotionComponent : IGameComponent {
 
     /**
      * A definition of a [IMotion] and function pair. The function is called when the [IMotion] is

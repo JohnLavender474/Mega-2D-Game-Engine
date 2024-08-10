@@ -1,7 +1,6 @@
 package com.engine.common.objects
 
 import com.badlogic.gdx.utils.Array
-import java.util.function.Consumer
 
 /**
  * Iterator for iterating over multiple collections in sequence.

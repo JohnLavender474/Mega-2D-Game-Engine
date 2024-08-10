@@ -3,7 +3,6 @@ package com.engine.controller
 import com.badlogic.gdx.utils.ObjectMap
 import com.engine.components.IGameComponent
 import com.engine.controller.buttons.IButtonActuator
-import com.engine.entities.IGameEntity
 import java.util.function.Supplier
 
 /**
@@ -13,24 +12,16 @@ import java.util.function.Supplier
  * @param actuators The map of actuators.
  * @see IButtonActuator
  */
-class ControllerComponent(
-    override val entity: IGameEntity,
-    val actuators: ObjectMap<Any, () -> IButtonActuator?>
-) : IGameComponent {
+class ControllerComponent(val actuators: ObjectMap<Any, () -> IButtonActuator?>) : IGameComponent {
 
     /**
      * Creates a [ControllerComponent] with the given actuators.
      *
      * @param _actuators The actuators to add to the component.
      */
-    constructor(
-        entity: IGameEntity,
-        vararg _actuators: Pair<Any, () -> IButtonActuator?>
-    ) : this(
-        entity,
-        ObjectMap<Any, () -> IButtonActuator?>().apply {
-            _actuators.forEach { put(it.first, it.second) }
-        })
+    constructor(vararg _actuators: Pair<Any, () -> IButtonActuator?>) : this(ObjectMap<Any, () -> IButtonActuator?>().apply {
+        _actuators.forEach { put(it.first, it.second) }
+    })
 
     /**
      * Puts an actuator into the map with the given name and supplier.

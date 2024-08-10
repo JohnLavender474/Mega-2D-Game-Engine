@@ -1,10 +1,8 @@
 package com.engine.animations
 
 import com.badlogic.gdx.utils.Array
-import com.engine.common.GameLogger
 import com.engine.components.IGameComponent
 import com.engine.drawables.sprites.GameSprite
-import com.engine.entities.IGameEntity
 import com.engine.entities.contracts.ISpritesEntity
 import java.util.function.Supplier
 
@@ -15,7 +13,6 @@ import java.util.function.Supplier
  * @param animators the animators that are used to animate the respective sprites
  */
 class AnimationsComponent(
-    override val entity: IGameEntity,
     val animators: Array<Pair<() -> GameSprite, IAnimator>> = Array()
 ) : IGameComponent {
 
@@ -32,24 +29,18 @@ class AnimationsComponent(
      * @see AnimationsComponent
      */
     constructor(
-        entity: IGameEntity,
-        spriteSupplier: () -> GameSprite,
-        animator: IAnimator
-    ) : this(
-        entity, Array<Pair<() -> GameSprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
+        spriteSupplier: () -> GameSprite, animator: IAnimator
+    ) : this(Array<Pair<() -> GameSprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
 
     /**
      * Convenience constructor if using Java [Supplier] to supply the sprite.
      *
-     * @param entity the entity that contains the sprite to animate
      * @param spriteSupplier the sprite supplier that is used to supply the sprite to animate
      * @param animator the animator that is used to animate the sprite
      */
     constructor(
-        entity: IGameEntity,
-        spriteSupplier: Supplier<GameSprite>,
-        animator: IAnimator
-    ) : this(entity, { spriteSupplier.get() }, animator)
+        spriteSupplier: Supplier<GameSprite>, animator: IAnimator
+    ) : this({ spriteSupplier.get() }, animator)
 
     /**
      * Convenience constructor if the entity is a [ISpritesEntity] where only the first sprite needs to
@@ -59,13 +50,7 @@ class AnimationsComponent(
      * @param entity the entity that contains the sprite to animate
      * @param animator the animator that is used to animate the sprite
      */
-    constructor(
-        entity: ISpritesEntity,
-        animator: IAnimator
-    ) : this(entity, { entity.firstSprite!! }, animator)
+    constructor(entity: ISpritesEntity, animator: IAnimator) : this({ entity.firstSprite!! }, animator)
 
-    override fun reset() {
-        GameLogger.debug(TAG, "reset(): Resetting animations component for entity [$entity]")
-        animators.forEach { it.second.reset() }
-    }
+    override fun reset() = animators.forEach { it.second.reset() }
 }

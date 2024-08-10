@@ -4,7 +4,6 @@ import com.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
-import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 
@@ -22,7 +21,7 @@ class BehaviorsSystemTest : DescribeSpec({
 
             behavior = spyk(Behavior({ true }, { }, { }, { }))
 
-            behaviorsComponent = spyk(BehaviorsComponent(entity))
+            behaviorsComponent = spyk(BehaviorsComponent())
             behaviorsComponent.addBehavior("key", behavior)
 
             behaviorsSystem = BehaviorsSystem()

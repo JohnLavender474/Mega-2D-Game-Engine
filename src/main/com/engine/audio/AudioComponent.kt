@@ -3,7 +3,6 @@ package com.engine.audio
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.utils.Array
 import com.engine.components.IGameComponent
-import com.engine.entities.IGameEntity
 
 /**
  * A request to play a sound.
@@ -29,7 +28,7 @@ data class MusicRequest(
  * @property playSoundRequests a list of sounds to play
  * @property stopSoundRequests a list of sounds to stop
  */
-class AudioComponent(override val entity: IGameEntity) : IGameComponent {
+class AudioComponent() : IGameComponent {
 
     val playSoundRequests = Array<SoundRequest>()
     val stopSoundRequests = Array<Any>()

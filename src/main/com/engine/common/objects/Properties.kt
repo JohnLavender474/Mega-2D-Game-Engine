@@ -231,7 +231,7 @@ class Properties : ICopyable<Properties> {
      * @param type The type to cast the property to.
      * @return The property, or the default value if no property is mapped to the given key.
      */
-    fun <T: Any> getOrDefaultNotNull(key: Any, defaultValue: Any, type: Class<T>): T {
+    fun <T : Any> getOrDefaultNotNull(key: Any, defaultValue: Any, type: Class<T>): T {
         val value = get(key)
         return if (value != null) type.cast(value) else type.cast(defaultValue)
     }

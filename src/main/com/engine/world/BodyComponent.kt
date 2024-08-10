@@ -1,16 +1,16 @@
 package com.engine.world
 
 import com.engine.components.IGameComponent
-import com.engine.entities.IGameEntity
 
 /**
- * A component that can be used to add a fixtureBody to a game entity.
+ * A component that can be used to add a body to a game entity.
  *
- * @param body the fixtureBody to add to the game entity
+ * @param body the body to add to the game entity
  */
-class BodyComponent(override val entity: IGameEntity, var body: Body) : IGameComponent {
+class BodyComponent(var body: Body) : IGameComponent {
 
+    /**
+     * Resets the body.
+     */
     override fun reset() = body.reset()
-
-    override fun print() = body.toString()
 }

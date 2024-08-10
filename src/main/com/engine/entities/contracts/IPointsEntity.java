@@ -6,7 +6,9 @@ import com.engine.points.Points;
 import com.engine.points.PointsComponent;
 import kotlin.reflect.KClass;
 
-/** An entity containing points. */
+/**
+ * An entity containing points.
+ */
 public interface IPointsEntity extends IGameEntity {
 
     /**
@@ -32,7 +34,7 @@ public interface IPointsEntity extends IGameEntity {
     /**
      * Puts the points into the map.
      *
-     * @param key The key of the points.
+     * @param key    The key of the points.
      * @param points The points.
      * @return The previous points mapped to the given key if any.
      */
@@ -43,9 +45,9 @@ public interface IPointsEntity extends IGameEntity {
     /**
      * Puts the points into the map.
      *
-     * @param key The key of the points.
-     * @param min The minimum value.
-     * @param max The maximum value.
+     * @param key     The key of the points.
+     * @param min     The minimum value.
+     * @param max     The maximum value.
      * @param current The current value.
      * @return The previous points mapped to the given key if any.
      */
@@ -57,7 +59,7 @@ public interface IPointsEntity extends IGameEntity {
      * Puts the points into the map. The min value will be zero. The current and max values will be
      * equal to value.
      *
-     * @param key The key of the points.
+     * @param key   The key of the points.
      * @param value The value.
      * @return The previous points mapped to the given key if any.
      */

@@ -5,31 +5,30 @@ import com.engine.common.extensions.objectMapOf
 import com.engine.common.interfaces.Updatable
 import com.engine.common.interfaces.UpdateFunction
 import com.engine.components.IGameComponent
-import com.engine.entities.IGameEntity
 
 /**
  * A component that holds a collection of [BitmapFontHandle] objects. The fonts are stored using a key
  * that can be used to retrieve the font. The fonts can be added, removed, and retrieved. The fonts are
  * stored in a map where the key is the key used to store the font and the value is the font itself.
  * The fonts can be used to draw text on the screen.
- *
- * @param entity the entity that this component belongs to
  */
-class FontsComponent(override val entity: IGameEntity, val fonts: OrderedMap<Any, BitmapFontHandle> = OrderedMap()) :
-    IGameComponent, Updatable {
+class FontsComponent(val fonts: OrderedMap<Any, BitmapFontHandle> = OrderedMap()) : IGameComponent, Updatable {
 
     internal val updatables = objectMapOf<Any, UpdateFunction<BitmapFontHandle>>()
 
     /**
      * Creates a [FontsComponent] with the given [fonts].
      *
-     * @param entity the entity that this [FontsComponent] belongs to
      * @param fonts the fonts to add to this [FontsComponent]
      */
-    constructor(
-        entity: IGameEntity,
-        vararg fonts: Pair<Any, BitmapFontHandle>
-    ) : this(entity, OrderedMap<Any, BitmapFontHandle>().apply { fonts.forEach { put(it.first, it.second) } })
+    constructor(vararg fonts: Pair<Any, BitmapFontHandle>) : this(OrderedMap<Any, BitmapFontHandle>().apply {
+        fonts.forEach {
+            put(
+                it.first,
+                it.second
+            )
+        }
+    })
 
     /**
      * Puts the given [function] into this [FontsComponent] with the given [key].

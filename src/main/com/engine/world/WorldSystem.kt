@@ -255,7 +255,7 @@ class WorldSystem(
         val worldGraph = worldGraphSupplier() ?: throw IllegalStateException("World graph cannot be null.")
 
         body.fixtures.forEach { (_, fixture) ->
-            if (fixture.isActive() && contactFilterMap?.containsKey(fixture.getFixtureType()) != false) {
+            if (fixture.isActive() && contactFilterMap.containsKey(fixture.getFixtureType())) {
                 if (printDebugStatements) GameLogger.debug(TAG, "checking for contacts with fixture = $fixture")
 
                 val overlapping = ObjectSet<IFixture>()

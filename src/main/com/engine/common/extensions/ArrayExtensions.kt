@@ -159,7 +159,7 @@ fun gdxIntArrayOf(vararg elements: Int): IntArray {
 
 /**
  * Adds the given [element] to the array and returns the array.
- * 
+ *
  * @param element the element to add
  * @return the array with the element added
  */
@@ -171,7 +171,7 @@ fun <T> Array<T>.addAndReturn(element: T): Array<T> {
 /**
  * Adds all the elements from the given [iterable] to the array and returns the array.
  * This method is useful for chaining multiple operations together.
- * 
+ *
  * @param iterable the iterable to add elements from
  * @return the array with all the elements from the iterable added
  */
@@ -183,7 +183,7 @@ fun <T> Array<T>.addAllAndReturn(iterable: Iterable<T>): Array<T> {
 /**
  * Adds all the elements from the given [elements] to the array and returns the array.
  * This method is useful for chaining multiple operations together.
- * 
+ *
  * @param elements the elements to add to the array
  * @return the array with all the elements added
  */

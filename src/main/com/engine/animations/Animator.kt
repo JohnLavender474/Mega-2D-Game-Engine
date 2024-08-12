@@ -1,7 +1,6 @@
 package com.engine.animations
 
 import com.badlogic.gdx.utils.ObjectMap
-import com.engine.common.GameLogger
 import com.engine.common.extensions.objectMapOf
 import com.engine.drawables.sprites.GameSprite
 import java.util.function.Supplier
@@ -67,10 +66,7 @@ class Animator(
         val nextKey = keySupplier()
 
         // if the key has changed, then reset the current animation before setting the key
-        if (currentKey != nextKey) {
-            GameLogger.debug(TAG, "animate(): Switching animation from [$currentKey] to [$nextKey]")
-            currentAnimation?.reset()
-        }
+        if (currentKey != nextKey) currentAnimation?.reset()
 
         currentKey = nextKey
         // after the key has been set to the new key, then also reset the new animation too

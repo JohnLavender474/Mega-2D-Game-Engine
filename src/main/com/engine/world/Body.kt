@@ -2,7 +2,6 @@ package com.engine.world
 
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
-import com.engine.common.GameLogger
 import com.engine.common.enums.Direction
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.interfaces.Resettable
@@ -141,14 +140,6 @@ open class Body(
     }
 
     /**
-     * Runs the given function for each fixture entry in this body.
-     *
-     * @param function the function to run for each fixture entry
-     */
-    open fun forEachFixture(function: (Any, IFixture) -> Unit) =
-        fixtures.forEach { function(it.first, it.second) }
-
-    /**
      * Resets the body to its default state by resetting its [PhysicsData] and resetting the positions
      * of its [Fixture]s to their default positions (offset from the center of the body).
      *
@@ -156,25 +147,6 @@ open class Body(
      */
     override fun reset() {
         physics.reset()
-    }
-
-    override fun copy(): Body {
-        GameLogger.debug(TAG, "copy(): Creating copy of body: $this.")
-        val body =
-            Body(
-                bodyType,
-                x,
-                y,
-                width,
-                height,
-                physics.copy(),
-                Array(),
-                preProcess,
-                postProcess,
-                properties = properties.copy()
-            )
-        fixtures.forEach { body.addFixture(it.second.copy()) }
-        return body
     }
 
     override fun equals(other: Any?) = this === other

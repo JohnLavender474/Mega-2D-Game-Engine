@@ -1,7 +1,6 @@
 package com.engine.spawns
 
 import com.badlogic.gdx.utils.Array
-import com.engine.common.GameLogger
 import com.engine.common.interfaces.Resettable
 import com.engine.common.interfaces.Updatable
 
@@ -41,7 +40,6 @@ class SpawnsManager : Updatable, Resettable {
      * @see ISpawner
      */
     fun setSpawners(spawners: Array<ISpawner>) {
-        GameLogger.debug(TAG, "setSpawners(): Setting spawners: $spawners")
         this._spawners.clear()
         this._spawners.addAll(spawners)
     }
@@ -62,19 +60,16 @@ class SpawnsManager : Updatable, Resettable {
             if (spawner.shouldBeCulled(delta)) {
                 spawner.reset()
                 iter.remove()
-                GameLogger.debug(TAG, "update(): Culling spawner: $spawner")
                 continue
             }
 
             if (spawner.test(delta)) {
                 val spawn = spawner.get()
-                GameLogger.debug(TAG, "update(): Spawning entity: $spawn")
                 _spawns.add(spawn)
 
                 if (!spawner.respawnable) {
                     spawner.reset()
                     iter.remove()
-                    GameLogger.debug(TAG, "update(): Culling spawner due to not being respawnable: $spawner")
                 }
             }
         }
@@ -82,7 +77,6 @@ class SpawnsManager : Updatable, Resettable {
 
     /** Clears the [ISpawner]s and [Spawn]s. */
     override fun reset() {
-        GameLogger.debug(TAG, "reset(): Clearing spawners and spawns")
         _spawners.clear()
         _spawns.clear()
     }

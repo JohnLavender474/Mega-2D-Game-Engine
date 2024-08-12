@@ -4,7 +4,6 @@ import com.badlogic.gdx.maps.MapLayer
 import com.badlogic.gdx.maps.MapLayers
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.utils.OrderedMap
-import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 
 /**
@@ -34,10 +33,7 @@ abstract class TiledMapLayerBuilders {
         val layersMap = layers.associateBy { it.name }
         layerBuilders.forEach {
             val layer = layersMap[it.key]
-            if (layer != null) {
-                GameLogger.debug(TAG, "build(): Building layer: ${layer.name}")
-                it.value.build(layer, returnProps)
-            }
+            if (layer != null) it.value.build(layer, returnProps)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.engine.pathfinding
 
-import com.engine.common.GameLogger
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
@@ -95,12 +94,10 @@ class PathfindingSystem(
                     pathfindingComponents[i].currentPath = result
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    GameLogger.error(TAG, "Error occurred while invoking pathfinding future for index $i: $e")
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            GameLogger.debug(TAG, "Error occurred while invoking pathfinding futures list: $e")
         }
     }
 }

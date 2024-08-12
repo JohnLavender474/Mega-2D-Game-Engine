@@ -28,7 +28,7 @@ data class MusicRequest(
  * @property playSoundRequests a list of sounds to play
  * @property stopSoundRequests a list of sounds to stop
  */
-class AudioComponent() : IGameComponent {
+class AudioComponent : IGameComponent {
 
     val playSoundRequests = Array<SoundRequest>()
     val stopSoundRequests = Array<Any>()

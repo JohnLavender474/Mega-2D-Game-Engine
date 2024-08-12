@@ -2,7 +2,6 @@ package com.engine.audio
 
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
-import com.engine.common.GameLogger
 
 object AudioManager : IAudioManager {
 
@@ -14,14 +13,12 @@ object AudioManager : IAudioManager {
     override var soundVolume = DEFAULT_VOLUME
         set(value) {
             field = restrictVolume(value)
-            GameLogger.debug(TAG, "setSoundVolume(): Sound volume set to: $soundVolume")
         }
         get() = field / MAX_VOLUME
 
     override var musicVolume = DEFAULT_VOLUME
         set(value) {
             field = restrictVolume(value)
-            GameLogger.debug(TAG, "setMusicVolume(): Music volume set to: $musicVolume")
         }
         get() = field / MAX_VOLUME
 
@@ -36,7 +33,6 @@ object AudioManager : IAudioManager {
             key.volume = musicVolume
             key.isLooping = loop
             key.play()
-            GameLogger.debug(TAG, "playMusic(): Playing music with key: $key, loop: $loop")
         }
     }
 
@@ -46,10 +42,7 @@ object AudioManager : IAudioManager {
      * @param key the music to stop
      */
     override fun stopMusic(key: Any?) {
-        if (key is Music) {
-            key.stop()
-            GameLogger.debug(TAG, "stopMusic(): Stopping music with key: $key")
-        }
+        if (key is Music) key.stop()
     }
 
     /**
@@ -58,10 +51,7 @@ object AudioManager : IAudioManager {
      * @param key the music to pause
      */
     override fun pauseMusic(key: Any?) {
-        if (key is Music) {
-            key.pause()
-            GameLogger.debug(TAG, "pauseMusic(): Pausing music with key: $key")
-        }
+        if (key is Music) key.pause()
     }
 
     /**
@@ -72,13 +62,8 @@ object AudioManager : IAudioManager {
      */
     override fun playSound(key: Any?, loop: Boolean) {
         if (key is Sound) {
-            if (loop) {
-                key.loop(soundVolume)
-                GameLogger.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
-            } else {
-                key.play(soundVolume)
-                GameLogger.debug(TAG, "playSound(): Playing sound with key: $key, loop: $loop")
-            }
+            if (loop) key.loop(soundVolume)
+            else key.play(soundVolume)
         }
     }
 
@@ -88,10 +73,7 @@ object AudioManager : IAudioManager {
      * @param key the sound to stop
      */
     override fun stopSound(key: Any?) {
-        if (key is Sound) {
-            key.stop()
-            GameLogger.debug(TAG, "stopSound(): Stopping sound with key: $key")
-        }
+        if (key is Sound) key.stop()
     }
 
     /**
@@ -100,10 +82,7 @@ object AudioManager : IAudioManager {
      * @param key the sound to pause
      */
     override fun pauseSound(key: Any?) {
-        if (key is Sound) {
-            key.pause()
-            GameLogger.debug(TAG, "pauseSound(): Pausing sound with key: $key")
-        }
+        if (key is Sound) key.pause()
     }
 
     private fun restrictVolume(requestedVolume: Float): Float {

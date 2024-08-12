@@ -1,7 +1,6 @@
 package com.engine.common.objects
 
 import com.badlogic.gdx.utils.Array
-import com.engine.common.GameLogger
 import com.engine.common.interfaces.Initializable
 import java.util.function.Consumer
 import java.util.function.Supplier
@@ -57,7 +56,6 @@ class Pool<T>(
 
     /** Initialize the pool by supplying the initial amount of objects. */
     override fun init() {
-        GameLogger.debug(TAG, "Initializing pool")
         for (i in 0 until startAmount) pool(supplyNew())
         initialized = true
     }
@@ -70,9 +68,6 @@ class Pool<T>(
     fun fetch(): T {
         if (!initialized) init()
         val element = if (queue.isEmpty) supplyNew() else queue.pop()
-        GameLogger.debug(
-            TAG, "Fetched object from pool. Updated queue size: ${queue.size}. Element: $element"
-        )
         onFetch?.invoke(element)
         return element
     }
@@ -83,7 +78,6 @@ class Pool<T>(
      * @param element the object to pool
      */
     fun pool(element: T) {
-        GameLogger.debug(TAG, "Pooling object: $element")
         queue.add(element)
         onPool?.invoke(element)
     }
@@ -94,7 +88,6 @@ class Pool<T>(
      */
     private fun supplyNew(): T {
         val element = supplier()
-        GameLogger.debug(TAG, "Supplying new object: $element")
         onSupplyNew?.invoke(element)
         return element
     }

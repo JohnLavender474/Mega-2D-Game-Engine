@@ -116,7 +116,7 @@ class QuadTreeGraphMapTest :
                 for (x in 0 until width) {
                     for (y in 0 until height) {
                         val cellObjects = quadTreeGraphMap.get(x, y)
-                        cellObjects.isEmpty() shouldBe true
+                        cellObjects.isEmpty shouldBe true
                     }
                 }
             }

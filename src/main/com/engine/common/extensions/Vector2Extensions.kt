@@ -2,6 +2,7 @@ package com.engine.common.extensions
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.engine.common.getRandom
 
 /**
  * Converts this [Vector2] to a [Vector3] with the given z value.
@@ -68,6 +69,27 @@ fun Vector2.coerce(min: Vector2, max: Vector2): Vector2 {
     y = y.coerceIn(min.y, max.y)
     return this
 }
+
+/**
+ * Creates a [Vector2] with random x and y values within the given range.
+ *
+ * @param min the minimum value
+ * @param max the maximum value
+ * @return the new [Vector2]
+ */
+fun randomVector2(min: Float, max: Float) = Vector2(getRandom(min, max), getRandom(min, max))
+
+/**
+ * Creates a [Vector2] with random x and y values within the given ranges.
+ *
+ * @param minX the minimum x value
+ * @param maxX the maximum x value
+ * @param minY the minimum y value
+ * @param maxY the maximum y value
+ * @return the new [Vector2]
+ */
+fun randomVector2(minX: Float, maxX: Float, minY: Float, maxY: Float) =
+    Vector2(getRandom(minX, maxX), getRandom(minY, maxY))
 
 /**
  * Creates a [Vector2] where the x and y values are set to the given value.

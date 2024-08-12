@@ -1,13 +1,12 @@
 package com.engine.world
 
-import com.engine.common.interfaces.ICopyable
 import com.engine.common.interfaces.IPropertizable
 import com.engine.common.shapes.IGameShape2D
 
 /**
  * Defines the contract of a fixture. Fixtures are sensors attached to bodies.
  */
-interface IFixture : IPropertizable, ICopyable<IFixture> {
+interface IFixture : IPropertizable {
 
     /**
      * Gets the shape of the fixture.

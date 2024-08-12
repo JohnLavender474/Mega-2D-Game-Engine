@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
-import com.engine.common.GameLogger
 import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.graph.IGraphMap
@@ -131,7 +130,6 @@ class WorldSystem(
         worldGraphSupplier()!!.reset()
         bodies.forEach { processPhysicsAndGraph(it, delta) }
         bodies.forEach { processContactsAndCollisions(it) }
-        if (printDebugStatements) GameLogger.debug(TAG, "current contacts = $currentContactSet")
         processContacts()
         postProcess(bodies, delta)
         if (debugTicks >= MAX_DEBUG_TICKS) debugTicks = 0
@@ -256,21 +254,13 @@ class WorldSystem(
 
         body.fixtures.forEach { (_, fixture) ->
             if (fixture.isActive() && contactFilterMap.containsKey(fixture.getFixtureType())) {
-                if (printDebugStatements) GameLogger.debug(TAG, "checking for contacts with fixture = $fixture")
-
                 val overlapping = ObjectSet<IFixture>()
-
                 val worldGraphResults = worldGraph.get(fixture.getShape())
-                if (printDebugStatements) GameLogger.debug(TAG, "world graph results = $worldGraphResults")
-
                 worldGraphResults.forEach {
                     if (it is IFixture && it.isActive() && filterContact(fixture, it) &&
                         fixture.getShape().overlaps(it.getShape())
                     ) overlapping.add(it)
                 }
-
-                if (printDebugStatements) GameLogger.debug(TAG, "overlapping fixtures = $overlapping")
-
                 overlapping.forEach { o -> currentContactSet.add(Contact(fixture, o)) }
             }
         }

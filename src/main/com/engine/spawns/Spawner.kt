@@ -1,6 +1,5 @@
 package com.engine.spawns
 
-import com.engine.common.GameLogger
 import java.util.function.Predicate
 
 /** A [Spawner] is used to spawn an entity. */
@@ -36,10 +35,7 @@ abstract class Spawner(
         respawnable = respawnable
     )
 
-    override fun get(): Spawn? {
-        GameLogger.debug(TAG, "get(): Spawning entity: $spawn")
-        return spawn
-    }
+    override fun get(): Spawn? = spawn
 
     override fun test(delta: Float): Boolean {
         if (spawn?.entity?.dead == true) spawn = null

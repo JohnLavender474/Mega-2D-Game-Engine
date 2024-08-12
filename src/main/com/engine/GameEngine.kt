@@ -2,10 +2,7 @@ package com.engine
 
 import com.badlogic.gdx.utils.OrderedSet
 import com.badlogic.gdx.utils.Queue
-import com.engine.common.CAUSE_OF_DEATH_MESSAGE
-import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
-import com.engine.common.objects.props
 import com.engine.entities.IGameEntity
 import com.engine.systems.IGameSystem
 import java.util.function.Consumer
@@ -99,16 +96,9 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
 
             entities.add(entity)
             entity.spawn(spawnProps)
-            GameLogger.debug(TAG, "spawn(): Spawned entity: ${entity.print()}")
 
             systems.forEach { system ->
-                if (system.qualifies(entity)) {
-                    GameLogger.debug(
-                        TAG,
-                        "update(): Adding [${entity::class.simpleName}] to system [${system::class.simpleName}]"
-                    )
-                    system.add(entity)
-                }
+                if (system.qualifies(entity)) system.add(entity)
             }
         }
 
@@ -118,14 +108,8 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
             val e = eIter.next()
             if (!e.dead) continue
 
-            systems.forEach { s ->
-                GameLogger.debug(
-                    TAG, "update(): Removing entity [${e.print()}] from system [${s::class.simpleName}]"
-                )
-                s.remove(e)
-            }
+            systems.forEach { s -> s.remove(e) }
 
-            GameLogger.debug(TAG, "update(): Destroying entity: ${e.print()}")
             e.onDestroy()
             eIter.remove()
         }
@@ -147,17 +131,13 @@ class GameEngine(override val systems: Iterable<IGameSystem>) : IGameEngine {
             if (updating) true
             else {
                 entities.forEach { e ->
-                    GameLogger.debug(TAG, "reset(): Destroying entity: ${e.print()}")
-                    e.kill(props(CAUSE_OF_DEATH_MESSAGE to "GameEngine reset"))
+                    e.kill()
                     e.onDestroy()
                 }
                 entities.clear()
                 entitiesToAdd.clear()
 
-                systems.forEach {
-                    GameLogger.debug(TAG, "reset(): Resetting system: ${it::class.simpleName}")
-                    it.reset()
-                }
+                systems.forEach { it.reset() }
 
                 false
             }

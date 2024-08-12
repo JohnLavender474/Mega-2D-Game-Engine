@@ -32,25 +32,13 @@ open class GameEntity : IGameEntity {
      */
     var initialized = false
 
-    override fun kill(props: Properties?) {
-        super.kill(props)
-        props?.let {
-            if (it.containsKey(CAUSE_OF_DEATH_MESSAGE)) {
-                val tag = it.getOrDefault(CAUSE_OF_DEATH_TAG, TAG) as String
-                GameLogger.debug(
-                    tag,
-                    "${this::class.simpleName} killed. Cause of death: ${it.get(CAUSE_OF_DEATH_MESSAGE)}"
-                )
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         getComponents().forEach { it.reset() }
     }
 
     override fun spawn(spawnProps: Properties) {
+        dead = false
         properties.clear()
         properties.putAll(spawnProps)
         if (!initialized) {
@@ -58,7 +46,6 @@ open class GameEntity : IGameEntity {
             initialized = true
         }
         runnablesOnSpawn.forEach { it.run() }
-        dead = false
     }
 
     override fun addComponent(c: IGameComponent) {

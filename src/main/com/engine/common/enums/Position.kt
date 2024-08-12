@@ -23,4 +23,20 @@ enum class Position(val x: Int, val y: Int) {
          */
         fun get(x: Int, y: Int): Position? = Position.values().find { it.x == x && it.y == y }
     }
+
+    fun opposite(): Position {
+        val newX = when (x) {
+            0 -> 2
+            1 -> 1
+            2 -> 0
+            else -> throw IllegalArgumentException("Invalid x value: $x")
+        }
+        val newY = when (y) {
+            0 -> 2
+            1 -> 1
+            2 -> 0
+            else -> throw IllegalArgumentException("Invalid y value: $y")
+        }
+        return get(newX, newY)!!
+    }
 }

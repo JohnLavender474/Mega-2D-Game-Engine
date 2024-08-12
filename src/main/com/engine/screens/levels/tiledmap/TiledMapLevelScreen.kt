@@ -3,7 +3,6 @@ package com.engine.screens.levels.tiledmap
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.tiled.TiledMap
-import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.common.objects.props
 import com.engine.screens.BaseScreen
@@ -86,7 +85,6 @@ abstract class TiledMapLevelScreen(private val batch: Batch, properties: Propert
         super.show()
         tmxMapSource?.let {
             tiledMapLoadResult = TiledMapLevelLoader.load(it)
-            GameLogger.debug(TAG, "show(): tiledMapLoadResult = $tiledMapLoadResult")
             val returnProps = Properties()
             val layerBuilders = getLayerBuilders()
             layerBuilders.build(tiledMapLoadResult!!.map.layers, returnProps)

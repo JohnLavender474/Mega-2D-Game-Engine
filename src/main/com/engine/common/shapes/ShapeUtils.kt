@@ -70,6 +70,6 @@ object ShapeUtils {
                 )
             ) return true
         }
-        return polygon.contains(circle.x, circle.y);
+        return polygon.contains(circle.x, circle.y)
     }
 }

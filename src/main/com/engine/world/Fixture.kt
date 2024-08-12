@@ -9,6 +9,7 @@ import com.engine.common.shapes.IGameShape2D
  * An implementation for [IFixture]. This implementation stores a shape variable labeled [rawShape] and
  * calculates the body-relative shape in [getShape].
  *
+ * @param body The body this fixture belongs to. This is used when calculating the body-relative shape in [getShape].
  * @param rawShape The raw bounds of this fixture. Defaults to a [GameRectangle] with size of zero. To get the bounds
  * of this fixture relative to the body it is attached to, use [getShape].
  * @param type The type for this fixture. Used to determine how this fixture interacts with other
@@ -38,16 +39,6 @@ open class Fixture(
 
     companion object {
         const val TAG = "Fixture"
-
-        /**
-         * Creates a new fixture with the given parameters.
-         *
-         * @param body the body to attach this fixture to
-         * @param type the type of this fixture
-         * @param rawShape the raw shape of this fixture
-         * @return a new fixture with the given parameters
-         */
-        fun createFixture(body: Body, type: Any, rawShape: IGameShape2D) = Fixture(body, type, rawShape)
     }
 
     /**
@@ -78,10 +69,6 @@ open class Fixture(
     override fun getFixtureType() = type
 
     override fun isActive() = active
-
-    override fun copy() = Fixture(
-        body, type, rawShape.copy(), active, attachedToBody, Vector2(offsetFromBodyCenter), properties.copy()
-    )
 
     override fun toString() =
         "Fixture(raw_shape=$rawShape, type=$type, active=$active, attachedToBody=$attachedToBody, " +

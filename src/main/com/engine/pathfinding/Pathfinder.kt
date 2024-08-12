@@ -127,7 +127,6 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
                 val worldPath = ArrayList<GameRectangle>()
                 graphPath.forEach { worldPath.add(graph.convertToWorldNode(it)) }
 
-                GameLogger.debug(TAG, "Found graph path: $graphPath")
                 return PathfinderResult(graphPath, worldPath, false)
             }
 

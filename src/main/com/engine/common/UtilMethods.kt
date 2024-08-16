@@ -75,6 +75,20 @@ fun getRandom(min: Float, max: Float): Float {
 }
 
 /**
+ * Generates a random value from the provided suppliers. The suppliers are used to generate the values to choose from.
+ * The suppliers must not be empty. If there is only one supplier, that supplier will be used to generate the value.
+ * Otherwise, a random supplier will be chosen to generate the value.
+ *
+ * @param suppliers The suppliers to generate the values from.
+ * @return A random value generated from the suppliers.
+ * @throws IllegalArgumentException If no suppliers are provided.
+ */
+fun <T> getRandomValue(vararg suppliers: () -> T): T {
+    if (suppliers.isEmpty()) throw IllegalArgumentException("No suppliers provided")
+    return suppliers[random.nextInt(suppliers.size)]()
+}
+
+/**
  * Executes a consumer function if a random number matches any value in the provided iterable.
  *
  * @param min The minimum value (inclusive).

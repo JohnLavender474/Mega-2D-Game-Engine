@@ -78,6 +78,13 @@ fun Sprite.setPosition(p: Vector2, pos: Position, offset: Vector2) = setPosition
 fun Sprite.setSize(size: Float) = setSize(size, size)
 
 /**
+ * Sets the size of this sprite to the specified size.
+ *
+ * @param size the size to set
+ */
+fun Sprite.setSize(size: Vector2) = setSize(size.x, size.y)
+
+/**
  * Sets the bounds of this sprite to the specified bounds.
  *
  * @param bounds the bounds to set

@@ -5,7 +5,7 @@ import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /** A system that can be used to animate sprites. */
-class AnimationsSystem : GameSystem(AnimationsComponent::class) {
+open class AnimationsSystem : GameSystem(AnimationsComponent::class) {
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return

@@ -1,6 +1,7 @@
 package com.engine.motion
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.interfaces.ICopyable
 import com.engine.common.interfaces.Updatable
 import kotlin.math.pow
 
@@ -20,7 +21,7 @@ class ArcMotion(
     var speed: Float,
     var arcFactor: Float,
     var continueBeyondTarget: Boolean = false
-) : IMotion {
+) : IMotion, ICopyable<ArcMotion> {
 
     companion object {
 
@@ -70,11 +71,18 @@ class ArcMotion(
 
     /**
      * The distance covered by the arc. This value is updated by the [update] method and is used to determine when the
-     * arc has reached the target position. Private setter, should only be modified internally by the class. Public
-     * access is read-only.
+     * arc has reached the target position. This value is equal to the sum of deltas multipled by speed. Private setter,
+     * should only be modified internally by the class. Public access is read-only.
      */
     var distanceCovered = 0f
         private set
+
+    /**
+     * Convenience property that returns the total distance between the start and target positions. This value is
+     * calculated by calling [Vector2.dst] on the start and target positions. This value is read-only.
+     */
+    val totalDistance: Float
+        get() = startPosition.dst(targetPosition)
 
     private var currentPosition = startPosition.cpy()
 
@@ -88,8 +96,6 @@ class ArcMotion(
      * @param delta the time in seconds since the last update
      */
     override fun update(delta: Float) {
-        val totalDistance = startPosition.dst(targetPosition)
-
         distanceCovered += speed * delta
 
         if (!continueBeyondTarget && distanceCovered >= totalDistance) {
@@ -99,6 +105,18 @@ class ArcMotion(
 
         val t = distanceCovered / totalDistance
         currentPosition = computeBezierPoint(t, arcFactor, startPosition, targetPosition)
+    }
+
+    /**
+     * Computes the position of the arc at the given time value (distance covered divided by total distance). This does
+     * not update the current position of the arc and therefore has no effect on the return value of [getMotionValue].
+     * To update the current position of the arc, use the [update] method instead.
+     *
+     * @param t the time value (distance covered divided by total distance)
+     * @return the position of the arc at the given time value
+     */
+    fun compute(t: Float): Vector2 {
+        return computeBezierPoint(t, arcFactor, startPosition, targetPosition)
     }
 
     /**
@@ -116,4 +134,12 @@ class ArcMotion(
         currentPosition = startPosition.cpy()
         distanceCovered = 0f
     }
+
+    /**
+     * Returns a copy of this [ArcMotion]. The copy will have copies of the [startPosition], [targetPosition], [speed],
+     * [arcFactor], and [continueBeyondTarget] properties.
+     *
+     * @return a copy of this [ArcMotion]
+     */
+    override fun copy() = ArcMotion(startPosition.cpy(), targetPosition.cpy(), speed, arcFactor, continueBeyondTarget)
 }

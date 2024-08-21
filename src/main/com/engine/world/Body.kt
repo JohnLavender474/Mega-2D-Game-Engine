@@ -117,7 +117,10 @@ open class Body(
             val copy = GameRectangle(this)
             copy.originX = if (originXCenter) center.x else originX
             copy.originY = if (originYCenter) center.y else originY
-            return copy.getCardinallyRotatedShape(cardinalRotation!!, false)
+            val returnShape = copy.getCardinallyRotatedShape(cardinalRotation!!, false)
+            returnShape.color = color
+            returnShape.thickness = thickness
+            return returnShape
         }
     }
 

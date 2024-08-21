@@ -11,7 +11,7 @@ class BehaviorsSystemTest : DescribeSpec({
     describe("BehaviorSystem") {
         lateinit var behaviorsComponent: BehaviorsComponent
         lateinit var behaviorsSystem: BehaviorsSystem
-        lateinit var behavior: AbstractBehavior
+        lateinit var behavior: AbstractBehaviorImpl
         lateinit var entity: GameEntity
 
         beforeEach {
@@ -19,7 +19,7 @@ class BehaviorsSystemTest : DescribeSpec({
 
             entity = GameEntity()
 
-            behavior = spyk(Behavior({ true }, { }, { }, { }))
+            behavior = spyk(FunctionalBehaviorImpl({ true }, { }, { }, { }))
 
             behaviorsComponent = spyk(BehaviorsComponent())
             behaviorsComponent.addBehavior("key", behavior)
@@ -63,28 +63,20 @@ class BehaviorsSystemTest : DescribeSpec({
             }
         }
 
-        it("should force quit behavior") {
+        it("should reset the behavior") {
             entity.addComponent(behaviorsComponent)
             behaviorsSystem.add(entity) shouldBe true
             behaviorsSystem.on = true
 
             behaviorsSystem.update(1f)
-            behaviorsComponent.forceQuitBehavior("key")
-            behaviorsSystem.update(0.1f)
+            behaviorsComponent.getBehavior("key")!!.reset()
 
-            verify { behavior.forceQuit() }
+            verify { behavior.reset() }
             behavior.isActive() shouldBe false
-        }
 
-        it("should not activate behavior again after force quit") {
-            entity.addComponent(behaviorsComponent)
-            behaviorsSystem.add(entity) shouldBe true
-            behaviorsSystem.on = true
+            behavior.update(1f)
 
-            behaviorsComponent.forceQuitBehavior("key")
-            behaviorsSystem.update(1f)
-
-            behavior.isActive() shouldBe false
+            verify { behavior.init() }
         }
     }
 })

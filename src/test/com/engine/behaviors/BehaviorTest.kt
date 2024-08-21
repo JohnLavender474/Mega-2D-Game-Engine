@@ -8,7 +8,7 @@ import io.mockk.spyk
 class BehaviorTest :
     DescribeSpec({
         describe("AbstractBehavior") {
-            class MockBehavior : AbstractBehavior() {
+            class MockBehaviorImpl : AbstractBehaviorImpl() {
 
                 var evaluate = false
 
@@ -30,20 +30,13 @@ class BehaviorTest :
                 override fun end() {
                     end = true
                 }
-
-                override fun reset() {
-                    super.reset()
-                    init = false
-                    end = false
-                    act = 0f
-                }
             }
 
-            lateinit var mockBehavior: MockBehavior
+            lateinit var mockBehavior: MockBehaviorImpl
 
             beforeEach {
                 clearAllMocks()
-                mockBehavior = spyk(MockBehavior())
+                mockBehavior = spyk(MockBehaviorImpl())
             }
 
             it("should be inactive initially") { mockBehavior.isActive() shouldBe false }
@@ -90,21 +83,6 @@ class BehaviorTest :
                 mockBehavior.init shouldBe true
                 mockBehavior.end shouldBe true
                 mockBehavior.act shouldBe 1f
-            }
-
-            it("should reset to inactive state") {
-                // if
-                mockBehavior.evaluate = true
-                mockBehavior.update(1f)
-
-                // when
-                mockBehavior.reset()
-
-                // then
-                mockBehavior.isActive() shouldBe false
-                mockBehavior.init shouldBe false
-                mockBehavior.end shouldBe false
-                mockBehavior.act shouldBe 0f
             }
         }
     })

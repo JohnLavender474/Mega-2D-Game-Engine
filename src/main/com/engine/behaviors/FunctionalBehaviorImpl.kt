@@ -4,27 +4,27 @@ import java.util.function.Consumer
 import java.util.function.Function
 
 /**
- * Implements an [AbstractBehavior] that can be used to create a behavior.
+ * Convenience class which extends [AbstractBehaviorImpl] that can be used to create a behavior via lambda functions.
  *
- * @param evaluate The function that evaluates this [AbstractBehavior].
- * @param init The function that initializes this [AbstractBehavior].
- * @param act The function that performs the action of this [AbstractBehavior].
- * @param end The function that ends this [AbstractBehavior].
+ * @param evaluate The function that evaluates this [AbstractBehaviorImpl].
+ * @param init The function that initializes this [AbstractBehaviorImpl].
+ * @param act The function that performs the action of this [AbstractBehaviorImpl].
+ * @param end The function that ends this [AbstractBehaviorImpl].
  */
-class Behavior(
+class FunctionalBehaviorImpl(
     private val evaluate: (delta: Float) -> Boolean,
     private val init: (() -> Unit)? = null,
     private val act: ((delta: Float) -> Unit)? = null,
     private val end: (() -> Unit)? = null
-) : AbstractBehavior() {
+) : AbstractBehaviorImpl() {
 
     /**
      * Convenience constructor that accepts Java [Function] and [Consumer] instances.
      *
-     * @param evaluate The function that evaluates this [AbstractBehavior].
-     * @param init The function that initializes this [AbstractBehavior].
-     * @param act The function that performs the action of this [AbstractBehavior].
-     * @param end The function that ends this [AbstractBehavior].
+     * @param evaluate The function that evaluates this [AbstractBehaviorImpl].
+     * @param init The function that initializes this [AbstractBehaviorImpl].
+     * @param act The function that performs the action of this [AbstractBehaviorImpl].
+     * @param end The function that ends this [AbstractBehaviorImpl].
      */
     constructor(
         evaluate: Function<Float, Boolean>, init: Runnable? = null, act: Consumer<Float>? = null, end: Runnable? = null

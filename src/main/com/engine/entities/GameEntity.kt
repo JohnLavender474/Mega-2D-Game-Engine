@@ -1,10 +1,7 @@
 package com.engine.entities
 
-import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.OrderedMap
 import com.badlogic.gdx.utils.OrderedSet
-import com.engine.common.CAUSE_OF_DEATH_MESSAGE
-import com.engine.common.CAUSE_OF_DEATH_TAG
-import com.engine.common.GameLogger
 import com.engine.common.objects.Properties
 import com.engine.components.IGameComponent
 import kotlin.reflect.KClass
@@ -19,10 +16,10 @@ open class GameEntity : IGameEntity {
         const val TAG = "GameEntity"
     }
 
-    val componentMap = ObjectMap<KClass<out IGameComponent>, IGameComponent>()
+    val components = OrderedMap<KClass<out IGameComponent>, IGameComponent>()
+    val runnablesOnSpawn = OrderedSet<Runnable>()
+    val runnablesOnDestroy = OrderedSet<Runnable>()
 
-    override val runnablesOnSpawn = OrderedSet<Runnable>()
-    override val runnablesOnDestroy = OrderedSet<Runnable>()
     override val properties = Properties()
     override var dead = false
 
@@ -32,14 +29,20 @@ open class GameEntity : IGameEntity {
      */
     var initialized = false
 
-    override fun onDestroy() {
-        super.onDestroy()
-        getComponents().forEach { it.reset() }
-    }
+    /**
+     * Empty implementation. Override this method to add logic to run when this [GameEntity] is instantiated.
+     */
+    override fun init() {}
 
+    /**
+     * Spawns this [GameEntity] with the given [spawnProps]. If this [GameEntity] has not been initialized,
+     * [init] will be called and [initialized] will be set to true within this method. All [runnablesOnSpawn]
+     * will be run at the end.
+     *
+     * @param spawnProps The [Properties] to spawn this [GameEntity] with.
+     */
     override fun spawn(spawnProps: Properties) {
         dead = false
-        properties.clear()
         properties.putAll(spawnProps)
         if (!initialized) {
             init()
@@ -48,21 +51,31 @@ open class GameEntity : IGameEntity {
         runnablesOnSpawn.forEach { it.run() }
     }
 
+    override fun kill(props: Properties?) {
+        dead = true
+        properties.clear()
+    }
+
+    override fun onDestroy() {
+        runnablesOnDestroy.forEach { it.run() }
+        getComponents().forEach { it.reset() }
+    }
+
     override fun addComponent(c: IGameComponent) {
-        componentMap.put(c::class, c)
+        components.put(c::class, c)
     }
 
     override fun <C : IGameComponent> getComponent(c: KClass<C>) =
-        if (hasComponent(c)) c.cast(componentMap[c]) else null
+        if (hasComponent(c)) c.cast(components[c]) else null
 
-    override fun getComponents(): Iterable<IGameComponent> = componentMap.values()
+    override fun getComponents(): Iterable<IGameComponent> = components.values()
 
-    override fun hasComponent(c: KClass<out IGameComponent>) = componentMap.containsKey(c)
+    override fun hasComponent(c: KClass<out IGameComponent>) = components.containsKey(c)
 
     override fun removeComponent(c: KClass<out IGameComponent>): IGameComponent? =
-        componentMap.remove(c)
+        components.remove(c)
 
-    override fun clearComponents() = componentMap.clear()
+    override fun clearComponents() = components.clear()
 
     override fun print() = "${this::class.simpleName}"
 

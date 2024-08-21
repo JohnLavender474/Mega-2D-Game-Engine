@@ -12,4 +12,4 @@ import com.engine.events.IEventListener
  * @see Screen
  * @see IEventListener
  */
-interface IScreen : Screen, Initializable, IEventListener, IPropertizable
+interface IScreen : Screen, IPropertizable

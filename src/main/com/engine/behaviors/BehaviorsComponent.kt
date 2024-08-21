@@ -5,65 +5,63 @@ import com.badlogic.gdx.utils.OrderedMap
 import com.engine.components.IGameComponent
 import java.util.function.BiFunction
 
-/** A [IGameComponent] that manages a collection of [AbstractBehavior]s. */
+/** A [IGameComponent] that manages a collection of [IBehavior]s. */
 open class BehaviorsComponent() : IGameComponent {
 
-    val behaviors = OrderedMap<Any, AbstractBehavior>()
+    val behaviors = OrderedMap<Any, IBehavior>()
     val allowedBehaviors = ObjectMap<Any, Boolean>()
 
     /**
      * Creates a [BehaviorsComponent] with the given [behaviors].
      *
-     * @param _behaviors The [AbstractBehavior]s to add to this [BehaviorsComponent].
+     * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(vararg _behaviors: Pair<Any, AbstractBehavior>) : this() {
+    constructor(vararg _behaviors: Pair<Any, IBehavior>) : this() {
         _behaviors.forEach { addBehavior(it.first, it.second) }
     }
 
     /**
      * Creates a [BehaviorsComponent] with the given [behaviors].
      *
-     * @param _behaviors The [AbstractBehavior]s to add to this [BehaviorsComponent].
+     * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(_behaviors: Iterable<Pair<Any, AbstractBehavior>>) : this() {
+    constructor(_behaviors: Iterable<Pair<Any, IBehavior>>) : this() {
         _behaviors.forEach { addBehavior(it.first, it.second) }
     }
 
     /**
      * Creates a [BehaviorsComponent] with the given [behaviors].
      *
-     * @param _behaviors The [AbstractBehavior]s to add to this [BehaviorsComponent].
+     * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(_behaviors: OrderedMap<Any, AbstractBehavior>) : this() {
+    constructor(_behaviors: OrderedMap<Any, IBehavior>) : this() {
         _behaviors.forEach { addBehavior(it.key, it.value) }
     }
 
     /**
-     * Forces the [AbstractBehavior] with the given [key] to quit. This will force the [AbstractBehavior] to disregard
-     * the result of its [AbstractBehavior.evaluate] method for one update cycle and end the [AbstractBehavior].
+     * Returns the [IBehavior] associated with the given [key] or null if no [IBehavior] is associated with the [key].
      *
-     * @param key The key of the [AbstractBehavior] to force quit.
+     * @param key The key of the [IBehavior] to get.
+     * @return The [IBehavior] associated with the given [key] or null if no [IBehavior] is associated with the [key].
      */
-    fun forceQuitBehavior(key: Any) {
-        behaviors[key]?.forceQuit()
-    }
+    fun getBehavior(key: Any): IBehavior? = behaviors.get(key)
 
     /**
-     * Adds a [AbstractBehavior] to this [BehaviorsComponent] with the given [key]. If an [AbstractBehavior] already
+     * Adds a [IBehavior] to this [BehaviorsComponent] with the given [key]. If an [IBehavior] already
      * exists with the given [key], it will be overwritten. Insertion order is preserved via an [OrderedMap]. The
      * behavior will be allowed by default, i.e. [isBehaviorAllowed] will return true with the key.
      *
-     * @param key The key to associate with the [AbstractBehavior].
-     * @param behavior The [AbstractBehavior] to add.
+     * @param key The key to associate with the [IBehavior].
+     * @param behavior The [IBehavior] to add.
      */
-    fun addBehavior(key: Any, behavior: AbstractBehavior) {
+    fun addBehavior(key: Any, behavior: IBehavior) {
         behaviors.put(key, behavior)
         allowedBehaviors.put(key, true)
     }
 
     /**
      * Sets if the behavior should be allowed. If [allowed] is set to false and the behavior is currently active, then
-     * [AbstractBehavior.end] will be called on the behavior immediately. The specified [key] must be associated with a
+     * [IBehavior.end] will be called on the behavior immediately. The specified [key] must be associated with a
      * behavior or else an [IllegalArgumentException] will be thrown.
      *
      * @param key the key of the behavior
@@ -84,7 +82,7 @@ open class BehaviorsComponent() : IGameComponent {
      *
      * @param function the function which returns the value designating if the behavior should be allowed.
      */
-    fun setBehaviorsAllowed(function: (Any, AbstractBehavior) -> Boolean) {
+    fun setBehaviorsAllowed(function: (Any, IBehavior) -> Boolean) {
         behaviors.forEach { entry ->
             val key = entry.key
             val behavior = entry.value
@@ -99,7 +97,7 @@ open class BehaviorsComponent() : IGameComponent {
      * @param function the function which returns the value designating if the behavior should be allowed.
      * @see [setBehaviorsAllowed]
      */
-    fun setBehaviorsAllowed(function: BiFunction<Any, AbstractBehavior, Boolean>) {
+    fun setBehaviorsAllowed(function: BiFunction<Any, IBehavior, Boolean>) {
         setBehaviorsAllowed { key, behavior -> function.apply(key, behavior) }
     }
 
@@ -137,10 +135,10 @@ open class BehaviorsComponent() : IGameComponent {
     fun isBehaviorAllowed(key: Any): Boolean = allowedBehaviors.containsKey(key) && allowedBehaviors.get(key)
 
     /**
-     * Returns if the [AbstractBehavior] with the given [key] is active.
+     * Returns if the [IBehavior] with the given [key] is active.
      *
-     * @param key The key of the [AbstractBehavior] to check.
-     * @return If the [AbstractBehavior] with the given [key] is active.
+     * @param key The key of the [IBehavior] to check.
+     * @return If the [IBehavior] with the given [key] is active.
      */
     fun isBehaviorActive(key: Any) = behaviors.get(key)?.isActive() ?: false
 
@@ -148,10 +146,10 @@ open class BehaviorsComponent() : IGameComponent {
     fun isAnyBehaviorActive(vararg keys: Any) = isAnyBehaviorActive(keys.asIterable())
 
     /**
-     * Returns if any of the [AbstractBehavior]s with the given [keys] are active.
+     * Returns if any of the [IBehavior]s with the given [keys] are active.
      *
-     * @param keys The keys of the [AbstractBehavior]s to check.
-     * @return If any of the [AbstractBehavior]s with the given [keys] are active.
+     * @param keys The keys of the [IBehavior]s to check.
+     * @return If any of the [IBehavior]s with the given [keys] are active.
      */
     fun isAnyBehaviorActive(keys: Iterable<Any>) = keys.any { isBehaviorActive(it) }
 
@@ -159,15 +157,13 @@ open class BehaviorsComponent() : IGameComponent {
     fun areAllBehaviorsActive(vararg keys: Any) = areAllBehaviorsActive(keys.asIterable())
 
     /**
-     * Returns if all of the [AbstractBehavior]s with the given [keys] are active.
+     * Returns if all of the [IBehavior]s with the given [keys] are active.
      *
-     * @param keys The keys of the [AbstractBehavior]s to check.
-     * @return If all of the [AbstractBehavior]s with the given [keys] are active.
+     * @param keys The keys of the [IBehavior]s to check.
+     * @return If all of the [IBehavior]s with the given [keys] are active.
      */
     fun areAllBehaviorsActive(keys: Iterable<Any>) = keys.all { isBehaviorActive(it) }
 
-    /** Calls [AbstractBehavior.reset] for each behavior. Does not modify [allowedBehaviors]. */
-    override fun reset() {
-        behaviors.values().forEach { it.reset() }
-    }
+    /** Calls [IBehavior.end] and [IBehavior.forceQuit] for each active behavior. */
+    override fun reset() = behaviors.forEach { if (isBehaviorActive(it.key)) { it.value.reset() } }
 }

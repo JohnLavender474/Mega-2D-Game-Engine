@@ -5,7 +5,7 @@ import com.engine.entities.IGameEntity
 import com.engine.systems.GameSystem
 
 /**
- * A [GameSystem] that processes [BehaviorsComponent]s. Each [AbstractBehavior] where its key returns true for
+ * A [GameSystem] that processes [BehaviorsComponent]s. Each [AbstractBehaviorImpl] where its key returns true for
  * [BehaviorsComponent.isBehaviorAllowed] is updated.
  */
 class BehaviorsSystem : GameSystem(BehaviorsComponent::class) {

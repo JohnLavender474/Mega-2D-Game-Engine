@@ -1,7 +1,8 @@
 package com.engine.entities.contracts;
 
-import com.engine.behaviors.AbstractBehavior;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.engine.behaviors.BehaviorsComponent;
+import com.engine.behaviors.IBehavior;
 import com.engine.common.ClassInstanceUtils;
 import com.engine.entities.IGameEntity;
 import kotlin.jvm.functions.Function2;
@@ -27,13 +28,32 @@ public interface IBehaviorsEntity extends IGameEntity {
     }
 
     /**
-     * Returns if the AbstractBehavior with the given key is active.
+     * Returns if the IBehavior with the given key is active.
      *
-     * @param key The key of the AbstractBehavior to check.
-     * @return If the AbstractBehavior with the given key is active.
+     * @param key The key of the IBehavior to check.
+     * @return If the IBehavior with the given key is active.
      */
     default boolean isBehaviorActive(Object key) {
         return getBehaviorsComponent().isBehaviorActive(key);
+    }
+
+    /**
+     * Returns the behavior entries of this entity.
+     *
+     * @return The behavior entries of this entity.
+     */
+    default OrderedMap<Object, IBehavior> getBehaviors() {
+        return getBehaviorsComponent().getBehaviors();
+    }
+
+    /**
+     * Returns the IBehavior with the given key.
+     *
+     * @param key The key of the IBehavior to get.
+     * @return The IBehavior with the given key.
+     */
+    default IBehavior getBehavior(Object key) {
+        return getBehaviors().get(key);
     }
 
     /**
@@ -79,13 +99,16 @@ public interface IBehaviorsEntity extends IGameEntity {
     }
 
     /**
-     * Forces the AbstractBehavior with the given key to quit. This will force the AbstractBehavior to disregard
-     * the result of its evaluate method for one update cycle and end the AbstractBehavior.
+     * Forces the IBehavior with the given key to quit. This will force the IBehavior to disregard
+     * the result of its evaluate method for one update cycle and end the IBehavior.
      *
-     * @param key The key of the AbstractBehavior to force quit.
+     * @param key The key of the IBehavior to force quit.
      */
-    default void forceQuitBehavior(Object key) {
-        getBehaviorsComponent().forceQuitBehavior(key);
+    default void resetBehavior(Object key) {
+        IBehavior behavior = getBehavior(key);
+        if (behavior != null) {
+            behavior.reset();
+        }
     }
 
     /**
@@ -113,7 +136,7 @@ public interface IBehaviorsEntity extends IGameEntity {
      *
      * @param function the function
      */
-    default void setBehaviorsAllowed(Function2<Object, AbstractBehavior, Boolean> function) {
+    default void setBehaviorsAllowed(Function2<Object, IBehavior, Boolean> function) {
         getBehaviorsComponent().setBehaviorsAllowed(function);
     }
 

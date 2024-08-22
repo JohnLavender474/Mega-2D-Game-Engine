@@ -30,6 +30,13 @@ open class GameEntity : IGameEntity {
     var initialized = false
 
     /**
+     * Whether this [GameEntity] can be spawned. This is always true by default.
+     *
+     * @return True if this [GameEntity] can be spawned, otherwise false.
+     */
+    override fun canSpawn() = true
+
+    /**
      * Empty implementation. Override this method to add logic to run when this [GameEntity] is instantiated.
      */
     override fun init() {}
@@ -43,7 +50,6 @@ open class GameEntity : IGameEntity {
      */
     override fun spawn(spawnProps: Properties) {
         dead = false
-        properties.putAll(spawnProps)
         if (!initialized) {
             init()
             initialized = true
@@ -53,7 +59,6 @@ open class GameEntity : IGameEntity {
 
     override fun kill(props: Properties?) {
         dead = true
-        properties.clear()
     }
 
     override fun onDestroy() {

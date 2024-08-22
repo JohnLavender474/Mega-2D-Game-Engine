@@ -2,7 +2,6 @@ package com.engine.systems
 
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectSet
-import com.engine.IGameEngine
 import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.ImmutableCollection
 import com.engine.common.objects.MutableOrderedSet

@@ -23,6 +23,13 @@ interface IGameEntity : IPropertizable, Initializable, IPrintable {
     var dead: Boolean
 
     /**
+     * Whether this [GameEntity] can be spawned.
+     *
+     * @return True if this [GameEntity] can be spawned, otherwise false.
+     */
+    fun canSpawn(): Boolean
+
+    /**
      * Initializes this [GameEntity] with the given [Properties].
      *
      * @param spawnProps The [HashMap] of data to initialize this [GameEntity] with.

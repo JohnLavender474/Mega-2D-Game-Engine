@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Polyline
 import com.badlogic.gdx.math.Vector2
 import com.engine.common.enums.Direction
 import com.engine.common.extensions.gdxArrayOf
@@ -207,6 +208,15 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
         return this
     }
 
+    /**
+     * Sets the origin of rotation to the center of the line. If the line is moved, set to dirty, or any other change
+     * is made, then this method should be called again to recalculate the origin to the center.
+     */
+    fun setOriginCenter() {
+        originX = getCenter().x
+        originY = getCenter().y
+    }
+
     /** Sets this line to dirty which means that the world points need to be recalculated. */
     fun setToDirty() {
         dirty = true
@@ -230,13 +240,12 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
      */
     override fun getCardinallyRotatedShape(direction: Direction, useNewShape: Boolean): GameLine {
         val line = if (useNewShape) GameLine(this) else this
-        line.rotation =
-            when (direction) {
-                Direction.UP -> 0f
-                Direction.RIGHT -> 90f
-                Direction.DOWN -> 180f
-                Direction.LEFT -> 270f
-            }
+        line.rotation = when (direction) {
+            Direction.UP -> 0f
+            Direction.RIGHT -> 90f
+            Direction.DOWN -> 180f
+            Direction.LEFT -> 270f
+        }
         return line
     }
 
@@ -341,8 +350,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
      * @param point2 The second point of this line.
      * @return This shape for chaining
      */
-    fun setLocalPoints(point1: Vector2, point2: Vector2) =
-        setLocalPoints(point1.x, point1.y, point2.x, point2.y)
+    fun setLocalPoints(point1: Vector2, point2: Vector2) = setLocalPoints(point1.x, point1.y, point2.x, point2.y)
 
     /**
      * Gets the local points (unscaled, unrotated, etc.) of this line.
@@ -402,6 +410,46 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
     }
 
     /**
+     * Returns the distance of the specified [point] from this [GameLine]. If [segment] is true, then the distance is
+     * calculated using this line as a segment. Otherwise, the distance is calculated using this line as a continuous
+     * (non-ending) line. World points are used for the calculation.
+     *
+     * @param point the point to calculate the distance from
+     * @param segment whether to treat this line as a segment or a continuous line
+     * @return the distance of the point from this line/segment
+     */
+    fun worldDistanceFromPoint(point: Vector2, segment: Boolean = true): Float {
+        val worldPoints = getWorldPoints()
+        return if (segment) Intersector.distanceSegmentPoint(worldPoints.first, worldPoints.second, point)
+        else {
+            val wp1 = worldPoints.first
+            val wp2 = worldPoints.second
+            Intersector.distanceLinePoint(wp1.x, wp1.y, wp2.x, wp2.y, point.x, point.y)
+        }
+    }
+
+    /**
+     * Gets the intersection point between this line and the other line, if there is one. If there is none,
+     * then null is returned.
+     *
+     * @param line the other line
+     * @return the intersection point, or null if there is none
+     */
+    fun intersectionPoint(line: GameLine): Vector2? {
+        val thisWP = getWorldPoints()
+        val otherWP = line.getWorldPoints()
+        val intersection = Vector2()
+        return if (Intersector.intersectLines(
+                thisWP.first,
+                thisWP.second,
+                otherWP.first,
+                otherWP.second,
+                intersection
+            )
+        ) intersection else null
+    }
+
+    /**
      * Checks if the point is contained in this line. The world points are used for calculating the
      * containment via [getWorldPoints].
      *
@@ -410,9 +458,11 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
      */
     override fun contains(point: Vector2): Boolean {
         val (_worldPoint1, _worldPoint2) = getWorldPoints()
-        return Intersector.pointLineSide(_worldPoint1, _worldPoint2, point) == 0 &&
-                point.x <= getMaxX() &&
-                point.x >= getX()
+        return Intersector.pointLineSide(
+            _worldPoint1,
+            _worldPoint2,
+            point
+        ) == 0 && point.x <= getMaxX() && point.x >= getX()
     }
 
     /**
@@ -447,13 +497,10 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
 
         position.x += centerDeltaX
         position.y += centerDeltaY
-        localPoint1.x += centerDeltaX
-        localPoint1.y += centerDeltaY
-        localPoint2.x += centerDeltaX
-        localPoint2.y += centerDeltaY
 
         dirty = true
         calculateLength = true
+
         return this
     }
 
@@ -480,8 +527,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
      *
      * @return The center of the local points.
      */
-    fun getLocalCenter() =
-        Vector2((localPoint1.x + localPoint2.x) / 2f, (localPoint1.y + localPoint2.y) / 2f)
+    fun getLocalCenter() = Vector2((localPoint1.x + localPoint2.x) / 2f, (localPoint1.y + localPoint2.y) / 2f)
 
     /**
      * Sets the x-coordinate of the first point of this line.
@@ -598,10 +644,9 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
 
         return when (other) {
             is GameRectangle -> Intersector.intersectSegmentRectangle(_worldPoint1, _worldPoint2, other)
-            is GameCircle ->
-                Intersector.intersectSegmentCircle(
-                    _worldPoint1, _worldPoint2, other.getCenter(), other.getRadius() * other.getRadius()
-                )
+            is GameCircle -> Intersector.intersectSegmentCircle(
+                _worldPoint1, _worldPoint2, other.getCenter(), other.getRadius() * other.getRadius()
+            )
 
             is GameLine -> {
                 val (otherWorldPoint1, otherWorldPoint2) = other.getWorldPoints()

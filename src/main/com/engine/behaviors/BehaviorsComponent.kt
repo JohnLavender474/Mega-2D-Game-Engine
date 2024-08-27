@@ -6,7 +6,7 @@ import com.engine.components.IGameComponent
 import java.util.function.BiFunction
 
 /** A [IGameComponent] that manages a collection of [IBehavior]s. */
-open class BehaviorsComponent() : IGameComponent {
+class BehaviorsComponent() : IGameComponent {
 
     val behaviors = OrderedMap<Any, IBehavior>()
     val allowedBehaviors = ObjectMap<Any, Boolean>()

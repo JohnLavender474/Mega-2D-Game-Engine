@@ -15,7 +15,7 @@ import com.engine.common.shapes.IGameShape2D
  * @param ppm The number of pixels per meter.
  * @param depth The depth of the quad tree.
  */
-open class QuadTreeGraphMap(
+class QuadTreeGraphMap(
     override val x: Int,
     override val y: Int,
     override val width: Int,

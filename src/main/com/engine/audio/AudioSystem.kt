@@ -18,7 +18,7 @@ import java.util.function.Consumer
  * @property stopSoundsWhenOff whether to stop sounds when the system is off
  * @property stopMusicWhenOff whether to stop music when the system is off
  */
-open class AudioSystem(
+class AudioSystem(
     private val soundRequestProcessor: (SoundRequest) -> Unit,
     private val musicRequestProcessor: (MusicRequest) -> Unit,
     private val soundStopper: (Any) -> Unit,

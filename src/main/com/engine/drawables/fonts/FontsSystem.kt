@@ -11,7 +11,7 @@ import java.util.function.Consumer
  *
  * @param fontsCollector the function that should collect the fonts to be drawn
  */
-open class FontsSystem(protected open val fontsCollector: (BitmapFontHandle) -> Unit) :
+class FontsSystem(protected val fontsCollector: (BitmapFontHandle) -> Unit) :
     GameSystem(FontsComponent::class) {
 
     /**

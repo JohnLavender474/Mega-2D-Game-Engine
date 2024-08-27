@@ -12,7 +12,7 @@ import java.util.function.Consumer
  * @param shapesCollector The function that should collect the shapes to be drawn
  * @param debug Whether the debug shapes should be drawn when the game is in debug mode
  */
-open class DrawableShapesSystem(
+class DrawableShapesSystem(
     private val shapesCollector: (IDrawableShape) -> Unit,
     var debug: Boolean = false
 ) : GameSystem(DrawableShapesComponent::class) {

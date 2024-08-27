@@ -52,7 +52,7 @@ import com.engine.common.shapes.GameRectangle
  * @see WorldSystem
  * @see Resettable
  */
-open class Body(
+class Body(
     var bodyType: BodyType,
     x: Float = 0f,
     y: Float = 0f,
@@ -110,7 +110,7 @@ open class Body(
      *
      * @return the bounds of this body
      */
-    open fun getBodyBounds(): GameRectangle {
+    fun getBodyBounds(): GameRectangle {
         if (cardinalRotation == null) return this
         else {
             val center = getCenter()
@@ -130,14 +130,14 @@ open class Body(
      * @param bodyType the [BodyType] to check
      * @return if the body is the given [BodyType]
      */
-    open fun isBodyType(bodyType: BodyType) = this.bodyType == bodyType
+    fun isBodyType(bodyType: BodyType) = this.bodyType == bodyType
 
     /**
      * Adds the given [Fixture] to this body. The fixture is mapped to the fixture's type.
      *
      * @param fixture the [Fixture] to add
      */
-    open fun addFixture(fixture: IFixture): Body {
+    fun addFixture(fixture: IFixture): Body {
         fixtures.add(fixture.getFixtureType() to fixture)
         return this
     }

@@ -11,7 +11,7 @@ import java.util.function.Consumer
  *
  * @param spritesCollector the function that should collect the sprites to be drawn
  */
-open class SpritesSystem(protected open val spritesCollector: (GameSprite) -> Unit) :
+class SpritesSystem(protected val spritesCollector: (GameSprite) -> Unit) :
     GameSystem(SpritesComponent::class) {
 
     /**

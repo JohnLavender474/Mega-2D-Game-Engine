@@ -165,6 +165,11 @@ class Animation : IAnimation {
 
     override fun copy() = Animation(this)
 
+    /**
+     * Returns a copy of this animation reversed.
+     *
+     * @return a copy of this animation reversed
+     */
     override fun reversed() = Animation(this, true)
 
     override fun slice(start: Int, end: Int): IAnimation {

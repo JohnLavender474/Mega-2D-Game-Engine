@@ -1,6 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.interfaces.ICopyable
 import com.engine.common.objects.Properties
 import com.engine.common.shapes.GameRectangle
 import com.engine.common.shapes.IGameShape2D
@@ -27,15 +28,15 @@ import com.engine.common.shapes.IGameShape2D
  *   before the body is rotated.
  * @param properties The properties of this fixture.
  */
-open class Fixture(
-    open var body: Body,
-    open var type: Any,
-    open var rawShape: IGameShape2D = GameRectangle(),
-    open var active: Boolean = true,
-    open var attachedToBody: Boolean = true,
-    open var offsetFromBodyCenter: Vector2 = Vector2(),
+class Fixture(
+    var body: Body,
+    var type: Any,
+    var rawShape: IGameShape2D = GameRectangle(),
+    var active: Boolean = true,
+    var attachedToBody: Boolean = true,
+    var offsetFromBodyCenter: Vector2 = Vector2(),
     override var properties: Properties = Properties(),
-) : IFixture {
+) : IFixture, ICopyable<Fixture> {
 
     companion object {
         const val TAG = "Fixture"
@@ -80,7 +81,7 @@ open class Fixture(
      * @param other the other shape
      * @return if this fixture overlaps the given shape
      */
-    open fun overlaps(other: IGameShape2D) = getShape().overlaps(other)
+    fun overlaps(other: IGameShape2D) = getShape().overlaps(other)
 
     /**
      * Returns if this fixture overlaps the given fixture.
@@ -88,5 +89,15 @@ open class Fixture(
      * @param other the other fixture
      * @return if this fixture overlaps the given fixture
      */
-    open fun overlaps(other: IFixture) = overlaps(other.getShape())
+    fun overlaps(other: IFixture) = overlaps(other.getShape())
+
+    override fun copy() = Fixture(
+        body,
+        getFixtureType(),
+        rawShape.copy(),
+        active,
+        attachedToBody,
+        offsetFromBodyCenter.cpy(),
+        Properties(properties)
+    )
 }

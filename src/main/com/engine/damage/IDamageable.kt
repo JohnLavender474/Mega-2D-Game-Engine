@@ -11,15 +11,17 @@ interface IDamageable {
     val invincible: Boolean
 
     /**
-     * Return true if this [IDamageable] can take damage from the [IDamager], otherwise false.
+     * Return true if this [IDamageable] can take damage from the [IDamager], otherwise false. Default return
+     * return value is true.
      *
      * @param damager the [IDamager] that is dealing damage to this [IDamageable]
      * @return true if this [IDamageable] can take damage from the [IDamager], otherwise false
      */
-    fun canBeDamagedBy(damager: IDamager): Boolean = false
+    fun canBeDamagedBy(damager: IDamager): Boolean = true
 
     /**
-     * Take damage from the [IDamager]. Return true if damage was taken, otherwise false.
+     * Take damage from the [IDamager]. Return true if damage was taken, otherwise false. Default return
+     * value is false.
      *
      * @param damager the [IDamager] that is dealing damage to this [IDamageable]
      * @return true if damage was taken, otherwise false

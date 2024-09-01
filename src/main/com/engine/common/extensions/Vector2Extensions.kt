@@ -5,6 +5,20 @@ import com.badlogic.gdx.math.Vector3
 import com.engine.common.getRandom
 
 /**
+ * Returns this [Vector2] with the x and y values swapped.
+ *
+ * @return this [Vector2] with the x and y values swapped
+ */
+fun Vector2.swapped() = set(y, x)
+
+/**
+ * Returns this [Vector2] with the signs of the x and y values flipped.
+ *
+ * @return this [Vector2] with the signs of the x and y values flipped.
+ */
+fun Vector2.flipped() = set(-x, -y)
+
+/**
  * Converts this [Vector2] to a [Vector3] with the given z value.
  *
  * @param z the z value of the new [Vector3]

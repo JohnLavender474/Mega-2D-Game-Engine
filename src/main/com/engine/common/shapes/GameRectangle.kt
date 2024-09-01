@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.FloatArray
 import com.engine.common.enums.Direction
 import com.engine.common.enums.Position
 import com.engine.common.extensions.gdxArrayOf
+import com.engine.common.extensions.gdxFloatArrayOf
 import com.engine.common.objects.Matrix
 import java.util.function.BiPredicate
 import kotlin.math.*
@@ -277,7 +278,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
                 Intersector.intersectSegmentRectangle(worldPoint1, worldPoint2, this)
             }
 
-            is GamePolygon -> Intersector.intersectPolygons(toPolygon().transformedVertices, other.transformedVertices)
+            is GamePolygon -> Intersector.overlapConvexPolygons(toPolygon().libgdxPolygon, other.libgdxPolygon)
             else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
         }
 
@@ -515,7 +516,12 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      *
      * @return The [GamePolygon] created from this [GameRectangle].
      */
-    fun toPolygon() = GamePolygon(getVertices())
+    fun toPolygon(): GamePolygon {
+        val polygon = GamePolygon()
+        polygon.localVertices = gdxFloatArrayOf(0f, 0f, width, 0f, width, height, 0f, height)
+        polygon.setPosition(x, y)
+        return polygon
+    }
 
     /**
      * Returns the dimensions that this [GameRectangle] can be split into based on the given [size].

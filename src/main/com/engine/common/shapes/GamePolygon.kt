@@ -252,18 +252,7 @@ class GamePolygon() : IGameShape2D {
         drawer.polygon(libgdxPolygon.transformedVertices)
     }
 
-    override fun copy(): GamePolygon {
-        val copy = GamePolygon()
-        copy.localVertices = FloatArray(localVertices)
-        copy.scaleX = scaleX
-        copy.scaleY = scaleY
-        copy.originX = originX
-        copy.originY = originY
-        copy.rotation = rotation
-        copy.color = color
-        copy.shapeType = shapeType
-        return copy
-    }
+    override fun copy() = GamePolygon(this)
 
     override fun getCardinallyRotatedShape(direction: Direction, useNewShape: Boolean): IGameShape2D {
         val polygon = if (useNewShape) copy() else this

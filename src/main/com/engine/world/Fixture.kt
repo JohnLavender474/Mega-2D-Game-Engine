@@ -31,7 +31,7 @@ import com.engine.common.shapes.IGameShape2D
 class Fixture(
     var body: Body,
     var type: Any,
-    var rawShape: IGameShape2D = GameRectangle(),
+    var rawShape: IGameShape2D = GameRectangle(body),
     var active: Boolean = true,
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),

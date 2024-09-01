@@ -9,6 +9,7 @@ import com.engine.common.objects.ImmutableCollection
 import com.engine.entities.IGameEntity
 import com.engine.graph.IGraphMap
 import com.engine.systems.GameSystem
+import java.util.function.Supplier
 import kotlin.math.abs
 
 /**
@@ -78,9 +79,34 @@ class WorldSystem(
     internal var currentContactSet = OrderedSet<Contact>()
     internal var accumulator = 0f
 
-    private val printDebugStatements: Boolean
-        get() = debug && debugTicks == MAX_DEBUG_TICKS
     private var debugTicks = 0
+
+    /**
+     * Constructor that accepts the world graph supplier as a [Supplier] (for easy compatibility with Java). See
+     * [WorldSystem] main constructor.
+     *
+     * @param contactListener the contact listener
+     * @param _worldGraphSupplier the world graph supplier as a [Supplier] object
+     * @param fixedStep the fixed step
+     * @param collisionHandler the collision handler
+     * @param contactFilterMap the contact filter map
+     * @param debug if this system should run in debug mode
+     */
+    constructor(
+        contactListener: IContactListener,
+        _worldGraphSupplier: Supplier<IGraphMap?>,
+        fixedStep: Float,
+        collisionHandler: ICollisionHandler = StandardCollisionHandler,
+        contactFilterMap: ObjectMap<Any, ObjectSet<Any>>,
+        debug: Boolean = false
+    ) : this(
+        contactListener,
+        { _worldGraphSupplier.get() },
+        fixedStep,
+        collisionHandler,
+        contactFilterMap,
+        debug
+    )
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return

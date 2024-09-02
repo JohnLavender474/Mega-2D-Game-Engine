@@ -1,8 +1,8 @@
-# 2D Game Engine
+# Mega 2D Game Engine
 
 ## Overview
 
-Welcome to the 2D Game Engine, a Kotlin-based game development library built on the popular LibGDX framework. This
+Welcome to the Mega 2D Game Engine, a Kotlin-based game development library built on the popular LibGDX framework. This
 library follows an Entity-Component-System (ECS) design, providing extensibility and flexibility for game development.
 Although this library is compatible with a Java-based game, it is HIGHLY recommended that you use Kotlin instead for
 your game development. This library is designed with Kotlin in mind foremost. No guarantee is made as to the compatibility

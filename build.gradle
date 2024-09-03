@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'com.github.JohnLavender474'
-version = '1.2'
+version = '1.0'
 
 repositories {
     google()

@@ -2,6 +2,7 @@ package com.engine.systems
 
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectSet
+import com.engine.GameEngine
 import com.engine.common.interfaces.Resettable
 import com.engine.common.objects.ImmutableCollection
 import com.engine.common.objects.MutableOrderedSet
@@ -89,12 +90,12 @@ abstract class GameSystem(
     final override fun qualifies(e: IGameEntity) = componentMask.all { e.hasComponent(it) }
 
     /**
-     * Updates this [GameSystem]. This method is called by the [IGameEngine] every frame. Entities
+     * Updates this [GameSystem]. This method is called by the [GameEngine] every frame. Entities
      * that are dead or that do not qualify are removed from this [GameSystem] before the [process]
      * method is called.
      *
      * @param delta the time in seconds since the last frame
-     * @see IGameEngine
+     * @see GameEngine
      */
     override fun update(delta: Float) {
         updating = true
@@ -113,9 +114,9 @@ abstract class GameSystem(
 
     /**
      * Clears all [IGameEntity]s from this [GameSystem] and resets it to its default state. This
-     * method is called by the [IGameEngine] when the game is reset.
+     * method is called by the [GameEngine] when the game is reset.
      *
-     * @see IGameEngine
+     * @see GameEngine
      * @see Resettable
      */
     override fun reset() {

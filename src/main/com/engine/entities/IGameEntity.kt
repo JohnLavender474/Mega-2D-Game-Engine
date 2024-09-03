@@ -17,8 +17,7 @@ import kotlin.reflect.KClass
 interface IGameEntity : IPropertizable, Initializable, IPrintable {
 
     /**
-     * True if this [GameEntity] is dead, otherwise false. A dead [GameEntity] should be removed from
-     * the game.
+     * True if this [GameEntity] is dead, otherwise false.
      */
     var dead: Boolean
 

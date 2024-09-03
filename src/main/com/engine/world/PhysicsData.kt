@@ -1,6 +1,7 @@
 package com.engine.world
 
 import com.badlogic.gdx.math.Vector2
+import com.engine.common.interfaces.ICopyable
 import com.engine.common.interfaces.Resettable
 
 /**
@@ -28,7 +29,7 @@ class PhysicsData(
     var gravityOn: Boolean = true,
     var collisionOn: Boolean = true,
     var takeFrictionFromOthers: Boolean = true
-) : Resettable {
+) : Resettable, ICopyable<PhysicsData> {
 
     /** Resets the [PhysicsData] to its default values. */
     fun resetToDefault() {
@@ -48,7 +49,7 @@ class PhysicsData(
      *
      * @return A copy of this [PhysicsData].
      */
-    fun copy() =
+    override fun copy() =
         PhysicsData(
             Vector2(gravity),
             Vector2(velocity),

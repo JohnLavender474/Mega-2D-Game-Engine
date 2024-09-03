@@ -18,7 +18,7 @@ To see the engine in action, see [Megaman Maverick](https://github.com/JohnLaven
 ## Installation
 
 Include the 2D Game Engine library in your Kotlin project by following these steps:
-- Download the latest JAR of the `Mega 2D Game Engine` project from the `Releases` tab on the Github repo
+- Download the latest JAR of the `Mega 2D Game Engine` project from the root directory of the Github repo. It will be titled something like `2D-Game-Engine-[version].jar`.
 - Move the downloaded jar file to the following location in your LibGDX project: `core/libs`
 - Add the following lines to the `project("core")` section in your `build.gradle` file: `api fileTree(dir: 'libs', include: '*.jar')`
 - If you are using IntelliJ (which is highly recommended), you may need to right-click the JAR file and select "Add as library..." in order for the JAR code to be accessible by the IDE

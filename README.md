@@ -21,9 +21,11 @@ Include the 2D Game Engine library in your Kotlin project by following these ste
 - Download the latest JAR of the `Mega 2D Game Engine` project from the `Releases` tab on the Github repo
 - Move the downloaded jar file to the following location in your LibGDX project: `core/libs`
 - Add the following lines to the `project("core")` section in your `build.gradle` file: `api fileTree(dir: 'libs', include: '*.jar')`
-- If you are using IntelliJ (which is highly recommended), you may need to right-click the JAR file and select "Add as library" in order for the JAR code to be accessible by the IDE
+- If you are using IntelliJ (which is highly recommended), you may need to right-click the JAR file and select "Add as library..." in order for the JAR code to be accessible by the IDE
 
 Check out the [build.gradle file in the Megaman Maverick project](https://github.com/JohnLavender474/Megaman-Maverick/blob/master/build.gradle) for an example.
+
+If you are making changes to this project locally and wish to create a new updated JAR, simply run the `./gradlew build` command, and the new JAR will appear under `build/libs`.
 
 ## Architecture
 

@@ -18,7 +18,7 @@ To see the engine in action, see [Megaman Maverick](https://github.com/JohnLaven
 ## Installation
 
 Include the 2D Game Engine library in your Kotlin project by following these steps:
-- Download the latest JAR of the `Mega 2D Game Engine` project from the root directory of the Github repo. It will be titled something like `2D-Game-Engine-[version].jar`. TODO: package this JAR using JPacker and also store somewhere other than root directory.
+- Download the latest JAR of the `Mega 2D Game Engine` project from the root directory of the Github repo. It will be titled something like `Mega-2D-Game-Engine-[version].jar`. TODO: package this JAR using JPacker and also store somewhere other than root directory.
 - Move the downloaded jar file to the following location in your LibGDX project: `core/libs`
 - Add the following lines to the `project("core")` section in your `build.gradle` file: `api fileTree(dir: 'libs', include: '*.jar')`
 - If you are using IntelliJ (which is highly recommended), you may need to right-click the JAR file and select "Add as library..." in order for the JAR code to be accessible by the IDE
@@ -120,20 +120,20 @@ In this project, entities are defined as objects that (1) contain components and
 - on destroy: called when the entity is destroyed (a destroyed entity can be re-spawned)
 We'll come back to the lifecycle part more in-depth in the [Engine](#Engine) section. In this section, we'll focus on the relationship between entities and components.
 
-If you take a look at the [IGameEntity](https://github.com/JohnLavender474/Mega-2D-Game-Engine/blob/master/src/main/com/engine/entities/IGameEntity.kt)
+If you take a look at the [GameEntity](https://github.com/JohnLavender474/Mega-2D-Game-Engine/blob/master/src/main/com/engine/entities/GameEntity.kt)
 interface, you'll see that among other methods, there are methods for adding components to an entity, removing components from an entity, and 
 getting an entity's owned components. Each of these methods receives a class instance as a parameter. For any game engine, there are a multitude
 of ways to implement this functionality. In the case of this project, I decided to use the class itself as the parameter for adding, removing, and
 getting components. The reasoning behind this is that, in my opinion, an entity should never have more than one instance of any type of component.
 On top of that, component classes should never extend another component class, but rather always implement `IGameComponent` and nothing more. 
 If an entity requires more than one instance of a component type, then this (at least in my opinion) signifies a bad design decision with the
-component. Yes, this is a very opinionated stance, and the fact that this is reflected strongly in the `IGameEntity` interface means that it is
+component. Yes, this is a very opinionated stance, and the fact that this is reflected strongly in the `GameEntity` interface means that it is
 almost impossible to deviate from this design decision when using this game engine. With this being said, it is up to the programmer to decide
 if this is a dealbreaker or not.
 
 The [GameEntity](https://github.com/JohnLavender474/Mega-2D-Game-Engine/blob/master/src/main/com/engine/entities/GameEntity.kt) class provides an 
-implementation for the `IGameEntity` interface. This is the implementation that I have come to use in my projects, as I find it most effective.
-That being said, if the implementation is not satisfactory for your needs, then there is always the option of implementing the `IGameEntity`
+implementation for the `GameEntity` interface. This is the implementation that I have come to use in my projects, as I find it most effective.
+That being said, if the implementation is not satisfactory for your needs, then there is always the option of implementing the `GameEntity`
 interface with your own base implementation instead. In this implementation, components are stored in a map where the component class is the key
 and the component itself is the value.
 
@@ -170,7 +170,7 @@ I've never run into a situation where I wanted a component transferred from one 
 would mean that a different approach should be considered.
 
 If you look in the code for game entities in [Megaman Maverick](https://github.com/JohnLavender474/Megaman-Maverick), you'll see that components are defined
-and added to entities from within the `IGameEntity.init` method. As said before, we'll go over the lifecyle of entities in the [Engine](#Engine) section,
+and added to entities from within the `GameEntity.init` method. As said before, we'll go over the lifecyle of entities in the [Engine](#Engine) section,
 but for now, it suffices to know that the `init` method is only called once when an entity is "first instantied in the game engine": this is separate from 
 when the instance of the class is created, though it aligns close enough that it suffices to think of it in that term for now. In other words, the `init`
 method is (or at least should be) called once and only once for an instance of an entity regardless of how many times it is re-spawned. Apologies if that 
@@ -223,7 +223,7 @@ Let's do something similar with our `FooComponent`. First, we'll define our own 
 `FooComponent` component.
 
 ```kotlin
-interface IFooEntity: IGameEntity {
+interface IFooEntity: GameEntity {
    
     // since this interface should only be implemented by an entity that ALWAYS has the foo component, we'll always apply a null check
     // if the foo component is optional for this method, then this interface would need to be refactored to reflect that optionality
@@ -277,7 +277,7 @@ So okay, we have the data in our components, and we have the components mapped t
 
 Put simply, systems are designed to manipulate the data of specific components for each entity registered in the system. For example, a physics system
 would take and manipulate the physics component of each entity registered in the system. In this project, systems all implement this following interface:
-[IGameSystem](https://github.com/JohnLavender474/Mega-2D-Game-Engine/blob/master/src/main/com/engine/systems/IGameSystem.kt). In the same package as the
+[GameSystem](https://github.com/JohnLavender474/Mega-2D-Game-Engine/blob/master/src/main/com/engine/systems/GameSystem.kt). In the same package as the
 interface is a default implementation titled `GameSystem` along with some special extensions of the system class. 
 
 Game systems run on an update cycle which is controlled by the `GameEngine` class. We'll come back to discussing the update cycle in the [Engine](#Engine) section,
@@ -341,7 +341,7 @@ class MyGameEntity: GameEntity(), IFooEntity, IBarEntity {
 class FooSystem: GameSystem(FooComponent::class, BarComponent::class) {
 
     // on each update cycle, process is called
-    override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
+    override fun process(on: Boolean, entities: ImmutableCollection<GameEntity>, delta: Float) {
         // if the system is not on, then we'll simply return without doing anything
         // however, if desired, we could do other things before returning if the system if "off", or else we could entirely ignore the concept of "on" or "off" if desired       
         if (!on) return

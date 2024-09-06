@@ -2,8 +2,8 @@ package com.mega.game.engine.world.collisions
 
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
-import com.mega.game.engine.world.body.Body
-import com.mega.game.engine.world.body.BodyType
+import com.mega.game.engine.world.body.*
+import com.mega.game.engine.world.WorldSystem
 
 /**
  * A collision handler that handles collisions between bodies. This collision handler is used by

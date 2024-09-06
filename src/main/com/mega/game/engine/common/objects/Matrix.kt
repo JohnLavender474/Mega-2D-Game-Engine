@@ -64,9 +64,22 @@ open class Matrix<T>(val rows: Int, val columns: Int) : MutableCollection<T> {
     internal val elementToIndexMap = ObjectMap<T, ObjectSet<IntPair>>()
 
     /**
-     * Creates a [Matrix] using the provided 2D array. The array is copied in last to first order,
-     * i.e. bottom to top. In other words, the last row inserted will be inserted as the first row in
-     * the matrix.
+     * Creates a [Matrix] using the provided 2D array. The array is copied in last to first order, i.e. bottom to top.
+     * In other words, the last row of the [array] will be inserted as the first row in the matrix. This conforms to
+     * a top-to-bottom view of the arrays, like the following where the bottom is the "x-axis", the leftmost side is the
+     * "y-axis", and the "*" elements have coordinates based on the x-axis and y-axis. This is a contrived example but
+     * hopefully it makes clear how the elements are arranged in the matrix.
+     * ```
+     * Matrix(
+     *    gdxArrayOf(
+     *       gdxArrayOf("3", "*", "*", "*"),
+     *       gdxArrayOf("2", "*", "*", "*"),
+     *       gdxArrayOf("1", "*", "*", "*"),
+     *       gdxArrayOf("0", "1", "2", "3")
+     *    )
+     * )
+     * ```
+     * *NOTE*: Each inner array must have the same length.
      *
      * @param array the 2D array to copy
      */

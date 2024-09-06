@@ -242,6 +242,20 @@ class GamePolygon() : IGameShape2D {
         return this
     }
 
+    /**
+     * Returns the width of this polygon's bounding rectangle.
+     *
+     * @return the width of this polygon's bounding rectangle.
+     */
+    override fun getWidth() = getBoundingRectangle().width
+
+    /**
+     * Returns the height of this polygon's bounding rectangle.
+     *
+     * @return the height of this polygon's bounding rectangle.
+     */
+    override fun getHeight() = getBoundingRectangle().height
+
     override fun contains(p0: Vector2) = libgdxPolygon.contains(p0)
 
     override fun contains(p0: Float, p1: Float) = libgdxPolygon.contains(p0, p1)

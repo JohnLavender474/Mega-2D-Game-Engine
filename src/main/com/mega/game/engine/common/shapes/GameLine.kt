@@ -605,6 +605,20 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
     }
 
     /**
+     * Returns the width of this line's bounding rectangle.
+     *
+     * @return the width of this line's bounding rectangle.
+     */
+    override fun getWidth() = getBoundingRectangle().width
+
+    /**
+     * Returns the height of this line's bounding rectangle.
+     *
+     * @return the height of this line's bounding rectangle.
+     */
+    override fun getHeight() = getBoundingRectangle().height
+
+    /**
      * Sets the origin of this line.
      *
      * @param origin The origin.

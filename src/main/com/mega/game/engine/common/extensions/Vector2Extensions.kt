@@ -3,6 +3,14 @@ package com.mega.game.engine.common.extensions
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.mega.game.engine.common.getRandom
+import com.mega.game.engine.common.objects.IntPair
+
+/**
+ * Converts this [Vector2] into an [IntPair] with the x and y values rounded down.
+ *
+ * @return this converted into an int pair
+ */
+fun Vector2.toIntPair() = IntPair(x.toInt(), y.toInt())
 
 /**
  * Returns this [Vector2] with the x and y values swapped.

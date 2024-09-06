@@ -5,9 +5,8 @@ import com.mega.game.engine.common.ClassInstanceUtils;
 import com.mega.game.engine.common.interfaces.IPositional;
 import com.mega.game.engine.common.interfaces.ISizable;
 import com.mega.game.engine.entities.IGameEntity;
-import com.mega.game.engine.entities.IGameEntity;
-import com.mega.game.engine.world.Body;
-import com.mega.game.engine.world.BodyComponent;
+import com.mega.game.engine.world.body.Body;
+import com.mega.game.engine.world.body.BodyComponent;
 import kotlin.reflect.KClass;
 import org.jetbrains.annotations.NotNull;
 

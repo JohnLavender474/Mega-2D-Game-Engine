@@ -152,4 +152,18 @@ interface IGameShape2D : Shape2D, IDrawableShape, ICopyable<IGameShape2D>, ICard
      * @see translation
      */
     fun translation(translation: Vector2) = translation(translation.x, translation.y)
+
+    /**
+     * Gets the width of this shape.
+     *
+     * @return the width of this shape
+     */
+    fun getWidth(): Float
+
+    /**
+     * Gets the height of this shape.
+     *
+     * @return the height of this shape
+     */
+    fun getHeight(): Float
 }

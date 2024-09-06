@@ -17,7 +17,7 @@ class CullablesSystem(private val engine: GameEngine) : GameSystem(CullablesComp
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
         entities.forEach { entity ->
-            if (!entity.gameEntityState.spawned) return
+            if (!entity.state.spawned) return
             val cullables = entity.getComponent(CullablesComponent::class)?.cullables?.values()
             for (cullable in cullables ?: return) if (cullable.shouldBeCulled(delta)) {
                 engine.destroy(entity)

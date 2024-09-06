@@ -1,51 +1,56 @@
 package com.mega.game.engine.pathfinding
 
-import com.mega.game.engine.common.GameLogger
+import com.badlogic.gdx.utils.Array
+import com.mega.game.engine.common.extensions.gdxArrayOf
 import com.mega.game.engine.common.objects.IntPair
 import com.mega.game.engine.common.objects.pairTo
-import com.mega.game.engine.common.shapes.GameRectangle
-import com.mega.game.engine.graph.IGraphMap
-import com.mega.game.engine.graph.convertToGraphCoordinate
-import com.mega.game.engine.graph.convertToWorldNode
-import com.mega.game.engine.graph.isOutOfBounds
+import com.mega.game.engine.pathfinding.heuristics.IHeuristic
 import java.util.*
-import java.util.concurrent.Callable
-import kotlin.math.abs
 
 /**
- * A pathfinder that finds a graphPath from a start point to a target point. Implements the
- * [Callable] interface so that it can be called in a separate thread if desired. Pathfinding is
- * usually an expensive operation, so it might be good to call this in a separate thread.
+ * A pathfinder that finds a path from a start point to a target point.
  *
- * If a graphPath is found, the [call] function should return a collection of [IntPair]s that
- * represent the graphPath from the start point to the target point. Otherwise, it should return
- * null.
+ * If a path is found, the [call] function returns a collection of [IntPair]s that represent the path from the start
+ * point to the target point. Otherwise, it returns null.
  *
- * @param graph the graph that represents the world
- * @param params the parameters used to create this pathfinder
- * @see [IPathfinder]
+ * @param startCoordinate A function to get the start point in graph coordinates.
+ * @param targetCoordinate A function to get the target point in graph coordinates.
+ * @param filter A function to check if the given coordinate is allowed. If true, then the coordiante is allowed. If
+ * false, then the coordinate is not allowed.
+ * @param allowDiagonal A flag to allow diagonal movement.
+ * @param heuristic The heuristic to use for calculating the cost between two coordinates.
+ * @param maxIterations The maximum iterations to run before returning if the target is not reached within that amount
+ * of iterations.
+ * @param maxDistance The maximum distance that can be traveled before the pathfinder returns. If the distance between
+ * the start and target exceeds this value, then the pathfinder returns. If within iterations the distance becomes
+ * greater than this value, the pathfinder returns early.
+ * @param returnBestPathOnFailure If the pathfinder quits early, then it will either return a null path or else the best
+ * found path based on this value.
  */
-class Pathfinder(private val graph: IGraphMap, private val params: PathfinderParams) : IPathfinder {
+class Pathfinder(
+    private val startCoordinate: IntPair,
+    private val targetCoordinate: IntPair,
+    private val filter: (IntPair) -> Boolean,
+    private val allowDiagonal: Boolean,
+    private val heuristic: IHeuristic,
+    private val maxIterations: Int = DEFAULT_MAX_ITERATIONS,
+    private val maxDistance: Int = DEFAULT_MAX_DISTANCE,
+    private val returnBestPathOnFailure: Boolean = DEFAULT_RETURN_BEST_PATH_ON_FAILURE
+) : IPathfinder {
 
     companion object {
         const val TAG = "Pathfinder"
+        const val DEFAULT_MAX_ITERATIONS = 1000
+        const val DEFAULT_MAX_DISTANCE = Integer.MAX_VALUE
+        const val DEFAULT_RETURN_BEST_PATH_ON_FAILURE = false
     }
 
-    /**
-     * A node in the graph. A node is a point in the graph that has a position and a list of edges
-     * that connect it to other nodes. The edges are the nodes that are adjacent to this node.
-     *
-     * @param coordinate the coordinate of this node
-     * @param ppm the number of pixels per meter
-     */
-    internal class Node(val coordinate: IntPair, val ppm: Int) : Comparable<Node> {
+    internal class Node(val coordinate: IntPair) : Comparable<Node> {
 
         val x: Int
-            get() = coordinate.first
-
+            get() = coordinate.x
         val y: Int
-            get() = coordinate.second
-
+            get() = coordinate.y
         var distance = 0
         var previous: Node? = null
         var discovered = false
@@ -54,150 +59,124 @@ class Pathfinder(private val graph: IGraphMap, private val params: PathfinderPar
 
         override fun hashCode(): Int {
             var hash = 49
-            hash = hash * 31 + coordinate.first
-            hash = hash * 31 + coordinate.second
+            hash = hash * 31 + coordinate.x
+            hash = hash * 31 + coordinate.y
             return hash
         }
 
         override fun equals(other: Any?) = other is Node && other.coordinate == coordinate
+
+        override fun toString() =
+            "Node{x=$x,y=$y,distance=$distance,discovered=$discovered,previous={${previous?.let { "${it.x},${it.y}" }}}"
     }
 
-    /**
-     * Finds a graphPath from the start point to the target point. If a graphPath is found, this
-     * function should return a collection of [IntPair]s that represent the graphPath from the start
-     * point to the target point. Otherwise, it should return null.
-     *
-     * @return a collection of [IntPair]s that represent the graphPath from the start point to the
-     *   target point, or null if no graphPath was found
-     */
     override fun call(): PathfinderResult {
-        // A map that maps coordinates to nodes
         val map = HashMap<IntPair, Node>()
 
-        // Convert the start and target pointsMap to graph coordinates
-        val targetCoordinate = graph.convertToGraphCoordinate(params.targetSupplier())
-        val startCoordinate = graph.convertToGraphCoordinate(params.startSupplier())
+        if (startCoordinate == targetCoordinate ||
+            (!returnBestPathOnFailure && startCoordinate.toVector2().dst(targetCoordinate.toVector2()) > maxDistance)
+        ) return PathfinderResult(null, true)
 
-        // If the start or target pointsMap are out of bounds, return null
-        if (graph.isOutOfBounds(targetCoordinate) || graph.isOutOfBounds(startCoordinate)) {
-            GameLogger.debug(
-                TAG,
-                "Target or start point is out of shape. Target: $targetCoordinate, Start: $startCoordinate"
-            )
-            return PathfinderResult(null, null, false)
-        }
-
-        // If the start and target pointsMap are the same, return an empty graphPath
-        if (startCoordinate == targetCoordinate) {
-            GameLogger.debug(
-                TAG,
-                "Target and start point are the same. Target: $targetCoordinate, Start: $startCoordinate"
-            )
-            return PathfinderResult(null, null, true)
-        }
-
-        // Add the start node to the map
-        val startNode = Node(startCoordinate, graph.ppm)
+        val startNode = Node(startCoordinate)
         map[startCoordinate] = startNode
 
-        // When a node is added, it is sorted based on its distance from all others
         val open = PriorityQueue<Node>()
         open.add(startNode)
 
-        // While there are still nodes to visit
+        var iterations = 0
+        var bestNode: Node? = null
+
         while (open.isNotEmpty()) {
-            // Get the node with the smallest distance
+            if (iterations >= maxIterations) break
+            iterations++
+
             val currentNode = open.poll()
             currentNode.discovered = true
 
-            // If the current node is the target node, return the result
+            if (currentNode.distance > maxDistance) break
+
+            if (bestNode == null || heuristic.calculate(
+                    currentNode.x,
+                    currentNode.y,
+                    targetCoordinate.x,
+                    targetCoordinate.y
+                ) < heuristic.calculate(bestNode.x, bestNode.y, targetCoordinate.x, targetCoordinate.y)
+            ) bestNode = currentNode
+
             if (currentNode.coordinate == targetCoordinate) {
-                val graphPath = ArrayList<IntPair>()
-
-                var node = currentNode
-                while (node != null) {
-                    graphPath.add(node.coordinate)
-                    node = node.previous
-                }
-
-                // reverse the graph path
-                graphPath.reverse()
-
-                // Convert the graphPath to world coordinates
-                val worldPath = ArrayList<GameRectangle>()
-                graphPath.forEach { worldPath.add(graph.convertToWorldNode(it)) }
-
-                return PathfinderResult(graphPath, worldPath, false)
+                val path = buildPath(currentNode)
+                return PathfinderResult(path, false)
             }
 
-            // Get the coordinates of the current node
-            val currentCoordinate = currentNode.coordinate
+            val neighborCoordinates = getNeighborCoordinates(currentNode.coordinate)
+            neighborCoordinates.forEach { neighborCoordinate ->
+                if (!filter.invoke(neighborCoordinate)) return@forEach
 
-            val min = currentCoordinate - 1
-            val max = currentCoordinate + 1
+                var neighbor = map[neighborCoordinate]
+                if (neighbor?.discovered == true) return@forEach
 
-            // For each adjacent node
-            for (x in min.first..max.first) {
-                for (y in min.second..max.second) {
-                    // If the adjacent node is out of bounds, skip it
-                    if (graph.isOutOfBounds(x, y)) continue
+                val totalDistance = currentNode.distance + heuristic.calculate(
+                    currentNode.x,
+                    currentNode.y,
+                    neighborCoordinate.x,
+                    neighborCoordinate.y
+                )
 
-                    // If diagonal movement is not allowed and the adjacent node is diagonal to the current
-                    // node, skip it
-                    if (!params.allowDiagonal() &&
-                        (x == min.first || x == max.first) &&
-                        (y == min.second || y == max.second)
-                    )
-                        continue
+                // If the adjacent node has not been discovered or the total distance from the start node to the
+                // adjacent node is less than the adjacent node's distance from the start node, update the adjacent
+                // node's distance from the start node and previous node accordingly
+                if (neighbor == null) {
+                    neighbor = Node(neighborCoordinate)
+                    map[neighborCoordinate] = neighbor
 
-                    // Get the adjacent node
-                    val neighborCoordinate = IntPair(x, y)
-                    var neighbor = map[neighborCoordinate]
+                    neighbor.distance = totalDistance
+                    neighbor.previous = currentNode
 
-                    // If the adjacent node has already been discovered, skip it
-                    if (neighbor?.discovered == true) continue
+                    open.add(neighbor)
+                } else if (totalDistance < neighbor.distance) {
+                    neighbor.distance = totalDistance
+                    neighbor.previous = currentNode
 
-                    // If the adjacent node is an obstacle, skip it
-                    if (x pairTo y != targetCoordinate && !params.filter(x pairTo y, graph.get(x, y)))
-                        continue
-
-                    // Calculate the total distance from the start node to the adjacent node
-                    val totalDistance = currentNode.distance + cost(currentNode.x, currentNode.y, x, y)
-
-                    // If the adjacent node has not been discovered or the total distance from the start node
-                    // to the adjacent node is less than the adjacent node's distance from the start node,
-                    // update the adjacent node's distance from the start node and previous node
-                    // accordingly
-                    if (neighbor == null) {
-                        neighbor = Node(neighborCoordinate, graph.ppm)
-                        map[neighborCoordinate] = neighbor
-
-                        neighbor.distance = totalDistance
-                        neighbor.previous = currentNode
-
-                        open.add(neighbor)
-                    } else if (totalDistance < neighbor.distance) {
-                        neighbor.distance = totalDistance
-                        neighbor.previous = currentNode
-
-                        open.remove(neighbor)
-                        open.add(neighbor)
-                    }
+                    open.remove(neighbor)
+                    open.add(neighbor)
                 }
             }
         }
 
-        return PathfinderResult(null, null, false)
+        return if (returnBestPathOnFailure && bestNode != null) {
+            val bestPath = buildPath(bestNode)
+            PathfinderResult(bestPath, false)
+        } else PathfinderResult(null, false)
     }
 
-    /**
-     * Calculates the cost between two points.
-     *
-     * @param x1 the x coordinate of the first point
-     * @param y1 the y coordinate of the first point
-     * @param x2 the x coordinate of the second point
-     * @param y2 the y coordinate of the second point
-     * @return the cost between the two points
-     */
-    internal fun cost(x1: Int, y1: Int, x2: Int, y2: Int) = abs(x1 - x2) + abs(y1 - y2)
+    private fun buildPath(node: Node): Array<IntPair> {
+        val path = Array<IntPair>()
+        var currentNode: Node? = node
+        while (currentNode != null) {
+            path.add(currentNode.coordinate)
+            currentNode = currentNode.previous
+        }
+        path.reverse()
+        return path
+    }
+
+    private fun getNeighborCoordinates(coordinate: IntPair): Array<IntPair> {
+        val (x, y) = coordinate
+        return if (allowDiagonal) {
+            gdxArrayOf(
+                x - 1 pairTo y,
+                x + 1 pairTo y,
+                x pairTo y - 1,
+                x pairTo y + 1,
+                x - 1 pairTo y - 1,
+                x + 1 pairTo y + 1,
+                x - 1 pairTo y + 1,
+                x + 1 pairTo y - 1
+            )
+        } else {
+            gdxArrayOf(
+                x - 1 pairTo y, x + 1 pairTo y, x pairTo y - 1, x pairTo y + 1
+            )
+        }
+    }
 }

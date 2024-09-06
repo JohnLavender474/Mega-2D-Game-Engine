@@ -10,24 +10,24 @@ import com.mega.game.engine.GameEngine
 import kotlin.reflect.KClass
 
 /**
- * The interface for entities. The [components] property contains a map for the entity's properties. The [gameEntityState]
- * property contains field defining the state of this entity. In almost all cases, the fields of the [gameEntityState] object
- * should not be modified from outside of the [GameEngine] class. The [gameEntityState] field is modified by the [GameEngine]
- * to reflect the state of the entity. Although the fields of [gameEntityState] are visible and modifiable, it is recommended
+ * The interface for entities. The [components] property contains a map for the entity's properties. The [state]
+ * property contains field defining the state of this entity. In almost all cases, the fields of the [state] object
+ * should not be modified from outside of the [GameEngine] class. The [state] field is modified by the [GameEngine]
+ * to reflect the state of the entity. Although the fields of [state] are visible and modifiable, it is recommended
  * to treat the fields as read-only except in certain circumstances. Also, in almost all cases, the following methods
  * should not be called from outside of the [GameEngine] class:
  * - [init]
  * - [onSpawn]
  * - [onDestroy]
  *
- * The [init] method is used to initialize an entity. This is called when the initialized field of [gameEntityState] is false.
+ * The [init] method is used to initialize an entity. This is called when the initialized field of [state] is false.
  * The [onSpawn] and [onDestroy] methods are called when the entity is spawned and destroyed by the game engine
  * respectively.
  */
 interface IGameEntity : IComponentBucket, IPropertizable, Initializable {
 
     val components: OrderedMap<KClass<out IGameComponent>, IGameComponent>
-    val gameEntityState: GameEntityState
+    val state: GameEntityState
 
     /**
      * Whether this [GameEntity] can be spawned. If this is false, then the entity will not be spawned by the engine.

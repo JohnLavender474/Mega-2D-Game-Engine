@@ -1,6 +1,7 @@
 package com.mega.game.engine.systems
 
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.ObjectSet
 import com.mega.game.engine.GameEngine
 import com.mega.game.engine.common.interfaces.Resettable
@@ -25,7 +26,7 @@ import kotlin.reflect.KClass
 abstract class GameSystem(
     private val componentMask: ObjectSet<KClass<out IGameComponent>>,
     private val entities: MutableOrderedSet<IGameEntity> = MutableOrderedSet()
-) : Updatable, Resettable {
+) : Updatable, Resettable, Disposable {
 
     companion object {
         const val TAG = "GameSystem"
@@ -40,6 +41,12 @@ abstract class GameSystem(
 
     private val entitiesToAdd = Array<IGameEntity>()
     private val entitiesToRemove = Array<IGameEntity>()
+
+    /**
+     * An array of disposable objects that should be disposed in the [dispose] method. Usage of this data structure
+     * is optional.
+     */
+    protected val disposables = Array<Disposable>()
 
     var on = true
     var updating = false
@@ -150,4 +157,6 @@ abstract class GameSystem(
         entities.clear()
         entitiesToAdd.clear()
     }
+
+    override fun dispose() = disposables.forEach { it.dispose() }
 }

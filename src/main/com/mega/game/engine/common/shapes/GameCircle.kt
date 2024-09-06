@@ -300,6 +300,20 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
     }
 
     /**
+     * Returns the radius of this circle.
+     *
+     * @return the radius of this circle
+     */
+    override fun getWidth() = getRadius()
+
+    /**
+     * Returns the radius of this circle.
+     *
+     * @return the radius of this circle
+     */
+    override fun getHeight() = getRadius()
+
+    /**
      * Checks if this circle contains the given point.
      *
      * @param point The point to check.

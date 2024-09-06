@@ -16,7 +16,7 @@ import kotlin.reflect.cast
 abstract class GameEntity(
     val engine: GameEngine,
     override val components: OrderedMap<KClass<out IGameComponent>, IGameComponent> = OrderedMap(),
-    override val gameEntityState: GameEntityState = GameEntityState(),
+    override val state: GameEntityState = GameEntityState(),
     override val properties: Properties = Properties()
 ) : IGameEntity {
 

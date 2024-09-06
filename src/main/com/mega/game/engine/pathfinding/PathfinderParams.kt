@@ -1,56 +1,44 @@
 package com.mega.game.engine.pathfinding
 
-import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.interfaces.IPropertizable
 import com.mega.game.engine.common.objects.IntPair
 import com.mega.game.engine.common.objects.Properties
-import java.util.function.BiPredicate
+import java.util.function.Predicate
 import java.util.function.Supplier
 
 /**
- * The parameters used to create a [Pathfinder].
+ * The parameters used in a [Pathfinder].
  *
- * @param startSupplier A supplier that supplies the start point.
- * @param targetSupplier A supplier that supplies the target point.
+ * @param startCoordinateSupplier A supplier that supplies the starting coordinate.
+ * @param targetCoordinateSupplier A supplier that supplies the target coordinate.
  * @param allowDiagonal A supplier that supplies whether diagonal movement is allowed.
- * @param filter A filter that filters out objects that should not be considered when pathfinding.
- *   If the filter returns false, the node will not be considered when pathfinding.
- * @param properties optional props
+ * @param filter A filter that filters whether the coordinate should be allowed in pathfinding. If it returns true, then
+ * the coordinate is allowed. If it returns false, then the coordinate is not allowed.
+ * @param properties Properties that can optionally be used to extend or modify functionality.
  */
 class PathfinderParams(
-    val startSupplier: () -> Vector2,
-    val targetSupplier: () -> Vector2,
-    val allowDiagonal: (() -> Boolean) = { true },
-    val filter: ((IntPair, Iterable<Any>) -> Boolean) = { _, _ -> true },
+    var startCoordinateSupplier: () -> IntPair,
+    var targetCoordinateSupplier: () -> IntPair,
+    var allowDiagonal: () -> Boolean,
+    var filter: (IntPair) -> Boolean,
     override val properties: Properties = Properties()
 ) : IPropertizable {
 
     /**
      * Creates a new [PathfinderParams] with the given suppliers and filter.
      *
-     * @param startSupplier A supplier that supplies the start point.
-     * @param targetSupplier A supplier that supplies the target point.
+     * @param startCoordinateSupplier A supplier that supplies the start coordinate.
+     * @param targetCoordinateSupplier A supplier that supplies the target coordinate.
      * @param allowDiagonal A supplier that supplies whether diagonal movement is allowed.
-     * @param filter A filter that filters out objects that should not be considered when pathfinding.
-     *  If the filter returns false, the node will not be considered when pathfinding.
-     * @param properties optional props
+     * @param filter A filter that filters whether the coordinate should be allowed in pathfinding.
      */
     constructor(
-        startSupplier: Supplier<Vector2>,
-        targetSupplier: Supplier<Vector2>,
+        startCoordinateSupplier: Supplier<IntPair>,
+        targetCoordinateSupplier: Supplier<IntPair>,
         allowDiagonal: Boolean,
-        filter: BiPredicate<IntPair, Iterable<Any>> = BiPredicate { _, _ -> true },
-        properties: Properties = Properties()
-    ) : this(
-        { startSupplier.get() },
-        { targetSupplier.get() },
+        filter: Predicate<IntPair> = Predicate { true },
+    ) : this({ startCoordinateSupplier.get() },
+        { targetCoordinateSupplier.get() },
         { allowDiagonal },
-        { it1, it2 -> filter.test(it1, it2) },
-        properties
-    )
-
-    override fun toString() =
-        "PathfinderParams(currentStart=${startSupplier()}, " +
-                "currentTarget=${targetSupplier()}, " +
-                "currentlyAllowsDiagonal=${allowDiagonal()}"
+        { filter.test(it) })
 }

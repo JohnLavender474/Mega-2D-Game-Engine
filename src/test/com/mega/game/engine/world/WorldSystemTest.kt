@@ -1,390 +1,117 @@
 package com.mega.game.engine.world
 
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.mega.game.engine.MockGameEntity
-import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.common.extensions.objectSetOf
-import com.mega.game.engine.common.extensions.round
 import com.mega.game.engine.common.shapes.GameRectangle
-import com.mega.game.engine.common.shapes.IGameShape2D
-import com.mega.game.engine.common.shapes.IGameShape2DSupplier
-import com.mega.game.engine.entities.GameEntity
-import com.mega.game.engine.graph.IGraphMap
-import com.mega.game.engine.graph.MinsAndMaxes
+import com.mega.game.engine.world.body.Body
+import com.mega.game.engine.world.body.BodyComponent
+import com.mega.game.engine.world.body.BodyType
+import com.mega.game.engine.world.body.Fixture
+import com.mega.game.engine.world.collisions.ICollisionHandler
+import com.mega.game.engine.world.contacts.IContactListener
+import com.mega.game.engine.world.container.IWorldContainer
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
-import io.mockk.*
+import io.mockk.mockk
+import io.mockk.verify
 
 class WorldSystemTest : DescribeSpec({
-    describe("WorldSystem class") {
-        val mockContactListener = mockk<IContactListener>()
-        val mockWorldGraph = mockk<IGraphMap>()
-        val mockWorldGraphSupplier = { mockWorldGraph }
-        val mockCollisionHandler = mockk<ICollisionHandler>()
-        val fixedStep = 0.02f
+    val mockContactListener = mockk<IContactListener>(relaxed = true)
+    val mockWorldContainer = mockk<IWorldContainer>(relaxed = true)
+    val mockCollisionHandler = mockk<ICollisionHandler>(relaxed = true)
+    val fixedStep = 0.02f
 
-        lateinit var entity: GameEntity
-        lateinit var physicsData: PhysicsData
-        lateinit var body: Body
-        lateinit var bodyComponent: BodyComponent
+    lateinit var body: Body
+    lateinit var worldSystem: WorldSystem
 
-        lateinit var contactFilterMap: ObjectMap<Any, ObjectSet<Any>>
-        lateinit var worldSystem: WorldSystem
+    beforeEach {
+        body = Body(BodyType.DYNAMIC)
+        val bodyComponent = BodyComponent(body)
+        val entity = MockGameEntity().apply { addComponent(bodyComponent) }
 
-        beforeEach {
-            clearAllMocks()
-
-            entity = spyk(MockGameEntity(
-                onSpawn = { entity, props -> entity.putAllProperties(props) },
-                onDestroy = { entity ->
-                    entity.clearComponents()
-                    entity.clearProperties()
-                }
-            ))
-
-            physicsData = spyk(PhysicsData())
-
-            body = spyk(Body(BodyType.DYNAMIC, physicsData))
-            body.cardinalRotation = Direction.UP
-            body.setSize(0f, 0f).setPosition(0f, 0f)
-            body.fixtures.clear()
-
-            bodyComponent = spyk(BodyComponent(body))
-            entity.addComponent(bodyComponent)
-
-            every { mockWorldGraph.reset() } just Runs
-
+        worldSystem = WorldSystem(
+            ppm = 1,
+            fixedStep = fixedStep,
+            worldContainerSupplier = { mockWorldContainer },
+            contactListener = mockContactListener,
+            collisionHandler = mockCollisionHandler,
             contactFilterMap = ObjectMap()
+        )
 
-            worldSystem = spyk(
-                WorldSystem(
-                    mockContactListener, mockWorldGraphSupplier, fixedStep, mockCollisionHandler, contactFilterMap
-                )
-            )
-            worldSystem.add(entity)
+        worldSystem.add(entity)
+    }
 
-            clearAllMocks()
+    it("entity not qualify or be added") {
+        worldSystem.qualifies(MockGameEntity()) shouldBe false
+        worldSystem.contains(MockGameEntity()) shouldBe false
+    }
+
+    it("should add body and fixtures to world container correctly") {
+        val fixture = Fixture(body, "Type", GameRectangle())
+        body.addFixture(fixture)
+
+        worldSystem.update(fixedStep)
+
+        verify { mockWorldContainer.addBody(body) }
+        verify { mockWorldContainer.addFixture(fixture) }
+    }
+
+    it("should process physics correctly - 1") {
+        body.physics.gravity.set(-0.5f, -1f)
+        worldSystem.update(fixedStep)
+
+        body.x shouldBe -0.5f * fixedStep
+        body.y shouldBe -1f * fixedStep
+    }
+
+    it("should process physics correctly - 2") {
+        body.physics.velocity.set(5f, 10f)
+        body.physics.gravity.set(-0.5f, -1f)
+        worldSystem.update(fixedStep)
+
+        body.x shouldBe (5f - 0.5f) * fixedStep
+        body.y shouldBe (10f - 1f) * fixedStep
+    }
+
+    it("should filter contacts correctly") {
+        val fixture1 = Fixture(mockk(), "Type1", mockk())
+        val fixture2 = Fixture(mockk(), "Type2", mockk())
+        val filterMap = ObjectMap<Any, ObjectSet<Any>>().apply {
+            put("Type1", objectSetOf("Type2"))
         }
 
-        it("entity should qualify") { worldSystem.qualifies(entity) shouldBe true }
+        val filteredSystem = WorldSystem(
+            ppm = 1,
+            fixedStep = fixedStep,
+            worldContainerSupplier = { mockWorldContainer },
+            contactListener = mockContactListener,
+            collisionHandler = mockCollisionHandler,
+            contactFilterMap = filterMap
+        )
 
-        it("should contain entity") {
-            every { worldSystem.process(any(), any(), any()) } just Runs
-            worldSystem.update(fixedStep)
-            worldSystem.contains(entity) shouldBe true
+        filteredSystem.filterContact(fixture1, fixture2) shouldBe true
+        filteredSystem.filterContact(fixture1, fixture1) shouldBe false
+    }
+
+    it("should update fixture positions correctly - 1") {
+        val fixture = Fixture(body, "Type", GameRectangle()).apply {
+            offsetFromBodyCenter.set(5f, 5f)
         }
+        body.addFixture(fixture)
+        worldSystem.update(fixedStep)
+        fixture.getShape().getCenter() shouldBe Vector2(5f, 5f)
+    }
 
-        it("should add bodies and fixtures to graph correctly") {
-            every { mockWorldGraph.reset() } just Runs
-            every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-
-            every { worldSystem.updatePhysics(any(), any()) } just Runs
-            every { worldSystem.processContacts() } just Runs
-            every { worldSystem.postProcess(any(), any()) } just Runs
-
-            val fixture = Fixture(body, "Type", GameRectangle())
-            body.addFixture(fixture)
-
-            val objs = ArrayList<Any>()
-
-            every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } answers {
-                objs.add(firstArg())
-            }
-            every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers { objs.add(firstArg()) }
-
-            worldSystem.update(fixedStep)
-
-            objs shouldContain body
-            objs shouldContain fixture
+    it("should update fixture positions correctly - 2") {
+        body.setCenter(5f, 5f)
+        val fixture = Fixture(body, "Type", GameRectangle()).apply {
+            offsetFromBodyCenter.set(5f, 5f)
         }
-
-        describe("cycle") {
-            it("should cycle correctly - test 1") {
-                body.addFixture(Fixture(body, "Test", GameRectangle()))
-
-                val objs = ArrayList<Any>()
-
-                every { worldSystem.preProcess(any(), any()) } just Runs
-                every { worldSystem.postProcess(any(), any()) } just Runs
-                every { worldSystem.updatePhysics(any(), any()) } just Runs
-                every { worldSystem.resolveCollisions(any()) } just Runs
-
-                every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } answers {
-                    objs.add(firstArg())
-                }
-                every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers {
-                    objs.add(firstArg())
-                }
-                every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-                every { mockWorldGraph.reset() } just Runs
-
-                worldSystem.update(fixedStep)
-
-                verify(exactly = 1) { worldSystem.preProcess(any(), any()) }
-                verify(exactly = 1) { worldSystem.postProcess(any(), any()) }
-                verify(exactly = 1) { worldSystem.updatePhysics(any(), any()) }
-                verify(exactly = 1) { worldSystem.resolveCollisions(any()) }
-
-                objs.size shouldBe 4
-                objs shouldContain body
-            }
-
-            it("should cycle correctly - test 2") {
-                body.addFixture(Fixture(body, "Test", GameRectangle()))
-
-                val objs = ArrayList<Any>()
-
-                every { worldSystem.preProcess(any(), any()) } just Runs
-                every { worldSystem.postProcess(any(), any()) } just Runs
-                every { worldSystem.updatePhysics(any(), any()) } just Runs
-                every { worldSystem.resolveCollisions(any()) } just Runs
-
-                every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-                every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } answers {
-                    objs.add(firstArg())
-                }
-                every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } answers {
-                    objs.add(firstArg())
-                }
-                every { mockWorldGraph.reset() } just Runs
-
-                worldSystem.update(fixedStep * 2)
-
-                verify(exactly = 2) { worldSystem.preProcess(any(), any()) }
-                verify(exactly = 2) { worldSystem.postProcess(any(), any()) }
-                verify(exactly = 2) { worldSystem.updatePhysics(any(), any()) }
-                verify(exactly = 2) { worldSystem.resolveCollisions(any()) }
-
-                objs.size shouldBe 6
-                objs.filter { it == body }.size shouldBe 3
-            }
-        }
-
-        it("should filter contacts correctly") {
-            val fixture1 = Fixture(mockk(), "Type1", mockk())
-            val fixture2 = Fixture(mockk(), "Type2", mockk())
-            val filterMap = ObjectMap<Any, ObjectSet<Any>>()
-            filterMap.put("Type1", objectSetOf("Type2"))
-
-            val filteredSystem = WorldSystem(
-                mockContactListener, mockWorldGraphSupplier, fixedStep, mockCollisionHandler, filterMap
-            )
-
-            filteredSystem.filterContact(fixture1, fixture2) shouldBe true
-            filteredSystem.filterContact(fixture1, fixture1) shouldBe false
-            filteredSystem.filterContact(fixture2, fixture2) shouldBe false
-        }
-
-        describe("process contacts") {
-
-            lateinit var entity1: GameEntity
-            lateinit var entity2: GameEntity
-
-            lateinit var body1: Body
-            lateinit var body2: Body
-
-            lateinit var fixture1: Fixture
-            lateinit var fixture2: Fixture
-
-            beforeEach {
-                body1 = Body(BodyType.DYNAMIC)
-                fixture1 = Fixture(body1, "Type1", GameRectangle(0f, 0f, 10f, 10f))
-                body1.addFixture(fixture1)
-                entity1 = MockGameEntity()
-                entity1.addComponent(BodyComponent(body1))
-
-                body2 = Body(BodyType.DYNAMIC)
-                fixture2 = Fixture(body, "Type2", GameRectangle(5f, 5f, 15f, 15f))
-                body2.addFixture(fixture2)
-                entity2 = MockGameEntity()
-                entity2.addComponent(BodyComponent(body2))
-
-                contactFilterMap.put("Type1", objectSetOf("Type2"))
-            }
-
-            it("should process contacts correctly - test 1") {
-                every { mockWorldGraph.reset() } just Runs
-                every { mockWorldGraph.add(any(), any<IGameShape2D>()) } returns true
-
-                every { worldSystem.updatePhysics(any(), any()) } just Runs
-                every { worldSystem.postProcess(any(), any()) } just Runs
-                every { worldSystem.resolveCollisions(any()) } just Runs
-
-                every { mockContactListener.beginContact(any(), any()) } just Runs
-                every { mockContactListener.continueContact(any(), any()) } just Runs
-                every { mockContactListener.endContact(any(), any()) } just Runs
-
-                worldSystem.reset()
-                worldSystem.add(entity1)
-                worldSystem.add(entity2)
-
-                every { mockWorldGraph.get(any<IGameShape2D>()) } answers {
-                    val fixtureShape = firstArg<IGameShape2D>()
-                    if (fixtureShape == fixture1.rawShape) {
-                        objectSetOf(fixture2)
-                    } else {
-                        objectSetOf(fixture1)
-                    }
-                }
-
-                worldSystem.update(fixedStep)
-                verify(exactly = 1) { mockContactListener.beginContact(any(), any()) }
-
-                worldSystem.update(fixedStep)
-                verify(exactly = 1) { mockContactListener.continueContact(any(), any()) }
-
-                every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-
-                worldSystem.update(fixedStep)
-                verify(exactly = 1) { mockContactListener.endContact(any(), any()) }
-            }
-
-            it("should process contacts correctly - test 2") {
-                every { mockWorldGraph.reset() } just Runs
-                every { mockWorldGraph.add(any(), any<IGameShape2D>()) } returns true
-
-                every { worldSystem.updatePhysics(any(), any()) } just Runs
-                every { worldSystem.postProcess(any(), any()) } just Runs
-                every { worldSystem.resolveCollisions(any()) } just Runs
-
-                every { mockContactListener.beginContact(any(), any()) } just Runs
-                every { mockContactListener.continueContact(any(), any()) } just Runs
-                every { mockContactListener.endContact(any(), any()) } just Runs
-
-                worldSystem.reset()
-                worldSystem.add(entity1)
-                worldSystem.add(entity2)
-
-                every { mockWorldGraph.get(any<IGameShape2D>()) } answers {
-                    val fixtureShape = firstArg<IGameShape2D>()
-                    if (fixtureShape == fixture1.rawShape) {
-                        objectSetOf(fixture2)
-                    } else {
-                        objectSetOf(fixture1)
-                    }
-                }
-
-                worldSystem.update(fixedStep * 2)
-                verify(exactly = 1) { mockContactListener.beginContact(any(), any()) }
-                verify(exactly = 1) { mockContactListener.continueContact(any(), any()) }
-
-                every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-
-                worldSystem.update(fixedStep)
-                verify(exactly = 1) { mockContactListener.endContact(any(), any()) }
-            }
-        }
-
-        describe("update physics") {
-            it("should update physics correctly - test 1") {
-                physicsData.gravity.x = -0.5f
-                physicsData.gravity.y = -1f
-                physicsData.velocity.x = 5f
-                physicsData.velocity.y = 5f
-                physicsData.velocityClamp.set(100f, 100f)
-
-                worldSystem.updatePhysics(body, fixedStep)
-
-                physicsData.velocity.x shouldBe 4.5f
-                physicsData.velocity.y shouldBe 4f
-                body.x.round(2) shouldBe (4.5f * fixedStep).round(2)
-                body.y.round(2) shouldBe (4f * fixedStep).round(2)
-            }
-
-            it("should update physics correctly - test 2") {
-                every { worldSystem.preProcess(any(), any()) } just Runs
-                every { worldSystem.postProcess(any(), any()) } just Runs
-                every { worldSystem.resolveCollisions(any()) } just Runs
-
-                every { mockWorldGraph.reset() } just Runs
-
-                every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } returns true
-                every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } returns true
-
-                physicsData.gravity.x = -0.5f
-                physicsData.gravity.y = -1f
-                physicsData.velocity.x = 5f
-                physicsData.velocity.y = 5f
-                physicsData.velocityClamp.set(100f, 100f)
-
-                worldSystem.update(fixedStep * 2f)
-
-                physicsData.velocity.x shouldBe 4f
-                physicsData.velocity.y shouldBe 3f
-                body.x.round(2) shouldBe ((4.5f + 4f) * fixedStep).round(2)
-                body.y.round(2) shouldBe ((4f + 3f) * fixedStep).round(2)
-            }
-        }
-
-        describe("update fixture positions") {
-            it("should update fixture positions - test 1") {
-                every { worldSystem.preProcess(any(), any()) } just Runs
-                every { worldSystem.postProcess(any(), any()) } just Runs
-                every { worldSystem.updatePhysics(any(), any()) } just Runs
-                every { worldSystem.resolveCollisions(any()) } just Runs
-
-                every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } returns true
-                every { mockWorldGraph.add(any<IGameShape2DSupplier>()) } returns true
-                every { mockWorldGraph.get(any<MinsAndMaxes>()) } returns ObjectSet()
-                every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-                every { mockWorldGraph.get(any(), any(), any(), any()) } returns ObjectSet()
-                every { mockWorldGraph.get(any(), any()) } returns Array()
-                every { mockWorldGraph.reset() } just Runs
-
-                val fixture = Fixture(body, "Type", GameRectangle())
-                fixture.offsetFromBodyCenter = Vector2(5f, 5f)
-                body.addFixture(fixture)
-
-                worldSystem.update(fixedStep)
-
-                fixture.rawShape.getCenter() shouldBe Vector2(5f, 5f)
-            }
-
-            it("should update fixture positions - test 2") {
-                every { worldSystem.preProcess(any(), any()) } just Runs
-                every { worldSystem.postProcess(any(), any()) } just Runs
-                every { worldSystem.updatePhysics(any(), any()) } just Runs
-                every { worldSystem.resolveCollisions(any()) } just Runs
-
-                every { mockWorldGraph.add(any<Body>(), any<IGameShape2D>()) } returns true
-                every { mockWorldGraph.get(any<IGameShape2D>()) } returns ObjectSet()
-                every { mockWorldGraph.reset() } just Runs
-
-                val _body = Body(BodyType.DYNAMIC)
-                _body.setSize(5f).setCenter(0f, 0f)
-
-                val shape = GameRectangle().setSize(1f)
-                val fixture = spyk(Fixture(_body, "Type", shape))
-                fixture.offsetFromBodyCenter = Vector2(0f, 5f)
-
-                val _entity = MockGameEntity()
-                val _bodyComponent = BodyComponent(_body)
-                _entity.addComponent(_bodyComponent)
-
-                worldSystem.remove(entity)
-                worldSystem.add(_entity)
-
-                _body.cardinalRotation = Direction.UP
-                worldSystem.update(fixedStep)
-                fixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
-
-                _body.cardinalRotation = Direction.DOWN
-                worldSystem.update(fixedStep)
-                fixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
-
-                _body.cardinalRotation = Direction.LEFT
-                worldSystem.update(fixedStep)
-                fixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
-
-                _body.cardinalRotation = Direction.RIGHT
-                worldSystem.update(fixedStep)
-
-                fixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
-            }
-        }
+        body.addFixture(fixture)
+        worldSystem.update(fixedStep)
+        fixture.getShape().getCenter() shouldBe Vector2(10f, 10f)
     }
 })

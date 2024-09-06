@@ -9,11 +9,6 @@ import com.mega.game.engine.common.objects.Properties
  *
  * @property spawned if the entity is spawned
  * @property initialized if the entity is initialized
- * @property properties optional properties that can be used to extend this class's functionality
  */
-class GameEntityState(
-    var initialized: Boolean = false,
-    var spawned: Boolean = false,
-    override val properties: Properties = Properties()
-) : IPropertizable
+class GameEntityState(var initialized: Boolean = false, var spawned: Boolean = false)
 

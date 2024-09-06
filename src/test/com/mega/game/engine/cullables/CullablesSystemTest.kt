@@ -42,7 +42,7 @@ class CullablesSystemTest : DescribeSpec({
                 val entity = entities[i]
                 val cullable = entity.getComponent(CullablesComponent::class)?.cullables?.get("key")
                 cullable shouldNotBe null
-                if (cullable != null) entity.gameEntityState.spawned shouldBe !shouldCull
+                if (cullable != null) entity.state.spawned shouldBe !shouldCull
             }
         }
 
@@ -58,7 +58,7 @@ class CullablesSystemTest : DescribeSpec({
             engine.update(1f)
 
             entities.forEach { entity ->
-                entity.gameEntityState.spawned shouldBe true
+                entity.state.spawned shouldBe true
                 entity.getComponent(CullablesComponent::class) shouldBe null
             }
         }

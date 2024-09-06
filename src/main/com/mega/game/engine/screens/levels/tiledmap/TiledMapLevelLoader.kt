@@ -12,12 +12,16 @@ import com.badlogic.gdx.utils.ObjectMap
  * @param layers the map of layer names to [MapObjects]
  * @param worldWidth the width of the world
  * @param worldHeight the height of the world
+ * @param tileWidth the width of each tile (the `ppm` or `pixel-per-meter`)
+ * @param tileHeight the height of each time (almost always the same as the [tileWidth])
  */
 data class TiledMapLoadResult(
     val map: TiledMap,
     val layers: ObjectMap<String, MapObjects>,
     val worldWidth: Int,
-    val worldHeight: Int
+    val worldHeight: Int,
+    val tileWidth: Int,
+    val tileHeight: Int
 )
 
 /**
@@ -38,9 +42,11 @@ object TiledMapLevelLoader {
 
         val worldWidth = map.properties["width"] as Int
         val worldHeight = map.properties["height"] as Int
+        val tileWidth = map.properties["tilewidth"] as Int
+        val tileHeight = map.properties["tileheight"] as Int
 
         val layers = ObjectMap<String, MapObjects>()
         map.layers.forEach { layer -> layers.put(layer.name, layer.objects) }
-        return TiledMapLoadResult(map, layers, worldWidth, worldHeight)
+        return TiledMapLoadResult(map, layers, worldWidth, worldHeight, tileWidth, tileHeight)
     }
 }

@@ -8,7 +8,7 @@ package com.mega.game.engine.common.objects
  *
  * @param E the type of elements in this collection
  */
-class ImmutableCollection<E>(private val collection: Collection<E>) : Collection<E> {
+open class ImmutableCollection<E>(private val collection: Collection<E>) : Collection<E> {
 
     override val size: Int
         get() = collection.size

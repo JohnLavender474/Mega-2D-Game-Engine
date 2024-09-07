@@ -25,22 +25,27 @@ abstract class GameEntity(
     }
 
     /**
+     * Default implementation of [init] is a no-op. In the child class, this method should be used to perform
+     * initialization, e.g. instantiation of components.
+     */
+    override fun init() {}
+
+    /**
      * Shorthand for `engine.spawn(this)`. Spawns this entity in the [engine]. Returns the result of [GameEngine.spawn].
-     * If this method is overriden, then the super method must be called or else the entity will not be spawned in the
-     * game engine.
+     * Do not confuse this method with [onSpawn]. This method is merely a convenience method; meanwhile [onSpawn] is
+     * called when the entity is spawned within the game engine.
      *
      * @return the result of [GameEngine.spawn]
      */
-    open fun spawn(spawnProps: Properties) = engine.spawn(this, spawnProps)
+    fun spawn(spawnProps: Properties) = engine.spawn(this, spawnProps)
 
     /**
      * Shorthand for `engine.destroy(this)`. Destroys this entity in the [engine]. Returns the result of
-     * [GameEngine.destroy]. If this method is overriden, then the super method must be called or else the
-     * entity will not be destroyed in the game engine.
+     * [GameEngine.destroy].
      *
      * @return the result of [GameEngine.destroy]
      */
-    open fun destroy() = engine.destroy(this)
+    fun destroy() = engine.destroy(this)
 
     override fun <C : IGameComponent> getComponent(key: KClass<C>): C? {
         val value = components[key] ?: return null

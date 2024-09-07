@@ -1,6 +1,7 @@
 package com.mega.game.engine.events
 
 import com.badlogic.gdx.utils.ObjectSet
+import com.mega.game.engine.common.extensions.objectSetOf
 import com.mega.game.engine.common.objects.Properties
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -85,7 +86,7 @@ class EventsManagerTest :
                 // if
                 val listener =
                     object : IEventListener {
-                        override val eventKeyMask = ObjectSet<Any>()
+                        override val eventKeyMask = objectSetOf<Any>("testEvent")
 
                         override fun onEvent(event: Event) {
                             eventHandled = true
@@ -107,12 +108,12 @@ class EventsManagerTest :
                 // if
                 val listener1 =
                     mockk<IEventListener> {
-                        every { eventKeyMask } returns ObjectSet<Any>()
+                        every { eventKeyMask } returns objectSetOf("testEvent")
                         every { onEvent(any()) } just Runs
                     }
                 val listener2 =
                     mockk<IEventListener> {
-                        every { eventKeyMask } returns ObjectSet<Any>()
+                        every { eventKeyMask } returns objectSetOf("testEvent")
                         every { onEvent(any()) } just Runs
                     }
 

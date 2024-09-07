@@ -8,8 +8,8 @@ import java.util.*
 
 /**
  * A manager for [Event]s and [IEventListener]s. [Event]s are submitted to the [EventsManager] and [IEventListener]s
- * are added to the [EventsManager]. When an [Event] is submitted, all [IEventListener]s are notified of the [Event]
- * when the [run] method is called.
+ * are added to the [EventsManager]. When an [Event] is submitted, all [IEventListener]s that are set to listen to
+ * the event are notified of the event on the next call to [run].
  */
 class EventsManager : Runnable {
 
@@ -101,13 +101,10 @@ class EventsManager : Runnable {
 
         listeners.forEach { listener ->
             val eventKeyMask = listener.eventKeyMask
-            if (eventKeyMask.isEmpty) events.values().flatten().forEach { event -> listener.onEvent(event) }
-            else {
-                events.forEach {
-                    val eventKey = it.key
-                    val eventsArray = it.value
-                    if (eventKeyMask.contains(eventKey)) eventsArray.forEach { event -> listener.onEvent(event) }
-                }
+            events.forEach {
+                val eventKey = it.key
+                val eventsArray = it.value
+                if (eventKeyMask.contains(eventKey)) eventsArray.forEach { event -> listener.onEvent(event) }
             }
         }
         events.clear()

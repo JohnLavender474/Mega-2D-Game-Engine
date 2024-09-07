@@ -27,7 +27,9 @@ import kotlin.math.abs
  *
  * This system uses a [IWorldContainer] to represent the world and determine which bodies are overlapping. This might be
  * a representation of the game level where the x and y of the graph map is the min coordinate of the level and the max
- * x and max y are determined by the min coordinate plus the width or height of the level.
+ * x and max y are determined by the min coordinate plus the width or height of the level. Although the lambda allows
+ * for the container object to be nullable, if it is null when [WorldSystem] is run, then a null-pointer exception will
+ * be thrown.
  *
  * This system uses a [IContactListener] to notify of contacts.
  *
@@ -61,28 +63,40 @@ import kotlin.math.abs
  * [Body.postProcess] function has been run. This is useful if you want to run common logic for all
  * bodies in the post-processing stage.
  *
+ * The [fixedStepScalar] property is useful for speeding up or slowing down the delta time, mainly for debugging
+ * purposes. It should be set to 1f (the default value) in production. The value must be greater than 0f or else an
+ * exception will be thrown.
+ *
  * @property ppm the pixels per meter of the world representation
  * @property contactListener the [IContactListener] to notify of contacts
  * @property worldContainerSupplier the supplier for the [IWorldContainer] to use
  * @property fixedStep the fixed step to update the physics
  * @property collisionHandler the [ICollisionHandler] to resolve collisions
  * @property contactFilterMap the optional [ObjectMap] to filter contacts
+ * @property fixedStepScalar the scalar to apply to the fixed step, useful for debugging; should be 1f in prod.
+ * Default value is 1f (no scaling applied). If the value is less than 1f, the rendering of physics will be slowed down.
+ * If greater than 1f, then rendering will be sped up. Must be greater than 0f or else an exception will be thrown.
  */
 class WorldSystem(
     private val ppm: Int,
     private val fixedStep: Float,
-    private val worldContainerSupplier: () -> IWorldContainer,
+    private val worldContainerSupplier: () -> IWorldContainer?,
     private val contactListener: IContactListener,
     private val collisionHandler: ICollisionHandler,
     private val contactFilterMap: ObjectMap<Any, ObjectSet<Any>>,
+    var fixedStepScalar: Float = 1f
 ) : GameSystem(BodyComponent::class) {
 
     companion object {
         const val TAG = "WorldSystem"
     }
 
+    init {
+        if (fixedStepScalar <= 0f) throw IllegalArgumentException("fixedStepScalar must be greater than 0")
+    }
+
     private val worldContainer: IWorldContainer
-        get() = worldContainerSupplier()
+        get() = worldContainerSupplier()!!
     private val reusableBodyArray = Array<Body>()
 
     private var priorContactSet = OrderedSet<Contact>()
@@ -103,7 +117,7 @@ class WorldSystem(
     constructor(
         ppm: Int,
         fixedStep: Float,
-        _worldContainerSupplier: Supplier<IWorldContainer>,
+        _worldContainerSupplier: Supplier<IWorldContainer?>,
         contactListener: IContactListener,
         collisionHandler: ICollisionHandler,
         contactFilterMap: ObjectMap<Any, ObjectSet<Any>>,
@@ -123,7 +137,7 @@ class WorldSystem(
             }
 
             while (accumulator >= fixedStep) {
-                accumulator -= fixedStep
+                accumulator -= fixedStep / fixedStepScalar
                 cycle(reusableBodyArray, fixedStep)
             }
 
@@ -142,7 +156,7 @@ class WorldSystem(
         accumulator = 0f
         priorContactSet.clear()
         currentContactSet.clear()
-        worldContainer.clear()
+        worldContainerSupplier()?.clear()
     }
 
     internal fun filterContact(fixture1: IFixture, fixture2: IFixture) =

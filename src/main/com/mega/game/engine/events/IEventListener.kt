@@ -8,8 +8,7 @@ import com.badlogic.gdx.utils.ObjectSet
 interface IEventListener {
 
     /**
-     * A set of [Event] keys that this [IEventListener] will be notified of. If this set is empty,
-     * then this [IEventListener] will be notified of all [Event]s.
+     * A set of [Event] keys that this [IEventListener] will be notified of.
      */
     val eventKeyMask: ObjectSet<Any>
 

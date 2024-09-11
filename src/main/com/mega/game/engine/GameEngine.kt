@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.Queue
 import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
-import com.mega.game.engine.common.objects.ImmutableCollection
 import com.mega.game.engine.common.objects.MutableOrderedSet
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.objects.SimpleQueueSet
@@ -14,18 +13,31 @@ import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
 /**
- * The GameEngine class manages the entities and systems in the game. It handles spawning and destroying entities,
- * updating systems, and managing the state of the game. Entities can be queued to spawn or be destroyed in the update
- * cycle. Each entity can be part of multiple systems, and the GameEngine is responsible for updating system memberships
- * as entities are added or removed.
+ * The [GameEngine] class manages the entities and systems in the game. It handles spawning and destroying entities,
+ * updating systems, and managing the state of the game. Entities can be queued to be spawned or destroyed in the update
+ * cycle using the [spawn] and [destroy] methods respectively. Each entity can be part of multiple systems, and the
+ * engine is responsible for updating system memberships as entities are added or removed.
+ *
+ * When [spawn] is called, the entity is queued to be spawned. Usually, the queued entity is not processed until the
+ * next call to [update]. However, it is possible for the entity to be spawned within the same update frame, especially
+ * if the entity is queued to spawn while the spawn queue is being processed, i.e. if [spawn] is called for an entity
+ * from another entity's [IGameEntity.onSpawn] method. When an entity is spawned, it is added to the game engine  and its
+ * [IGameEntity.init] method is called if [IGameEntity.initialized] is false, its [IGameEntity.onSpawn] method is called,
+ * and it is added to all systems that it qualifies for.
+ *
+ * When [destroy] is called, the entity is queued to be destroyed, usually for the next call to [update]. When the
+ * entity is destroyed during the update cycle, it is removed from the game engine, its [IGameEntity.onDestroy] method
+ * is called, its components are reset, and it's removed from all systems in this game engine.
  *
  * @property systems The systems registered with this game engine, which will be updated each cycle.
+ * @property onQueueToSpawn Optional lambda to call at the moment when an entity is queued to be spawned
+ * @property onQueueToDestroy Optional lambda to call at the moment when an entity is queued to be destroyed
  */
-class GameEngine(var systems: Array<GameSystem> = Array()) : Updatable, Resettable, Disposable {
-
-    companion object {
-        const val TAG = "GameEngine"
-    }
+class GameEngine(
+    var systems: Array<GameSystem> = Array(),
+    var onQueueToSpawn: ((IGameEntity) -> Unit)? = null,
+    var onQueueToDestroy: ((IGameEntity) -> Unit)? = null
+) : Updatable, Resettable, Disposable {
 
     /**
      * A helper class for managing a queue of entities to be spawned. This ensures that entities are added in the correct
@@ -93,15 +105,11 @@ class GameEngine(var systems: Array<GameSystem> = Array()) : Updatable, Resettab
     var updating = false
         private set
 
-    /**
-     * Checks if the game engine has been disposed. This value is true when [dispose] has been called.
-     */
-    var disposed = false
-        private set
-
     private val entities = MutableOrderedSet<IGameEntity>()
     private val entitiesToSpawn = EntitiesToSpawn()
     private val entitiesToKill = SimpleQueueSet<IGameEntity>()
+    private var reset = false
+    private var disposed = false
 
     /**
      * Checks if the specified entity is currently part of the game engine. This checks whether the entity is in the
@@ -115,13 +123,6 @@ class GameEngine(var systems: Array<GameSystem> = Array()) : Updatable, Resettab
         entities.contains(entity) || (containedIfQueuedToSpawn && entitiesToSpawn.contains(entity))
 
     /**
-     * Returns an immutable view of all the entities currently managed by the game engine.
-     *
-     * @return An immutable collection of the entities in the game engine.
-     */
-    fun getEntities() = ImmutableCollection(entities)
-
-    /**
      * Queues the given entity to be spawned in the next update cycle. The entity must be able to spawn, which is
      * determined by the result of its `canSpawn()` method.
      *
@@ -130,21 +131,22 @@ class GameEngine(var systems: Array<GameSystem> = Array()) : Updatable, Resettab
      * @return True if the entity is successfully queued to spawn; False otherwise.
      */
     fun spawn(entity: IGameEntity, spawnProps: Properties = Properties()) = if (entity.canSpawn()) {
-        entitiesToSpawn.add(entity, spawnProps)
-        true
+        val queued = entitiesToSpawn.add(entity, spawnProps)
+        if (queued) onQueueToSpawn?.invoke(entity)
+        queued
     } else false
 
     private fun spawnNow(entity: IGameEntity, spawnProps: Properties) {
         entities.add(entity)
-        if (!entity.state.initialized) initialize(entity)
+        if (!entity.initialized) initialize(entity)
         entity.onSpawn(spawnProps)
-        entity.state.spawned = true
         updateSystemMembershipsFor(entity)
+        entity.spawned = true
     }
 
     private fun initialize(entity: IGameEntity) {
         entity.init()
-        entity.state.initialized = true
+        entity.initialized = true
     }
 
     /**
@@ -154,17 +156,18 @@ class GameEngine(var systems: Array<GameSystem> = Array()) : Updatable, Resettab
      * @param entity The entity to destroy.
      * @return True if the entity is successfully queued for destruction; False otherwise.
      */
-    fun destroy(entity: IGameEntity) = if (entity.state.spawned) {
-        entitiesToKill.add(entity)
-        true
-    } else false
+    fun destroy(entity: IGameEntity): Boolean {
+        val shouldBeQueued = entitiesToKill.add(entity)
+        if (shouldBeQueued) onQueueToDestroy?.invoke(entity)
+        return shouldBeQueued
+    }
 
     private fun destroyNow(entity: IGameEntity) {
         entities.remove(entity)
-        entity.state.spawned = false
         systems.forEach { s -> s.remove(entity) }
         entity.components.forEach { it.value.reset() }
         entity.onDestroy()
+        entity.spawned = false
     }
 
     /**
@@ -185,7 +188,7 @@ class GameEngine(var systems: Array<GameSystem> = Array()) : Updatable, Resettab
      * @throws IllegalStateException If the engine has been disposed.
      */
     override fun update(delta: Float) {
-        if (disposed) throw IllegalStateException("Cannot update game engine after is has been disposed")
+        if (disposed) throw IllegalStateException("Cannot update game engine after it has been disposed")
         updating = true
         while (!entitiesToSpawn.isEmpty()) {
             val (entity, spawnProps) = entitiesToSpawn.poll()
@@ -197,34 +200,35 @@ class GameEngine(var systems: Array<GameSystem> = Array()) : Updatable, Resettab
         }
         systems.forEach { it.update(delta) }
         updating = false
+        if (reset) reset()
     }
 
     /**
      * Resets the game engine by destroying all spawned entities, clearing the entities from the engine, and resetting
-     * all systems. This method cannot be called while the engine is updating. If it is called during an update cycle,
-     * an [IllegalStateException] will be thrown.
-     *
-     * @throws IllegalStateException If called during an update.
+     * all systems. If this method is called during an update, then the reset operation will be delayed until the end
+     * of this update cycle. Otherwise, the reset logic is applied immediately.
      */
     override fun reset() {
-        if (updating) throw IllegalStateException("Cannot reset game engine while updating")
-        entities.filter { it.state.spawned }.forEach { destroyNow(it) }
+        reset = if (updating) true
+        else {
+            entities.filter { it.spawned }.forEach { destroyNow(it) }
+            entities.clear()
+            entitiesToSpawn.clear()
+            entitiesToKill.clear()
+            systems.forEach { it.reset() }
+            false
+        }
+    }
+
+    /**
+     * Disposes the [GameEngine]. This will immediately call [Disposable.dispose] on each [GameSystem].
+     */
+    override fun dispose() {
+        entities.filter { it.spawned }.forEach { destroyNow(it) }
         entities.clear()
         entitiesToSpawn.clear()
         entitiesToKill.clear()
         systems.forEach { it.reset() }
-    }
-
-    /**
-     * Disposes of the game engine by first resetting it, and then disposing each system. After disposal, no further
-     * updates can occur, and any attempt to update will result in an [IllegalStateException].
-     *
-     * @throws IllegalStateException If called while the engine is updating or if the engine has already been disposed
-     */
-    override fun dispose() {
-        if (disposed) throw IllegalStateException("Cannot dispose game engine after it has already been disposed")
-        if (updating) throw IllegalStateException("Cannot dispose game engine while updating")
-        reset()
         systems.forEach { it.dispose() }
         disposed = true
     }

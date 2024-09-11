@@ -15,6 +15,8 @@ abstract class BaseScreen(override val properties: Properties = Properties()) : 
 
     override fun resume() {}
 
+    override fun reset() {}
+
     override fun hide() {}
 
     override fun dispose() {}

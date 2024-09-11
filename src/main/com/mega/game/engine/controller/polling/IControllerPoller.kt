@@ -3,6 +3,7 @@ package com.mega.game.engine.controller.polling
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.mega.game.engine.common.interfaces.IActivatable
+import com.mega.game.engine.common.interfaces.Initializable
 import com.mega.game.engine.controller.buttons.ButtonStatus
 
 /**
@@ -10,7 +11,14 @@ import com.mega.game.engine.controller.buttons.ButtonStatus
  * returns the status of the buttons. This interface extends [IActivatable] and [Runnable] so that it
  * can be activated and run. The [run] method should update the status of each button.
  */
-interface IControllerPoller : IActivatable, Runnable {
+interface IControllerPoller : IActivatable, Runnable, Initializable {
+
+    /**
+     * Should be used to initialize this controller poller. Default implementation is a no-op.
+     */
+    override fun init() {
+        // default implementation is a no-op
+    }
 
     /**
      * Gets the status of the button mapped to the key.

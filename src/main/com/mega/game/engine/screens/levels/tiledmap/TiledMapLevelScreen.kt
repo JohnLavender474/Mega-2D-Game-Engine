@@ -15,7 +15,7 @@ import com.mega.game.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilde
  * of [ITiledMapLayerBuilder]s. This screen is intended to be reused for multiple levels. Make sure
  * that the [tmxMapSource] is set each time to the correct level before calling [show].
  *
- * @param properties the [Properties] to use for this [TiledMapLevelScreen]
+ * @property properties the [Properties] to use for this [TiledMapLevelScreen]
  * @property tmxMapSource the source of the tiled map to load. This should be set to the level intended to be rendered
  *   each time before calling [show].
  * @property tiledMapLoadResult the [TiledMapLoadResult] that was loaded from [TiledMapLevelLoader.load]. This is set
@@ -25,19 +25,11 @@ import com.mega.game.engine.screens.levels.tiledmap.builders.TiledMapLayerBuilde
  *   deriving class.
  * @property tiledMap the [TiledMap] that was loaded into the [tiledMapLoadResult] after [show] is called.
  */
-abstract class TiledMapLevelScreen(private val batch: Batch, properties: Properties = props()) :
-    BaseScreen(properties) {
-
-    companion object {
-        const val TAG = "TiledMapLevelScreen"
-    }
-
-    /**
-     * The source of the tiled map to load. This should be set to the level intended to be rendered
-     * each time before calling [show]. After [show] is called, setting this field has no effect until
-     * the next time [show] is called.
-     */
-    var tmxMapSource: String? = null
+abstract class TiledMapLevelScreen(
+    val batch: Batch,
+    var tmxMapSource: String? = null,
+    properties: Properties = props()
+) : BaseScreen(properties) {
 
     /**
      * The result of loading a [TiledMap] using [TiledMapLevelLoader]. This is set in [show] and
@@ -91,6 +83,11 @@ abstract class TiledMapLevelScreen(private val batch: Batch, properties: Propert
             buildLevel(returnProps)
             tiledMapLevelRenderer = TiledMapLevelRenderer(tiledMapLoadResult!!.map, batch)
         } ?: throw IllegalStateException("Tmx map source must be set before calling show()")
+    }
+
+    /** Disposes the [tiledMap] if it is not null. */
+    override fun reset() {
+        tiledMap?.dispose()
     }
 
     /** Disposes the [tiledMap] if it is not null. */

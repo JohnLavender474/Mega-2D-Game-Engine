@@ -1,10 +1,9 @@
 package com.mega.game.engine.controller
 
-import com.mega.game.engine.controller.buttons.Button
+import com.mega.game.engine.controller.buttons.ControllerButton
 import com.mega.game.engine.controller.buttons.ButtonStatus
-import com.mega.game.engine.controller.buttons.Buttons
+import com.mega.game.engine.controller.buttons.ControllerButtons
 import com.mega.game.engine.controller.polling.ControllerPoller
-import com.mega.game.engine.controller.ControllerUtils
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -21,10 +20,12 @@ class ControllerPollerTest :
                     every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
                     every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
 
-                    val buttons = Buttons()
-                    buttons.put("ButtonA", Button(1, 1, true))
-                    buttons.put("ButtonB", Button(1, 1, true))
+                    val buttons = ControllerButtons()
+                    buttons.put("ButtonA", ControllerButton(1, 1, true))
+                    buttons.put("ButtonB", ControllerButton(1, 1, true))
+
                     val controllerPoller = ControllerPoller(buttons)
+                    controllerPoller.init()
 
                     controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
                     controllerPoller.getStatus("ButtonB") shouldBe ButtonStatus.RELEASED
@@ -35,10 +36,12 @@ class ControllerPollerTest :
                 mockkObject(ControllerUtils) {
                     every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
                     every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
-                    val buttonPoller = spyk(Button(1, 1, true))
-                    val buttons = Buttons()
+                    val buttonPoller = spyk(ControllerButton(1, 1, true))
+                    val buttons = ControllerButtons()
                     buttons.put("ButtonA", buttonPoller)
+
                     val controllerPoller = ControllerPoller(buttons)
+                    controllerPoller.init()
 
                     controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
@@ -67,10 +70,12 @@ class ControllerPollerTest :
                 mockkObject(ControllerUtils) {
                     every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
                     every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
-                    val buttonPollerA = spyk(Button(1, 1, true))
-                    val buttons = Buttons()
+                    val buttonPollerA = spyk(ControllerButton(1, 1, true))
+                    val buttons = ControllerButtons()
                     buttons.put("ButtonA", buttonPollerA)
+
                     val controllerPoller = ControllerPoller(buttons)
+                    controllerPoller.init()
 
                     controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 
@@ -78,7 +83,7 @@ class ControllerPollerTest :
                     controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.JUST_PRESSED
                     controllerPoller.getStatus("ButtonB") shouldBe null
 
-                    val buttonPollerB = spyk(Button(1, 1, true))
+                    val buttonPollerB = spyk(ControllerButton(1, 1, true))
                     buttons.put("ButtonB", buttonPollerB)
 
                     controllerPoller.run()
@@ -91,10 +96,12 @@ class ControllerPollerTest :
                 mockkObject(ControllerUtils) {
                     every { ControllerUtils.isControllerKeyPressed(any()) } answers { pressed }
                     every { ControllerUtils.isKeyboardKeyPressed(any()) } answers { pressed }
-                    val buttonPollerA = spyk(Button(1, 1, true))
-                    val buttons = Buttons()
+                    val buttonPollerA = spyk(ControllerButton(1, 1, true))
+                    val buttons = ControllerButtons()
                     buttons.put("ButtonA", buttonPollerA)
+
                     val controllerPoller = ControllerPoller(buttons)
+                    controllerPoller.init()
 
                     controllerPoller.getStatus("ButtonA") shouldBe ButtonStatus.RELEASED
 

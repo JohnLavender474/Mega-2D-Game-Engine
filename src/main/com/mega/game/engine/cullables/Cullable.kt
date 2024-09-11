@@ -11,7 +11,7 @@ import java.util.function.Predicate
 class Cullable(
     private val shouldBeCulledFunction: (Float) -> Boolean,
     private val resetFunction: () -> Unit
-) : com.mega.game.engine.cullables.ICullable {
+) : ICullable {
 
     /**
      * Constructor that takes lambdas for each of the cullable methods.

@@ -14,7 +14,7 @@ import java.util.function.Predicate
 class CullableOnEvent(
     private val cullOnEvent: (Event) -> Boolean,
     override val eventKeyMask: ObjectSet<Any> = ObjectSet()
-) : com.mega.game.engine.cullables.ICullable, IEventListener {
+) : ICullable, IEventListener {
 
     companion object {
         const val TAG = "CullableOnEvent"

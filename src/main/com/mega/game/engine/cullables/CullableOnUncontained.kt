@@ -14,7 +14,7 @@ class CullableOnUncontained<T>(
     val containerSupplier: () -> T,
     val containable: IContainable<T>,
     var timeToCull: Float = 0f
-) : com.mega.game.engine.cullables.ICullable {
+) : ICullable {
 
     private var timeUncontained = 0f
     private var shouldBeCulled = false

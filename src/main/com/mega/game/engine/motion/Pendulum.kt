@@ -2,32 +2,80 @@ package com.mega.game.engine.motion
 
 import com.badlogic.gdx.math.MathUtils.*
 import com.badlogic.gdx.math.Vector2
+import com.mega.game.engine.motion.Pendulum.Companion.DEFAULT_DISTURBANCE_THRESHOLD
+import com.mega.game.engine.motion.Pendulum.Companion.DEFAULT_RANDOM_FORCE
+import java.util.function.Supplier
+import kotlin.math.abs
 
 /**
  * A class representing a pendulum motion.
  *
- * @param length The length of the pendulum.
- * @param gravity The acceleration due to gravity.
- * @param anchor The anchor point for the pendulum.
- * @param targetFPS The target frames per second for updates.
- * @param scalar A scaling factor for motion calculations (default is 1.0).
+ * @property length The length of the pendulum.
+ * @property gravity The acceleration due to gravity.
+ * @property anchor The anchor point for the pendulum.
+ * @property targetFPS The target frames per second for updates.
+ * @property scalar A scaling factor for motion calculations (default is 1.0).
+ * @property defaultAngle The default angle to start the pendulum at. Defaults to (PI / 2.0).
+ * @property damping The damping factor to simulate energy loss (e.g. air resistance) per second. A higher value means
+ * more resistance (default is 0.0).
+ * @property disturbanceThreshold Threshold to detect near-vertical positioning, in which case a random force needs to
+ * be applied. Default is [DEFAULT_DISTURBANCE_THRESHOLD].
+ * @property randomForce Supplier for the random force to apply when the pendulum is nearly vertical. Default lambda
+ * returns between -[DEFAULT_RANDOM_FORCE] and [DEFAULT_RANDOM_FORCE].
  */
 class Pendulum(
     var length: Float,
     var gravity: Float,
     var anchor: Vector2,
     var targetFPS: Float,
-    var scalar: Float = 1f
+    var scalar: Float = 1f,
+    var defaultAngle: Float = PI / 2f,
+    var damping: Float = 0f,
+    var disturbanceThreshold: Float = DEFAULT_DISTURBANCE_THRESHOLD,
+    var randomForce: () -> Float = { random(-DEFAULT_RANDOM_FORCE, DEFAULT_RANDOM_FORCE) }
 ) : IMotion {
 
+    companion object {
+        const val DEFAULT_DISTURBANCE_THRESHOLD = 0.001f
+        const val DEFAULT_RANDOM_FORCE = 0.001f
+    }
+
+    /**
+     * The current angle of the pendulum.
+     */
+    var angle = defaultAngle
+
+    private val endPoint = Vector2()
     private var angleVel = 0f
     private var angleAccel = 0f
     private var accumulator = 0f
 
-    private val endPoint = Vector2()
-
-    var angle = PI / 2f
-        private set
+    /**
+     * Constructor for Java compatibility.
+     *
+     * @see [Pendulum]
+     */
+    constructor(
+        length: Float,
+        gravity: Float,
+        anchor: Vector2,
+        targetFPS: Float,
+        scalar: Float = 1f,
+        angle: Float = PI / 2f,
+        damping: Float = 0f,
+        disturbanceThreshold: Float,
+        randomForce: Supplier<Float>
+    ) : this(
+        length,
+        gravity,
+        anchor,
+        targetFPS,
+        scalar,
+        angle,
+        damping,
+        disturbanceThreshold,
+        { randomForce.get() }
+    )
 
     /**
      * Computes a point at a specified distance from the anchor point on the pendulum.
@@ -40,6 +88,26 @@ class Pendulum(
         point.x = anchor.x + sin(angle) * distance
         point.y = anchor.y + cos(angle) * distance
         return point
+    }
+
+    /**
+     * Applies additional force to increase swing speed.
+     *
+     * @param force The amount of force to apply, increasing angular velocity.
+     */
+    fun applyForce(force: Float) {
+        angleVel += force
+    }
+
+    /**
+     * Determines if the pendulum is swinging clockwise or counterclockwise.
+     *
+     * @return 1 if the pendulum is swinging clockwise, -1 if swinging counterclockwise, 0 if it's not moving.
+     */
+    fun getSwingDirection() = when {
+        angleVel < 0 -> 1
+        angleVel > 0 -> -1
+        else -> 0
     }
 
     /**
@@ -58,8 +126,10 @@ class Pendulum(
         accumulator += delta
         while (accumulator >= targetFPS) {
             accumulator -= targetFPS
+            if (abs(defaultAngle % PI) < disturbanceThreshold) angleVel += randomForce()
             angleAccel = (gravity / length * sin(angle))
             angleVel += angleAccel * targetFPS * scalar
+            angleVel *= (1 - (damping * delta))
             angle += angleVel * targetFPS * scalar
         }
         endPoint.set(getPointFromAnchor(length))
@@ -70,7 +140,7 @@ class Pendulum(
         angleVel = 0f
         angleAccel = 0f
         accumulator = 0f
-        angle = PI / 2f
+        angle = defaultAngle
         endPoint.setZero()
     }
 }

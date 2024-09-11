@@ -1,22 +1,31 @@
 package com.mega.game.engine.cullables
 
 import com.badlogic.gdx.utils.Array
-import com.mega.game.engine.GameEngine
+import com.badlogic.gdx.utils.ObjectSet
 import com.mega.game.engine.MockGameEntity
 import com.mega.game.engine.entities.GameEntity
+import com.mega.game.engine.entities.IGameEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.spyk
+import io.mockk.verify
 
 class CullablesSystemTest : DescribeSpec({
 
-    lateinit var engine: GameEngine
+    lateinit var culler: GameEntityCuller
     lateinit var cullablesSystem: CullablesSystem
+    lateinit var culledEntities: ObjectSet<IGameEntity>
+
 
     beforeEach {
-        engine = GameEngine()
-        cullablesSystem = CullablesSystem(engine)
-        engine.systems.add(cullablesSystem)
+        culledEntities = ObjectSet()
+        culler = spyk(object : GameEntityCuller {
+            override fun cull(entity: IGameEntity) {
+                culledEntities.add(entity)
+            }
+        })
+        cullablesSystem = CullablesSystem(culler)
     }
 
     describe("CullablesSystem") {
@@ -24,25 +33,26 @@ class CullablesSystemTest : DescribeSpec({
             val entities = Array<GameEntity>()
             for (i in 0..10) {
                 val shouldCull = i % 2 == 0
-                val entity = MockGameEntity()
+                val entity = spyk(MockGameEntity())
                 val cullablesComponent = CullablesComponent()
                 cullablesComponent.cullables.put("key", object : ICullable {
                     override fun shouldBeCulled(delta: Float) = shouldCull
                 })
                 entity.addComponent(cullablesComponent)
-                engine.spawn(entity)
+                cullablesSystem.add(entity)
                 entities.add(entity)
             }
 
-            engine.update(1f)
-            engine.update(1f)
+            cullablesSystem.update(1f)
 
             for (i in 0..10) {
-                val shouldCull = i % 2 == 0
+                val times = if (i % 2 == 0) 1 else 0
                 val entity = entities[i]
                 val cullable = entity.getComponent(CullablesComponent::class)?.cullables?.get("key")
                 cullable shouldNotBe null
-                if (cullable != null) entity.state.spawned shouldBe !shouldCull
+                verify(exactly = times) { culler.cull(entity) }
+                val contains = culledEntities.contains(entity)
+                contains shouldBe (times != 0)
             }
         }
 
@@ -51,15 +61,16 @@ class CullablesSystemTest : DescribeSpec({
 
             for (i in 0..10) {
                 val entity = MockGameEntity()
-                engine.spawn(entity)
+                cullablesSystem.add(entity)
                 entities.add(entity)
             }
 
-            engine.update(1f)
+            cullablesSystem.update(1f)
 
             entities.forEach { entity ->
-                entity.state.spawned shouldBe true
+                verify(exactly = 0) { culler.cull(entity) }
                 entity.getComponent(CullablesComponent::class) shouldBe null
+                culledEntities.isEmpty shouldBe true
             }
         }
     }

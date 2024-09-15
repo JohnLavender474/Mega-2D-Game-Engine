@@ -171,13 +171,17 @@ class Timer(_duration: Float) : Updatable, Resettable {
     }
 
     /**
-     * Sets the [time] to the [duration]. This will set [justFinished] to true if the [time] was not
-     * equal to the [duration] and is now equal to the [duration].
+     * Sets the [time] to the [duration]. This will set [justFinished] to true if the [time] was not equal to the
+     * [duration] and is now equal to the [duration] and also if [allowJustFinished] is true.
+     *
+     * @param allowJustFinished If this is true, then [isJustFinished] will return true until the next time [update]
+     * is called. However, if this is false, then [isJustFinished] will return false.
+     * @return this timer for chaining
      */
-    fun setToEnd(): Timer {
+    fun setToEnd(allowJustFinished: Boolean = true): Timer {
         val oldTime = time
         time = duration
-        justFinished = oldTime != time
+        justFinished = if (allowJustFinished) oldTime != time else false
         return this
     }
 }

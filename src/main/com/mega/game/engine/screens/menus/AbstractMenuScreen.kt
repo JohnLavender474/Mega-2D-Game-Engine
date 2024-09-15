@@ -65,7 +65,7 @@ abstract class AbstractMenuScreen(
     /**
      * Called on every frame that [getNavigationDirection] returns a non-null value.
      */
-    protected open fun onAnyMovement() {}
+    protected open fun onAnyMovement(direction: Direction) {}
 
     /**
      * Called once when the following is true:
@@ -108,7 +108,7 @@ abstract class AbstractMenuScreen(
 
         buttons[currentButtonKey]?.let { button ->
             getNavigationDirection()?.let {
-                onAnyMovement()
+                onAnyMovement(it)
                 currentButtonKey = button.onNavigate(it, delta)
             }
 

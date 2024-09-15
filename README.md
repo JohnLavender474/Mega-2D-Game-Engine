@@ -3,23 +3,21 @@
 ## Overview
 
 `Mega 2D Game Engine` is a Kotlin-based game development engine built on the popular LibGDX framework. 
-This project is designed to provide very simple yet effective and flexible tools for designing a 2D game in LibGDX. 
-This project is designed with Kotlin in mind first and foremost, although there is compatibility with Java. It is 
-highly recommended to use this project with a Kotlin-based repository rather than a Java-based one.
+The project is designed to provide very simple yet effective and flexible tools for designing a 2D game in LibGDX.
 
 To see how to install and use this library in your game, see the [Installation](#Installation) section.
 
-The engine uses the [Entity-Component-System](https://en.wikipedia.org/wiki/Entity_component_system) pattern. Classes
-for entities, components, systems, and the engine are provided in this project. To read more on how ECS is implemented
-and used in this project, see the [Architecture](#Architecture) section.
+The engine uses the [Entity-Component-System](https://en.wikipedia.org/wiki/Entity_component_system) pattern. Classes for entities, components, systems, and the engine 
+are provided in this project. To read more on how ECS is implemented and used in this project, see the 
+[Architecture](#Architecture) section.
 
 To see the engine in action, see [Megaman Maverick](https://github.com/JohnLavender474/Megaman-Maverick)!
 
 ## Installation
 
 Include the 2D Game Engine library in your Kotlin project by following these steps:
-- Download the latest JAR of the `Mega 2D Game Engine` project from the root directory of the Github repo. It will be titled something like `Mega-2D-Game-Engine-[version].jar`. TODO: package this JAR using JPacker and also store somewhere other than root directory.
-- Move the downloaded jar file to the following location in your LibGDX project: `core/libs`
+- Download the latest JAR of the `Mega 2D Game Engine` project from the root directory of the Github repo. It will be titled something like `Mega-2D-Game-Engine-[version].jar`. 
+- Move the downloaded JAR to the following location in your LibGDX project: `core/libs`
 - Add the following lines to the `project("core")` section in your `build.gradle` file: `api fileTree(dir: 'libs', include: '*.jar')`
 - If you are using IntelliJ (which is highly recommended), you may need to right-click the JAR file and select "Add as library..." in order for the JAR code to be accessible by the IDE
 
@@ -29,7 +27,7 @@ If you are making changes to this project locally and wish to create a new updat
 
 ## Architecture
 
-Simply put, ECS or Entity-Component-System in the case of this project is an architectural pattern that consists of the 
+ECS, or Entity-Component-System, in the case of this project is an architectural pattern that consists of the 
 following parts:
 - Components
 - Entities
@@ -115,9 +113,8 @@ In ECS, entities are objects that own components. If a component is a bucket to 
 
 In this project, entities are defined as objects that (1) contain components and (2) have the following lifecycle:
 - init: called when the entity is first instantiated (entity instances should only ever be initialized once)
-- spawn: called every time the entity is spawned (entities can be spawned more than once)
-- kill: called in order to kill the entity
-- on destroy: called when the entity is destroyed (a destroyed entity can be re-spawned)
+- onSpawn: called every time the entity is spawned (entities can be spawned more than once)
+- onDestroyed: called when the entity is destroyed
 We'll come back to the lifecycle part more in-depth in the [Engine](#Engine) section. In this section, we'll focus on the relationship between entities and components.
 
 If you take a look at the [GameEntity](https://github.com/JohnLavender474/Mega-2D-Game-Engine/blob/master/src/main/com/engine/entities/GameEntity.kt)
@@ -187,9 +184,9 @@ class MyGameEntity: GameEntity() {
         addComponent(defineBarComponent)
     }
 
-    // the spawn method is called every time the entity is spawned
+    // the onSpawn method is called every time the entity is spawned
     // this should be used to set values for components or other data
-    override fun spawn(spawnProps: Properties) {
+    override fun onSpawn(spawnProps: Properties) {
         // get the spawn prop for "is foo" and set the component's value to it
         val isFoo = spawnProps.getOrDefault("foo", false, Boolean::class)
         val fooComponent = getComponent(FooComponent::class)!!
@@ -253,7 +250,7 @@ class MyGameEntity: GameEntity(), IFooEntity {
         addComponent(defineBarComponent())
     }
 
-    override fun spawn(spawnProps: Properties) {       
+    override fun onSpawn(spawnProps: Properties) {       
         val isFoo = spawnProps.getOrDefault(FOO, DEFAULT_FOO, Boolean::class)
         setFoo(isFoo) 
         // we don't have to explicitly fetch the component here since the interface's default implementation already does that for us
@@ -324,7 +321,7 @@ class MyGameEntity: GameEntity(), IFooEntity, IBarEntity {
         addComponent(defineBarComponent())
     }
 
-    override fun spawn(spawnProps: Properties) {       
+    override fun onSpawn(spawnProps: Properties) {       
         val isFoo = spawnProps.getOrDefault(FOO, DEFAULT_FOO, Boolean::class)
         setFoo(isFoo) 
         
@@ -387,11 +384,11 @@ Nonetheless, let's dive into the `GameEngine` implementation as it illuminates c
 
 The `GameEngine` class contains (among other things) collections for systems and entities. 
 
-The `GameEngine` class is responsible for handling the spawning of entities. If you look at the `spawn` method in `GameEngine` along with the `spawn` method
-in `GameEntity`, you'll see that the `spawn` method in `GameEngine` is called first, and then once the entity is "spawned" inside the engine, then the entity's 
-own `spawn` method is called. 
+The `GameEngine` class is responsible for handling the spawning of entities. If you look at the `spawn` method in `GameEngine` along with the `onSpawn` method
+in `IGameEntity`, you'll see that the `spawn` method in `GameEngine` is called first, and then once the entity is "spawned" inside the engine, then the entity's 
+`onSpawn` method is called. 
 
-You'll also notice that in the `spawn` method of `GameEntity`, if "initialized" is false for the entity, then the entity's `init` method is called and then
+You'll also notice that in the `spawn` method of `GameEngine`, if "initialized" is false for the entity, then the entity's `init` method is called and then
 `initialized` is set to true. After this, the value for `initialized` will remain true until it is set to false by the programmer's own logic. 
 
 Once this "spawn" process is complete, the entity is added to all systems that it qualifies for. In the `GameEngine` implementation, an entity is only added
@@ -400,31 +397,32 @@ to systems when the entity is first spawned.
 Each time the `GameEngine.update` method is called, entities that should be added are added to the engine along with any systems they qualify for, entities that should be 
 removed are removed from the engine along with from all systems, and then finally each system is updated.
 
-In `GameEntity`, calling the `kill` method sets the entity's `dead` field to true. When `dead` is true, then the entity is set to be removed from the engine and systems.
+An `IGameEntity` can be "destroyed" by passing it into the `destroy` method of the `GameEngine`. When the engine destroys
+the entity, the entity's `onDestroy` method is called.
 
 Let's see all of this in action. If you look in the "Megaman Maverick" project, you'll see that the game engine class is only updated when a "level screen is being shown.
 We'll follow that design decision here by implementing a "game screen" class that is shown when the game is being played.
 
 ```kotlin
 
-class MyGameScreen(private val gameEngine: GameEngine): ScreenAdapter() {
+class MyGameScreen(private val engine: GameEngine): ScreenAdapter() {
 
     override fun show() = resume()
 
     // for simplicity, we'll update the engine on every render
-    override fun render(delta: Float) = gameEngine.update(delta)
+    override fun render(delta: Float) = engine.update(delta)
 
     // for simplicity, on pause we'll turn all systems off
-    override fun pause() = gameEngine.systems.forEach { it.on = false }
+    override fun pause() = engine.systems.forEach { it.on = false }
 
     // turn on all systems on resume
-    override fun resume() = gameEngine.systems.forEach { it.on = true }
+    override fun resume() = engine.systems.forEach { it.on = true }
 
     override fun hide() = pause()
 
     // the reset method clears all entities out of the engine, clears all entities out of the systems, and then calls
     // the optional "reset" method for each system
-    override fun dispose() = gameEngine.reset()
+    override fun dispose() = engine.reset()
 }
 
 class MyGame: Game() {
@@ -445,9 +443,9 @@ class MyGame: Game() {
         // in a real project, there would be many more systems to add here
         // spawn our entities using the game engine
                               
-        val gameEngine = GameEngine(gdxArrayOf(FooSystem()))
-        gameEngine.spawn(entity1, props("foo" to false, "bar" to true))
-        gameEngine.spawn(entity2, props("foo" to true))       
+        val engine = GameEngine(gdxArrayOf(FooSystem()))
+        engine.spawn(entity1, props("foo" to false, "bar" to true))
+        engine.spawn(entity2, props("foo" to true))       
         
         val gameScreen = MyGameScreen(gameEngine)       
         setScreen(gameScreen)

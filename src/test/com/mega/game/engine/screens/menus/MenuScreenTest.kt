@@ -53,7 +53,7 @@ class MenuScreenTest :
                     spyk(
                         object : AbstractMenuScreen(buttons, pauseSupplier, firstButtonKey) {
 
-                            override fun onAnyMovement() {
+                            override fun onAnyMovement(direction: Direction) {
                                 onAnyMovement = true
                             }
 

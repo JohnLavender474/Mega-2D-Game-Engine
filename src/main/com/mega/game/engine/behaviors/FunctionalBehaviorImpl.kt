@@ -15,7 +15,8 @@ class FunctionalBehaviorImpl(
     private val evaluate: (delta: Float) -> Boolean,
     private val init: (() -> Unit)? = null,
     private val act: ((delta: Float) -> Unit)? = null,
-    private val end: (() -> Unit)? = null
+    private val end: (() -> Unit)? = null,
+    private val reset: (() -> Unit)? = null
 ) : AbstractBehaviorImpl() {
 
     /**
@@ -43,4 +44,6 @@ class FunctionalBehaviorImpl(
     override fun end() {
         end?.invoke()
     }
+
+
 }

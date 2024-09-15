@@ -43,6 +43,7 @@ import com.mega.game.engine.common.shapes.GameRectangle
  *   [getBodyBounds()]. If your intention is to merely rotate the body relative to itself (i.e. rotate
  *   but not move), then you should set this to true. The default value is true. If you do not wish
  *   to use the built-in rotation logic, then it is best to keep this field the default value.
+ * @param onReset Optional lambda to call in the [reset] method.
  * @see GameRectangle
  * @see BodyType
  * @see PhysicsData
@@ -63,6 +64,7 @@ class Body(
     var cardinalRotation: Direction? = null,
     var originXCenter: Boolean = true,
     var originYCenter: Boolean = true,
+    var onReset: (() -> Unit)? = null,
     override var properties: Properties = Properties(),
 ) : GameRectangle(x, y, width, height), Resettable, IPropertizable {
 
@@ -141,6 +143,7 @@ class Body(
      */
     override fun reset() {
         physics.reset()
+        onReset?.invoke()
     }
 
     override fun equals(other: Any?) = this === other

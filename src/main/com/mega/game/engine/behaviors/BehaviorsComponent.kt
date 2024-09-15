@@ -164,10 +164,8 @@ class BehaviorsComponent() : IGameComponent {
      */
     fun areAllBehaviorsActive(keys: Iterable<Any>) = keys.all { isBehaviorActive(it) }
 
-    /** Calls [IBehavior.end] and [IBehavior.forceQuit] for each active behavior. */
+    /** Calls [IBehavior.reset] for each active behavior. */
     override fun reset() = behaviors.forEach {
-        if (isBehaviorActive(it.key)) {
-            it.value.reset()
-        }
+        if (isBehaviorActive(it.key)) it.value.reset()
     }
 }

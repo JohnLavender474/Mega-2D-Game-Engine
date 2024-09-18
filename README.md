@@ -4,14 +4,16 @@
 
 `Mega 2D Game Engine` is a Kotlin-based game development engine built on the popular LibGDX framework. 
 The project is designed to provide very simple yet effective and flexible tools for designing a 2D game in LibGDX.
+The design decisions made in this game engine are made to cater to the [Megaman Maverick](https://github.com/JohnLavender474/Megaman-Maverick) game. Therefore,
+if you choose to use this engine for your own game, it might be worthwhile to (1) fork the project to make your own
+changes and (2) to use the Megaman Maverick game as a template for how to use the engine. The rest of this README will
+refer to the game engine in terms completely de-coupled from Megaman Maverick.
 
-To see how to install and use this library in your game, see the [Installation](#Installation) section.
+To see how to install and use this library for your own game, see the [Installation](#Installation) section.
 
 The engine uses the [Entity-Component-System](https://en.wikipedia.org/wiki/Entity_component_system) pattern. Classes for entities, components, systems, and the engine 
 are provided in this project. To read more on how ECS is implemented and used in this project, see the 
 [Architecture](#Architecture) section.
-
-To see the engine in action, see [Megaman Maverick](https://github.com/JohnLavender474/Megaman-Maverick)!
 
 ## Installation
 

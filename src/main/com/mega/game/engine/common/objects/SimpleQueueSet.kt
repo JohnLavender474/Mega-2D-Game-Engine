@@ -67,8 +67,10 @@ class SimpleQueueSet<T> : MutableCollection<T>, java.util.Queue<T> {
         return originalSize != size
     }
 
-    override fun removeAll(elements: Collection<T>) = elements.fold(false) { modified, element ->
-        remove(element) || modified
+    override fun removeAll(elements: Collection<T>) : Boolean {
+        var removed = false
+        elements.forEach { if (remove(it)) removed = true }
+        return removed
     }
 
     override fun remove(element: T) = if (set.remove(element)) {
@@ -80,8 +82,10 @@ class SimpleQueueSet<T> : MutableCollection<T>, java.util.Queue<T> {
 
     override fun contains(element: T) = set.contains(element)
 
-    override fun addAll(elements: Collection<T>) = elements.fold(false) { modified, element ->
-        add(element) || modified
+    override fun addAll(elements: Collection<T>) : Boolean {
+        var added = false
+        elements.forEach { if (add(it)) added = true }
+        return added
     }
 
     override fun add(element: T) = if (set.add(element)) {

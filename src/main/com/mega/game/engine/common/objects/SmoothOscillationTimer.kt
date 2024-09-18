@@ -5,7 +5,7 @@ import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
 
 /**
- * A [SmoothOscillationTimer] modulates a value between 0 and 1 using lerping.
+ * A [SmoothOscillationTimer] modulates a value between the min and max values using lerping.
  *
  * @property duration The total duration of one cycle.
  * @property min The min value.

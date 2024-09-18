@@ -5,7 +5,20 @@ package com.mega.game.engine.common.enums
  * @param rotation The rotation of the direction in degrees.
  */
 enum class Direction(val rotation: Float) {
+
     UP(0f), DOWN(180f), LEFT(90f), RIGHT(270f);
+
+    /**
+     * Returns the opposite direction of this one.
+     *
+     * @return the opposite direction
+     */
+    fun getOpposite() = when (this) {
+        UP -> DOWN
+        DOWN -> UP
+        LEFT -> RIGHT
+        RIGHT -> LEFT
+    }
 
     /**
      * Returns true if this direction is horizontal.

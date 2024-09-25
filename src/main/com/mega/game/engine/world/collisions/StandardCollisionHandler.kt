@@ -2,8 +2,10 @@ package com.mega.game.engine.world.collisions
 
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
-import com.mega.game.engine.world.body.*
 import com.mega.game.engine.world.WorldSystem
+import com.mega.game.engine.world.body.Body
+import com.mega.game.engine.world.body.BodyType
+import com.mega.game.engine.world.body.PhysicsData
 
 /**
  * A collision handler that handles collisions between bodies. This collision handler is used by
@@ -11,6 +13,12 @@ import com.mega.game.engine.world.WorldSystem
  * collisions by moving the dynamic fixtureBody out of the static fixtureBody and applying the friction value of
  * [PhysicsData.frictionToApply] from [Body.physics] to [PhysicsData.frictionOnSelf] of the dynamic
  * fixtureBody's [Body.physics].
+ *
+ * **NOTE**
+ * There is a known implementation flaw that was not discovered until well into making the `Megaman Maverick` game.
+ * This collision handler works without flaw except when the body bounds of both bodies are rotated. When both are
+ * rotated, this can lead to issues. Either a new collision handler class should be written to deal with this case
+ * or else work around this issue in another way.
  *
  * @see WorldSystem
  * @see Body

@@ -16,6 +16,7 @@ class SmoothOscillationTimer(
     private var min: Float = 0f,
     private var max: Float = 1f
 ) : Updatable, Resettable {
+
     private var elapsedTime = 0f
     private val halfDuration = duration / 2
 

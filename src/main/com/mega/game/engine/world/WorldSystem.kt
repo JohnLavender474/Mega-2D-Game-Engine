@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
+import com.mega.game.engine.common.extensions.exp
 import com.mega.game.engine.common.objects.ImmutableCollection
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
@@ -206,10 +207,21 @@ class WorldSystem(
 
     private fun updatePhysics(body: Body, delta: Float) {
         body.physics.let { physics ->
+            /*
             if (physics.takeFrictionFromOthers) {
                 if (physics.frictionOnSelf.x > 0f) physics.velocity.x /= physics.frictionOnSelf.x
                 if (physics.frictionOnSelf.y > 0f) physics.velocity.y /= physics.frictionOnSelf.y
             }
+             */
+            if (physics.takeFrictionFromOthers) {
+                if (physics.frictionOnSelf.x > 0f) {
+                    physics.velocity.x *= exp(-physics.frictionOnSelf.x * delta)
+                }
+                if (physics.frictionOnSelf.y > 0f) {
+                    physics.velocity.y *= exp(-physics.frictionOnSelf.y * delta)
+                }
+            }
+
             physics.frictionOnSelf.set(physics.defaultFrictionOnSelf)
 
             if (physics.gravityOn) physics.velocity.add(physics.gravity)

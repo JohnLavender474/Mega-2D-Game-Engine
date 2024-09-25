@@ -72,8 +72,9 @@ class WorldSystemTest : DescribeSpec({
         body.physics.gravity.set(-0.5f, -1f)
         worldSystem.update(fixedStep)
 
-        body.x shouldBe (5f - 0.5f) * fixedStep
-        body.y shouldBe (10f - 1f) * fixedStep
+        body.getPosition().epsilonEquals(
+            Vector2((5f - 0.5f) * fixedStep, (10f - 1f) * fixedStep), 0.01f
+        ) shouldBe true
     }
 
     it("should filter contacts correctly") {

@@ -14,7 +14,7 @@ import kotlin.reflect.cast
  * @param pairs The key-value pairs.
  * @return A [Properties] instance with the given key-value pairs.
  */
-fun props(vararg pairs: Pair<Any, Any?>) = Properties().apply { pairs.forEach { put(it.first, it.second) } }
+fun props(vararg pairs: GamePair<Any, Any?>) = Properties().apply { pairs.forEach { put(it.first, it.second) } }
 
 /** A [HashMap] that stores [String] keys and [Any] type values. */
 class Properties : ICopyable<Properties> {
@@ -142,6 +142,13 @@ class Properties : ICopyable<Properties> {
     fun putAll(_props: Properties) = _props.forEach { key, value -> put(key, value) }
 
     /**
+     * Puts the pairs into this properties object.
+     *
+     * @param _props the pairs
+     */
+    fun <K : Any, V> putAll(vararg _props: GamePair<K, V>) = _props.forEach { put(it.first, it.second) }
+
+    /**
      * Gets a property from this [Properties] instance.
      *
      * @param key The key of the property.
@@ -164,9 +171,9 @@ class Properties : ICopyable<Properties> {
      * @param keyPredicate The predicate to match.
      * @return An array of properties where the key matches the given predicate.
      */
-    fun getAllMatching(keyPredicate: (Any) -> Boolean): Array<Pair<Any, Any?>> {
-        val matching = Array<Pair<Any, Any?>>()
-        forEach { key, value -> if (keyPredicate(key)) matching.add(Pair(key, value)) }
+    fun getAllMatching(keyPredicate: (Any) -> Boolean): Array<GamePair<Any, Any?>> {
+        val matching = Array<GamePair<Any, Any?>>()
+        forEach { key, value -> if (keyPredicate(key)) matching.add(GamePair(key, value)) }
         return matching
     }
 
@@ -176,9 +183,9 @@ class Properties : ICopyable<Properties> {
      * @param keyPredicate The predicate to match.
      * @return An array of properties where the key matches the given predicate.
      */
-    fun getAllMatching(keyPredicate: Predicate<Any>): Array<Pair<Any, Any?>> {
-        val matching = Array<Pair<Any, Any?>>()
-        forEach { key, value -> if (keyPredicate.evaluate(key)) matching.add(Pair(key, value)) }
+    fun getAllMatching(keyPredicate: Predicate<Any>): Array<GamePair<Any, Any?>> {
+        val matching = Array<GamePair<Any, Any?>>()
+        forEach { key, value -> if (keyPredicate.evaluate(key)) matching.add(GamePair(key, value)) }
         return matching
     }
 

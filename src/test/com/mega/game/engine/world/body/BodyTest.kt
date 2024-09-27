@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.common.extensions.gdxArrayOf
 import com.mega.game.engine.common.interfaces.Updatable
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.shapes.GameRectangle
 import io.kotest.core.spec.style.DescribeSpec
@@ -17,7 +18,7 @@ class BodyTest :
         describe("Body") {
             val bodyType = BodyType.ABSTRACT
             val physicsData = PhysicsData()
-            val fixtures = gdxArrayOf<Pair<Any, IFixture>>()
+            val fixtures = gdxArrayOf<GamePair<Any, IFixture>>()
             val props = Properties()
             val body = Body(bodyType, physicsData, fixtures, properties = props)
 
@@ -67,7 +68,7 @@ class BodyTest :
                 body1.hashCode() shouldNotBe body2.hashCode()
             }
 
-            it("should set fixtures relative to fixtureBody") {
+            it("should set fixtures relative to the body") {
                 body.setSize(10f)
                 body.setCenter(0f, 0f)
 
@@ -89,10 +90,15 @@ class BodyTest :
 
                 body.cardinalRotation = Direction.UP
 
-                bottomFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
-                topFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
-                leftFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
-                rightFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
+                var shape = bottomFixture.getShape()
+                println("shape = $shape")
+                shape.getCenter() shouldBe Vector2(0f, -5f)
+                shape = topFixture.getShape()
+                shape.getCenter() shouldBe Vector2(0f, 5f)
+                shape = leftFixture.getShape()
+                shape.getCenter() shouldBe Vector2(-5f, 0f)
+                shape = rightFixture.getShape()
+                shape.getCenter() shouldBe Vector2(5f, 0f)
 
                 body.cardinalRotation = Direction.LEFT
 

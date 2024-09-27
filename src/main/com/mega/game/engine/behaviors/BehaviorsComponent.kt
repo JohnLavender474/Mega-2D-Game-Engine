@@ -2,6 +2,7 @@ package com.mega.game.engine.behaviors
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedMap
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 import java.util.function.BiFunction
 
@@ -16,7 +17,7 @@ class BehaviorsComponent() : IGameComponent {
      *
      * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(vararg _behaviors: Pair<Any, IBehavior>) : this() {
+    constructor(vararg _behaviors: GamePair<Any, IBehavior>) : this() {
         _behaviors.forEach { addBehavior(it.first, it.second) }
     }
 
@@ -25,7 +26,7 @@ class BehaviorsComponent() : IGameComponent {
      *
      * @param _behaviors The [IBehavior]s to add to this [BehaviorsComponent].
      */
-    constructor(_behaviors: Iterable<Pair<Any, IBehavior>>) : this() {
+    constructor(_behaviors: Iterable<GamePair<Any, IBehavior>>) : this() {
         _behaviors.forEach { addBehavior(it.first, it.second) }
     }
 

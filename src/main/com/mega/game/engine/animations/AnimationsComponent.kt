@@ -1,6 +1,7 @@
 package com.mega.game.engine.animations
 
 import com.badlogic.gdx.utils.Array
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 import com.mega.game.engine.drawables.sprites.GameSprite
 import com.mega.game.engine.entities.contracts.ISpritesEntity
@@ -13,7 +14,7 @@ import java.util.function.Supplier
  * @param animators the animators that are used to animate the respective sprites
  */
 class AnimationsComponent(
-    val animators: Array<Pair<() -> GameSprite, IAnimator>> = Array()
+    val animators: Array<GamePair<() -> GameSprite, IAnimator>> = Array()
 ) : IGameComponent {
 
     companion object {
@@ -30,7 +31,7 @@ class AnimationsComponent(
      */
     constructor(
         spriteSupplier: () -> GameSprite, animator: IAnimator
-    ) : this(Array<Pair<() -> GameSprite, IAnimator>>().apply { add(Pair(spriteSupplier, animator)) })
+    ) : this(Array<GamePair<() -> GameSprite, IAnimator>>().apply { add(GamePair(spriteSupplier, animator)) })
 
     /**
      * Convenience constructor if using Java [Supplier] to supply the sprite.

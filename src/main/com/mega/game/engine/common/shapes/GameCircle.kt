@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
-import com.mega.game.engine.common.enums.Direction
+import com.mega.game.engine.common.objects.Properties
+import com.mega.game.engine.common.objects.props
+import com.mega.game.engine.common.objects.pairTo
 import java.util.function.BiPredicate
 
 /**
@@ -18,7 +20,7 @@ import java.util.function.BiPredicate
  * @param y The y-coordinate of the circle's center.
  * @param radius The radius of the circle.
  */
-class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
+open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
     companion object {
         private var OVERLAP_EXTENSION: ((GameCircle, IGameShape2D) -> Boolean)? = null
@@ -50,17 +52,12 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
         }
     }
 
-    val libgdxCircle: Circle
+    val libgdxCircle: Circle = Circle(x, y, radius)
 
     override var originX = 0f
     override var originY = 0f
-
     override var color: Color = Color.RED
     override var shapeType: ShapeType = Line
-
-    init {
-        libgdxCircle = Circle(x, y, radius)
-    }
 
     /** Creates a circle with the center at [0,0] and a radius of 0. */
     constructor() : this(0f, 0f, 0f)
@@ -82,18 +79,48 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
     constructor(circle: Circle) : this(circle.x, circle.y, circle.radius)
 
     /**
-     * Returns a new [GameCircle] with the given cardinal rotation.
+     * Returns this circle's properties in a [Properties] object. The following key-value entries are set:
+     * - "x": Float
+     * - "y": Float
+     * - "radius": Float
+     * - "origin_x": Float
+     * - "origin_y": Float
+     * - "color": Color
+     * - "shape_type": ShapeType
      *
-     * @param direction The cardinal rotation to rotate this shape by.
-     * @return A new [GameCircle] with the given cardinal rotation.
+     * @see Color
+     * @see ShapeRenderer.ShapeType
      */
-    override fun getCardinallyRotatedShape(direction: Direction, useNewShape: Boolean): IGameShape2D {
-        val rotatedBoundingRectangle =
-            getBoundingRectangle()
-                .setOrigin(originX, originY)
-                .getCardinallyRotatedShape(direction, false)
-        val rotatedCircle = if (useNewShape) copy() else this
-        return rotatedCircle.setCenter(rotatedBoundingRectangle.getCenter())
+    override fun getProps(props: Properties?): Properties {
+        val returnProps = props ?: props()
+        returnProps.putAll(
+            "x" pairTo libgdxCircle.x,
+            "y" pairTo libgdxCircle.y,
+            "radius" pairTo libgdxCircle.radius,
+            "origin_x" pairTo originX,
+            "origin_y" pairTo originY,
+            "color" pairTo color,
+            "shape_type" pairTo shapeType
+        )
+        return returnProps
+    }
+
+    /**
+     * Sets this circle's properties using the specified [Properties] object. See [getProps] for a list of the expected
+     * properties. If a property is not contained, then the field is not set.
+     *
+     * @param props the properties
+     * @return this shape for chaining
+     */
+    override fun setWithProps(props: Properties): IGameShape2D {
+        libgdxCircle.x = props.getOrDefault("x", libgdxCircle.x, Float::class)
+        libgdxCircle.y = props.getOrDefault("y", libgdxCircle.y, Float::class)
+        libgdxCircle.radius = props.getOrDefault("radius", libgdxCircle.radius, Float::class)
+        originX = props.getOrDefault("origin_x", originX, Float::class)
+        originY = props.getOrDefault("origin_y", originY, Float::class)
+        color = props.getOrDefault("color", color, Color::class)
+        shapeType = props.getOrDefault("shape_type", shapeType, ShapeType::class)
+        return this
     }
 
     /**
@@ -158,12 +185,10 @@ class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
             else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
         }
 
-    /**
-     * Gets the bounding rectangle of this circle.
-     *
-     * @return The bounding rectangle of this circle.
-     */
-    override fun getBoundingRectangle() = libgdxCircle.getBoundingRectangle()
+    override fun getBoundingRectangle(bounds: GameRectangle?): GameRectangle{
+        val circleBounds = bounds ?: GameRectangle()
+        return circleBounds.set(libgdxCircle.getBoundingRectangle())
+    }
 
     /**
      * Sets the least x-coordinate.

@@ -2,17 +2,21 @@ package com.mega.game.engine.common.shapes
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.FloatArray
 import com.mega.game.engine.common.enums.Direction
+import com.mega.game.engine.common.objects.Properties
+import com.mega.game.engine.common.objects.props
+import com.mega.game.engine.common.objects.pairTo
 import java.util.function.BiPredicate
 
 /**
  * A polygon is defined as vertices that may or may not create a connected shape.
  */
-class GamePolygon() : IGameShape2D {
+open class GamePolygon() : ICardinallyRotatableShape2D {
 
     companion object {
         private var OVERLAP_EXTENSION: ((GamePolygon, IGameShape2D) -> Boolean)? = null
@@ -154,6 +158,59 @@ class GamePolygon() : IGameShape2D {
     }
 
     /**
+     * Returns this circle's properties in a [Properties] object. The following key-value entries are returned:
+     * - "local_vertices": FloatArray
+     * - "x": Float
+     * - "y": Float
+     * - "scale_x": Float
+     * - "scale_y": Float
+     * - "origin_x": Float
+     * - "origin_y": Float
+     * - "rotation": Float
+     * - "color": Color
+     * - "shape_type": ShapeType
+     *
+     * @see Color
+     * @see ShapeRenderer.ShapeType
+     */
+    override fun getProps(props: Properties?): Properties {
+        val returnProps = props ?: props()
+        returnProps.putAll(
+            "local_vertices" pairTo FloatArray(localVertices),
+            "x" pairTo getX(),
+            "y" pairTo getY(),
+            "scale_x" pairTo scaleX,
+            "scale_y" pairTo scaleY,
+            "origin_x" pairTo originX,
+            "origin_y" pairTo originY,
+            "rotation" pairTo rotation,
+            "color" pairTo color,
+            "shape_type" pairTo shapeType
+        )
+        return returnProps
+    }
+
+    /**
+     * Sets this circle's properties with the specified [Properties]. See [getProps] for the expected key-value entries.
+     *
+     * @param props the properties
+     * @return this shape for chaining
+     */
+    override fun setWithProps(props: Properties): IGameShape2D {
+        if (props.containsKey("local_vertices")) localVertices = props.get("local_vertices", FloatArray::class)!!
+        if (props.containsKey("x")) setX(props.get("x", Float::class)!!)
+        if (props.containsKey("y")) setY(props.get("y", Float::class)!!)
+        if (props.containsKey("scale_x")) scaleX = props.get("scale_x", Float::class)!!
+        if (props.containsKey("scale_y")) scaleY = props.get("scale_y", Float::class)!!
+        if (props.containsKey("origin_x")) originX = props.get("origin_x", Float::class)!!
+        if (props.containsKey("origin_y")) originY = props.get("origin_y", Float::class)!!
+        if (props.containsKey("rotation")) rotation = props.get("rotation", Float::class)!!
+        if (props.containsKey("color")) color = props.get("color", Color::class)!!
+        if (props.containsKey("shape_type")) shapeType = props.get("shape_type", ShapeType::class)!!
+        return this
+    }
+
+    /**
      * Sets the local vertices of the polygon to be the same as the given vertices. The vertices are copied to prevent
      * external modification. The scale, origin, and rotation are also set to values as the given polygon.
      *
@@ -196,7 +253,10 @@ class GamePolygon() : IGameShape2D {
         }
     }
 
-    override fun getBoundingRectangle() = libgdxPolygon.boundingRectangle.toGameRectangle()
+    override fun getBoundingRectangle(bounds: GameRectangle?): GameRectangle {
+        val polygonBounds = bounds ?: GameRectangle()
+        return polygonBounds.set(libgdxPolygon.boundingRectangle)
+    }
 
     override fun setPosition(x: Float, y: Float): IGameShape2D {
         libgdxPolygon.setPosition(x, y)
@@ -268,15 +328,30 @@ class GamePolygon() : IGameShape2D {
 
     override fun copy() = GamePolygon(this)
 
-    override fun getCardinallyRotatedShape(direction: Direction, useNewShape: Boolean): IGameShape2D {
-        val polygon = if (useNewShape) copy() else this
-        when (direction) {
-            Direction.UP -> polygon.libgdxPolygon.rotation = 0f
-            Direction.DOWN -> polygon.libgdxPolygon.rotation = 180f
-            Direction.LEFT -> polygon.libgdxPolygon.rotation = 90f
-            Direction.RIGHT -> polygon.libgdxPolygon.rotation = 270f
+    /**
+     * Returns a new polygon created from this line rotated by the given amount based on the [direction]. The [direction]
+     * is used to determine the direction to rotate this line. [Direction.UP] is 90 degrees, [Direction.RIGHT] is 180
+     * degrees, [Direction.DOWN] is 270 degrees, and [Direction.LEFT] is 360 degrees.
+     *
+     * The [returnShape] type must either be null or else a [GamePolygon], or else an exception will be thrown.
+     *
+     * @param direction The direction to rotate this polygon.
+     * @param returnShape The shape to rotate and return.
+     * @return The rotated polygon.
+     */
+    override fun getCardinallyRotatedShape(direction: Direction, returnShape: IGameShape2D?): GamePolygon {
+        val rotatedPoly = when (returnShape) {
+            null -> this
+            is GamePolygon -> returnShape
+            else -> throw IllegalStateException("Return shape is not a GamePolygon: $returnShape")
         }
-        return polygon
+        when (direction) {
+            Direction.UP -> rotatedPoly.libgdxPolygon.rotation = 0f
+            Direction.DOWN -> rotatedPoly.libgdxPolygon.rotation = 180f
+            Direction.LEFT -> rotatedPoly.libgdxPolygon.rotation = 90f
+            Direction.RIGHT -> rotatedPoly.libgdxPolygon.rotation = 270f
+        }
+        return rotatedPoly
     }
 
     /**

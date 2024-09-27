@@ -6,11 +6,13 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.Queue
 import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.objects.MutableOrderedSet
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.objects.SimpleQueueSet
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
+import com.mega.game.engine.common.objects.pairTo
 
 /**
  * The [GameEngine] class manages the entities and systems in the game. It handles spawning and destroying entities,
@@ -45,7 +47,7 @@ class GameEngine(
      */
     internal class EntitiesToSpawn {
 
-        private val queue = Queue<Pair<IGameEntity, Properties>>()
+        private val queue = Queue<GamePair<IGameEntity, Properties>>()
         private val set = ObjectSet<IGameEntity>()
 
         /**
@@ -58,7 +60,7 @@ class GameEngine(
          */
         internal fun add(entity: IGameEntity, spawnProps: Properties) = if (contains(entity)) false
         else {
-            queue.addLast(entity to spawnProps)
+            queue.addLast(entity pairTo spawnProps)
             set.add(entity)
             true
         }
@@ -83,7 +85,7 @@ class GameEngine(
          *
          * @return a pair containing the entity and spawn properties
          */
-        internal fun poll(): Pair<IGameEntity, Properties> {
+        internal fun poll(): GamePair<IGameEntity, Properties> {
             val pair = queue.removeFirst()
             set.remove(pair.first)
             return pair

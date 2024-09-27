@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.OrderedMap
  * weights. Items can be added or removed after construction.
  */
 class WeightedRandomSelector<T>(
-    vararg items: Pair<T, Float>
+    vararg items: GamePair<T, Float>
 ) {
 
     private val items: OrderedMap<T, Float> = OrderedMap<T, Float>()

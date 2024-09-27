@@ -1,9 +1,11 @@
 package com.mega.game.engine.world.body
 
 import com.badlogic.gdx.math.Vector2
+import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.common.interfaces.ICopyable
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.shapes.GameRectangle
+import com.mega.game.engine.common.shapes.ICardinallyRotatableShape2D
 import com.mega.game.engine.common.shapes.IGameShape2D
 
 /**
@@ -13,7 +15,7 @@ import com.mega.game.engine.common.shapes.IGameShape2D
  * @param body The body this fixture belongs to. This is used when calculating the body-relative shape in [getShape].
  * @param rawShape The raw bounds of this fixture. Defaults to a [GameRectangle] with size of zero. To get the bounds
  * of this fixture relative to the body it is attached to, use [getShape].
- * @param type The type for this fixture. Used to determine how this fixture interacts with other
+ * @param fixtureType The type for this fixture. Used to determine how this fixture interacts with other
  *   fixtures. It can be anything (String, Int, Enum, etc.) so long as it properly implements
  *   [Any.equals] and [Any.hashCode] such that any two fixtures with the same type are considered
  *   equal (only in terms of contact interaction, not in terms of object equality) and any two
@@ -30,8 +32,8 @@ import com.mega.game.engine.common.shapes.IGameShape2D
  */
 class Fixture(
     var body: Body,
-    var type: Any,
-    var rawShape: IGameShape2D = GameRectangle(body),
+    var fixtureType: Any,
+    rawShape: IGameShape2D = GameRectangle(body),
     var active: Boolean = true,
     var attachedToBody: Boolean = true,
     var offsetFromBodyCenter: Vector2 = Vector2(),
@@ -43,36 +45,57 @@ class Fixture(
     }
 
     /**
-     * Fetches a copy of the body-relative shape of this fixture. The body-relative shape is recalculated each
-     * time this function is called. If [attachedToBody] is false, then [rawShape] is returned unmodified.
+     * The raw shape used to generate this fixture's sensor. The raw shape is not used for contact detection, but rather
+     * a copy of the raw shape. A new shape copy is created when the [getShape] method is called every time this
+     * field is set.
+     */
+    var rawShape: IGameShape2D = rawShape
+        set(value) {
+            field = value
+            shapeCopy = null
+        }
+
+    private var shapeCopy: IGameShape2D? = null
+    private val reusableShapeProps = Properties()
+
+    /**
+     * Fetches the body-relative shape of this fixture. The body-relative shape is recalculated each time this function
+     * is called. The body-relative shape is a copy of the [rawShape] that has been translated based on the body's center
+     * and the value of [offsetFromBodyCenter]. The copy shape's origin is set to either the body's center or else the
+     * body's origin based on the values of [Body.originXCenter] and [Body.originYCenter]. If [attachedToBody] is false,
+     * then [rawShape] is returned unmodified.
+     *
+     * If [rawShape] is an instance of [ICardinallyRotatableShape2D] and the return value of [rawShape.copy()] is
+     * also an instance of [ICardinallyRotatableShape2D], then the shape returned by this method is rotated based
+     * on the [body]'s [Body.cardinalRotation] using [ICardinallyRotatableShape2D.getCardinallyRotatedShape]. If
+     * the [body]'s [Body.cardinalRotation] value is null, then [Direction.UP] is used by default.
      *
      * @return the body-relative shape of this fixture
      */
     override fun getShape(): IGameShape2D {
         if (!attachedToBody) return rawShape
 
+        reusableShapeProps.clear()
+        rawShape.getProps(reusableShapeProps)
+
+        if (shapeCopy == null) shapeCopy = rawShape.copy()
+        shapeCopy!!.setWithProps(reusableShapeProps)
+
         val bodyCenter = body.getCenter()
-        rawShape.setCenter(bodyCenter).translation(offsetFromBodyCenter)
+        shapeCopy!!.setCenter(bodyCenter).translation(offsetFromBodyCenter)
+        shapeCopy!!.originX = if (body.originXCenter) bodyCenter.x else body.originX
+        shapeCopy!!.originY = if (body.originYCenter) bodyCenter.y else body.originY
 
-        val relativeShape = rawShape.copy()
-        relativeShape.originX = if (body.originXCenter) bodyCenter.x else body.originX
-        relativeShape.originY = if (body.originYCenter) bodyCenter.y else body.originY
-
-        relativeShape.color = rawShape.color
-        relativeShape.shapeType = rawShape.shapeType
-
-        val cardinalRotation = body.cardinalRotation
-
-        return if (cardinalRotation == null) relativeShape
-        else relativeShape.getCardinallyRotatedShape(cardinalRotation, false)
+        return if (shapeCopy !is ICardinallyRotatableShape2D) shapeCopy!!
+        else (shapeCopy as ICardinallyRotatableShape2D).getCardinallyRotatedShape(body.cardinalRotation ?: Direction.UP)
     }
 
-    override fun getFixtureType() = type
+    override fun getType() = fixtureType
 
     override fun isActive() = active
 
     override fun toString() =
-        "Fixture(raw_shape=$rawShape, type=$type, active=$active, attachedToBody=$attachedToBody, " +
+        "Fixture(raw_shape=$rawShape, type=$fixtureType, active=$active, attachedToBody=$attachedToBody, " +
                 "offsetFromBodyCenter=$offsetFromBodyCenter, properties=$properties)"
 
     /**
@@ -93,8 +116,8 @@ class Fixture(
 
     override fun copy() = Fixture(
         body,
-        getFixtureType(),
-        rawShape.copy(),
+        getType(),
+        rawShape.copy() as ICardinallyRotatableShape2D,
         active,
         attachedToBody,
         offsetFromBodyCenter.cpy(),

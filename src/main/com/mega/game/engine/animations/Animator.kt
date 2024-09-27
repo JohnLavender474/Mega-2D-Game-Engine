@@ -2,6 +2,7 @@ package com.mega.game.engine.animations
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.mega.game.engine.common.extensions.objectMapOf
+import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.drawables.sprites.GameSprite
 import java.util.function.Supplier
 
@@ -49,7 +50,7 @@ class Animator(
      *
      * @param animation the animation to animate the sprite with
      */
-    constructor(animation: IAnimation) : this({ DEFAULT_KEY }, objectMapOf(DEFAULT_KEY to animation))
+    constructor(animation: IAnimation) : this({ DEFAULT_KEY }, objectMapOf(DEFAULT_KEY pairTo animation))
 
     /**
      * Convenience constructor if using Java [Supplier] to supply the key.

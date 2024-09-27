@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.extensions.objectMapOf
 import com.mega.game.engine.common.interfaces.Updatable
 import com.mega.game.engine.common.interfaces.UpdateFunction
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 
 /**
@@ -21,7 +22,7 @@ class FontsComponent(val fonts: OrderedMap<Any, BitmapFontHandle> = OrderedMap()
      *
      * @param fonts the fonts to add to this [FontsComponent]
      */
-    constructor(vararg fonts: Pair<Any, BitmapFontHandle>) : this(OrderedMap<Any, BitmapFontHandle>().apply {
+    constructor(vararg fonts: GamePair<Any, BitmapFontHandle>) : this(OrderedMap<Any, BitmapFontHandle>().apply {
         fonts.forEach {
             put(
                 it.first,

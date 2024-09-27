@@ -1,6 +1,7 @@
 package com.mega.game.engine.controller
 
 import com.badlogic.gdx.utils.ObjectMap
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 import com.mega.game.engine.controller.buttons.IButtonActuator
 import java.util.function.Supplier
@@ -19,7 +20,7 @@ class ControllerComponent(val actuators: ObjectMap<Any, () -> IButtonActuator?>)
      *
      * @param _actuators The actuators to add to the component.
      */
-    constructor(vararg _actuators: Pair<Any, () -> IButtonActuator?>) : this(ObjectMap<Any, () -> IButtonActuator?>().apply {
+    constructor(vararg _actuators: GamePair<Any, () -> IButtonActuator?>) : this(ObjectMap<Any, () -> IButtonActuator?>().apply {
         _actuators.forEach { put(it.first, it.second) }
     })
 

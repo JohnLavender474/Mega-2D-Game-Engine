@@ -1,15 +1,28 @@
 package com.mega.game.engine.world.contacts
 
 import com.badlogic.gdx.utils.ObjectSet
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.world.body.IFixture
 
 /**
- * A class that represents a contact between two [IFixture]s.
+ * A class that represents a contact between two [IFixture]s. This class is intended to be used with
+ * [IFixture]s.
  *
  * @param fixture1 the first fixture
  * @param fixture2 the second fixture
  */
-data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
+data class Contact(var fixture1: IFixture, var fixture2: IFixture) {
+
+    /**
+     * Sets the fixtures contained in this [Contact].
+     *
+     * @param fixture1 the first fixture
+     * @param fixture2 the second fixture
+     */
+    fun set(fixture1: IFixture, fixture2: IFixture) {
+        this.fixture1 = fixture1
+        this.fixture2 = fixture2
+    }
 
     /**
      * Returns if the fixtures have the given labels.
@@ -19,8 +32,8 @@ data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
      * @return if the fixtures are of the given labels
      */
     fun fixturesMatch(fixtureType1: Any, fixtureType2: Any) =
-        (fixture1.getFixtureType() == fixtureType1 && fixture2.getFixtureType() == fixtureType2) ||
-                (fixture2.getFixtureType() == fixtureType1 && fixture1.getFixtureType() == fixtureType2)
+        (fixture1.getType() == fixtureType1 && fixture2.getType() == fixtureType2) ||
+                (fixture2.getType() == fixtureType1 && fixture1.getType() == fixtureType2)
 
     /**
      * If [fixtureLabels1] contains the label of the first fixture and [fixtureLabels2] contains the
@@ -33,8 +46,8 @@ data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
      * @return if the fixtures are of the given labels
      */
     fun fixtureSetsMatch(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
-        (fixtureLabels1.contains(fixture1.getFixtureType()) && fixtureLabels2.contains(fixture2.getFixtureType())) ||
-                (fixtureLabels1.contains(fixture2.getFixtureType()) && fixtureLabels2.contains(fixture1.getFixtureType()))
+        (fixtureLabels1.contains(fixture1.getType()) && fixtureLabels2.contains(fixture2.getType())) ||
+                (fixtureLabels1.contains(fixture2.getType()) && fixtureLabels2.contains(fixture1.getType()))
 
     /**
      * Returns if at least one of the fixtures is of the given type.
@@ -43,7 +56,7 @@ data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
      * @return if at least one of the fixtures is of the given type
      */
     fun oneFixtureMatches(fixtureType: Any) =
-        fixture1.getFixtureType() == fixtureType || fixture2.getFixtureType() == fixtureType
+        fixture1.getType() == fixtureType || fixture2.getType() == fixtureType
 
     /**
      * If one of the fixtures has the [fixtureType], then the fixture with the [fixtureType] is
@@ -56,8 +69,8 @@ data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
      */
     fun getFixturesIfOneMatches(fixtureType: Any) =
         when (fixtureType) {
-            fixture1.getFixtureType() -> Pair(fixture1, fixture2)
-            fixture2.getFixtureType() -> Pair(fixture2, fixture1)
+            fixture1.getType() -> GamePair(fixture1, fixture2)
+            fixture2.getType() -> GamePair(fixture2, fixture1)
             else -> null
         }
 
@@ -70,11 +83,11 @@ data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
      * @return the fixtures in order of [fixtureType1] and [fixtureType2], or null if the fixtures
      */
     fun getFixturesInOrder(fixtureType1: Any, fixtureType2: Any) =
-        if (fixture1.getFixtureType() == fixtureType1 && fixture2.getFixtureType() == fixtureType2) Pair(
+        if (fixture1.getType() == fixtureType1 && fixture2.getType() == fixtureType2) GamePair(
             fixture1,
             fixture2
         )
-        else if (fixture2.getFixtureType() == fixtureType1 && fixture1.getFixtureType() == fixtureType2) Pair(
+        else if (fixture2.getType() == fixtureType1 && fixture1.getType() == fixtureType2) GamePair(
             fixture2,
             fixture1
         )
@@ -94,17 +107,17 @@ data class Contact(val fixture1: IFixture, val fixture2: IFixture) {
      *   are not of the given types
      */
     fun getFixtureSetsInOrder(fixtureLabels1: ObjectSet<Any>, fixtureLabels2: ObjectSet<Any>) =
-        if (fixtureLabels1.contains(fixture1.getFixtureType()) &&
-            fixtureLabels2.contains(fixture2.getFixtureType())
+        if (fixtureLabels1.contains(fixture1.getType()) &&
+            fixtureLabels2.contains(fixture2.getType())
         )
-            Pair(
+            GamePair(
                 fixture1,
                 fixture2
             )
-        else if (fixtureLabels1.contains(fixture2.getFixtureType()) &&
-            fixtureLabels2.contains(fixture1.getFixtureType())
+        else if (fixtureLabels1.contains(fixture2.getType()) &&
+            fixtureLabels2.contains(fixture1.getType())
         )
-            Pair(
+            GamePair(
                 fixture2,
                 fixture1
             )

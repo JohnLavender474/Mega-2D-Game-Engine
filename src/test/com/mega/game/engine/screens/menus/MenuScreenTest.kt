@@ -2,6 +2,7 @@ package com.mega.game.engine.screens.menus
 
 import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.common.extensions.objectMapOf
+import com.mega.game.engine.common.objects.pairTo
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -22,7 +23,7 @@ class MenuScreenTest :
             val secondButtonKey = "secondButtonKey"
             val buttons =
                 objectMapOf(
-                    firstButtonKey to
+                    firstButtonKey pairTo
                             spyk(
                                 object : IMenuButton {
                                     override fun onSelect(delta: Float) = true
@@ -30,7 +31,7 @@ class MenuScreenTest :
                                     override fun onNavigate(direction: Direction, delta: Float) =
                                         secondButtonKey
                                 }),
-                    secondButtonKey to
+                    secondButtonKey pairTo
                             spyk(
                                 object : IMenuButton {
                                     override fun onSelect(delta: Float) = false

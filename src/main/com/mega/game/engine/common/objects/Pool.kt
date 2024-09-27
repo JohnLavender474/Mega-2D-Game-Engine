@@ -16,7 +16,7 @@ import java.util.function.Supplier
  * @param onFetch a runnable that will be called when an object is fetched from the pool
  * @param onPool a runnable that will be called when an object is pooled
  */
-class Pool<T>(
+open class Pool<T>(
     private var startAmount: Int = 10,
     var supplier: () -> T,
     var onSupplyNew: ((T) -> Unit)? = null,

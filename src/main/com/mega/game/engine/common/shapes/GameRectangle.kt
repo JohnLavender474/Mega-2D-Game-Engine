@@ -8,12 +8,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.FloatArray
 import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.common.enums.Position
 import com.mega.game.engine.common.extensions.gdxArrayOf
 import com.mega.game.engine.common.extensions.gdxFloatArrayOf
-import com.mega.game.engine.common.objects.Matrix
+import com.mega.game.engine.common.objects.*
 import java.util.function.BiPredicate
 import kotlin.math.*
 
@@ -23,7 +24,7 @@ import kotlin.math.*
  * @see Rectangle
  * @see PositionalGameShape2D
  */
-open class GameRectangle() : Rectangle(), PositionalGameShape2D {
+open class GameRectangle() : Rectangle(), ICardinallyRotatableShape2D, PositionalGameShape2D {
 
     companion object {
         private var OVERLAP_EXTENSION: ((GameRectangle, IGameShape2D) -> Boolean)? = null
@@ -54,37 +55,59 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
             setOverlapExtension { rect, shape -> overlapExtension.test(rect, shape) }
         }
 
+        // reusable for the [calculateBoundsFromLines] method
+        private val reusablePair = GamePair(Vector2(), Vector2())
+
         /**
-         * Calculates the bounds of a rectangle from the given lines.
+         * Calculates the bounds of a rectangle from the given lines. If [bounds] is supplied, then it is used instead
+         * of a new [GameRectangle] instance.
          *
          * @param lines The lines to calculate the bounds from.
+         * @param bounds The optional bounds to supply.
          * @return The bounds of the rectangle.
          */
-        fun calculateBoundsFromLines(lines: Iterable<Pair<Vector2, Vector2>>): GameRectangle {
+        fun calculateBoundsFromLines(
+            lines: Array<GamePair<Vector2, Vector2>>,
+            bounds: GameRectangle? = null
+        ): GameRectangle {
             var minX = Float.MAX_VALUE
             var minY = Float.MAX_VALUE
             var maxX = Float.NEGATIVE_INFINITY
             var maxY = Float.NEGATIVE_INFINITY
 
-            lines.forEach { (point1, point2) ->
+            lines.forEach {
+                val (point1, point2) = it
                 minX = min(minX, min(point1.x, point2.x))
                 minY = min(minY, min(point1.y, point2.y))
                 maxX = max(maxX, max(point1.x, point2.x))
                 maxY = max(maxY, max(point1.y, point2.y))
             }
 
-            return GameRectangle(minX, minY, abs(maxX - minX), abs(maxY - minY))
+            val lineBounds = bounds ?: GameRectangle()
+            return lineBounds.set(minX, minY, abs(maxX - minX), abs(maxY - minY))
         }
     }
 
     override var originX = 0f
     override var originY = 0f
-
     override var color: Color = RED
     override var shapeType = Line
 
     /** Thickness of the rectangle lines when drawn. This is used only if [shapeType] is [Line]. */
     var thickness: Float = 1f
+
+    private val reusableLinesArray = gdxArrayOf(
+        GameLine(),
+        GameLine(),
+        GameLine(),
+        GameLine()
+    )
+    private val reusablePointsArray = gdxArrayOf(
+        Vector2() pairTo Vector2(),
+        Vector2() pairTo Vector2(),
+        Vector2() pairTo Vector2(),
+        Vector2() pairTo Vector2(),
+    )
 
     /**
      * Creates a new [GameRectangle] with the given first, second, width, and height.
@@ -107,6 +130,83 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      */
     constructor(rect: Rectangle) : this() {
         set(rect)
+    }
+
+    /**
+     * Creates a new [GameRectangle] with the given [GameRectangle].
+     *
+     * @param rect the [GameRectangle] to create this [GameRectangle] from.
+     */
+    constructor(rect: GameRectangle) : this() {
+        set(rect)
+    }
+
+    /**
+     * Sets this rectangle using the supplied [GameRectangle].
+     *
+     * @param rect the game rectangle
+     * @return this shape for chaining
+     */
+    fun set(rect: GameRectangle): GameRectangle {
+        set(rect as Rectangle)
+        originX = rect.originX
+        originY = rect.originY
+        color = rect.color
+        shapeType = rect.shapeType
+        thickness = rect.thickness
+        return this
+    }
+
+    /**
+     * Returns this rectangle's properties as a [Properties] object with the following key-value pairs:
+     * - "x": Float
+     * - "y": Float
+     * - "width": Float
+     * - "height": Float
+     * - "origin_x": Float
+     * - "origin_y": Float
+     * - "color": Color
+     * - "shape_type": ShapeType
+     * - "thickness": Float
+     *
+     * @return this rectangle's properties
+     * @see Color
+     * @see ShapeRenderer.ShapeType
+     */
+    override fun getProps(props: Properties?): Properties {
+        val returnProps = props ?: props()
+        returnProps.putAll(
+            "x" pairTo x,
+            "y" pairTo y,
+            "width" pairTo width,
+            "height" pairTo height,
+            "origin_x" pairTo originX,
+            "origin_y" pairTo originY,
+            "color" pairTo color,
+            "shape_type" pairTo shapeType,
+            "thickness" pairTo thickness
+        )
+        return returnProps
+    }
+
+    /**
+     * Sets this rectangle's properties with the specified [Properties]. See [getProps] for a list of the expected
+     * key-value entries. If an expected key is not present, then the field's value is not set in this rectangle.
+     *
+     * @param props the properties
+     * @return this shape for chaining
+     */
+    override fun setWithProps(props: Properties): IGameShape2D {
+        x = props.getOrDefault("x", x, Float::class)
+        y = props.getOrDefault("y", y, Float::class)
+        width = props.getOrDefault("width", width, Float::class)
+        height = props.getOrDefault("height", height, Float::class)
+        originX = props.getOrDefault("origin_x", originX, Float::class)
+        originY = props.getOrDefault("origin_y", originY, Float::class)
+        color = props.getOrDefault("color", color, Color::class)
+        shapeType = props.getOrDefault("shape_type", shapeType, ShapeRenderer.ShapeType::class)
+        thickness = props.getOrDefault("thickness", thickness, Float::class)
+        return this
     }
 
     /**
@@ -145,27 +245,42 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
     }
 
     /**
-     * Returns an array of [GameLine]s that make up this [GameRectangle].
+     * Returns an array of [GameLine]s that make up this [GameRectangle]. If an array is supplied, then that array
+     * is used rather than a new array. Each of the four lines can be provided as well rather than a new one made.
      *
+     * @param array the optional array
+     * @param topLine the optional top line
+     * @param bottomLine the optional bottom line
+     * @param leftLine the optional left line
+     * @param rightLine the optional right line
      * @return An array of [GameLine]s that make up this [GameRectangle].
      */
-    fun getAsLines() =
-        gdxArrayOf(
-            GameLine(getTopLeftPoint(), getTopRightPoint()),
-            GameLine(getBottomLeftPoint(), getBottomRightPoint()),
-            GameLine(getBottomLeftPoint(), getTopLeftPoint()),
-            GameLine(getBottomRightPoint(), getTopRightPoint())
+    fun getAsLines(
+        array: Array<GameLine>? = null,
+        topLine: GameLine? = null,
+        bottomLine: GameLine? = null,
+        leftLine: GameLine? = null,
+        rightLine: GameLine? = null
+    ): Array<GameLine> {
+        val linesArray = array ?: Array()
+        linesArray.addAll(
+            (topLine ?: GameLine()).set(getTopLeftPoint(), getTopRightPoint()),
+            (bottomLine ?: GameLine()).set(getBottomLeftPoint(), getBottomRightPoint()),
+            (leftLine ?: GameLine()).set(getBottomLeftPoint(), getTopLeftPoint()),
+            (rightLine ?: GameLine()).set(getBottomRightPoint(), getTopRightPoint())
         )
+        return linesArray
+    }
 
     /**
      * Returns an array of vertices that make up this [GameRectangle].
      *
      * @return An array of vertices that make up this [GameRectangle].
      */
-    fun getVertices(): FloatArray {
-        val vertices = FloatArray(8)
-        vertices.addAll(x, y, x + width, y, x + width, y + height, x, y + height)
-        return vertices
+    fun getVertices(vertices: FloatArray? = null): FloatArray {
+        val returnVerts = vertices ?: FloatArray()
+        returnVerts.addAll(x, y, x + width, y, x + width, y + height, x, y + height)
+        return returnVerts
     }
 
     /**
@@ -173,29 +288,42 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      * [direction]. [Direction.UP] is 0f, [Direction.LEFT] is 90f, [Direction.DOWN] is 180f, and
      * [Direction.RIGHT] is 270f.
      *
+     * The [returnShape] type must be a [GameRectangle] or else an exception will be thrown.
+     *
      * @param direction The direction to set the rotation to.
+     * @param returnShape The return shape to use.
      * @return A new [GameRectangle] based on this instance with the given rotation.
+     * @throws IllegalStateException if the provided [returnShape] is not a [GameRectangle].
      */
-    override fun getCardinallyRotatedShape(
-        direction: Direction,
-        useNewShape: Boolean,
-    ): GameRectangle {
-        val rotatedLines =
-            getAsLines().map { line ->
-                line.originX = originX
-                line.originY = originY
-                line.rotation =
-                    when (direction) {
-                        Direction.UP -> 0f
-                        Direction.LEFT -> 90f
-                        Direction.DOWN -> 180f
-                        Direction.RIGHT -> 270f
-                    }
-                line.getWorldPoints()
-            }
+    override fun getCardinallyRotatedShape(direction: Direction, returnShape: IGameShape2D?): GameRectangle {
+        val line1 = reusableLinesArray[0]
+        val line2 = reusableLinesArray[1]
+        val line3 = reusableLinesArray[2]
+        val line4 = reusableLinesArray[3]
+        reusableLinesArray.clear()
+        getAsLines(reusableLinesArray, line1, line2, line3, line4)
 
-        val rotatedRectangle = calculateBoundsFromLines(rotatedLines)
-        return if (useNewShape) rotatedRectangle else set(rotatedRectangle)
+        for (i in 0 until reusableLinesArray.size) {
+            val line = reusableLinesArray[i]
+            line.originX = originX
+            line.originY = originY
+            line.rotation =
+                when (direction) {
+                    Direction.UP -> 0f
+                    Direction.LEFT -> 90f
+                    Direction.DOWN -> 180f
+                    Direction.RIGHT -> 270f
+                }
+            val pair = reusablePointsArray[i]
+            line.getWorldPoints(pair)
+        }
+
+        val rotatedRect = when (returnShape) {
+            null -> this
+            is GameRectangle -> returnShape
+            else -> throw IllegalStateException("Provided return shape is not a GameRectangle: $returnShape")
+        }
+        return calculateBoundsFromLines(reusablePointsArray, rotatedRect)
     }
 
     override fun setSize(sizeXY: Float) = super.setSize(sizeXY) as GameRectangle
@@ -232,7 +360,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
 
     override fun merge(vec: Vector2) = super.merge(vec) as GameRectangle
 
-    override fun merge(vecs: Array<out Vector2>) = super.merge(vecs) as GameRectangle
+    override fun merge(vecs: kotlin.Array<Vector2>) = super.merge(vecs) as GameRectangle
 
     override fun fitOutside(rect: Rectangle) = super.fitOutside(rect) as GameRectangle
 
@@ -282,7 +410,10 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
             else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
         }
 
-    override fun getBoundingRectangle() = GameRectangle(this)
+    override fun getBoundingRectangle(bounds: GameRectangle?): GameRectangle {
+        val rectBounds = bounds ?: GameRectangle()
+        return rectBounds.set(this)
+    }
 
     override fun getCenter(): Vector2 = super.getCenter(Vector2())
 
@@ -528,7 +659,7 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      * The rows and columns are rounded to the nearest integer.
      *
      * @param size The size of the cells to split this [GameRectangle] into.
-     * @return A [Pair] of the rows and columns that this [GameRectangle] can be split into.
+     * @return A [GamePair] of the rows and columns that this [GameRectangle] can be split into.
      */
     fun getSplitDimensions(size: Float) = getSplitDimensions(size, size)
 
@@ -538,12 +669,12 @@ open class GameRectangle() : Rectangle(), PositionalGameShape2D {
      *
      * @param rectWidth The width of the cells to split this [GameRectangle] into.
      * @param rectHeight The height of the cells to split this [GameRectangle] into.
-     * @return A [Pair] of the rows and columns that this [GameRectangle] can be split into.
+     * @return A [GamePair] of the rows and columns that this [GameRectangle] can be split into.
      */
-    fun getSplitDimensions(rectWidth: Float, rectHeight: Float): Pair<Int, Int> {
+    fun getSplitDimensions(rectWidth: Float, rectHeight: Float): GamePair<Int, Int> {
         val rows = (height / rectHeight).roundToInt()
         val columns = (width / rectWidth).roundToInt()
-        return Pair(rows, columns)
+        return GamePair(rows, columns)
     }
 
     /**

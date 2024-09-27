@@ -17,7 +17,7 @@ class FixtureTest :
 
             it("should have the correct initial properties") {
                 fixture.rawShape shouldBe shape
-                fixture.type shouldBe fixtureLabel
+                fixture.fixtureType shouldBe fixtureLabel
                 fixture.active shouldBe true
                 fixture.attachedToBody shouldBe true
                 fixture.offsetFromBodyCenter shouldBe offset

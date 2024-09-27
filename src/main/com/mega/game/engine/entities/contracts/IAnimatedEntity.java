@@ -4,9 +4,9 @@ import com.badlogic.gdx.utils.Array;
 import com.mega.game.engine.animations.AnimationsComponent;
 import com.mega.game.engine.animations.IAnimator;
 import com.mega.game.engine.common.ClassInstanceUtils;
+import com.mega.game.engine.common.objects.GamePair;
 import com.mega.game.engine.entities.IGameEntity;
 import com.mega.game.engine.drawables.sprites.GameSprite;
-import kotlin.Pair;
 import kotlin.jvm.functions.Function0;
 import kotlin.reflect.KClass;
 
@@ -20,7 +20,7 @@ public interface IAnimatedEntity extends IGameEntity {
         return getComponent(key);
     }
 
-    default Array<Pair<Function0<GameSprite>, IAnimator>> getAnimators() {
+    default Array<GamePair<Function0<GameSprite>, IAnimator>> getAnimators() {
         return getAnimationsComponent().getAnimators();
     }
 }

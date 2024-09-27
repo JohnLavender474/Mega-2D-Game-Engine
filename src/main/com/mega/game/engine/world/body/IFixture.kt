@@ -1,12 +1,13 @@
 package com.mega.game.engine.world.body
 
 import com.mega.game.engine.common.interfaces.IPropertizable
+import com.mega.game.engine.common.interfaces.ITypable
 import com.mega.game.engine.common.shapes.IGameShape2D
 
 /**
  * Defines the contract of a fixture. Fixtures are sensors attached to bodies.
  */
-interface IFixture : IPropertizable {
+interface IFixture : ITypable, IPropertizable {
 
     /**
      * Gets the shape of the fixture.
@@ -14,13 +15,6 @@ interface IFixture : IPropertizable {
      * @return the shape of the fixture.
      */
     fun getShape(): IGameShape2D
-
-    /**
-     * Gets the type of the fixture. This is used for determining collisions with other fixtures.
-     *
-     * @return the type of the fixture
-     */
-    fun getFixtureType(): Any
 
     /**
      * Indicates if the fixture is active or not.

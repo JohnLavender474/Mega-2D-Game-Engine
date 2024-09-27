@@ -1,6 +1,7 @@
 package com.mega.game.engine.points
 
 import com.badlogic.gdx.utils.ObjectMap
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 import java.util.function.Consumer
 
@@ -19,14 +20,14 @@ class PointsComponent(
      *
      * @param _points The pointsMap.
      */
-    constructor(vararg _points: Pair<Any, Points>) : this(_points.asIterable())
+    constructor(vararg _points: GamePair<Any, Points>) : this(_points.asIterable())
 
     /**
      * The points component. Contains all the points for an entity.
      *
      * @param _points The points iterable.
      */
-    constructor(_points: Iterable<Pair<Any, Points>>) : this(ObjectMap<Any, Points>().apply {
+    constructor(_points: Iterable<GamePair<Any, Points>>) : this(ObjectMap<Any, Points>().apply {
         _points.forEach {
             put(
                 it.first,

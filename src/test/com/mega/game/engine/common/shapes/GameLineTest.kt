@@ -86,10 +86,8 @@ class GameLineTest :
                     // test local points
                     val controlLocalPoints = controlLine.vertices
                     println("Control local points: ${controlLocalPoints.contentToString()}")
-                    val testLocalPoints = testLine.getLocalPoints()
-                    println("Test local points: $testLocalPoints")
-                    testLocalPoints.first shouldBe Vector2(controlLocalPoints[0], controlLocalPoints[1])
-                    testLocalPoints.second shouldBe Vector2(controlLocalPoints[2], controlLocalPoints[3])
+                    testLine.getFirstLocalPoint() shouldBe Vector2(controlLocalPoints[0], controlLocalPoints[1])
+                    testLine.getSecondLocalPoint() shouldBe Vector2(controlLocalPoints[2], controlLocalPoints[3])
 
                     // test world points
                     val controlWorldPoints = controlLine.transformedVertices

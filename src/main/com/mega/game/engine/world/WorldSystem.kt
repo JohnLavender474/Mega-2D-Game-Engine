@@ -8,6 +8,9 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedSet
 import com.mega.game.engine.common.extensions.exp
 import com.mega.game.engine.common.objects.ImmutableCollection
+import com.mega.game.engine.common.objects.Pool
+import com.mega.game.engine.common.objects.Properties
+import com.mega.game.engine.common.shapes.GameRectangle
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 import com.mega.game.engine.world.body.Body
@@ -96,9 +99,25 @@ class WorldSystem(
         if (fixedStepScalar <= 0f) throw IllegalArgumentException("fixedStepScalar must be greater than 0")
     }
 
+    private class DummyFixture : IFixture {
+        override fun getShape() =
+            throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+
+        override fun isActive() =
+            throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+
+        override fun getType() =
+            throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+
+        override val properties: Properties
+            get() = throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+    }
+
     private val worldContainer: IWorldContainer
         get() = worldContainerSupplier()!!
     private val reusableBodyArray = Array<Body>()
+    private val contactPool = Pool(supplier = { Contact(DummyFixture(), DummyFixture()) })
+    private val reusableGameRect = GameRectangle()
 
     private var priorContactSet = OrderedSet<Contact>()
     private var currentContactSet = OrderedSet<Contact>()
@@ -155,16 +174,18 @@ class WorldSystem(
     override fun reset() {
         super.reset()
         accumulator = 0f
+        priorContactSet.forEach { contactPool.pool(it) }
+        currentContactSet.forEach { contactPool.pool(it) }
         priorContactSet.clear()
         currentContactSet.clear()
         worldContainerSupplier()?.clear()
     }
 
     internal fun filterContact(fixture1: IFixture, fixture2: IFixture) =
-        (fixture1 != fixture2) && (contactFilterMap.get(fixture1.getFixtureType())?.contains(
-            fixture2.getFixtureType()
-        ) == true || contactFilterMap.get(fixture2.getFixtureType())?.contains(
-            fixture1.getFixtureType()
+        (fixture1 != fixture2) && (contactFilterMap.get(fixture1.getType())?.contains(
+            fixture2.getType()
+        ) == true || contactFilterMap.get(fixture2.getType())?.contains(
+            fixture1.getType()
         ) == true)
 
     private fun cycle(bodies: Array<Body>, delta: Float) {
@@ -183,13 +204,11 @@ class WorldSystem(
         postProcess(bodies, delta)
     }
 
-    private fun preProcess(bodies: Array<Body>, delta: Float) {
+    private fun preProcess(bodies: Array<Body>, delta: Float) =
         bodies.forEach { body -> body.preProcess.values().forEach { it.update(delta) } }
-    }
 
-    private fun postProcess(bodies: Array<Body>, delta: Float) {
+    private fun postProcess(bodies: Array<Body>, delta: Float) =
         bodies.forEach { body -> body.postProcess.values().forEach { it.update(delta) } }
-    }
 
     private fun processContacts() {
         currentContactSet.forEach {
@@ -198,11 +217,15 @@ class WorldSystem(
         }
 
         priorContactSet.forEach {
-            if (!currentContactSet.contains(it)) contactListener.endContact(it, fixedStep)
+            if (!currentContactSet.contains(it)) {
+                contactListener.endContact(it, fixedStep)
+                contactPool.pool(it)
+            }
         }
 
-        priorContactSet = currentContactSet
-        currentContactSet = OrderedSet()
+        priorContactSet.clear()
+        priorContactSet.addAll(currentContactSet)
+        currentContactSet.clear()
     }
 
     private fun updatePhysics(body: Body, delta: Float) {
@@ -214,14 +237,11 @@ class WorldSystem(
             }
              */
             if (physics.takeFrictionFromOthers) {
-                if (physics.frictionOnSelf.x > 0f) {
+                if (physics.frictionOnSelf.x > 0f)
                     physics.velocity.x *= exp(-physics.frictionOnSelf.x * delta)
-                }
-                if (physics.frictionOnSelf.y > 0f) {
+                if (physics.frictionOnSelf.y > 0f)
                     physics.velocity.y *= exp(-physics.frictionOnSelf.y * delta)
-                }
             }
-
             physics.frictionOnSelf.set(physics.defaultFrictionOnSelf)
 
             if (physics.gravityOn) physics.velocity.add(physics.gravity)
@@ -237,19 +257,23 @@ class WorldSystem(
     }
 
     private fun checkForContacts(body: Body) = body.fixtures.forEach { (_, fixture) ->
-        if (fixture.isActive() && contactFilterMap.containsKey(fixture.getFixtureType())) {
-            val bounds = fixture.getShape().getBoundingRectangle()
+        if (fixture.isActive() && contactFilterMap.containsKey(fixture.getType())) {
+            fixture.getShape().getBoundingRectangle(reusableGameRect)
             val worldGraphResults = worldContainer.getFixtures(
-                MathUtils.floor(bounds.x / ppm),
-                MathUtils.floor(bounds.y / ppm),
-                MathUtils.floor(bounds.getMaxX() / ppm),
-                MathUtils.floor(bounds.getMaxY() / ppm)
+                MathUtils.floor(reusableGameRect.x / ppm),
+                MathUtils.floor(reusableGameRect.y / ppm),
+                MathUtils.floor(reusableGameRect.getMaxX() / ppm),
+                MathUtils.floor(reusableGameRect.getMaxY() / ppm)
             )
 
             worldGraphResults.forEach {
                 if (it.isActive() && filterContact(fixture, it) &&
                     fixture.getShape().overlaps(it.getShape())
-                ) currentContactSet.add(Contact(fixture, it))
+                ) {
+                    val contact = contactPool.fetch()
+                    contact.set(fixture, it)
+                    currentContactSet.add(contact)
+                }
             }
         }
     }
@@ -262,10 +286,8 @@ class WorldSystem(
             MathUtils.floor(bounds.getMaxX() / ppm),
             MathUtils.floor(bounds.getMaxY() / ppm)
         ).forEach {
-            if (it != body && it.getBodyBounds().overlaps(bounds as Rectangle)) collisionHandler.handleCollision(
-                body,
-                it
-            )
+            if (it != body && it.getBodyBounds().overlaps(bounds as Rectangle))
+                collisionHandler.handleCollision(body, it)
         }
     }
 }

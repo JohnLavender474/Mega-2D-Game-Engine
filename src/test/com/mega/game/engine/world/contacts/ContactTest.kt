@@ -1,5 +1,6 @@
 package com.mega.game.engine.world.contacts
 
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.shapes.GameRectangle
 import com.mega.game.engine.world.body.Body
 import com.mega.game.engine.world.body.BodyType
@@ -25,10 +26,10 @@ class ContactDescribeSpec :
                 val fixtureType2 = "type2"
 
                 var fixturesInOrder = contact.getFixturesInOrder(fixtureType1, fixtureType2)
-                fixturesInOrder shouldBe Pair(fixture1, fixture2)
+                fixturesInOrder shouldBe GamePair(fixture1, fixture2)
 
                 fixturesInOrder = contact.getFixturesInOrder(fixtureType2, fixtureType1)
-                fixturesInOrder shouldBe Pair(fixture2, fixture1)
+                fixturesInOrder shouldBe GamePair(fixture2, fixture1)
             }
 
             it("should check if fixtures are of types correctly") {

@@ -6,7 +6,9 @@ import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.common.interfaces.IPropertizable
 import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.objects.Properties
+import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.common.shapes.GameRectangle
 
 /**
@@ -58,7 +60,7 @@ class Body(
     width: Float = 0f,
     height: Float = 0f,
     var physics: PhysicsData = PhysicsData(),
-    var fixtures: Array<Pair<Any, IFixture>> = Array(),
+    var fixtures: Array<GamePair<Any, IFixture>> = Array(),
     var preProcess: OrderedMap<Any, Updatable> = OrderedMap(),
     var postProcess: OrderedMap<Any, Updatable> = OrderedMap(),
     var cardinalRotation: Direction? = null,
@@ -86,11 +88,13 @@ class Body(
     constructor(
         bodyType: BodyType,
         physicsData: PhysicsData,
-        fixtures: Array<Pair<Any, IFixture>> = Array(),
+        fixtures: Array<GamePair<Any, IFixture>> = Array(),
         properties: Properties = Properties(),
         preProcess: OrderedMap<Any, Updatable> = OrderedMap(),
         postProcess: OrderedMap<Any, Updatable> = OrderedMap()
     ) : this(bodyType, 0f, 0f, 0f, 0f, physicsData, fixtures, preProcess, postProcess, properties = properties)
+
+    private val copyBounds = GameRectangle()
 
     /**
      * Returns the bounds of this body. If [cardinalRotation] is null, then this method simply returns "this. However,
@@ -106,14 +110,12 @@ class Body(
     fun getBodyBounds(): GameRectangle {
         if (cardinalRotation == null) return this
         else {
+            copyBounds.set(this)
             val center = getCenter()
-            val copy = GameRectangle(this)
-            copy.originX = if (originXCenter) center.x else originX
-            copy.originY = if (originYCenter) center.y else originY
-            val returnShape = copy.getCardinallyRotatedShape(cardinalRotation!!, false)
-            returnShape.color = color
-            returnShape.thickness = thickness
-            return returnShape
+            copyBounds.originX = if (originXCenter) center.x else originX
+            copyBounds.originY = if (originYCenter) center.y else originY
+            copyBounds.getCardinallyRotatedShape(cardinalRotation!!)
+            return copyBounds
         }
     }
 
@@ -131,7 +133,7 @@ class Body(
      * @param fixture the [Fixture] to add
      */
     fun addFixture(fixture: IFixture): Body {
-        fixtures.add(fixture.getFixtureType() to fixture)
+        fixtures.add(fixture.getType() pairTo fixture)
         return this
     }
 

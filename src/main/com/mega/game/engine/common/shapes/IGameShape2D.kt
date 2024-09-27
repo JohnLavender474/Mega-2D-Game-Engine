@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.interfaces.ICopyable
+import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.drawables.shapes.IDrawableShape
 
 /**
@@ -19,10 +20,27 @@ import com.mega.game.engine.drawables.shapes.IDrawableShape
  *   value of the origin.
  * @see Shape2D
  */
-interface IGameShape2D : Shape2D, IDrawableShape, ICopyable<IGameShape2D>, ICardinallyRotatableShape2D {
+interface IGameShape2D : Shape2D, IDrawableShape, ICopyable<IGameShape2D> {
 
     var originX: Float
     var originY: Float
+
+    /**
+     * Returns this shape's properties in a [Properties] object. The key-value entries should be specified in the child
+     * class's documentation.
+     *
+     * @return this shape's properties
+     */
+    fun getProps(props: Properties? = null): Properties
+
+    /**
+     * Sets this shape's properties with the specified [Properties] objects. The expected key-value entries should be
+     * specified in the child class's documentation.
+     *
+     * @param props the properties
+     * @return this shape for chaining
+     */
+    fun setWithProps(props: Properties): IGameShape2D
 
     /**
      * Returns whether this shape overlaps the given shape.
@@ -33,11 +51,13 @@ interface IGameShape2D : Shape2D, IDrawableShape, ICopyable<IGameShape2D>, ICard
     fun overlaps(other: IGameShape2D): Boolean
 
     /**
-     * Returns the bounding rectangle of this shape.
+     * Returns the bounding rectangle of this shape. If bounds are supplied, then it should be set rather than
+     * creating a new [GameRectangle] instance.
      *
+     * @param bounds the optional bounds to supply
      * @return The bounding rectangle of this shape.
      */
-    fun getBoundingRectangle(): GameRectangle
+    fun getBoundingRectangle(bounds: GameRectangle? = null): GameRectangle
 
     /**
      * Sets the position of this shape to the given position.

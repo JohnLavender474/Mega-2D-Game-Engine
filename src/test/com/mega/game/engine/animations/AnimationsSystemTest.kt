@@ -3,6 +3,7 @@ package com.mega.game.engine.animations
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.mega.game.engine.MockGameEntity
 import com.mega.game.engine.common.extensions.gdxArrayOf
+import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.drawables.sprites.GameSprite
 import com.mega.game.engine.entities.GameEntity
 import io.kotest.core.spec.style.DescribeSpec
@@ -28,7 +29,7 @@ class AnimationsSystemTest :
                                 sprite.setRegion(TextureRegion())
                             }
                 }
-                val anims = gdxArrayOf({ mockSprite } to mockAnimator)
+                val anims = gdxArrayOf({ mockSprite } pairTo mockAnimator)
                 animationsComponent = spyk(AnimationsComponent(anims))
                 animationsSystem = spyk(AnimationsSystem())
                 entity.addComponent(animationsComponent)

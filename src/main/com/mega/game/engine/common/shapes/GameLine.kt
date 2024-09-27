@@ -8,9 +8,12 @@ import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.enums.Direction
-import com.mega.game.engine.common.extensions.gdxArrayOf
 import com.mega.game.engine.common.interfaces.IRotatable
 import com.mega.game.engine.common.interfaces.IScalable
+import com.mega.game.engine.common.objects.GamePair
+import com.mega.game.engine.common.objects.Properties
+import com.mega.game.engine.common.objects.props
+import com.mega.game.engine.common.objects.pairTo
 import java.util.function.BiPredicate
 import kotlin.math.max
 import kotlin.math.min
@@ -19,7 +22,7 @@ import kotlin.math.sqrt
 /**
  * A line that can be used in a game. A line is defined by two pointsHandles.
  */
-class GameLine : IGameShape2D, IScalable, IRotatable {
+class GameLine : IGameShape2D, ICardinallyRotatableShape2D, IScalable, IRotatable {
 
     companion object {
         private var OVERLAP_EXTENSION: ((GameLine, IGameShape2D) -> Boolean)? = null
@@ -144,6 +147,65 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
     constructor() : this(0f, 0f, 0f, 0f)
 
     /**
+     * Returns this line's properties in a [Properties] object. The following key-value entries are set:
+     * - "local_point_1_x": Float
+     * - "local_point_1_y": Float
+     * - "local_point_2_x": Float
+     * - "local_point_2_y": Float
+     * - "scale_x": Float
+     * - "scale_y": Float
+     * - "rotation": Float
+     * - "origin_x": Float
+     * - "origin_y": Float
+     * - "color": Color
+     * - "shape_type": ShapeType
+     * - "thickness": Float
+     *
+     * @return this shape's properties
+     */
+    override fun getProps(props: Properties?): Properties {
+        val returnProps = props ?: props()
+        returnProps.putAll(
+            "local_point_1_x" pairTo localPoint1.x,
+            "local_point_1_y" pairTo localPoint1.y,
+            "local_point_2_x" pairTo localPoint2.x,
+            "local_point_2_y" pairTo localPoint2.y,
+            "scale_x" pairTo scaleX,
+            "scale_y" pairTo scaleY,
+            "rotation" pairTo rotation,
+            "origin_x" pairTo originX,
+            "origin_y" pairTo originY,
+            "color" pairTo color,
+            "shape_type" pairTo shapeType,
+            "thickness" pairTo thickness
+        )
+        return returnProps
+    }
+
+    /**
+     * Sets this circle's properties with the specified [Properties]. See [getProps] for a list of the expected
+     * key-value pairs.
+     *
+     * @param props the properties
+     * @return this shape for chaining
+     */
+    override fun setWithProps(props: Properties): IGameShape2D {
+        localPoint1.x = props.getOrDefault("local_point_1_x", localPoint1.x, Float::class)
+        localPoint1.y = props.getOrDefault("local_point_1_y", localPoint1.y, Float::class)
+        localPoint2.x = props.getOrDefault("local_point_2_x", localPoint2.x, Float::class)
+        localPoint2.y = props.getOrDefault("local_point_2_y", localPoint2.y, Float::class)
+        scaleX = props.getOrDefault("scale_x", scaleX, Float::class)
+        scaleY = props.getOrDefault("scale_y", scaleX, Float::class)
+        rotation = props.getOrDefault("rotation", rotation, Float::class)
+        originX = props.getOrDefault("origin_x", originX, Float::class)
+        originY = props.getOrDefault("origin_y", originY, Float::class)
+        color = props.getOrDefault("color", color, Color::class)
+        shapeType = props.getOrDefault("shape_type", shapeType, ShapeType::class)
+        thickness = props.getOrDefault("thickness", thickness, Float::class)
+        return this
+    }
+
+    /**
      * Returns the vertices of this line as a float array. The vertices are the local points of this line.
      *
      * @return The vertices of this line.
@@ -227,25 +289,29 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
     }
 
     /**
-     * Returns a new line created from this line rotated by the given amount based on the [direction].
-     * The [direction] is used to determine the direction to rotate this line. [Direction.UP] is 90
-     * degrees, [Direction.RIGHT] is 180 degrees, [Direction.DOWN] is 270 degrees, and
-     * [Direction.LEFT] is 360 degrees.
+     * Returns a new line created from this line rotated by the given amount based on the [direction]. The [direction]
+     * is used to determine the direction to rotate this line. [Direction.UP] is 90 degrees, [Direction.RIGHT] is 180
+     * degrees, [Direction.DOWN] is 270 degrees, and [Direction.LEFT] is 360 degrees.
+     *
+     * The [returnShape] type must either be null or else a [GameLine], or else an exception will be thrown.
      *
      * @param direction The direction to rotate this line.
-     * @param useNewShape If true, a new shape will be created and returned. If false, this shape will
-     *   be rotated and returned.
+     * @param returnShape The shape to rotate and return.
      * @return The rotated line.
      */
-    override fun getCardinallyRotatedShape(direction: Direction, useNewShape: Boolean): GameLine {
-        val line = if (useNewShape) GameLine(this) else this
-        line.rotation = when (direction) {
+    override fun getCardinallyRotatedShape(direction: Direction, returnShape: IGameShape2D?): GameLine {
+        val rotatedLine = when (returnShape) {
+            null -> this
+            is GameLine -> returnShape
+            else -> throw IllegalStateException("Return shape is not a GameLine: $returnShape")
+        }
+        rotatedLine.rotation = when (direction) {
             Direction.UP -> 0f
             Direction.RIGHT -> 90f
             Direction.DOWN -> 180f
             Direction.LEFT -> 270f
         }
-        return line
+        return rotatedLine
     }
 
     /**
@@ -320,8 +386,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
      * @return This shape for chaining
      */
     fun setSecondLocalPoint(x2: Float, y2: Float): GameLine {
-        val firstLocalPoint = getFirstLocalPoint()
-        setLocalPoints(firstLocalPoint.x, firstLocalPoint.y, x2, y2)
+        setLocalPoints(localPoint1.x, localPoint2.y, x2, y2)
         return this
     }
 
@@ -352,40 +417,43 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
     fun setLocalPoints(point1: Vector2, point2: Vector2) = setLocalPoints(point1.x, point1.y, point2.x, point2.y)
 
     /**
-     * Gets the local points (unscaled, unrotated, etc.) of this line.
-     *
-     * @return The local points of this line.
-     */
-    fun getLocalPoints() = Pair(getFirstLocalPoint(), getSecondLocalPoint())
-
-    /**
-     * Gets the first local point (unscaled, unrotated, etc.) of this line.
+     * Gets the first local point (unscaled, unrotated, etc.) of this line. The return value of this method should be
+     * treated as read-only; if the values are modified, this line will NOT be set to dirty, which will lead to
+     * unexpected behavior. Therefore, if the values are modified, then [setToDirty] should be called.
      *
      * @return The first local point of this line.
      */
-    fun getFirstLocalPoint() = Vector2(localPoint1)
+    fun getFirstLocalPoint() = localPoint1
 
     /**
-     * Gets the second local point (unscaled, unrotated, etc.) of this line.
+     * Gets the second local point (unscaled, unrotated, etc.) of this line. The return value of this method should be
+     * treated as read-only; if the values are modified, this line will NOT be set to dirty, which will lead to
+     * unexpected behavior. Therefore, if the values are modified, then [setToDirty] should be called.
      *
      * @return The second local point of this line.
      */
-    fun getSecondLocalPoint() = Vector2(localPoint2)
+    fun getSecondLocalPoint() = localPoint2
 
     /**
-     * Gets the world points (scaled, rotated, etc.) of this line.
+     * Gets the world points (scaled, rotated, etc.) of this line. If a pair is supplied, then that pair is
+     * populated rather than a new pair. The points returned in the pair are references to the internal world
+     * point fields. Although these references can be modified, it is advisable to treat these are read-only
+     * values; the references are changed each time [getWorldPoints] is called.
      *
+     * @param pair the optional pair to provide (if one is not provided, then a new one is instantiated)
      * @return The world points of this line.
      */
-    fun getWorldPoints(): Pair<Vector2, Vector2> {
-        if (!dirty) return Pair(Vector2(worldPoint1), Vector2(worldPoint2))
+    fun getWorldPoints(pair: GamePair<Vector2, Vector2>? = null): GamePair<Vector2, Vector2> {
+        val pointsPair = pair?.set(worldPoint1, worldPoint2) ?: GamePair(worldPoint1, worldPoint2)
+
+        if (!dirty) return pointsPair
         dirty = false
 
         val cos = MathUtils.cosDeg(rotation)
         val sin = MathUtils.sinDeg(rotation)
 
         var first = true
-        gdxArrayOf(localPoint1, localPoint2).forEach {
+        forEachLocalPoint {
             var x = it.x - originX
             var y = it.y - originY
 
@@ -405,7 +473,20 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
             worldPoint.y = position.y + y + originY
         }
 
-        return Pair(Vector2(worldPoint1), Vector2(worldPoint2))
+        return pointsPair
+    }
+
+    /**
+     * Applies the specified action to each of the local points. If the values are modified, then [setToDirty] should
+     * be called manually.
+     *
+     * @param action the action
+     * @return this line for chaining
+     */
+    fun forEachLocalPoint(action: (Vector2) -> Unit): GameLine {
+        action.invoke(localPoint1)
+        action.invoke(localPoint2)
+        return this
     }
 
     /**
@@ -679,7 +760,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
      *
      * @return The bounding rectangle of this line.
      */
-    override fun getBoundingRectangle(): GameRectangle {
+    override fun getBoundingRectangle(bounds: GameRectangle?): GameRectangle {
         val (_worldPoint1, _worldPoint2) = getWorldPoints()
 
         val minX = min(_worldPoint1.x, _worldPoint2.x)
@@ -687,7 +768,8 @@ class GameLine : IGameShape2D, IScalable, IRotatable {
         val minY = min(_worldPoint1.y, _worldPoint2.y)
         val maxY = max(_worldPoint1.y, _worldPoint2.y)
 
-        return GameRectangle(minX, minY, maxX - minX, maxY - minY)
+        val lineBounds = bounds ?: GameRectangle()
+        return lineBounds.set(minX, minY, maxX - minX, maxY - minY)
     }
 
     override fun toString() = getWorldPoints().toString()

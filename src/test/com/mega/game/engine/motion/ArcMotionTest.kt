@@ -44,8 +44,6 @@ class ArcMotionSpec : DescribeSpec({
                 val t = (distanceCovered / totalDistance).coerceIn(0f, 1f)
                 val expectedPosition = ArcMotion.computeBezierPoint(t, arcFactor, startPosition, targetPosition)
 
-                println("start=$startPosition, target=$targetPosition, expected=$expectedPosition, current=${arcMotion.getMotionValue()}")
-
                 arcMotion.getMotionValue() shouldBe expectedPosition
             }
 

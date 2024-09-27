@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.interfaces.Updatable
 import com.mega.game.engine.common.interfaces.UpdateFunction
+import com.mega.game.engine.common.objects.GamePair
+import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.components.IGameComponent
 
 /**
@@ -26,7 +28,7 @@ class SpritesComponent(
      *
      * @param _sprites The sprites to add to this [SpritesComponent].
      */
-    constructor(vararg _sprites: Pair<String, GameSprite>) : this(OrderedMap<String, GameSprite>().apply {
+    constructor(vararg _sprites: GamePair<String, GameSprite>) : this(OrderedMap<String, GameSprite>().apply {
         _sprites.forEach {
             put(
                 it.first,
@@ -41,7 +43,7 @@ class SpritesComponent(
      *
      * @param sprite The sprite to add to this [SpritesComponent].
      */
-    constructor(sprite: GameSprite) : this(SPRITE to sprite)
+    constructor(sprite: GameSprite) : this(SPRITE pairTo  sprite)
 
     /**
      * Updates the sprites in this [SpritesComponent] using the corresponding update functions. If no

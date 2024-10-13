@@ -1,3 +1,5 @@
+This README is not finished; therefore sections may contain inaccurate or outdated info.
+
 # Mega 2D Game Engine
 
 ## Overview

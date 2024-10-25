@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 import com.mega.game.engine.controller.buttons.IButtonActuator
-import java.util.function.Supplier
 
 /**
  * A component that contains a map of [IButtonActuator]s. The key is the name of the button and the
@@ -32,16 +31,6 @@ class ControllerComponent(val actuators: ObjectMap<Any, () -> IButtonActuator?>)
      */
     fun putActuator(name: Any, actuator: () -> IButtonActuator?) {
         actuators.put(name, actuator)
-    }
-
-    /**
-     * Puts an actuator into the map with the given name and supplier.
-     *
-     * @param name The name of the actuator.
-     * @param actuator The supplier of the actuator.
-     */
-    fun putActuator(name: Any, actuator: Supplier<IButtonActuator?>) {
-        actuators.put(name, actuator::get)
     }
 
     /**

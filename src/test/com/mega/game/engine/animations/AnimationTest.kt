@@ -3,6 +3,7 @@ package com.mega.game.engine.animations
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.extensions.round
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -157,7 +158,6 @@ class AnimationTest :
             it("should reset the animation correctly") {
                 animation.update(0.75f)
                 animation.reset()
-
                 animation.elapsedTime shouldBe 0f
                 animation.isFinished() shouldBe false
             }
@@ -165,6 +165,59 @@ class AnimationTest :
             it("should create an animation filled with single duration value") {
                 val _animation = Animation(mockRegion, rows, columns, 0.5f)
                 _animation.frameDurations.size shouldBe rows * columns
+            }
+
+            it("should set the animation to looping mode") {
+                animation.setLooping(true)
+                animation.update(1.5f)
+                animation.currentIndex shouldBe 0
+                animation.isFinished() shouldBe false
+            }
+
+            describe("setIndex") {
+                it("should set the current index correctly within valid bounds") {
+                    animation.setIndex(2)
+                    animation.currentIndex shouldBe 2
+                    animation.isFinished() shouldBe false
+                }
+
+                it("should clamp the index to the first frame if index is less than 0") {
+                    animation.setIndex(-1)
+                    animation.currentIndex shouldBe 0
+                }
+
+                it("should clamp the index to the last frame if index exceeds frame count") {
+                    animation.setIndex(5)
+                    animation.currentIndex shouldBe 3
+                }
+            }
+
+            describe("setTime") {
+                it("should set the elapsed time correctly and update currentIndex accordingly") {
+                    animation.setCurrentTime(0.75f)
+                    animation.elapsedTime shouldBe 0.75f
+                    animation.currentIndex shouldBe 1
+                    animation.isFinished() shouldBe false
+                }
+
+                it("should roll-over animation time if loop is true and setTime exceeds total duration") {
+                    animation.setCurrentTime(2.0f)
+                    animation.elapsedTime shouldBe 0.5f
+                    animation.currentIndex shouldBe 1
+                    animation.isFinished() shouldBe false
+                }
+
+                it("should mark the animation as finished if loop is false and setTime exceeds total duration") {
+                    animation.setLooping(false)
+                    animation.setCurrentTime(2.0f)
+                    animation.elapsedTime shouldBe 1.5f
+                    animation.currentIndex shouldBe 3
+                    animation.isFinished() shouldBe true
+                }
+
+                it("should throw exception if setTime is less than 0") {
+                    shouldThrow<IllegalArgumentException> { animation.setCurrentTime(-0.5f) }
+                }
             }
         }
     })

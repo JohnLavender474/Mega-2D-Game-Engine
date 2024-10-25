@@ -1,5 +1,6 @@
 package com.mega.game.engine.state
 
+import com.mega.game.engine.common.objects.MutableArray
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -7,9 +8,9 @@ class StateMachineTest : DescribeSpec({
 
     describe("State Machine with simple loop") {
         it("should loop through states in order") {
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ true }, stateC)
@@ -26,10 +27,10 @@ class StateMachineTest : DescribeSpec({
 
     describe("State Machine with branching paths") {
         it("should follow different paths based on conditions") {
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
-            val stateD = State("D")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
+            val stateD = DefaultStateImpl("D")
 
             var aGoesToC = false
 
@@ -55,14 +56,14 @@ class StateMachineTest : DescribeSpec({
 
     describe("State Machine with manipulated transition order") {
         it("should check transitions in the specified order") {
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
 
             stateA.addTransition({ true }, stateB)
             stateA.addTransition({ true }, stateC)
 
-            stateA.transitions.reverse()
+            (stateA.transitions as MutableArray).reverse()
 
             val stateMachine = StateMachine(stateA)
 
@@ -73,11 +74,11 @@ class StateMachineTest : DescribeSpec({
 
     describe("State Machine with complex loop and branch combination") {
         it("should handle complex scenarios with multiple branches and loops") {
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
-            val stateD = State("D")
-            val stateE = State("E")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
+            val stateD = DefaultStateImpl("D")
+            val stateE = DefaultStateImpl("E")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ true }, stateC)
@@ -99,7 +100,7 @@ class StateMachineTest : DescribeSpec({
 
     describe("Potential pitfalls with incorrect transition conditions") {
         it("should handle a scenario where no transitions are valid") {
-            val stateA = State("A")
+            val stateA = DefaultStateImpl("A")
             stateA.addTransition({ false }, stateA)
 
             val stateMachine = StateMachine(stateA)
@@ -109,8 +110,8 @@ class StateMachineTest : DescribeSpec({
         }
 
         it("should handle a scenario where transitions form an unintended loop") {
-            val stateA = State("A")
-            val stateB = State("B")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ true }, stateA)
@@ -129,9 +130,9 @@ class StateMachineTest : DescribeSpec({
             var conditionToB = false
             var conditionToC = true
 
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
 
             stateA.addTransition({ conditionToB }, stateB)
             stateA.addTransition({ conditionToC }, stateC)
@@ -151,9 +152,9 @@ class StateMachineTest : DescribeSpec({
 
     describe("State Machine with backtracking") {
         it("should be able to move back to previous states based on conditions") {
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ true }, stateC)
@@ -173,11 +174,11 @@ class StateMachineTest : DescribeSpec({
         it("should handle mixed loops with conditional branches correctly") {
             var loopCondition = true
 
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
-            val stateD = State("D")
-            val stateE = State("E")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
+            val stateD = DefaultStateImpl("D")
+            val stateE = DefaultStateImpl("E")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ loopCondition }, stateC)
@@ -204,12 +205,12 @@ class StateMachineTest : DescribeSpec({
         it("should handle complex scenarios with backtracking and dynamic branching") {
             var conditionToD = false
 
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
-            val stateD = State("D")
-            val stateE = State("E")
-            val stateF = State("F")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
+            val stateD = DefaultStateImpl("D")
+            val stateE = DefaultStateImpl("E")
+            val stateF = DefaultStateImpl("F")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ true }, stateC)
@@ -239,10 +240,10 @@ class StateMachineTest : DescribeSpec({
         it("should handle nested loops with conditional resets") {
             var innerLoopCondition = true
 
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
-            val stateD = State("D")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
+            val stateD = DefaultStateImpl("D")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ !innerLoopCondition }, stateC)
@@ -274,12 +275,12 @@ class StateMachineTest : DescribeSpec({
             var conditionToD = true
             var conditionToE = false
 
-            val stateA = State("A")
-            val stateB = State("B")
-            val stateC = State("C")
-            val stateD = State("D")
-            val stateE = State("E")
-            val stateF = State("F")
+            val stateA = DefaultStateImpl("A")
+            val stateB = DefaultStateImpl("B")
+            val stateC = DefaultStateImpl("C")
+            val stateD = DefaultStateImpl("D")
+            val stateE = DefaultStateImpl("E")
+            val stateF = DefaultStateImpl("F")
 
             stateA.addTransition({ true }, stateB)
             stateB.addTransition({ conditionToC }, stateC)

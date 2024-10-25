@@ -14,13 +14,13 @@ buildscript {
 }
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.10'
     id 'java'
     id 'maven-publish'
 }
 
-group = 'com.github.JohnLavender474'
-version = '1.0'
+group = 'com.mega.2D.game.engine'
+version = '1.0.15'
 
 repositories {
     google()
@@ -57,23 +57,41 @@ dependencies {
     testImplementation "io.mockk:mockk:1.13.7"
 }
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+test {
+    useJUnitPlatform()
 }
 
-compileTestKotlin {
+// Ensure compatibility with Java 11
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"  // Targeting JVM 11
     }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_11  // Use Java 11 for source compatibility
+    targetCompatibility = JavaVersion.VERSION_11  // Use Java 11 for target compatibility
 }
 
-test {
-    useJUnitPlatform()
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from tasks.javadoc
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = 'com.mega.2D.game.engine'
+            artifactId = 'Mega-2D-Game-Engine'
+            version = project.version
+            artifact javadocJar
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
 }

@@ -46,6 +46,18 @@ class AnimatorTest :
                     return this
                 }
 
+                override fun setIndex(index: Int) {
+                    // TODO: do nothing
+                }
+
+                override fun getIndex() = 0
+
+                override fun setCurrentTime(time: Float) {
+                    // TODO: do nothing
+                }
+
+                override fun getCurrentTime() = 0f
+
                 override fun copy(): IAnimation {
                     return this
                 }

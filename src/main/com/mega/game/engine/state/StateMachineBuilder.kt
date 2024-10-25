@@ -1,8 +1,7 @@
 package com.mega.game.engine.state
 
-import com.mega.game.engine.common.extensions.gdxArrayOf
-import com.mega.game.engine.common.extensions.objectMapOf
-import java.util.function.Supplier
+import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
 
 /**
  * A builder class for constructing a [StateMachine] with a flexible and deferred creation process.
@@ -16,9 +15,10 @@ import java.util.function.Supplier
  */
 class StateMachineBuilder<T> {
 
-    private val stateDefinitions = objectMapOf<String, T>()
-    private val transitionDefinitions = gdxArrayOf<Triple<String, String, () -> Boolean>>()
+    private val stateDefinitions = ObjectMap<String, T>()
+    private val transitionDefinitions = Array<Triple<String, String, () -> Boolean>>()
     private var initialStateName: String? = null
+    private var onChangeState: ((T, T) -> Unit)? = null
 
     /**
      * Defines a state with the given name and associated element.
@@ -46,17 +46,6 @@ class StateMachineBuilder<T> {
     }
 
     /**
-     * Convenience version of [transition] method takes in [condition] as a [Supplier] for Java interoperability.
-     * See [transition].
-     *
-     * @param fromState The name of the state from which the transition originates.
-     * @param toState The name of the state to which the transition leads.
-     * @param condition A supplier that returns a boolean value, indicating whether the transition should occur.
-     */
-    fun transition(fromState: String, toState: String, condition: Supplier<Boolean>) =
-        transition(fromState, toState) { condition.get() }
-
-    /**
      * Sets the initial state of the state machine. This is the state that the machine will start in.
      *
      * @param name The name of the initial state.
@@ -68,9 +57,21 @@ class StateMachineBuilder<T> {
     }
 
     /**
+     * Sets the "on change state" lambda of the state machine. See [StateMachine.onChangeState].
+     *
+     * @param onChangeState the "on change state" lambda
+     * @return true if the "on change state" lambda was not null before being set, otherwise false
+     */
+    fun setOnChangeState(onChangeState: ((T, T) -> Unit)? = null): Boolean {
+        val wasAlreadySet = this.onChangeState != null
+        this.onChangeState = onChangeState
+        return wasAlreadySet
+    }
+
+    /**
      * Builds the [StateMachine] by resolving all state and transition definitions.
      *
-     * This method creates the actual [State] objects and links them according to the defined transitions.
+     * This method creates the actual [DefaultStateImpl] objects and links them according to the defined transitions.
      * If any state or transition is not properly defined, an exception is thrown at this point.
      *
      * @return The constructed [StateMachine] instance.
@@ -78,17 +79,19 @@ class StateMachineBuilder<T> {
      * @throws IllegalArgumentException If any transition references a state that has not been defined.
      */
     fun build(): StateMachine<T> {
-        val states = mutableMapOf<String, State<T>>()
-        stateDefinitions.forEach { states[it.key] = State(it.value) }
+        val states = mutableMapOf<String, IState<T>>()
+        stateDefinitions.forEach { states[it.key] = DefaultStateImpl(it.value) }
         val initialState = states[initialStateName]
-            ?: throw IllegalStateException("Initial state $initialStateName is not defined")
+            ?: throw IllegalStateException("Initial state $initialStateName needs to be added via the [state] method")
         for ((fromStateName, toStateName, condition) in transitionDefinitions) {
             val fromState = states[fromStateName]
-                ?: throw IllegalArgumentException("State $fromStateName not found")
+                ?: throw IllegalArgumentException("Building transition with \"from\" state: state $fromStateName not found")
             val toState = states[toStateName]
-                ?: throw IllegalArgumentException("State $toStateName not found")
+                ?: throw IllegalArgumentException("Building transition with \"to\" state: state $toStateName not found")
             fromState.addTransition(condition, toState)
         }
-        return StateMachine(initialState)
+        val stateMachine = StateMachine(initialState)
+        onChangeState?.let { stateMachine.onChangeState = it }
+        return stateMachine
     }
 }

@@ -2,8 +2,6 @@ package com.mega.game.engine.common.objects
 
 import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.interfaces.Initializable
-import java.util.function.Consumer
-import java.util.function.Supplier
 
 /**
  * A pool of objects. This pool is not thread-safe.
@@ -32,31 +30,10 @@ open class Pool<T>(
     private val queue = Array<T>()
 
     /**
-     * Creates a pool with the specified parameters.
-     *
-     * @param startAmount the initial amount of objects in the pool; default is 10
-     * @param supplier the supplier of the objects
-     * @param onSupplyNew a runnable that will be called when a new object is instantiated from the
-     *  supplier
-     * @param onFetch a runnable that will be called when an object is fetched from the pool
-     * @param onPool a runnable that will be called when an object is pooled
+     * Initialize the pool by supplying the initial amount of objects.
      */
-    constructor(
-        startAmount: Int = 10,
-        supplier: Supplier<T>,
-        onSupplyNew: Consumer<T>? = null,
-        onFetch: Consumer<T>? = null,
-        onPool: Consumer<T>? = null,
-    ) : this(
-        startAmount,
-        { supplier.get() },
-        { onSupplyNew?.accept(it) },
-        { onFetch?.accept(it) },
-        { onPool?.accept(it) })
-
-    /** Initialize the pool by supplying the initial amount of objects. */
     override fun init() {
-        for (i in 0 until startAmount) pool(supplyNew())
+        (0 until startAmount).forEach { i -> pool(supplyNew()) }
         initialized = true
     }
 
@@ -81,6 +58,11 @@ open class Pool<T>(
         queue.add(element)
         onPool?.invoke(element)
     }
+
+    /**
+     * Clears the pool.
+     */
+    fun clear() = queue.clear()
 
     /**
      * Should supply a new object. This will call the [onSupplyNew] runnable if it is not null. This

@@ -53,12 +53,14 @@ object StandardCollisionHandler : ICollisionHandler {
         val overlap = Rectangle()
         if (Intersector.intersectRectangles(dynamicBody.getBodyBounds(), staticBody.getBodyBounds(), overlap)) {
             if (overlap.width > overlap.height) {
-                dynamicBody.physics.frictionOnSelf.x += staticBody.physics.frictionToApply.x
+                if (dynamicBody.physics.receiveFrictionX)
+                    dynamicBody.physics.frictionOnSelf.x += staticBody.physics.frictionToApply.x
 
                 if (dynamicBody.y > staticBody.y) dynamicBody.y += overlap.height
                 else dynamicBody.y -= overlap.height
             } else {
-                dynamicBody.physics.frictionOnSelf.y += staticBody.physics.frictionToApply.y
+                if (dynamicBody.physics.receiveFrictionY)
+                    dynamicBody.physics.frictionOnSelf.y += staticBody.physics.frictionToApply.y
 
                 if (dynamicBody.x > staticBody.x) dynamicBody.x += overlap.width
                 else dynamicBody.x -= overlap.width

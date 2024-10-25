@@ -18,7 +18,8 @@ class PhysicsDataTest :
                 physicsData.defaultFrictionOnSelf shouldBe Vector2(1f, 1f)
                 physicsData.gravityOn shouldBe true
                 physicsData.collisionOn shouldBe true
-                physicsData.takeFrictionFromOthers shouldBe true
+                physicsData.applyFrictionX shouldBe true
+                physicsData.applyFrictionY shouldBe true
             }
 
             it("should reset correctly") {

@@ -5,19 +5,19 @@ import com.mega.game.engine.common.interfaces.ICopyable
 import com.mega.game.engine.common.interfaces.Resettable
 
 /**
- * Physics data for a [Body]. Contains information about the physics of the fixtureBody.
+ * Physics data for a [Body]. Contains information about the physics of the body.
  *
- * @param gravity The gravity to apply to the fixtureBody.
- * @param velocity The velocity of the fixtureBody.
- * @param velocityClamp The maximum velocity of the fixtureBody.
+ * @param gravity The gravity to apply to the body.
+ * @param velocity The velocity of the body.
+ * @param velocityClamp The maximum velocity of the body.
  * @param frictionToApply The friction to apply to other bodies when colliding with them.
- * @param frictionOnSelf The friction to apply to this fixtureBody in the next [WorldSystem] update.
- * @param defaultFrictionOnSelf The default friction to apply to this fixtureBody. Value of
- *   [frictionOnSelf] is reset to this value at the end of each [WorldSystem] update.
- * @param gravityOn Whether gravity is applied to this fixtureBody.
- * @param collisionOn Whether collisions are applied to this fixtureBody.
- * @param takeFrictionFromOthers Whether this fixtureBody takes friction from other bodies.
+ * @param frictionOnSelf The friction to apply to this body.
+ * @param defaultFrictionOnSelf The default friction to apply to this body. Value of
+ *   [frictionOnSelf] is reset to this value.
+ * @param gravityOn Whether gravity is applied to this body.
+ * @param collisionOn Whether collisions are applied to this body.
  * @see Body
+ * @see com.mega.game.engine.world.WorldSystem
  */
 class PhysicsData(
     var gravity: Vector2 = Vector2(),
@@ -28,21 +28,11 @@ class PhysicsData(
     var defaultFrictionOnSelf: Vector2 = Vector2(1f, 1f),
     var gravityOn: Boolean = true,
     var collisionOn: Boolean = true,
-    var takeFrictionFromOthers: Boolean = true
+    var applyFrictionX: Boolean = true,
+    var applyFrictionY: Boolean = true,
+    var receiveFrictionX: Boolean = true,
+    var receiveFrictionY: Boolean = true
 ) : Resettable, ICopyable<PhysicsData> {
-
-    /** Resets the [PhysicsData] to its default values. */
-    fun resetToDefault() {
-        gravity.setZero()
-        velocity.setZero()
-        velocityClamp.setZero()
-        frictionToApply.setZero()
-        defaultFrictionOnSelf.set(1f, 1f)
-        frictionOnSelf.set(defaultFrictionOnSelf)
-        gravityOn = true
-        collisionOn = true
-        takeFrictionFromOthers = true
-    }
 
     /**
      * Creates a copy of this [PhysicsData].
@@ -59,7 +49,8 @@ class PhysicsData(
             Vector2(defaultFrictionOnSelf),
             gravityOn,
             collisionOn,
-            takeFrictionFromOthers
+            applyFrictionX,
+            applyFrictionY
         )
 
     /** Sets the [velocity] to zero and the [frictionOnSelf] to [defaultFrictionOnSelf]. */
@@ -72,5 +63,5 @@ class PhysicsData(
         "PhysicsData(gravity=$gravity, velocity=$velocity, velocityClamp=$velocityClamp, " +
                 "frictionToApply=$frictionToApply, frictionOnSelf=$frictionOnSelf, " +
                 "defaultFrictionOnSelf=$defaultFrictionOnSelf, gravityOn=$gravityOn, " +
-                "collisionOn=$collisionOn, takeFrictionFromOthers=$takeFrictionFromOthers)"
+                "collisionOn=$collisionOn, applyFrictionX=$applyFrictionX, applyFrictionY=$applyFrictionY)"
 }

@@ -117,7 +117,7 @@ class Fixture(
     override fun copy() = Fixture(
         body,
         getType(),
-        rawShape.copy() as ICardinallyRotatableShape2D,
+        rawShape.copy(),
         active,
         attachedToBody,
         offsetFromBodyCenter.cpy(),

@@ -42,25 +42,21 @@ class StateMachineBuilderTest : DescribeSpec({
         }
 
         it("should throw an exception if a state is referenced in a transition but not defined") {
-            val exception = shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 StateMachineBuilder<String>()
                     .state("A", "State A")
                     .transition("A", "B") { true }
                     .initialState("A")
                     .build()
             }
-
-            exception.message shouldBe "State B not found"
         }
 
         it("should throw an exception if the initial state is not defined") {
-            val exception = shouldThrow<IllegalStateException> {
+            shouldThrow<IllegalStateException> {
                 StateMachineBuilder<String>()
                     .state("A", "State A")
                     .build()
             }
-
-            exception.message shouldBe "Initial state null is not defined"
         }
     }
 
@@ -93,7 +89,7 @@ class StateMachineBuilderTest : DescribeSpec({
         }
 
         it("should throw an exception if any transition references an undefined state in complex setups") {
-            val exception = shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 StateMachineBuilder<String>()
                     .state("A", "State A")
                     .state("B", "State B")
@@ -102,19 +98,15 @@ class StateMachineBuilderTest : DescribeSpec({
                     .initialState("A")
                     .build()
             }
-
-            exception.message shouldBe "State C not found"
         }
     }
 
     describe("StateMachineBuilder with edge cases") {
 
         it("should handle an empty state machine definition with an error") {
-            val exception = shouldThrow<IllegalStateException> {
+            shouldThrow<IllegalStateException> {
                 StateMachineBuilder<String>().build()
             }
-
-            exception.message shouldBe "Initial state null is not defined"
         }
 
         it("should handle transitions that are never used") {

@@ -1,12 +1,12 @@
 package com.mega.game.engine.entities
 
 import com.badlogic.gdx.utils.OrderedMap
+import com.mega.game.engine.GameEngine
 import com.mega.game.engine.common.interfaces.IPropertizable
 import com.mega.game.engine.common.interfaces.Initializable
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.components.IComponentBucket
 import com.mega.game.engine.components.IGameComponent
-import com.mega.game.engine.GameEngine
 import kotlin.reflect.KClass
 
 /**
@@ -24,7 +24,7 @@ interface IGameEntity : IComponentBucket, IPropertizable, Initializable {
      *
      * @return rrue if this [GameEntity] can be spawned, otherwise false
      */
-    fun canSpawn(): Boolean
+    fun canSpawn(spawnProps: Properties): Boolean
 
     /**
      * Called when this entity is spawned by the game engine.

@@ -16,11 +16,11 @@ import com.mega.game.engine.systems.GameSystem
 import com.mega.game.engine.world.body.Body
 import com.mega.game.engine.world.body.BodyComponent
 import com.mega.game.engine.world.body.IFixture
+import com.mega.game.engine.world.body.PhysicsData
 import com.mega.game.engine.world.collisions.ICollisionHandler
 import com.mega.game.engine.world.contacts.Contact
 import com.mega.game.engine.world.contacts.IContactListener
 import com.mega.game.engine.world.container.IWorldContainer
-import java.util.function.Supplier
 import kotlin.math.abs
 
 /**
@@ -48,6 +48,9 @@ import kotlin.math.abs
  * It is up to the user to determine what the best value for the fixed step is. I personally
  * recommend the fixed step be half the target FPS. More physics updates per frame will result in
  * more accurate and reliable physics, but will also result in more processing time.
+ *
+ * For each "step" of the world system, the [updatePhysics] method is called on each body. This method is
+ * open if the user would like to change the implementation of this method.
  *
  * This system uses an optional [contactFilterMap] to optimize the determination of which contacts
  * to notify the [IContactListener] of. The [contactFilterMap] can be used to filter only cases
@@ -81,7 +84,7 @@ import kotlin.math.abs
  * Default value is 1f (no scaling applied). If the value is less than 1f, the rendering of physics will be slowed down.
  * If greater than 1f, then rendering will be sped up. Must be greater than 0f or else an exception will be thrown.
  */
-class WorldSystem(
+open class WorldSystem(
     private val ppm: Int,
     private val fixedStep: Float,
     private val worldContainerSupplier: () -> IWorldContainer?,
@@ -96,21 +99,21 @@ class WorldSystem(
     }
 
     init {
-        if (fixedStepScalar <= 0f) throw IllegalArgumentException("fixedStepScalar must be greater than 0")
+        if (fixedStepScalar <= 0f) throw IllegalArgumentException("Value of fixedStepScalar must be greater than 0")
     }
 
     private class DummyFixture : IFixture {
         override fun getShape() =
-            throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+            throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
 
         override fun isActive() =
-            throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+            throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
 
         override fun getType() =
-            throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+            throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
 
         override val properties: Properties
-            get() = throw IllegalStateException("The `getType` method should never be called on a DummyTypable instance")
+            get() = throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
     }
 
     private val worldContainer: IWorldContainer
@@ -124,32 +127,20 @@ class WorldSystem(
     private var accumulator = 0f
 
     /**
-     * Constructor that accepts the world graph supplier as a [Supplier] (for easy compatibility with Java). See
-     * [WorldSystem] main constructor.
+     * If [on] is false, then nothing occurs.
+     * 
+     * Accumulates the delta time. While the accumulated delta time is greater than [fixedStep], the fixed step value
+     * (divided by the [fixedStepScalar] value) is subtracted from the accumulated delta time, and the world system's 
+     * "cycle" is performed.
+     * 
+     * At the end of each cycle, the [worldContainer] is cleared and repopulated with all bodies and fixtures contained
+     * in the world system.
      *
-     * @param ppm the pixels per meter of the world representation
-     * @param fixedStep the fixed step
-     * @param contactListener the contact listener
-     * @param _worldContainerSupplier the world graph supplier as a [Supplier] object
-     * @param collisionHandler the collision handler
-     * @param contactFilterMap the contact filter map
      */
-    constructor(
-        ppm: Int,
-        fixedStep: Float,
-        _worldContainerSupplier: Supplier<IWorldContainer?>,
-        contactListener: IContactListener,
-        collisionHandler: ICollisionHandler,
-        contactFilterMap: ObjectMap<Any, ObjectSet<Any>>,
-    ) : this(
-        ppm, fixedStep, { _worldContainerSupplier.get() }, contactListener, collisionHandler, contactFilterMap
-    )
-
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
 
         accumulator += delta
-
         if (accumulator >= fixedStep) {
             entities.forEach {
                 val body = it.getComponent(BodyComponent::class)!!.body
@@ -171,6 +162,12 @@ class WorldSystem(
         }
     }
 
+    /**
+     * Performs the following operations:
+     * - Resets the delta-time accumulator back to zero
+     * - Clears all contacts
+     * - Clears the [worldContainer]
+     */
     override fun reset() {
         super.reset()
         accumulator = 0f
@@ -181,7 +178,15 @@ class WorldSystem(
         worldContainerSupplier()?.clear()
     }
 
-    internal fun filterContact(fixture1: IFixture, fixture2: IFixture) =
+    /**
+     * Returns true if the two fixtures can make contact. 
+     * 
+     * The default implementation of this method returns true if the following conditions are met:
+     * - The two fixtures are not the same
+     * - The [contactFilterMap] contains a key-value pairing for the two fixtures (where the map contains either 
+     *      fixture's type as a key and the key's value set contains the other fixture's key)
+     */
+    open fun filterContact(fixture1: IFixture, fixture2: IFixture) =
         (fixture1 != fixture2) && (contactFilterMap.get(fixture1.getType())?.contains(
             fixture2.getType()
         ) == true || contactFilterMap.get(fixture2.getType())?.contains(
@@ -197,7 +202,7 @@ class WorldSystem(
             body.fixtures.forEach { (_, fixture) -> worldContainer.addFixture(fixture) }
         }
         bodies.forEach { body ->
-            checkForContacts(body)
+            collectContacts(body, currentContactSet)
             resolveCollisions(body)
         }
         processContacts()
@@ -228,20 +233,43 @@ class WorldSystem(
         currentContactSet.clear()
     }
 
-    private fun updatePhysics(body: Body, delta: Float) {
+    /**
+     * Updates the physics of a body based on its current velocity, friction, and gravity, over a given time interval.
+     *
+     * The default implementation of this method follows the following steps:
+     *
+     * 1. If [PhysicsData.applyFrictionX] is true for the body's physics data instance, then the x value of
+     *    [PhysicsData.frictionOnSelf] is applied to the body's velocity in the x direction. This is done by multiplying
+     *    the current x velocity by the exponential decay factor based on the friction value and the time step [delta].
+     *    See the [exp] function.
+     *
+     * 2. If [PhysicsData.applyFrictionY] is true for the body's physics data instance, then the y value of
+     *    [PhysicsData.frictionOnSelf] is applied to the body's velocity in the y direction, using a similar
+     *    exponential decay as in the x direction.
+     *
+     * 3. After applying friction, the friction values for both x and y directions are reset to their default values
+     *    by calling [PhysicsData.defaultFrictionOnSelf].
+     *
+     * 4. If [PhysicsData.gravityOn] is true, the current gravity is applied to the body's velocity. This adds
+     *    the gravity vector to the velocity vector, affecting both x and y directions as defined by the gravity value.
+     *
+     * 5. The body's velocity is clamped to ensure that it stays within the limits defined by [PhysicsData.velocityClamp].
+     *    Both the x and y components of the velocity are constrained to their respective maximum values, ensuring the
+     *    body does not move faster than allowed.
+     *
+     * 6. Finally, the body's position is updated based on the current velocity and the time step [delta]. The new
+     *    x and y positions are calculated by adding the product of velocity and delta to the body's current position.
+     *
+     * @param body The [Body] whose physics should be updated.
+     * @param delta The time step over which to apply the physics updates. This is typically the frame time or
+     *              delta time in a game loop.
+     */
+    open fun updatePhysics(body: Body, delta: Float) {
         body.physics.let { physics ->
-            /*
-            if (physics.takeFrictionFromOthers) {
-                if (physics.frictionOnSelf.x > 0f) physics.velocity.x /= physics.frictionOnSelf.x
-                if (physics.frictionOnSelf.y > 0f) physics.velocity.y /= physics.frictionOnSelf.y
-            }
-             */
-            if (physics.takeFrictionFromOthers) {
-                if (physics.frictionOnSelf.x > 0f)
-                    physics.velocity.x *= exp(-physics.frictionOnSelf.x * delta)
-                if (physics.frictionOnSelf.y > 0f)
-                    physics.velocity.y *= exp(-physics.frictionOnSelf.y * delta)
-            }
+            if (physics.applyFrictionX && physics.frictionOnSelf.x > 0f)
+                physics.velocity.x *= exp(-physics.frictionOnSelf.x * delta)
+            if (physics.applyFrictionY && physics.frictionOnSelf.y > 0f)
+                physics.velocity.y *= exp(-physics.frictionOnSelf.y * delta)
             physics.frictionOnSelf.set(physics.defaultFrictionOnSelf)
 
             if (physics.gravityOn) physics.velocity.add(physics.gravity)
@@ -256,7 +284,27 @@ class WorldSystem(
         }
     }
 
-    private fun checkForContacts(body: Body) = body.fixtures.forEach { (_, fixture) ->
+    /**
+     * The default implementation of this method collects all the contacts for a given body by iterating over its active
+     * fixtures and checking for potential overlaps with other fixtures in the world. Contacts are added to the provided 
+     * [contactSet] if they meet the specified filtering conditions and overlap with the given body's fixtures.
+     *
+     * The default implementation follows these steps:
+     * 1. Iterates over all fixtures of the given [body].
+     * 2. For each active fixture, checks if the fixture type has an associated contact filter in [contactFilterMap].
+     * 3. If a contact filter is found, the fixture's bounding rectangle is calculated using its shape.
+     * 4. The method then queries the [worldContainer] to retrieve all fixtures within the area defined by the fixture's
+     *    bounding rectangle.
+     * 5. For each retrieved fixture, the method:
+     *    - Checks if it is active.
+     *    - Applies the [filterContact] method to see if the fixture can be considered for contact.
+     *    - Checks if the fixture's shape overlaps with the current fixture.
+     * 6. If all conditions are met, a [Contact] object is created and added to the [contactSet].
+     *
+     * @param body The [Body] whose contacts are being collected.
+     * @param contactSet The set where valid contacts will be added.
+     */
+    open fun collectContacts(body: Body, contactSet: ObjectSet<Contact>) = body.fixtures.forEach { (_, fixture) ->
         if (fixture.isActive() && contactFilterMap.containsKey(fixture.getType())) {
             fixture.getShape().getBoundingRectangle(reusableGameRect)
             val worldGraphResults = worldContainer.getFixtures(
@@ -272,13 +320,27 @@ class WorldSystem(
                 ) {
                     val contact = contactPool.fetch()
                     contact.set(fixture, it)
-                    currentContactSet.add(contact)
+                    contactSet.add(contact)
                 }
             }
         }
     }
 
-    private fun resolveCollisions(body: Body) {
+    /**
+     * Resolves this body's collisions.
+     * 
+     * The default implementation performs the following steps:
+     * - Retrieves the body's adjusted bounds via the [Body.getBodyBounds] method
+     * - Retrieves all bodies overlapping (or close to overlapping) the adjusted bounds via the [worldContainer]'s
+     * [IWorldContainer.getBodies] method where 
+     *   - minX = adjusted bound's x divided by [ppm]
+     *   - minY = adjusted bound's y divided by [ppm]
+     *   - maxX = adjusted bound's max x divided by [ppm]
+     *   - maxY = adjusted bound's max y divided by [ppm]
+     * - For each retrieved body, if it does not equal the body and its adjusted bounds overlaps the body's adjusted 
+     *      bounds, then both bodies are passed into the [collisionHandler]'s [ICollisionHandler.handleCollision] method.
+     */
+    open fun resolveCollisions(body: Body) {
         val bounds = body.getBodyBounds()
         worldContainer.getBodies(
             MathUtils.floor(bounds.x / ppm),

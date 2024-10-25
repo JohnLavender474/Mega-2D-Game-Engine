@@ -2,8 +2,6 @@ package com.mega.game.engine.pathfinding
 
 import com.mega.game.engine.common.time.Timer
 import com.mega.game.engine.components.IGameComponent
-import java.util.function.Consumer
-import java.util.function.Supplier
 
 /**
  * A component that handles pathfinding.
@@ -25,17 +23,6 @@ class PathfindingComponent(
     companion object {
         const val DEFAULT_UPDATE_INTERVAL = 0.1f
     }
-
-    /**
-     * Creates a new pathfinding component.
-     *
-     * @param params The pathfinder params.
-     * @param consumer The consumer of the pathfinder result.
-     * @param doUpdate The function that determines if the pathfinder should update. By default, the
-     */
-    constructor(
-        params: PathfinderParams, consumer: Consumer<PathfinderResult>, doUpdate: Supplier<Boolean> = Supplier { true }
-    ) : this(params, { consumer.accept(it) }, { doUpdate.get() })
 
     internal var currentPath: PathfinderResult? = null
 }

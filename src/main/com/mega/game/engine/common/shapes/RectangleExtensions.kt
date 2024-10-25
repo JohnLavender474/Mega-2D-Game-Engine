@@ -6,6 +6,18 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.mega.game.engine.common.extensions.isInCamera
+import com.mega.game.engine.common.getRandom
+
+/**
+ * Returns a random position contained within this [Rectangle].
+ *
+ * @return the random position
+ */
+fun Rectangle.getRandomPositionInBounds(): Vector2 {
+    val randX = getRandom(x, x + width)
+    val randY = getRandom(y, y + height)
+    return Vector2(randX, randY)
+}
 
 /**
  * Converts a [Rectangle] to a [BoundingBox] in 3D space with the z-coordinate set to 0.

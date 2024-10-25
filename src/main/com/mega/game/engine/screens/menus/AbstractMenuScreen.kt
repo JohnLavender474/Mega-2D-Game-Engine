@@ -3,7 +3,6 @@ package com.mega.game.engine.screens.menus
 import com.badlogic.gdx.utils.ObjectMap
 import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.screens.BaseScreen
-import java.util.function.Supplier
 
 /**
  * Abstract class for menu screens. Handles navigation and selection of buttons.
@@ -32,19 +31,6 @@ abstract class AbstractMenuScreen(
      */
     var selectionMade = false
         protected set
-
-    /**
-     * Constructor for menu screens compatible with Java code.
-     *
-     * @param buttons the map of buttons
-     * @param pauseSupplier a supplier for if the game is paused
-     * @param firstButtonKey the key of the first button to be selected
-     */
-    constructor(
-        buttons: ObjectMap<String, IMenuButton> = ObjectMap(),
-        pauseSupplier: Supplier<Boolean>,
-        firstButtonKey: String,
-    ) : this(buttons, { pauseSupplier.get() }, firstButtonKey)
 
     /**
      * Gets the direction of the navigation. This is called every frame. If no navigation is made, then null should be

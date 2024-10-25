@@ -17,14 +17,12 @@ class Animation : IAnimation {
 
     internal val animation: Array<TextureRegion>
     internal val frameDurations: Array<Float>
-
-    private var loop = true
-
     internal var currentIndex = 0
         private set
-
     internal var elapsedTime = 0f
         private set
+
+    private var loop = true
 
     /**
      * Creates an animation with the specified texture region. The rows and columns values are each
@@ -132,7 +130,6 @@ class Animation : IAnimation {
         // If the animation is finished and not looping, then keep the elapsed time
         // at the duration, and set the current region to the last one (instead of the first)
         val duration = getDuration()
-
         while (elapsedTime >= duration) {
             if (loop) elapsedTime -= duration
             else {
@@ -186,4 +183,32 @@ class Animation : IAnimation {
         }
         return newAnimation
     }
+
+    override fun setIndex(index: Int) {
+        currentIndex = if (index < 0) 0 else if (index >= animation.size) animation.size - 1 else index
+        elapsedTime = 0f
+        for (i in 0 until currentIndex) elapsedTime += frameDurations[i]
+    }
+
+    override fun getIndex() = currentIndex
+
+    override fun setCurrentTime(time: Float) {
+        if (time < 0f) throw IllegalArgumentException("Time value cannot be less than zero")
+        val duration = getDuration()
+        elapsedTime = if (loop) time % duration else time.coerceAtMost(duration)
+        if (!loop && elapsedTime == duration) {
+            currentIndex = animation.size - 1
+            return
+        }
+
+        var currentLoopDuration = elapsedTime
+        var tempIndex = 0
+        while (tempIndex < animation.size && currentLoopDuration > frameDurations[tempIndex]) {
+            currentLoopDuration -= frameDurations[tempIndex]
+            tempIndex++
+        }
+        currentIndex = tempIndex
+    }
+
+    override fun getCurrentTime() = elapsedTime
 }

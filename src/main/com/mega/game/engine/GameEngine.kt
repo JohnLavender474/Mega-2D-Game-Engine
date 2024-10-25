@@ -6,13 +6,9 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.Queue
 import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
-import com.mega.game.engine.common.objects.GamePair
-import com.mega.game.engine.common.objects.MutableOrderedSet
-import com.mega.game.engine.common.objects.Properties
-import com.mega.game.engine.common.objects.SimpleQueueSet
+import com.mega.game.engine.common.objects.*
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
-import com.mega.game.engine.common.objects.pairTo
 
 /**
  * The [GameEngine] class manages the entities and systems in the game. It handles spawning and destroying entities,
@@ -132,7 +128,7 @@ class GameEngine(
      * @param spawnProps The properties to use when spawning the entity.
      * @return True if the entity is successfully queued to spawn; False otherwise.
      */
-    fun spawn(entity: IGameEntity, spawnProps: Properties = Properties()) = if (entity.canSpawn()) {
+    fun spawn(entity: IGameEntity, spawnProps: Properties = Properties()) = if (entity.canSpawn(spawnProps)) {
         val queued = entitiesToSpawn.add(entity, spawnProps)
         if (queued) onQueueToSpawn?.invoke(entity)
         queued

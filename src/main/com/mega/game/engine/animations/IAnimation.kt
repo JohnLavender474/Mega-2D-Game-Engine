@@ -74,4 +74,32 @@ interface IAnimation : ICopyable<IAnimation>, Updatable, Resettable {
      * @return the sliced animation
      */
     fun slice(start: Int, end: Int): IAnimation
+
+    /**
+     * Sets the index of this animation.
+     *
+     * @param index the index to set this animation to
+     */
+    fun setIndex(index: Int)
+
+    /**
+     * Gets the index of this animation.
+     *
+     * @return the index of this animation
+     */
+    fun getIndex(): Int
+
+    /**
+     * Sets the current time of this animation.
+     *
+     * @param time the time to set this animation to
+     */
+    fun setCurrentTime(time: Float)
+
+    /**
+     * Gets the current time of this animation.
+     *
+     * @return the time of this animation
+     */
+    fun getCurrentTime(): Float
 }

@@ -94,7 +94,7 @@ abstract class GameEntity(
      *
      * @see [GameEngine.spawn]
      */
-    override fun canSpawn() = true
+    override fun canSpawn(spawnProps: Properties) = true
 
     override fun <C : IGameComponent> getComponent(key: KClass<C>): C? {
         val value = components[key] ?: return null

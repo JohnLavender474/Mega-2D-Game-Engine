@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils.*
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.motion.Pendulum.Companion.DEFAULT_DISTURBANCE_THRESHOLD
 import com.mega.game.engine.motion.Pendulum.Companion.DEFAULT_RANDOM_FORCE
-import java.util.function.Supplier
 import kotlin.math.abs
 
 /**
@@ -49,33 +48,6 @@ class Pendulum(
     private var angleVel = 0f
     private var angleAccel = 0f
     private var accumulator = 0f
-
-    /**
-     * Constructor for Java compatibility.
-     *
-     * @see [Pendulum]
-     */
-    constructor(
-        length: Float,
-        gravity: Float,
-        anchor: Vector2,
-        targetFPS: Float,
-        scalar: Float = 1f,
-        angle: Float = PI / 2f,
-        damping: Float = 0f,
-        disturbanceThreshold: Float,
-        randomForce: Supplier<Float>
-    ) : this(
-        length,
-        gravity,
-        anchor,
-        targetFPS,
-        scalar,
-        angle,
-        damping,
-        disturbanceThreshold,
-        { randomForce.get() }
-    )
 
     /**
      * Computes a point at a specified distance from the anchor point on the pendulum.

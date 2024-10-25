@@ -3,7 +3,20 @@ package com.mega.game.engine.common.objects
 import com.badlogic.gdx.utils.Array
 
 /**
- * A mutable collection backed by a LibGDX array. This collection is not thread-safe.
+ * Returns a new [MutableArray] containing the [values].
+ *
+ * @param values the var args of values
+ * @return the new mutable array containing the values
+ */
+fun <T> mutableArrayOf(vararg values: T): MutableArray<T> {
+    val array = MutableArray<T>()
+    values.forEach { array.add(it) }
+    return array
+}
+
+/**
+ * A mutable collection backed by a LibGDX array. This collection does not extend the [Array] class. This collection
+ * is not thread-safe.
  */
 class MutableArray<T> : MutableCollection<T> {
 

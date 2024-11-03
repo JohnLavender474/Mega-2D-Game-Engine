@@ -128,11 +128,11 @@ open class WorldSystem(
 
     /**
      * If [on] is false, then nothing occurs.
-     * 
+     *
      * Accumulates the delta time. While the accumulated delta time is greater than [fixedStep], the fixed step value
-     * (divided by the [fixedStepScalar] value) is subtracted from the accumulated delta time, and the world system's 
+     * (divided by the [fixedStepScalar] value) is subtracted from the accumulated delta time, and the world system's
      * "cycle" is performed.
-     * 
+     *
      * At the end of each cycle, the [worldContainer] is cleared and repopulated with all bodies and fixtures contained
      * in the world system.
      *
@@ -179,33 +179,33 @@ open class WorldSystem(
     }
 
     /**
-     * Returns true if the two fixtures can make contact. 
-     * 
+     * Returns true if the two fixtures can make contact.
+     *
      * The default implementation of this method returns true if the following conditions are met:
      * - The two fixtures are not the same
-     * - The [contactFilterMap] contains a key-value pairing for the two fixtures (where the map contains either 
+     * - The [contactFilterMap] contains a key-value pairing for the two fixtures (where the map contains either
      *      fixture's type as a key and the key's value set contains the other fixture's key)
      */
     open fun filterContact(fixture1: IFixture, fixture2: IFixture) =
-        (fixture1 != fixture2) && (contactFilterMap.get(fixture1.getType())?.contains(
-            fixture2.getType()
-        ) == true || contactFilterMap.get(fixture2.getType())?.contains(
-            fixture1.getType()
-        ) == true)
+        (fixture1 != fixture2) &&
+                (contactFilterMap.get(fixture1.getType())?.contains(fixture2.getType()) == true ||
+                        contactFilterMap.get(fixture2.getType())?.contains(fixture1.getType()) == true)
 
     private fun cycle(bodies: Array<Body>, delta: Float) {
         preProcess(bodies, delta)
+
         worldContainer.clear()
         bodies.forEach { body ->
             updatePhysics(body, delta)
             worldContainer.addBody(body)
             body.fixtures.forEach { (_, fixture) -> worldContainer.addFixture(fixture) }
         }
-        bodies.forEach { body ->
-            collectContacts(body, currentContactSet)
-            resolveCollisions(body)
-        }
+
+        bodies.forEach { body -> collectContacts(body, currentContactSet) }
         processContacts()
+
+        bodies.forEach { body -> resolveCollisions(body) }
+
         postProcess(bodies, delta)
     }
 
@@ -286,7 +286,7 @@ open class WorldSystem(
 
     /**
      * The default implementation of this method collects all the contacts for a given body by iterating over its active
-     * fixtures and checking for potential overlaps with other fixtures in the world. Contacts are added to the provided 
+     * fixtures and checking for potential overlaps with other fixtures in the world. Contacts are added to the provided
      * [contactSet] if they meet the specified filtering conditions and overlap with the given body's fixtures.
      *
      * The default implementation follows these steps:
@@ -328,16 +328,16 @@ open class WorldSystem(
 
     /**
      * Resolves this body's collisions.
-     * 
+     *
      * The default implementation performs the following steps:
      * - Retrieves the body's adjusted bounds via the [Body.getBodyBounds] method
      * - Retrieves all bodies overlapping (or close to overlapping) the adjusted bounds via the [worldContainer]'s
-     * [IWorldContainer.getBodies] method where 
+     * [IWorldContainer.getBodies] method where
      *   - minX = adjusted bound's x divided by [ppm]
      *   - minY = adjusted bound's y divided by [ppm]
      *   - maxX = adjusted bound's max x divided by [ppm]
      *   - maxY = adjusted bound's max y divided by [ppm]
-     * - For each retrieved body, if it does not equal the body and its adjusted bounds overlaps the body's adjusted 
+     * - For each retrieved body, if it does not equal the body and its adjusted bounds overlaps the body's adjusted
      *      bounds, then both bodies are passed into the [collisionHandler]'s [ICollisionHandler.handleCollision] method.
      */
     open fun resolveCollisions(body: Body) {

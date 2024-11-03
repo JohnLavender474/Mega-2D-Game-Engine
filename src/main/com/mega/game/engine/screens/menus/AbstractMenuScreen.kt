@@ -94,8 +94,8 @@ abstract class AbstractMenuScreen(
 
         buttons[currentButtonKey]?.let { button ->
             getNavigationDirection()?.let {
-                onAnyMovement(it)
                 currentButtonKey = button.onNavigate(it, delta)
+                onAnyMovement(it)
             }
 
             if (selectionRequested()) {

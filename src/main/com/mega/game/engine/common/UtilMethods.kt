@@ -147,7 +147,7 @@ fun getOverlapPushDirection(
     val toBePushedBounds = toBePushed.getBoundingRectangle()
     val otherBounds = other.getBoundingRectangle()
     return if (Intersector.intersectRectangles(toBePushedBounds, otherBounds, overlap)) {
-        if (overlap.width > overlap.height) {
+        if (overlap.width >= overlap.height) {
             if (toBePushedBounds.y > otherBounds.y) Direction.UP else Direction.DOWN
         } else if (toBePushedBounds.x > otherBounds.x) Direction.RIGHT else Direction.LEFT
     } else null

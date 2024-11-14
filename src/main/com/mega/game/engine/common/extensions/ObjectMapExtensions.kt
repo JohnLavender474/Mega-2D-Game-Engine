@@ -29,13 +29,12 @@ fun <T, U> orderedMapOf(vararg pairs: GamePair<T, U>): OrderedMap<T, U> {
 }
 
 /**
- * Put the value in the map if the key does not already have a value. If the key does have a value
- * then the value is returned.
+ * Put the specified default value in the map if the key does not already have a value, then return the value mapped to
+ * the key (the specified value if no value was mapped to the key beforehand).
  *
  * @param key the key whose value is to be computed
  * @param defaultValue the default mapping of the key
- * @return the current (existing or computed) value associated with the specified key, or null if
- *   the computed value is null
+ * @return the value associated with the key (either the existing value or the specified default value)
  */
 fun <K, V> ObjectMap<K, V>.putIfAbsentAndGet(key: K, defaultValue: V): V {
     if (!containsKey(key)) put(key, defaultValue)

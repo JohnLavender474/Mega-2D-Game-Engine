@@ -1,5 +1,6 @@
 package com.mega.game.engine.common
 
+import com.badlogic.gdx.ApplicationLogger
 import com.badlogic.gdx.utils.ObjectSet
 
 /**
@@ -8,89 +9,103 @@ import com.badlogic.gdx.utils.ObjectSet
  * @see [GameLogger]
  */
 enum class GameLogLevel {
-    INFO,
+    OFF,
+    LOG,
     DEBUG,
     ERROR
 }
 
 /**
+ * Definition class assigned to a [GameLogLevel] value.
+ *
+ * @property filterByTag whether the logs of the log level should be filtered by tags
+ * @property tagsToLog the logs to print (with all others ignored) if and only if [filterByTag] is true
+ */
+data class GameLogDef(
+    var filterByTag: Boolean = false,
+    val tagsToLog: ObjectSet<String> = ObjectSet()
+)
+
+/**
  * A simple logger that can be used to log messages. The log level can be set to determine which
- * messages should be logged. If the log level is set to [GameLogLevel.INFO], only info messages
+ * messages should be logged. If the log level is set to [GameLogLevel.LOG], only info messages
  * will be logged. If the log level is set to [GameLogLevel.DEBUG], info and debug messages will be
  * logged. If the log level is set to [GameLogLevel.ERROR], info, debug, and error messages will be
  * logged. If the logger is turned off, no messages will be logged.
  *
  * @see [GameLogLevel]
  */
-object GameLogger {
+object GameLogger : ApplicationLogger {
 
-    /**
-     * Whether the logger should filter messages by tag. If this is set to true, only messages with
-     * tags that are in [tagsToLog] will be logged. Default value is false.
-     */
-    var filterByTag = false
+    val DEFAULT_LOG_FORMATTER: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String =
+        { level, tag, message, throwable ->
+            var message = "$level | $tag | $message"
+            if (throwable != null) {
+                message += " | ${throwable.message}"
+                throwable.stackTrace.forEach { line -> message += "\n\t$line" }
+            }
+            message
+        }
 
-    /**
-     * The set of tags that should be logged if [filterByTag] is set to true. If [filterByTag] is set
-     * to true, only messages with tags that are in this set will be logged. If [filterByTag] is set
-     * to false, this set will be ignored.
-     */
     val tagsToLog = ObjectSet<String>()
+    var filterByTag = true
 
-    internal var logLevel: GameLogLevel? = null
-
-    /** Turns off the logger. No messages will be logged. */
-    fun turnOff() {
-        logLevel = null
-    }
+    internal var formatter: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String =
+        DEFAULT_LOG_FORMATTER
+    internal var level = GameLogLevel.OFF
 
     /**
      * Sets the log level. The log level determines which messages should be logged. If the log level
-     * is set to [GameLogLevel.INFO], only info messages will be logged. If the log level is set to
+     * is set to [GameLogLevel.LOG], only info messages will be logged. If the log level is set to
      * [GameLogLevel.DEBUG], info and debug messages will be logged. If the log level is set to
      * [GameLogLevel.ERROR], info, debug, and error messages will be logged.
      *
      * @param level the log level
-     * @see [GameLogLevel]
      */
-    fun set(level: GameLogLevel) {
-        logLevel = level
+    fun setLogLevel(level: GameLogLevel) {
+        this.level = level
     }
 
     /**
-     * Logs the given message if the log level is set to [GameLogLevel.INFO] or higher.
+     * Gets the current log level.
      *
-     * @param message the message to log
-     * @return true if the message was logged, false otherwise
+     * @return the current log level
      */
-    fun info(tag: String, message: String) = log(GameLogLevel.INFO, tag, message)
+    fun getLogLevel() = level
 
     /**
-     * Logs the given message if the log level is set to [GameLogLevel.DEBUG] or higher.
+     * Sets the formatter for formatting logs.
      *
-     * @param message the message to log
-     * @return true if the message was logged, false otherwise
+     * @param formatter the formatter to set for formatting logs
      */
-    fun debug(tag: String, message: String) = log(GameLogLevel.DEBUG, tag, message)
+    fun setLogFormatter(
+        formatter: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String
+    ) {
+        this.formatter = formatter
+    }
 
-    /**
-     * Logs the given message if the log level is set to [GameLogLevel.ERROR] or higher.
-     *
-     * @param message the message to log
-     * @return true if the message was logged, false otherwise
-     */
-    fun error(tag: String, message: String) = log(GameLogLevel.ERROR, tag, message)
+    override fun log(tag: String, message: String) = print(GameLogLevel.LOG, tag, message)
 
-    private fun log(level: GameLogLevel, tag: String, message: String): Boolean {
-        if (filterByTag && !tagsToLog.contains(tag)) return false
+    override fun log(tag: String, message: String, exception: Throwable) =
+        print(GameLogLevel.LOG, tag, message, exception)
 
-        logLevel?.let {
-            if (level.ordinal <= it.ordinal) {
-                println("[$level] --- [$tag] --- $message")
-                return true
-            }
-        }
+    override fun debug(tag: String, message: String) = print(GameLogLevel.DEBUG, tag, message)
 
-        return false
+    override fun debug(tag: String, message: String, exception: Throwable?) =
+        print(GameLogLevel.DEBUG, tag, message, exception)
+
+    override fun error(tag: String, message: String) = print(GameLogLevel.ERROR, tag, message)
+
+    override fun error(tag: String, message: String, exception: Throwable?) =
+        print(GameLogLevel.ERROR, tag, message, exception)
+
+    private fun print(level: GameLogLevel, tag: String, message: String, throwable: Throwable? = null) {
+        if (level == GameLogLevel.OFF ||
+            this.level.ordinal > level.ordinal ||
+            (filterByTag && !tagsToLog.contains(tag))
+        ) return
+
+        val string = formatter.invoke(level, tag, message, throwable)
+        println(string)
     }
 }

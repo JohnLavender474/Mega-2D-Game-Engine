@@ -5,15 +5,18 @@ import com.mega.game.engine.common.interfaces.Resettable
 /**
  * A state machine that loops through states and can branch based on conditions.
  *
- * @property initialState the initial state of the state machine
- * @property currentState the current state of the state machine
- * @property onChangeState nullable lambda which is called when the value of [currentState] changes; the first argument
- *      is the new state, and the second argument is the previous state
+ * @property initialState The initial state of the state machine.
+ * @property currentState The current state of the state machine.
+ * @property onChangeState Nullable lambda which is called when the value of [currentState] changes; the first argument
+ *      is the new state, and the second argument is the previous state.
+ * @property triggerChangeWhenSameElement Whether a change should be triggered when the next state is the same as the
+ *      current state.
  * @param T the type of elements in the state machine
  */
 class StateMachine<T>(
     var initialState: IState<T>,
-    var onChangeState: ((currentElement: T, previousElement: T) -> Unit)? = null
+    var onChangeState: ((currentElement: T, previousElement: T) -> Unit)? = null,
+    var triggerChangeWhenSameElement: Boolean = false
 ) : Resettable {
 
     private var currentState: IState<T> = initialState
@@ -38,7 +41,7 @@ class StateMachine<T>(
      */
     fun next(): T {
         val nextState = currentState.getNextState()
-        if (nextState != null && currentState != nextState) {
+        if (nextState != null && (triggerChangeWhenSameElement || currentState != nextState)) {
             val previousStateElement = currentState.element
             currentState = nextState
             onChangeState?.invoke(currentState.element, previousStateElement)

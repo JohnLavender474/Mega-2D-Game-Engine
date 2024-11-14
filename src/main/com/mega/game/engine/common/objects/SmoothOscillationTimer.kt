@@ -8,13 +8,13 @@ import com.mega.game.engine.common.interfaces.Updatable
  * A [SmoothOscillationTimer] modulates a value between the min and max values using lerping.
  *
  * @property duration The total duration of one cycle.
- * @property min The min value.
- * @property max The max value.
+ * @property start The start value.
+ * @property end The end value.
  */
 class SmoothOscillationTimer(
     private var duration: Float,
-    private var min: Float = 0f,
-    private var max: Float = 1f
+    private var start: Float = 0f,
+    private var end: Float = 1f
 ) : Updatable, Resettable {
 
     private var elapsedTime = 0f
@@ -34,8 +34,8 @@ class SmoothOscillationTimer(
      */
     fun getValue() =
         if (elapsedTime <= halfDuration)
-            MathUtils.lerp(min, max, elapsedTime / halfDuration)
+            MathUtils.lerp(start, end, elapsedTime / halfDuration)
         else
-            MathUtils.lerp(max, min, (elapsedTime - halfDuration) / halfDuration)
+            MathUtils.lerp(end, start, (elapsedTime - halfDuration) / halfDuration)
 
 }

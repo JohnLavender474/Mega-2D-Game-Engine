@@ -14,7 +14,8 @@ import com.mega.game.engine.controller.buttons.ButtonStatus
 interface IControllerPoller : IActivatable, Runnable, Initializable {
 
     /**
-     * Should be used to initialize this controller poller. Default implementation is a no-op.
+     * Should be used to initialize this controller poller if any initialization logic is needed. Default
+     * implementation is a no-op.
      */
     override fun init() {
         // default implementation is a no-op

@@ -94,6 +94,13 @@ class Animation : IAnimation {
         }
     }
 
+    /**
+     * Gets the number of regions in this animation.
+     *
+     * @return this number of regions in this animation
+     */
+    fun size() = animation.size
+
     override fun getCurrentRegion(): TextureRegion = animation[currentIndex]
 
     override fun isFinished() = !loop && elapsedTime >= getDuration()

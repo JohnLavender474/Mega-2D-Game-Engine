@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.shapes.IGameShape2D
 import com.mega.game.engine.components.IGameComponent
-import java.util.function.BiConsumer
 
 /**
  * A component that holds a list of [IMotion]s and a list of functions that are called when the
@@ -17,32 +16,17 @@ class MotionComponent : IGameComponent {
      * A definition of a [IMotion] and function pair. The function is called when the [IMotion] is
      * updated and a value has been obtained from [IMotion.getMotionValue].
      *
-     * @param motion the [IMotion]
-     * @param function the function
+     * @property motion the [IMotion]
+     * @property function the function which takes as parameters the motion value and delta time
+     * @property doUpdate whether to update the motion
+     * @property onReset function to call on reset
      */
     data class MotionDefinition(
         val motion: IMotion,
         val function: (Vector2, Float) -> Unit,
+        val doUpdate: () -> Boolean = { true },
         var onReset: (() -> Unit)? = null
     ) : Resettable {
-
-        /**
-         * A definition of a [IMotion] and function pair. The function is called when the [IMotion] is
-         * updated and a value has been obtained from [IMotion.getMotionValue].
-         *
-         * @param motion the [IMotion]
-         * @param function the function
-         * @param onReset the function to call when the motion is reset
-         */
-        constructor(
-            motion: IMotion,
-            function: BiConsumer<Vector2, Float>,
-            onReset: Runnable? = null
-        ) : this(
-            motion,
-            { vector, value -> function.accept(vector, value) },
-            { onReset?.run() }
-        )
 
         override fun reset() {
             motion.reset()
@@ -62,6 +46,8 @@ class MotionComponent : IGameComponent {
      */
     fun put(key: Any, definition: MotionDefinition): MotionDefinition? = definitions.put(key, definition)
 
-    /** Resets the motions in this component */
+    /**
+     * Resets the motions in this component
+     */
     override fun reset() = definitions.values().forEach { it.reset() }
 }

@@ -19,6 +19,7 @@ class StateMachineBuilder<T> {
     private val transitionDefinitions = Array<Triple<String, String, () -> Boolean>>()
     private var initialStateName: String? = null
     private var onChangeState: ((T, T) -> Unit)? = null
+    private var triggerChangeWhenSameElement = false
 
     /**
      * Defines a state with the given name and associated element.
@@ -69,6 +70,15 @@ class StateMachineBuilder<T> {
     }
 
     /**
+     * Sets whether a state change occurs when the next state is not null and is the same as the current state.
+     *
+     * @param trigger whether a state change occurs when the next state is not null and is the same as the current state
+     */
+    fun setTriggerChangeWhenSameElement(trigger: Boolean) {
+        triggerChangeWhenSameElement = trigger
+    }
+
+    /**
      * Builds the [StateMachine] by resolving all state and transition definitions.
      *
      * This method creates the actual [DefaultStateImpl] objects and links them according to the defined transitions.
@@ -92,6 +102,7 @@ class StateMachineBuilder<T> {
         }
         val stateMachine = StateMachine(initialState)
         onChangeState?.let { stateMachine.onChangeState = it }
+        stateMachine.triggerChangeWhenSameElement = triggerChangeWhenSameElement
         return stateMachine
     }
 }

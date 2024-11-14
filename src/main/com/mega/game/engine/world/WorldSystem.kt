@@ -193,19 +193,15 @@ open class WorldSystem(
 
     private fun cycle(bodies: Array<Body>, delta: Float) {
         preProcess(bodies, delta)
-
         worldContainer.clear()
         bodies.forEach { body ->
             updatePhysics(body, delta)
             worldContainer.addBody(body)
             body.fixtures.forEach { (_, fixture) -> worldContainer.addFixture(fixture) }
         }
-
         bodies.forEach { body -> collectContacts(body, currentContactSet) }
         processContacts()
-
         bodies.forEach { body -> resolveCollisions(body) }
-
         postProcess(bodies, delta)
     }
 

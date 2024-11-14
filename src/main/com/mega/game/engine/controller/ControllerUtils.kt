@@ -3,11 +3,8 @@ package com.mega.game.engine.controller
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.Controllers
-import com.mega.game.engine.common.GameLogger
 
-const val CONTROLLER_UTILS_TAG = "ControllerUtils"
-
-/** Utility class for controllers. */
+/** Utility object for controllers. */
 object ControllerUtils {
 
     /**
@@ -33,22 +30,19 @@ object ControllerUtils {
      * @param key The key to check.
      * @return True if the specified key is pressed on the specified controller.
      */
-    fun isControllerKeyPressed(index: Int, key: Int) = getController(index)?.getButton(key) ?: false
+    fun isControllerKeyPressed(index: Int, key: Int) = getController(index)?.getButton(key) == true
 
     /**
-     * Gets the controller with the specified index.
+     * Gets the controller from the specified index, or null if one does not exist. Returns null rather than throwing
+     * an exception if the index is out of bounds.
      *
      * @param index The index of the controller.
-     * @return The controller with the specified index.
+     * @return The controller at the specified index, or null.
      */
     fun getController(index: Int): Controller? =
         try {
             Controllers.getControllers().get(index)
-        } catch (e: Exception) {
-            GameLogger.error(
-                CONTROLLER_UTILS_TAG,
-                "Controller with index $index could not be fetched due to exception: $e"
-            )
+        } catch (_: Exception) {
             null
         }
 
@@ -65,8 +59,7 @@ object ControllerUtils {
      *
      * @return The first controller.
      */
-    fun getController() =
-        if (Controllers.getControllers().size > 0) Controllers.getControllers().get(0) else null
+    fun getController() = if (!Controllers.getControllers().isEmpty) Controllers.getControllers().get(0) else null
 
     /**
      * Checks if the first controller is connected.

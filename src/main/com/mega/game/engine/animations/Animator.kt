@@ -16,7 +16,7 @@ import com.mega.game.engine.drawables.sprites.GameSprite
  * @param animations the animations that are used to animate the sprite
  * @param updateScalar the scalar that is used to speed up or slow down the current animation; default is 1.0f
  * @param onChangeKey optional lambda to call when the animation key changes; first arg is the old key, second is the
- *      new key
+ *      new key; this is called BEFORE the old animation is reset
  * @see IAnimator
  */
 class Animator(
@@ -57,10 +57,9 @@ class Animator(
 
     override fun animate(sprite: GameSprite, delta: Float) {
         val nextKey = keySupplier()
-        // if the key has changed, then reset the current animation before setting the key
         if (currentKey != nextKey) {
-            currentAnimation?.reset()
             onChangeKey?.invoke(currentKey, nextKey)
+            currentAnimation?.reset()
         }
         currentKey = nextKey
         currentAnimation?.let {

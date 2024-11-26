@@ -63,7 +63,7 @@ class Body(
     var fixtures: Array<GamePair<Any, IFixture>> = Array(),
     var preProcess: OrderedMap<Any, Updatable> = OrderedMap(),
     var postProcess: OrderedMap<Any, Updatable> = OrderedMap(),
-    var cardinalRotation: Direction? = null,
+    var cardinalRotation: Direction = Direction.UP,
     var originXCenter: Boolean = true,
     var originYCenter: Boolean = true,
     var onReset: (() -> Unit)? = null,
@@ -97,9 +97,9 @@ class Body(
     private val copyBounds = GameRectangle()
 
     /**
-     * Returns the bounds of this body. If [cardinalRotation] is null, then this method simply returns "this. However,
-     * if [cardinalRotation] is not null, then a copy of the body's bounds are rotated according to the value of
-     * [Direction.rotation] of [cardinalRotation] and returned. If [originXCenter] is true, then the center x of
+     * Returns the bounds of this body. If [cardinalRotation] is [Direction.UP], then this method simply returns "this"
+     * since the rotation is zero. For other direction values, a copy of the body's bounds is rotated to the value of
+     * [Direction.rotation] of [cardinalRotation] and is returned. If [originXCenter] is true, then the center x of
      * the body will be used as the origin x instead of the value of [originX]. If [originYCenter] is true, then the
      * center y of the body will be used as the origin y instead of the value of [originY]. The origin only affects the
      * return value of this method. The default value of [cardinalRotation] is null. The default value of
@@ -108,15 +108,12 @@ class Body(
      * @return the bounds of this body
      */
     fun getBodyBounds(): GameRectangle {
-        if (cardinalRotation == null) return this
-        else {
-            copyBounds.set(this)
-            val center = getCenter()
-            copyBounds.originX = if (originXCenter) center.x else originX
-            copyBounds.originY = if (originYCenter) center.y else originY
-            copyBounds.getCardinallyRotatedShape(cardinalRotation!!)
-            return copyBounds
-        }
+        copyBounds.set(this)
+        val center = getCenter()
+        copyBounds.originX = if (originXCenter) center.x else originX
+        copyBounds.originY = if (originYCenter) center.y else originY
+        copyBounds.getCardinallyRotatedShape(cardinalRotation)
+        return copyBounds
     }
 
     /**

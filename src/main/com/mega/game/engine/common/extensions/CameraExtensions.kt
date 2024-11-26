@@ -19,8 +19,7 @@ fun Camera.overlaps(bounds: Rectangle) = frustum.boundsInFrustum(bounds.toBoundi
  *
  * @return a [GameRectangle] representing this [Camera]
  */
-fun Camera.toGameRectangle(): GameRectangle {
-    val rectangle = GameRectangle()
+fun Camera.toGameRectangle(rectangle: GameRectangle = GameRectangle()): GameRectangle {
     rectangle.setSize(viewportWidth, viewportHeight)
     rectangle.setCenter(position.x, position.y)
     return rectangle

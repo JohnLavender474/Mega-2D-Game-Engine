@@ -15,6 +15,7 @@ import com.mega.game.engine.common.enums.Position
 import com.mega.game.engine.common.extensions.gdxArrayOf
 import com.mega.game.engine.common.extensions.gdxFloatArrayOf
 import com.mega.game.engine.common.objects.*
+import com.mega.game.engine.common.shapes.GameRectangle.Companion.OVERLAP_EXTENSION
 import java.util.function.BiPredicate
 import kotlin.math.*
 
@@ -241,6 +242,18 @@ open class GameRectangle() : Rectangle(), ICardinallyRotatableShape2D, Positiona
      */
     fun setOriginY(originY: Float): GameRectangle {
         this.originY = originY
+        return this
+    }
+
+    /**
+     * Sets the origin of this rectangle to its center.
+     *
+     * @return this shape for chaining.
+     */
+    fun setOriginCenter(): GameRectangle {
+        val center = getCenter()
+        originX = center.x
+        originY = center.y
         return this
     }
 

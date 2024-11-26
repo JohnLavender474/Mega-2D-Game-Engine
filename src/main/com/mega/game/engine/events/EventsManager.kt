@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
 import com.badlogic.gdx.utils.OrderedSet
 import com.mega.game.engine.common.extensions.putIfAbsentAndGet
+import com.mega.game.engine.common.objects.SimpleQueueSet
 import java.util.*
 
 /**
@@ -18,8 +19,8 @@ class EventsManager : Runnable {
     }
 
     internal val listeners = OrderedSet<IEventListener>()
-    internal val listenersToAdd = LinkedList<IEventListener>()
-    internal val listenersToRemove = LinkedList<IEventListener>()
+    internal val listenersToAdd = SimpleQueueSet<IEventListener>()
+    internal val listenersToRemove = SimpleQueueSet<IEventListener>()
 
     internal val events = OrderedMap<Any, Array<Event>>()
     internal val eventsToAdd = LinkedList<Event>()
@@ -44,6 +45,30 @@ class EventsManager : Runnable {
         val eventKey = event.key
         events.putIfAbsentAndGet(eventKey, Array()).add(event)
     }
+
+    /**
+     * Returns true if the [listener] is registered to this events manager.
+     *
+     * @param listener the listener
+     * @return if the listener is registered
+     */
+    fun isListener(listener: IEventListener) = listeners.contains(listener)
+
+    /**
+     * Returns true if the [listener] is queued to be registered to this events manager.
+     *
+     * @param listener the listener
+     * @return if the listener is queued to be registered
+     */
+    fun isQueuedToBeAdded(listener: IEventListener) = listenersToAdd.contains(listener)
+
+    /**
+     * Returns true if the [listener] is queued to be removed from this events manager.
+     *
+     * @param listener the listener
+     * @return if the listener is queued to be removed
+     */
+    fun isQueuedToBeRemoved(listener: IEventListener) = listenersToRemove.contains(listener)
 
     /**
      * Adds an [IEventListener] to this [EventsManager]. The [IEventListener] will be notified of
@@ -92,8 +117,8 @@ class EventsManager : Runnable {
         running = true
 
         while (!eventsToAdd.isEmpty()) submitEventNow(eventsToAdd.poll())
-        while (!listenersToAdd.isEmpty()) addListenerNow(listenersToAdd.poll())
-        while (!listenersToRemove.isEmpty()) removeListenerNow(listenersToRemove.poll())
+        while (!listenersToAdd.isEmpty()) addListenerNow(listenersToAdd.remove())
+        while (!listenersToRemove.isEmpty()) removeListenerNow(listenersToRemove.remove())
         if (setToClearListeners) {
             clearListenersNow()
             setToClearListeners = false

@@ -22,8 +22,7 @@ plugins {
 }
 
 group = 'com.mega.2D.game.engine'
-version = '1.0.27'
-
+version = '1.0.33'
 
 repositories {
     google()

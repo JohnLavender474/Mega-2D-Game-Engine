@@ -139,6 +139,18 @@ class GameRectangleTest :
 
                     actualRectangle shouldBe expectedRectangle
                 }
+
+                it("rotation test around center 1") {
+                    var actualRectangle = GameRectangle(0f, 0f, 5f, 2f)
+                    val center = actualRectangle.getCenter()
+
+                    actualRectangle.setOriginCenter()
+                    actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT)
+
+                    val expectedRectangle = GameRectangle().setSize(2f, 5f).setCenter(center)
+
+                    actualRectangle shouldBe expectedRectangle
+                }
             }
         }
     })

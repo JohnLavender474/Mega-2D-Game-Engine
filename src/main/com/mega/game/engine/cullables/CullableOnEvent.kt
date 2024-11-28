@@ -5,12 +5,7 @@ import com.mega.game.engine.events.Event
 import com.mega.game.engine.events.IEventListener
 import java.util.function.Predicate
 
-/**
- * A [ICullable] that will be culled if [cullOnEvent] returns true for any event.
- *
- * @param cullOnEvent a function that returns true if the [ICullable] should be culled for the
- *   event.
- */
+
 class CullableOnEvent(
     private val cullOnEvent: (Event) -> Boolean,
     override val eventKeyMask: ObjectSet<Any> = ObjectSet()
@@ -22,12 +17,7 @@ class CullableOnEvent(
 
     private var cull: Boolean = false
 
-    /**
-     * Constructor that takes a lambda for the cullOnEvent function.
-     *
-     * @param cullOnEvent Lambda to be called when the object should be culled.
-     * @param eventKeyMask The set of event keys that this cullable is interested in.
-     */
+
     constructor(
         cullOnEvent: Predicate<Event>,
         eventKeyMask: ObjectSet<Any> = ObjectSet()

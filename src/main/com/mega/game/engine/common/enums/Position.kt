@@ -1,6 +1,5 @@
 package com.mega.game.engine.common.enums
 
-/** Represents a position on a 3x3 grid. */
 enum class Position(val x: Int, val y: Int) {
     TOP_LEFT(0, 2),
     TOP_CENTER(1, 2),
@@ -14,13 +13,6 @@ enum class Position(val x: Int, val y: Int) {
 
     companion object {
 
-        /**
-         * Returns the [Position] at the given [x] and [y] coordinates.
-         *
-         * @param x the x coordinate
-         * @param y the y coordinate
-         * @return the [Position] at the given [x] and [y] coordinates
-         */
         fun get(x: Int, y: Int): Position? = Position.values().find { it.x == x && it.y == y }
     }
 

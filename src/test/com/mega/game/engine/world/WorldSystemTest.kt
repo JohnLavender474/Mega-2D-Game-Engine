@@ -99,7 +99,7 @@ class WorldSystemTest : DescribeSpec({
 
     it("should update fixture positions correctly - 1") {
         val fixture = Fixture(body, "Type", GameRectangle()).apply {
-            offsetFromBodyCenter.set(5f, 5f)
+            offsetFromBodyAttachment.set(5f, 5f)
         }
         body.addFixture(fixture)
         worldSystem.update(fixedStep)
@@ -109,7 +109,7 @@ class WorldSystemTest : DescribeSpec({
     it("should update fixture positions correctly - 2") {
         body.setCenter(5f, 5f)
         val fixture = Fixture(body, "Type", GameRectangle()).apply {
-            offsetFromBodyCenter.set(5f, 5f)
+            offsetFromBodyAttachment.set(5f, 5f)
         }
         body.addFixture(fixture)
         worldSystem.update(fixedStep)

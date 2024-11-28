@@ -4,7 +4,7 @@ import com.mega.game.engine.controller.polling.IControllerPoller
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
-/** Implementation for [IButtonActuator] that uses lambdas. */
+
 class ButtonActuator(
     var onJustPressed: ((IControllerPoller) -> Unit)? = null,
     var onPressContinued: ((IControllerPoller, Float) -> Unit)? = null,
@@ -12,14 +12,7 @@ class ButtonActuator(
     var onReleaseContinued: ((IControllerPoller, Float) -> Unit)? = null
 ) : IButtonActuator {
 
-    /**
-     * Constructor that takes lambdas for each of the button actuator methods.
-     *
-     * @param onJustPressed Lambda to be called when the button is just pressed.
-     * @param onPressContinued Lambda to be called when the button is pressed and continued.
-     * @param onJustReleased Lambda to be called when the button is just released.
-     * @param onReleaseContinued Lambda to be called when the button is released and continued.
-     */
+
     constructor(
         onJustPressed: Consumer<IControllerPoller>? = null,
         onPressContinued: BiConsumer<IControllerPoller, Float>? = null,

@@ -12,9 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/**
- * Interface for entities that have a body.
- */
+
 public interface IBodyEntity extends IGameEntity, IPositional, ISizable {
 
     default Body getBody() {

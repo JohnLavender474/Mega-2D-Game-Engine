@@ -5,7 +5,7 @@ import com.mega.game.engine.entities.GameEntity
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
-/** The updatable system. Processes all the updatables of each [GameEntity]. */
+
 class UpdatablesSystem : GameSystem(UpdatablesComponent::class) {
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {

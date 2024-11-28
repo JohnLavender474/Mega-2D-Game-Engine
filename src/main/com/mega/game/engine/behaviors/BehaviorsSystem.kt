@@ -4,10 +4,7 @@ import com.mega.game.engine.common.objects.ImmutableCollection
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
-/**
- * A [GameSystem] that processes [BehaviorsComponent]s. Each [AbstractBehaviorImpl] where its key returns true for
- * [BehaviorsComponent.isBehaviorAllowed] is updated.
- */
+
 class BehaviorsSystem : GameSystem(BehaviorsComponent::class) {
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {

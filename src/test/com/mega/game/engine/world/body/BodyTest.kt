@@ -23,7 +23,7 @@ class BodyTest :
             val body = Body(bodyType, physicsData, fixtures, properties = props)
 
             it("should have the correct initial properties") {
-                body.bodyType shouldBe bodyType
+                body.type shouldBe bodyType
                 body.physics shouldBe physicsData
                 body.fixtures shouldBe fixtures
                 body.properties shouldBe props
@@ -73,22 +73,22 @@ class BodyTest :
                 body.setCenter(0f, 0f)
 
                 val bottomFixture = Fixture(body, "bottom", GameRectangle().setSize(1f))
-                bottomFixture.offsetFromBodyCenter.y = -5f
+                bottomFixture.offsetFromBodyAttachment.y = -5f
                 body.addFixture(bottomFixture)
 
                 val topFixture = Fixture(body, "top", GameRectangle().setSize(1f))
-                topFixture.offsetFromBodyCenter.y = 5f
+                topFixture.offsetFromBodyAttachment.y = 5f
                 body.addFixture(topFixture)
 
                 val leftFixture = Fixture(body, "left", GameRectangle().setSize(1f))
-                leftFixture.offsetFromBodyCenter.x = -5f
+                leftFixture.offsetFromBodyAttachment.x = -5f
                 body.addFixture(leftFixture)
 
                 val rightFixture = Fixture(body, "right", GameRectangle().setSize(1f))
-                rightFixture.offsetFromBodyCenter.x = 5f
+                rightFixture.offsetFromBodyAttachment.x = 5f
                 body.addFixture(rightFixture)
 
-                body.cardinalRotation = Direction.UP
+                body.direction = Direction.UP
 
                 var shape = bottomFixture.getShape()
                 println("shape = $shape")
@@ -100,21 +100,21 @@ class BodyTest :
                 shape = rightFixture.getShape()
                 shape.getCenter() shouldBe Vector2(5f, 0f)
 
-                body.cardinalRotation = Direction.LEFT
+                body.direction = Direction.LEFT
 
                 bottomFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
                 topFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
                 leftFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
                 rightFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
 
-                body.cardinalRotation = Direction.DOWN
+                body.direction = Direction.DOWN
 
                 bottomFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
                 topFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
                 leftFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
                 rightFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
 
-                body.cardinalRotation = Direction.RIGHT
+                body.direction = Direction.RIGHT
 
                 bottomFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
                 topFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)

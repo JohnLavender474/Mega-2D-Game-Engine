@@ -51,7 +51,7 @@ class GameLineTest :
                 val translationX = 2f
                 val translationY = 2f
                 val expectedCenter = Vector2(4.5f, 4.5f)
-                line.translation(translationX, translationY)
+                line.translate(translationX, translationY)
                 line.getCenter() shouldBe expectedCenter
             }
 
@@ -92,7 +92,7 @@ class GameLineTest :
                     // test world points
                     val controlWorldPoints = controlLine.transformedVertices
                     println("Control world points: ${controlWorldPoints.contentToString()}")
-                    val testWorldPoints = testLine.getWorldPoints()
+                    val testWorldPoints = testLine.calculateWorldPoints()
                     println("Test world points: $testWorldPoints")
                     testWorldPoints.first shouldBe Vector2(controlWorldPoints[0], controlWorldPoints[1])
                     testWorldPoints.second shouldBe Vector2(controlWorldPoints[2], controlWorldPoints[3])
@@ -138,7 +138,7 @@ class GameLineTest :
 
             it("should translate correctly") {
                 val line = GameLine(0f, 0f, 1f, 1f)
-                line.translation(1f, 1f)
+                line.translate(1f, 1f)
                 val center = line.getCenter()
                 center shouldBe Vector2(1.5f, 1.5f)
             }

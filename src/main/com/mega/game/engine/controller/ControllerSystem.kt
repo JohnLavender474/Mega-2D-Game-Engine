@@ -6,10 +6,7 @@ import com.mega.game.engine.controller.polling.IControllerPoller
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
-/**
- * System for controllers. This system will call the appropriate methods on the actuators of the
- * controller buttons. This system requires a [IControllerPoller] to poll the controller buttons.
- */
+
 class ControllerSystem(private val poller: IControllerPoller) :
     GameSystem(ControllerComponent::class) {
 

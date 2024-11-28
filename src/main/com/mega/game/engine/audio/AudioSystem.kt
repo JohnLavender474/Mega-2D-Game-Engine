@@ -5,19 +5,7 @@ import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 import java.util.function.Consumer
 
-/**
- * A [GameSystem] that processes [AudioComponent]s. It handles sounds and music requested to be
- * played or stopped by entities.
- *
- * @property soundRequestProcessor the processor for sound requests
- * @property musicRequestProcessor the processor for music requests
- * @property soundStopper the stopper for sounds
- * @property musicStopper the stopper for music
- * @property playSoundsWhenOff whether to play sounds when the system is off
- * @property playMusicWhenOff whether to play music when the system is off
- * @property stopSoundsWhenOff whether to stop sounds when the system is off
- * @property stopMusicWhenOff whether to stop music when the system is off
- */
+
 class AudioSystem(
     private val soundRequestProcessor: (SoundRequest) -> Unit,
     private val musicRequestProcessor: (MusicRequest) -> Unit,
@@ -29,9 +17,7 @@ class AudioSystem(
     var stopMusicWhenOff: Boolean = true
 ) : GameSystem(AudioComponent::class) {
 
-    /**
-     * Convenience constructor that takes [Consumer]s for sound and music requests and stoppers.
-     */
+    
     constructor(
         soundRequestProcessor: Consumer<SoundRequest>,
         musicRequestProcessor: Consumer<MusicRequest>,

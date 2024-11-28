@@ -8,22 +8,10 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-/**
- * The parameters for defining [AsyncPathfindingSystem] timeout.
- *
- * @param timeout The timeout for the pathfinder.
- * @param timeoutUnit The unit of the timeout.
- */
+
 class TimeoutParams(val timeout: Long, val timeoutUnit: TimeUnit)
 
-/**
- * An asynchronous implementation of [AbstractPathfindingSystem]. The system continues to update until each thread
- * either succeeds, fails, or times out. Instead of waiting for each thread to complete in the same cycle, the system
- * checks for task completion in subsequent cycles, avoiding stutter.
- *
- * Timeout logic can be modified via the [timeoutParams] parameter. The default timeout value if [DEFAULT_TIMEOUT], and
- * the default time unit is [DEFAULT_TIMEOUT_UNIT].
- */
+
 class AsyncPathfindingSystem(
     factory: IPathfinderFactory,
     private val timeoutParams: TimeoutParams = TimeoutParams(

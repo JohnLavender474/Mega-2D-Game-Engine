@@ -10,9 +10,7 @@ import com.mega.game.engine.drawables.sprites.GameSprite;
 import kotlin.jvm.functions.Function0;
 import kotlin.reflect.KClass;
 
-/**
- * Interface for entities that have animations.
- */
+
 public interface IAnimatedEntity extends IGameEntity {
 
     default AnimationsComponent getAnimationsComponent() {

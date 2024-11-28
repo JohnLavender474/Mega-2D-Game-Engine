@@ -1,13 +1,6 @@
 package com.mega.game.engine.common.objects
 
-/**
- * An immutable collection that wraps a [Collection] and prevents direct modification. Of course,
- * the underlying [Collection] can still be modified, but this class is useful for clearly
- * indicating when a collection should not be modified. (Although this distinction is already
- * enforced by the [Collection] interface, this class makes it more explicit.)
- *
- * @param E the type of elements in this collection
- */
+
 open class ImmutableCollection<E>(private val collection: Collection<E>) : Collection<E> {
 
     override val size: Int

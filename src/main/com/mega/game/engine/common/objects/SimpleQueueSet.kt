@@ -4,9 +4,7 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.Queue
 import com.mega.game.engine.common.extensions.toObjectSet
 
-/**
- * A mutable iterator for [SimpleQueueSet].
- */
+
 class SimpleQueueSetIterator<T>(queueSet: SimpleQueueSet<T>) : MutableIterator<T> {
 
     private val queue = queueSet.queue
@@ -30,10 +28,7 @@ class SimpleQueueSetIterator<T>(queueSet: SimpleQueueSet<T>) : MutableIterator<T
     }
 }
 
-/**
- * A collection that combines the functionality of a [Queue] and a [Set]. Elements maintain their insertion order from
- * the queue but ensure uniqueness using the set.
- */
+
 class SimpleQueueSet<T> : MutableCollection<T>, java.util.Queue<T> {
 
     internal val queue = Queue<T>()

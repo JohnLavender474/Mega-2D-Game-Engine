@@ -5,7 +5,7 @@ import com.mega.game.engine.entities.GameEntity
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
-/** A system that updates the [MotionComponent]s of [GameEntity]s. */
+
 class MotionSystem : GameSystem(MotionComponent::class) {
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {

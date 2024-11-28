@@ -46,27 +46,6 @@ open class GameRectangle() : IGameShape2D, IRotatableShape {
         }
     }
 
-    var x: Float
-        get() = getX()
-        set(value) {
-            setX(value)
-        }
-    var y: Float
-        get() = getY()
-        set(value) {
-            setY(value)
-        }
-    var width: Float
-        get() = getWidth()
-        set(value) {
-            setWidth(value)
-        }
-    var height: Float
-        get() = getHeight()
-        set(value) {
-            setHeight(value)
-        }
-
     internal val rectangle = Rectangle()
 
     private val reusableLinesArray = gdxArrayOf(

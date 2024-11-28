@@ -1,10 +1,8 @@
 package com.mega.game.engine.updatables
 
 import com.mega.game.engine.common.objects.ImmutableCollection
-import com.mega.game.engine.entities.GameEntity
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
-
 
 class UpdatablesSystem : GameSystem(UpdatablesComponent::class) {
 
@@ -12,8 +10,8 @@ class UpdatablesSystem : GameSystem(UpdatablesComponent::class) {
         if (!on) return
 
         entities.forEach { entity ->
-            val updatablesComponent = entity.getComponent(UpdatablesComponent::class)
-            updatablesComponent?.updatables?.forEach { it.update(delta) }
+            val component = entity.getComponent(UpdatablesComponent::class)
+            component?.updatables?.values()?.forEach { it.update(delta) }
         }
     }
 }

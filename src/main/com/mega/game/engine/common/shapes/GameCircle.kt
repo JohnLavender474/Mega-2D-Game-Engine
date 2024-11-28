@@ -23,22 +23,6 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
         }
     }
 
-    var x: Float
-        get() = getX()
-        set(value) {
-            setX(value)
-        }
-    var y: Float
-        get() = getY()
-        set(value) {
-            setY(value)
-        }
-    var radius: Float
-        get() = getRadius()
-        set(value) {
-            setRadius(value)
-        }
-
     internal val libgdxCircle: Circle = Circle(x, y, radius)
     private val tempRect = Rectangle()
     private val tempVec1 = Vector2()
@@ -95,7 +79,7 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
             else -> OVERLAP_EXTENSION?.invoke(this, other) == true
         }
 
-    override fun getBoundingRectangle(out: GameRectangle) = out.set(libgdxCircle.getBoundingRectangle())
+    override fun getBoundingRectangle(out: GameRectangle) = libgdxCircle.getBoundingRectangle(out)
 
     override fun setX(x: Float): IGameShape2D {
         libgdxCircle.x = x - getRadius()

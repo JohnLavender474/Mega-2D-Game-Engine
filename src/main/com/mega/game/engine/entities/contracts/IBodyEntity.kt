@@ -1,76 +1,68 @@
-package com.mega.game.engine.entities.contracts;
+package com.mega.game.engine.entities.contracts
 
-import com.badlogic.gdx.math.Vector2;
-import com.mega.game.engine.common.ClassInstanceUtils;
-import com.mega.game.engine.common.interfaces.IPositional;
-import com.mega.game.engine.common.interfaces.ISizable;
-import com.mega.game.engine.entities.IGameEntity;
-import com.mega.game.engine.world.body.Body;
-import com.mega.game.engine.world.body.BodyComponent;
-import kotlin.reflect.KClass;
-import org.jetbrains.annotations.NotNull;
+import com.mega.game.engine.common.interfaces.IPositional
+import com.mega.game.engine.common.interfaces.ISizable
+import com.mega.game.engine.entities.IGameEntity
+import com.mega.game.engine.world.body.Body
+import com.mega.game.engine.world.body.BodyComponent
 
-import java.util.Objects;
+interface IBodyEntity : IGameEntity, IPositional, ISizable {
 
+    val bodyComponent: BodyComponent
+        get() {
+            val key = BodyComponent::class
+            return getComponent(key)!!
+        }
 
-public interface IBodyEntity extends IGameEntity, IPositional, ISizable {
+    val body: Body
+        get() = bodyComponent.body
 
-    default Body getBody() {
-        KClass<BodyComponent> key = ClassInstanceUtils.convertToKClass(BodyComponent.class);
-        return Objects.requireNonNull(getComponent(key)).getBody();
+    override fun getX(): Float {
+        return this.body.getX()
     }
 
-    default float getX() {
-        return getBody().getX();
+    override fun setX(x: Float) {
+        this.body.setX(x)
     }
 
-    default void setX(float x) {
-        getBody().setX(x);
+    override fun getY(): Float {
+        return this.body.getY()
     }
 
-    default float getY() {
-        return getBody().getY();
+    override fun setY(y: Float) {
+        this.body.setY(y)
     }
 
-    default void setY(float y) {
-        getBody().setY(y);
+    override fun setPosition(x: Float, y: Float) {
+        this.body.setPosition(x, y)
     }
 
-    default void setPosition(float x, float y) {
-        getBody().setPosition(x, y);
+    override fun getWidth(): Float {
+        return this.body.getWidth()
     }
 
-    @NotNull
-    default Vector2 getPosition() {
-        return getBody().getPosition();
+    override fun setWidth(width: Float) {
+        this.body.setWidth(width)
     }
 
-    default float getWidth() {
-        return getBody().getWidth();
+    override fun getHeight(): Float {
+        return this.body.getHeight()
     }
 
-    default void setWidth(float width) {
-        getBody().setWidth(width);
+    override fun setHeight(height: Float) {
+        this.body.setHeight(height)
     }
 
-    default float getHeight() {
-        return getBody().getHeight();
+    override fun setSize(width: Float, height: Float) {
+        this.body.setSize(width, height)
     }
 
-    default void setHeight(float height) {
-        getBody().setHeight(height);
+    override fun translateSize(width: Float, height: Float) {
+        this.body.setWidth(this.body.getWidth() + width)
+        this.body.setHeight(this.body.getHeight() + height)
     }
 
-    default void setSize(float width, float height) {
-        getBody().setSize(width, height);
-    }
-
-    default void translateSize(float width, float height) {
-        getBody().setWidth(getBody().getWidth() + width);
-        getBody().setHeight(getBody().getHeight() + height);
-    }
-
-    default void translate(float x, float y) {
-        getBody().translation(x, y);
+    override fun translate(x: Float, y: Float) {
+        this.body.translate(x, y)
     }
 }

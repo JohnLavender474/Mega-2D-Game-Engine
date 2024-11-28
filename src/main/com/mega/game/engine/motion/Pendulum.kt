@@ -2,10 +2,7 @@ package com.mega.game.engine.motion
 
 import com.badlogic.gdx.math.MathUtils.*
 import com.badlogic.gdx.math.Vector2
-import com.mega.game.engine.motion.Pendulum.Companion.DEFAULT_DISTURBANCE_THRESHOLD
-import com.mega.game.engine.motion.Pendulum.Companion.DEFAULT_RANDOM_FORCE
 import kotlin.math.abs
-
 
 class Pendulum(
     var length: Float,
@@ -23,7 +20,6 @@ class Pendulum(
         const val DEFAULT_DISTURBANCE_THRESHOLD = 0.001f
         const val DEFAULT_RANDOM_FORCE = 0.001f
     }
-
     
     var angle = defaultAngle
 
@@ -31,7 +27,6 @@ class Pendulum(
     private var angleVel = 0f
     private var angleAccel = 0f
     private var accumulator = 0f
-
     
     fun getPointFromAnchor(distance: Float): Vector2 {
         val point = Vector2()
@@ -40,11 +35,9 @@ class Pendulum(
         return point
     }
 
-    
     fun applyForce(force: Float) {
         angleVel += force
     }
-
     
     fun getSwingDirection() = when {
         angleVel < 0 -> 1
@@ -52,10 +45,8 @@ class Pendulum(
         else -> 0
     }
 
-    
-    override fun getMotionValue() = Vector2(endPoint)
+    override fun getMotionValue(out: Vector2): Vector2 = out.set(endPoint)
 
-    
     override fun update(delta: Float) {
         accumulator += delta
         while (accumulator >= targetFPS) {
@@ -69,7 +60,6 @@ class Pendulum(
         endPoint.set(getPointFromAnchor(length))
     }
 
-    
     override fun reset() {
         angleVel = 0f
         angleAccel = 0f

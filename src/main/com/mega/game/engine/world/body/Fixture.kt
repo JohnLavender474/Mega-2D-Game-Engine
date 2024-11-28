@@ -10,9 +10,9 @@ import com.mega.game.engine.common.shapes.IRotatableShape
 
 class Fixture(
     var body: Body,
-    var type: Any,
+    type: Any,
     rawShape: IGameShape2D,
-    var active: Boolean = true,
+    active: Boolean = true,
     var attachedToBody: Boolean = true,
     var bodyAttachmentPosition: Position = Position.CENTER,
     var offsetFromBodyAttachment: Vector2 = Vector2(),
@@ -28,6 +28,8 @@ class Fixture(
             field = value
             adjustedShape = null
         }
+    private var fixtureType = type
+    private var isActive = active
     private var adjustedShape: IGameShape2D? = null
 
     private val reusableShapeProps = Properties()
@@ -57,16 +59,20 @@ class Fixture(
         return copy
     }
 
-    override fun getType() = type
+    override fun getType() = fixtureType
 
-    override fun setActive(active: Boolean) {
-        this.active = active
+    override fun setType(type: Any) {
+        fixtureType = type
     }
 
-    override fun isActive() = active
+    override fun setActive(active: Boolean) {
+        isActive = active
+    }
+
+    override fun isActive() = isActive
 
     override fun toString() =
-        "Fixture(raw_shape=$rawShape, type=$type, active=$active, attachedToBody=$attachedToBody, " +
+        "Fixture(raw_shape=$rawShape, type=$fixtureType, active=$isActive, attachedToBody=$attachedToBody, " +
                 "offsetFromBodyCenter=$offsetFromBodyAttachment, properties=$properties)"
 
     fun overlaps(other: IGameShape2D) = getShape().overlaps(other)
@@ -77,7 +83,7 @@ class Fixture(
         body,
         getType(),
         rawShape.copy(),
-        active,
+        isActive,
         attachedToBody,
         bodyAttachmentPosition,
         offsetFromBodyAttachment.cpy(),

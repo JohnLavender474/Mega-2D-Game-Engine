@@ -4,9 +4,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.extensions.toGdxArray
 
-
 data class TrajectoryDefinition(val xVelocity: Float, val yVelocity: Float, val time: Float)
-
 
 class Trajectory(
     private val trajectoryDefinitions: Array<TrajectoryDefinition>,
@@ -14,7 +12,6 @@ class Trajectory(
 ) : IMotion {
 
     companion object {
-
 
         fun parseTrajectoryDefinitions(trajectoryDefinitionString: String) =
             trajectoryDefinitionString
@@ -31,16 +28,13 @@ class Trajectory(
     private var duration = 0f
     private var index = 0
 
-
     constructor(
         trajectoryDefinitions: String,
         ppm: Int = 1
     ) : this(parseTrajectoryDefinitions(trajectoryDefinitions), ppm)
 
-
-    override fun getMotionValue() =
-        currentDefinition?.let { Vector2(it.xVelocity, it.yVelocity).scl(ppm.toFloat()) }
-
+    override fun getMotionValue(out: Vector2) =
+        currentDefinition?.let { out.set(it.xVelocity, it.yVelocity).scl(ppm.toFloat()) }
 
     override fun update(delta: Float) {
         duration += delta
@@ -56,7 +50,6 @@ class Trajectory(
             }
         }
     }
-
 
     override fun reset() {
         duration = 0f

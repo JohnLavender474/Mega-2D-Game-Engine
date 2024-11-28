@@ -23,7 +23,7 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
         }
     }
 
-    val libgdxPolygon = Polygon()
+    internal val libgdxPolygon = Polygon()
 
     override var originX: Float
         get() = libgdxPolygon.originX
@@ -108,11 +108,15 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
         return this
     }
 
-    fun getTransformedVertices(out: Array<Float>) =
+    fun getTransformedVertices(out: Array<Float>): Array<Float> {
         libgdxPolygon.transformedVertices.forEach { out.add(it) }
+        return out
+    }
 
-    fun getLocalVertices(out: Array<Float>) =
+    fun getLocalVertices(out: Array<Float>): Array<Float> {
         libgdxPolygon.vertices.forEach { out.add(it) }
+        return out
+    }
 
     fun setLocalVertices(vertices: FloatArray) {
         libgdxPolygon.vertices = vertices
@@ -198,9 +202,9 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
         return this
     }
 
-    override fun getWidth() = getBoundingRectangle(tempRect).width
+    override fun getWidth() = getBoundingRectangle(tempRect).getWidth()
 
-    override fun getHeight() = getBoundingRectangle(tempRect).height
+    override fun getHeight() = getBoundingRectangle(tempRect).getHeight()
 
     override fun contains(p0: Vector2) = libgdxPolygon.contains(p0)
 

@@ -6,7 +6,6 @@ import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
 import kotlin.math.min
 
-
 class Timer(_duration: Float) : Updatable, Resettable {
 
     companion object {
@@ -28,20 +27,16 @@ class Timer(_duration: Float) : Updatable, Resettable {
 
     private var firstUpdate = true
 
-    
     constructor() : this(DEFAULT_TIME)
 
-    
     constructor(
         duration: Float, vararg _runnables: TimeMarkedRunnable
     ) : this(duration, Array(_runnables))
 
-    
     constructor(
         duration: Float, _runnables: Array<TimeMarkedRunnable>
     ) : this(duration, false, _runnables)
 
-    
     constructor(
         duration: Float, setToEnd: Boolean, _runnables: Array<TimeMarkedRunnable>
     ) : this(duration) {
@@ -61,7 +56,6 @@ class Timer(_duration: Float) : Updatable, Resettable {
         if (justFinished) runOnFinished?.invoke()
     }
 
-    
     override fun reset() {
         time = 0f
         justFinished = false
@@ -72,25 +66,19 @@ class Timer(_duration: Float) : Updatable, Resettable {
         temp.forEach { runnableQueue.addLast(it) }
     }
 
-    
     fun resetDuration(duration: Float) {
         this.duration = duration
         reset()
     }
 
-    
     fun getRatio() = if (duration > 0f) min(time / duration, 1f) else 0f
 
-    
     fun isAtBeginning() = time == 0f
 
-    
     fun isFinished() = time >= duration
 
-    
     fun isJustFinished() = justFinished
 
-    
     fun setRunnables(_runnables: Array<TimeMarkedRunnable>): Timer {
         runnables.clear()
         runnables.addAll(_runnables)
@@ -103,14 +91,12 @@ class Timer(_duration: Float) : Updatable, Resettable {
         return this
     }
 
-    
     fun clearRunnables(): Timer {
         runnables.clear()
         runnableQueue.clear()
         return this
     }
 
-    
     fun setToEnd(allowJustFinished: Boolean = true): Timer {
         val oldTime = time
         time = duration

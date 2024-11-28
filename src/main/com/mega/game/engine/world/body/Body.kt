@@ -18,7 +18,7 @@ class Body(
     y: Float = 0f,
     width: Float = 0f,
     height: Float = 0f,
-    var physics: PhysicsData = PhysicsData(),
+    override var physics: PhysicsData = PhysicsData(),
     var fixtures: Array<GamePair<Any, IFixture>> = Array(),
     var preProcess: OrderedMap<Any, () -> Unit> = OrderedMap(),
     var postProcess: OrderedMap<Any, () -> Unit> = OrderedMap(),
@@ -31,35 +31,49 @@ class Body(
         const val TAG = "Body"
     }
 
-    override var x: Float
-        get() = bounds.getX()
-        set(value) {
-            bounds.setX(value)
-        }
-    override var y: Float
-        get() = bounds.getY()
-        set(value) {
-            bounds.setY(value)
-        }
-    override var width: Float
-        get() = bounds.getWidth()
-        set(value) {
-            bounds.setWidth(value)
-        }
-    override var height: Float
-        get() = bounds.getHeight()
-        set(value) {
-            bounds.setHeight(value)
-        }
-
     private val bounds = GameRectangle(x, y, width, height)
     private val tempVec1 = Vector2()
 
     override fun getBounds(out: GameRectangle): GameRectangle {
         out.set(bounds)
         val center = bounds.getCenter(tempVec1)
-        out.setRotation(direction.rotation, center.x, center.y, out)
+        out.setRotation(direction.rotation, center.x, center.y)
         return out
+    }
+
+    override fun setX(x: Float) {
+        bounds.setX(x)
+    }
+
+    override fun setY(y: Float) {
+        bounds.setY(y)
+    }
+
+    override fun setPosition(x: Float, y: Float) {
+        setX(x)
+        setY(y)
+    }
+
+    override fun getX() = bounds.getX()
+
+    override fun getY() = bounds.getY()
+
+    override fun setCenter(x: Float, y: Float) {
+        bounds.setCenter(x, y)
+    }
+
+    override fun getCenter(out: Vector2) = bounds.getCenter(out)
+
+    override fun getWidth() = bounds.getWidth()
+
+    override fun getHeight() = bounds.getHeight()
+
+    override fun setWidth(width: Float) {
+        bounds.setWidth(width)
+    }
+
+    override fun setHeight(height: Float) {
+        bounds.setHeight(height)
     }
 
     override fun addFixture(fixture: IFixture) = fixtures.add(fixture.getType() pairTo fixture)
@@ -89,8 +103,8 @@ class Body(
         physics.velocity.y =
             physics.velocity.y.coerceIn(-abs(physics.velocityClamp.y), abs(physics.velocityClamp.y))
 
-        x += physics.velocity.x * delta
-        y += physics.velocity.y * delta
+        bounds.translate(physics.velocity.x * delta, 0f)
+        bounds.translate(0f, physics.velocity.y * delta)
     }
 
     override fun postProcess() = postProcess.values().forEach { it.invoke() }

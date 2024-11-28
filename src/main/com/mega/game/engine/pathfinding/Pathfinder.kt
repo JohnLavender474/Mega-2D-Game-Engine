@@ -1,5 +1,6 @@
 package com.mega.game.engine.pathfinding
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.extensions.gdxArrayOf
 import com.mega.game.engine.common.objects.IntPair
@@ -51,11 +52,15 @@ class Pathfinder(
             "Node{x=$x,y=$y,distance=$distance,discovered=$discovered,previous={${previous?.let { "${it.x},${it.y}" }}}"
     }
 
+    private val out1 = Vector2()
+    private val out2 = Vector2()
+
     override fun call(): PathfinderResult {
         val map = HashMap<IntPair, Node>()
 
         if (startCoordinate == targetCoordinate ||
-            (!returnBestPathOnFailure && startCoordinate.toVector2().dst(targetCoordinate.toVector2()) > maxDistance)
+            (!returnBestPathOnFailure && startCoordinate.toVector2(out1)
+                .dst(targetCoordinate.toVector2(out2)) > maxDistance)
         ) return PathfinderResult(null, true)
 
         val startNode = Node(startCoordinate)

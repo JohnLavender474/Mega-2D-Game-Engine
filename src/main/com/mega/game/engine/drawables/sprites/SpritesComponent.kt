@@ -10,28 +10,20 @@ import com.mega.game.engine.components.IGameComponent
 
 
 class SpritesComponent(
-    val sprites: OrderedMap<String, GameSprite> = OrderedMap(),
-    val updatables: ObjectMap<String, UpdateFunction<GameSprite>> = ObjectMap()
+    val sprites: OrderedMap<Any, GameSprite> = OrderedMap(),
+    val updatables: ObjectMap<Any, UpdateFunction<GameSprite>> = ObjectMap()
 ) :
     IGameComponent, Updatable {
 
     companion object {
-        const val SPRITE = "sprite"
+        const val DEFAULT_KEY = "default_key"
     }
 
-
-    constructor(vararg _sprites: GamePair<String, GameSprite>) : this(OrderedMap<String, GameSprite>().apply {
-        _sprites.forEach {
-            put(
-                it.first,
-                it.second
-            )
-        }
+    constructor(vararg sprites: GamePair<Any, GameSprite>) : this(OrderedMap<Any, GameSprite>().apply {
+        sprites.forEach { put(it.first, it.second) }
     })
 
-
-    constructor(sprite: GameSprite) : this(SPRITE pairTo  sprite)
-
+    constructor(sprite: GameSprite) : this(DEFAULT_KEY pairTo sprite)
 
     override fun update(delta: Float) {
         updatables.forEach { e ->
@@ -41,18 +33,23 @@ class SpritesComponent(
         }
     }
 
+    fun putSprite(sprite: GameSprite) = putSprite(DEFAULT_KEY, sprite)
+
+    fun putSprite(key: Any, sprite: GameSprite): GameSprite? = sprites.put(key, sprite)
+
+    fun containsSprite(key: Any) = sprites.containsKey(key)
+
+    fun removeSprite(key: Any): GameSprite? = sprites.remove(key)
 
     fun putUpdateFunction(function: UpdateFunction<GameSprite>) {
-        putUpdateFunction(SPRITE, function)
+        putUpdateFunction(DEFAULT_KEY, function)
     }
 
-
-    fun putUpdateFunction(key: String, function: UpdateFunction<GameSprite>) {
+    fun putUpdateFunction(key: Any, function: UpdateFunction<GameSprite>) {
         updatables.put(key, function)
     }
 
-
-    fun removeUpdateFunction(key: String) {
+    fun removeUpdateFunction(key: Any) {
         updatables.remove(key)
     }
 }

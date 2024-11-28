@@ -9,6 +9,7 @@ import com.mega.game.engine.common.objects.ImmutableCollection
 import com.mega.game.engine.common.objects.Pool
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.shapes.GameRectangle
+import com.mega.game.engine.common.shapes.IGameShape2D
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 import com.mega.game.engine.world.body.BodyComponent
@@ -37,15 +38,24 @@ class WorldSystem(
         if (fixedStepScalar <= 0f) throw IllegalArgumentException("Value of fixedStepScalar must be greater than 0")
     }
 
-    private class DummyFixture : IFixture {
+    internal class DummyFixture : IFixture {
         override fun getShape() =
             throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
+
+        override fun setShape(shape: IGameShape2D) =
+            throw IllegalStateException("The `setShape` method should never be called on a DummyFixture instance")
+
+        override fun setActive(active: Boolean) =
+            throw IllegalStateException("The `setShape` method should never be called on a DummyFixture instance")
 
         override fun isActive() =
             throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
 
         override fun getType() =
             throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
+
+        override fun setType(type: Any) =
+            throw IllegalStateException("The `setType` method should never be called on a DummyFixture instance")
 
         override val properties: Properties
             get() = throw IllegalStateException("The `getType` method should never be called on a DummyFixture instance")
@@ -55,14 +65,12 @@ class WorldSystem(
         get() = worldContainerSupplier()
             ?: throw IllegalStateException("World container supplier must supply a non-null value for WorldSystem")
 
-    private val reusableBodyArray = Array<IBody>()
-
     private val contactPool = Pool(supplier = { Contact(DummyFixture(), DummyFixture()) })
-
     private var priorContactSet = OrderedSet<Contact>()
     private var currentContactSet = OrderedSet<Contact>()
     private var accumulator = 0f
 
+    private val reusableBodyArray = Array<IBody>()
     private val reusableGameRect = GameRectangle()
     private val out1 = GameRectangle()
     private val out2 = GameRectangle()
@@ -102,12 +110,12 @@ class WorldSystem(
         worldContainerSupplier()?.clear()
     }
 
-    private fun filterContact(fixture1: IFixture, fixture2: IFixture) =
+    internal fun filterContact(fixture1: IFixture, fixture2: IFixture) =
         (fixture1 != fixture2) &&
                 (contactFilterMap.get(fixture1.getType())?.contains(fixture2.getType()) == true ||
                         contactFilterMap.get(fixture2.getType())?.contains(fixture1.getType()) == true)
 
-    private fun cycle(bodies: Array<IBody>, delta: Float) {
+    internal fun cycle(bodies: Array<IBody>, delta: Float) {
         bodies.forEach { body -> body.preProcess() }
         worldContainer.clear()
         bodies.forEach { body ->
@@ -121,7 +129,7 @@ class WorldSystem(
         bodies.forEach { body -> body.postProcess() }
     }
 
-    private fun processContacts() {
+    internal fun processContacts() {
         currentContactSet.forEach {
             if (priorContactSet.contains(it)) contactListener.continueContact(it, fixedStep)
             else contactListener.beginContact(it, fixedStep)
@@ -139,7 +147,7 @@ class WorldSystem(
         currentContactSet.clear()
     }
 
-    private fun collectContacts(body: IBody, contactSet: ObjectSet<Contact>) = body.forEachFixture { fixture ->
+    internal fun collectContacts(body: IBody, contactSet: ObjectSet<Contact>) = body.forEachFixture { fixture ->
         if (fixture.isActive() && contactFilterMap.containsKey(fixture.getType())) {
             fixture.getShape().getBoundingRectangle(reusableGameRect)
             val worldGraphResults = worldContainer.getFixtures(
@@ -161,7 +169,7 @@ class WorldSystem(
         }
     }
 
-    private fun resolveCollisions(body: IBody) {
+    internal fun resolveCollisions(body: IBody) {
         val bounds = body.getBounds(out1)
         worldContainer.getBodies(
             MathUtils.floor(bounds.getX() / ppm),

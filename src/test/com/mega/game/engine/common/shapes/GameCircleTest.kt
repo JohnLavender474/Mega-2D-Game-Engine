@@ -1,12 +1,9 @@
 package com.mega.game.engine.common.shapes
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.extensions.round
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.mockk
-import io.mockk.verify
 
 class GameCircleTest :
     DescribeSpec({
@@ -65,11 +62,5 @@ class GameCircleTest :
             it("should contain a point") { gameCircle.contains(Vector2(10f, 10f)) shouldBe true }
 
             it("should not contain a point") { gameCircle.contains(Vector2(20f, 20f)) shouldBe false }
-
-            it("should draw the circle using a ShapeRenderer") {
-                val shapeRenderer = mockk<ShapeRenderer>(relaxed = true)
-                gameCircle.draw(shapeRenderer)
-                verify { shapeRenderer.circle(10f, 10f, 5f) }
-            }
         }
     })

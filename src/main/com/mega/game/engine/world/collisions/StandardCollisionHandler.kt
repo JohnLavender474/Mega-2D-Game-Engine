@@ -3,9 +3,8 @@ package com.mega.game.engine.world.collisions
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.mega.game.engine.common.shapes.GameRectangle
-import com.mega.game.engine.world.body.Body
 import com.mega.game.engine.world.body.BodyType
-
+import com.mega.game.engine.world.body.IBody
 
 object StandardCollisionHandler : ICollisionHandler {
 
@@ -13,12 +12,10 @@ object StandardCollisionHandler : ICollisionHandler {
     private val rectOut1 = Rectangle()
     private val rectOut2 = Rectangle()
     private val overlap = Rectangle()
-    
-    override fun handleCollision(body1: Body, body2: Body): Boolean {
-        if (!body1.physics.collisionOn || !body2.physics.collisionOn) return false
 
-        val dynamicBody: Body
-        val staticBody: Body
+    override fun handleCollision(body1: IBody, body2: IBody): Boolean {
+        val dynamicBody: IBody
+        val staticBody: IBody
 
         if (body1.type == BodyType.DYNAMIC && body2.type == BodyType.STATIC) {
             dynamicBody = body1
@@ -35,14 +32,14 @@ object StandardCollisionHandler : ICollisionHandler {
                 if (dynamicBody.physics.receiveFrictionX)
                     dynamicBody.physics.frictionOnSelf.x += staticBody.physics.frictionToApply.x
 
-                if (dynamicBody.y > staticBody.y) dynamicBody.y += overlap.height
-                else dynamicBody.y -= overlap.height
+                if (dynamicBody.getY() > staticBody.getY()) dynamicBody.translate(0f, overlap.height)
+                else dynamicBody.translate(0f, -overlap.height)
             } else {
                 if (dynamicBody.physics.receiveFrictionY)
                     dynamicBody.physics.frictionOnSelf.y += staticBody.physics.frictionToApply.y
 
-                if (dynamicBody.x > staticBody.x) dynamicBody.x += overlap.width
-                else dynamicBody.x -= overlap.width
+                if (dynamicBody.getX() > staticBody.getX()) dynamicBody.translate(overlap.width, 0f)
+                else dynamicBody.translate(-overlap.width, 0f)
             }
 
             return true

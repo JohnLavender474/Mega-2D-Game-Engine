@@ -9,7 +9,6 @@ import java.util.function.Consumer
 class SpritesSystem(protected val spritesCollector: (GameSprite) -> Unit) :
     GameSystem(SpritesComponent::class) {
 
-
     constructor(spritesCollector: Consumer<GameSprite>) : this(spritesCollector::accept)
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {

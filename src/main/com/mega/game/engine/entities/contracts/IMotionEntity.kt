@@ -1,56 +1,45 @@
-package com.mega.game.engine.entities.contracts;
+package com.mega.game.engine.entities.contracts
 
-import com.badlogic.gdx.utils.OrderedMap;
-import com.mega.game.engine.common.ClassInstanceUtils;
-import com.mega.game.engine.entities.IGameEntity;
-import com.mega.game.engine.motion.IMotion;
-import com.mega.game.engine.motion.MotionComponent;
-import kotlin.reflect.KClass;
+import com.badlogic.gdx.utils.OrderedMap
+import com.mega.game.engine.entities.IGameEntity
+import com.mega.game.engine.motion.IMotion
+import com.mega.game.engine.motion.MotionComponent
+import com.mega.game.engine.motion.MotionComponent.MotionDefinition
 
+interface IMotionEntity : IGameEntity {
 
-public interface IMotionEntity extends IGameEntity {
+    val motionComponent: MotionComponent
+        get() {
+            val key = MotionComponent::class
+            return getComponent(key)!!
+        }
 
+    val motionDefinitions: OrderedMap<Any, MotionDefinition>
+        get() = this.motionComponent.definitions
 
-    default MotionComponent getMotionComponent() {
-        KClass<MotionComponent> key = ClassInstanceUtils.convertToKClass(MotionComponent.class);
-        return getComponent(key);
+    fun getMotionDefinition(key: Any): MotionDefinition? {
+        return this.motionDefinitions.get(key)
     }
 
-
-    default OrderedMap<Object, MotionComponent.MotionDefinition> getMotionDefinitions() {
-        return getMotionComponent().getDefinitions();
+    fun getMotion(key: Any): IMotion? {
+        val definition = getMotionDefinition(key)
+        return definition?.motion
     }
 
-
-    default MotionComponent.MotionDefinition getMotionDefinition(Object key) {
-        return getMotionDefinitions().get(key);
+    fun putMotionDefinition(key: Any, definition: MotionDefinition): MotionDefinition? {
+        return this.motionComponent.put(key, definition)
     }
 
-
-    default IMotion getMotion(Object key) {
-        MotionComponent.MotionDefinition definition = getMotionDefinition(key);
-        return definition != null ? definition.getMotion() : null;
+    fun removeMotionDefinition(key: Any): MotionDefinition? {
+        return this.motionDefinitions.remove(key)
     }
 
-
-    default MotionComponent.MotionDefinition putMotionDefinition(Object key,
-                                                                 MotionComponent.MotionDefinition definition) {
-        return getMotionComponent().put(key, definition);
+    fun clearMotionDefinitions() {
+        this.motionDefinitions.clear()
     }
 
-
-    default MotionComponent.MotionDefinition removeMotionDefinition(Object key) {
-        return getMotionDefinitions().remove(key);
-    }
-
-
-    default void clearMotionDefinitions() {
-        getMotionDefinitions().clear();
-    }
-
-
-    default void resetMotionComponent() {
-        getMotionComponent().reset();
+    fun resetMotionComponent() {
+        this.motionComponent.reset()
     }
 }
 

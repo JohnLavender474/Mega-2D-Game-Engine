@@ -4,14 +4,12 @@ import com.mega.game.engine.controller.polling.IControllerPoller
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
-
 class ButtonActuator(
     var onJustPressed: ((IControllerPoller) -> Unit)? = null,
     var onPressContinued: ((IControllerPoller, Float) -> Unit)? = null,
     var onJustReleased: ((IControllerPoller) -> Unit)? = null,
     var onReleaseContinued: ((IControllerPoller, Float) -> Unit)? = null
 ) : IButtonActuator {
-
 
     constructor(
         onJustPressed: Consumer<IControllerPoller>? = null,

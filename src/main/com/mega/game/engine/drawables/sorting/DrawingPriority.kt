@@ -1,12 +1,8 @@
 package com.mega.game.engine.drawables.sorting
 
-import com.mega.game.engine.drawables.IDrawable
-
-
 data class DrawingPriority(var section: DrawingSection, var value: Int) :
     Comparable<DrawingPriority> {
 
-    
     override fun compareTo(other: DrawingPriority): Int {
         val sectionCompare = section.compareTo(other.section)
         return if (sectionCompare == 0) value.compareTo(other.value) else sectionCompare

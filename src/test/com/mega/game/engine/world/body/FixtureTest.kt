@@ -9,15 +9,17 @@ class FixtureTest :
     DescribeSpec({
         describe("Fixture class") {
             val shape = GameRectangle(0f, 0f, 10f, 10f)
-            val fixtureLabel = "type"
+            val type = "type"
             val offset = Vector2(5f, 5f)
             val body = Body(BodyType.DYNAMIC)
 
-            val fixture = Fixture(body, fixtureLabel, shape, offsetFromBodyAttachment = offset)
+            val fixture = Fixture(body, type, shape, offsetFromBodyAttachment = offset)
+
+            val outRect = GameRectangle()
+            val outVec = Vector2()
 
             it("should have the correct initial properties") {
-                fixture.rawShape shouldBe shape
-                fixture.type shouldBe fixtureLabel
+                fixture.type shouldBe type
                 fixture.active shouldBe true
                 fixture.attachedToBody shouldBe true
                 fixture.offsetFromBodyAttachment shouldBe offset
@@ -33,7 +35,7 @@ class FixtureTest :
             }
 
             it("should return the correct shape") {
-                val bodyCenter = body.getBounds().getCenter()
+                val bodyCenter = body.getBounds(outRect).getCenter(outVec)
                 val expectedShape = shape.copy().setCenter(bodyCenter).translate(offset)
                 val actualShape = fixture.getShape()
 

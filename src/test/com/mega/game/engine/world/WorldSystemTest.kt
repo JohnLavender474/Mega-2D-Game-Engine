@@ -27,6 +27,8 @@ class WorldSystemTest : DescribeSpec({
     lateinit var body: Body
     lateinit var worldSystem: WorldSystem
 
+    val outVec = Vector2()
+
     beforeEach {
         body = Body(BodyType.DYNAMIC)
         val bodyComponent = BodyComponent(body)
@@ -72,7 +74,7 @@ class WorldSystemTest : DescribeSpec({
         body.physics.gravity.set(-0.5f, -1f)
         worldSystem.update(fixedStep)
 
-        body.getPosition().epsilonEquals(
+        body.getPosition(outVec).epsilonEquals(
             Vector2((5f - 0.5f) * fixedStep, (10f - 1f) * fixedStep), 0.01f
         ) shouldBe true
     }
@@ -103,7 +105,7 @@ class WorldSystemTest : DescribeSpec({
         }
         body.addFixture(fixture)
         worldSystem.update(fixedStep)
-        fixture.getShape().getCenter() shouldBe Vector2(5f, 5f)
+        fixture.getShape().getCenter(outVec) shouldBe Vector2(5f, 5f)
     }
 
     it("should update fixture positions correctly - 2") {
@@ -113,6 +115,6 @@ class WorldSystemTest : DescribeSpec({
         }
         body.addFixture(fixture)
         worldSystem.update(fixedStep)
-        fixture.getShape().getCenter() shouldBe Vector2(10f, 10f)
+        fixture.getShape().getCenter(outVec) shouldBe Vector2(10f, 10f)
     }
 })

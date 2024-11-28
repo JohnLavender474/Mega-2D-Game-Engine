@@ -2,9 +2,7 @@ package com.mega.game.engine.motion
 
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.interfaces.ICopyable
-import com.mega.game.engine.common.interfaces.Updatable
 import kotlin.math.pow
-
 
 class ArcMotion(
     startPosition: Vector2,
@@ -15,7 +13,6 @@ class ArcMotion(
 ) : IMotion, ICopyable<ArcMotion> {
 
     companion object {
-
 
         fun computeBezierPoint(t: Float, arcFactor: Float, startPosition: Vector2, targetPosition: Vector2): Vector2 {
             val controlPoint = Vector2(
@@ -32,31 +29,22 @@ class ArcMotion(
         }
     }
 
-
-
-    var startPosition = startPosition.cpy()
+    var startPosition: Vector2 = startPosition.cpy()
         set(value) {
             field = value.cpy()
             reset()
         }
-
-
-    var targetPosition = targetPosition.cpy()
+    var targetPosition: Vector2 = targetPosition.cpy()
         set(value) {
             field = value.cpy()
             reset()
         }
-
-
     var distanceCovered = 0f
         private set
-
-
     val totalDistance: Float
         get() = startPosition.dst(targetPosition)
 
     private var currentPosition = startPosition.cpy()
-
 
     override fun update(delta: Float) {
         distanceCovered += speed * delta
@@ -70,20 +58,14 @@ class ArcMotion(
         currentPosition = computeBezierPoint(t, arcFactor, startPosition, targetPosition)
     }
 
+    fun compute(t: Float) = computeBezierPoint(t, arcFactor, startPosition, targetPosition)
 
-    fun compute(t: Float): Vector2 {
-        return computeBezierPoint(t, arcFactor, startPosition, targetPosition)
-    }
-
-
-    override fun getMotionValue(): Vector2? = currentPosition.cpy()
-
+    override fun getMotionValue(out: Vector2): Vector2? = out.set(currentPosition)
 
     override fun reset() {
         currentPosition = startPosition.cpy()
         distanceCovered = 0f
     }
-
 
     override fun copy() = ArcMotion(startPosition.cpy(), targetPosition.cpy(), speed, arcFactor, continueBeyondTarget)
 }

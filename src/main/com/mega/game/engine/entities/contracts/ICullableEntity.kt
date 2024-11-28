@@ -1,28 +1,23 @@
-package com.mega.game.engine.entities.contracts;
+package com.mega.game.engine.entities.contracts
 
-import com.mega.game.engine.common.ClassInstanceUtils;
-import com.mega.game.engine.entities.IGameEntity;
-import com.mega.game.engine.cullables.CullablesComponent;
-import com.mega.game.engine.cullables.ICullable;
-import kotlin.reflect.KClass;
+import com.mega.game.engine.cullables.CullablesComponent
+import com.mega.game.engine.cullables.ICullable
+import com.mega.game.engine.entities.IGameEntity
 
+interface ICullableEntity : IGameEntity {
 
-public interface ICullableEntity extends IGameEntity {
+    val cullablesComponent: CullablesComponent
+        get() {
+            val key = CullablesComponent::class
+            return getComponent(key)!!
+        }
 
-
-    default CullablesComponent getCullablesComponent() {
-        KClass<CullablesComponent> key = ClassInstanceUtils.convertToKClass(CullablesComponent.class);
-        return getComponent(key);
+    fun putCullable(key: String, cullable: ICullable) {
+        this.cullablesComponent.put(key, cullable)
     }
 
-
-    default void putCullable(String key, ICullable cullable) {
-        getCullablesComponent().put(key, cullable);
-    }
-
-
-    default void removeCullable(String key) {
-        getCullablesComponent().remove(key);
+    fun removeCullable(key: String) {
+        this.cullablesComponent.remove(key)
     }
 }
 

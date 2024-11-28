@@ -1,40 +1,31 @@
-package com.mega.game.engine.entities.contracts;
+package com.mega.game.engine.entities.contracts
 
-import com.badlogic.gdx.audio.Music;
-import com.mega.game.engine.audio.AudioComponent;
-import com.mega.game.engine.common.ClassInstanceUtils;
-import com.mega.game.engine.entities.IGameEntity;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import kotlin.reflect.KClass;
+import com.badlogic.gdx.audio.Music
+import com.mega.game.engine.audio.AudioComponent
+import com.mega.game.engine.entities.IGameEntity
 
+interface IAudioEntity : IGameEntity {
 
-public interface IAudioEntity extends IGameEntity {
+    val audioComponent: AudioComponent
+        get() {
+            val key = AudioComponent::class
+            return getComponent(key)!!
+        }
 
-    
-    default AudioComponent getAudioComponent() {
-        KClass<AudioComponent> key = ClassInstanceUtils.convertToKClass(AudioComponent.class);
-        return getComponent(key);
+    fun requestToPlaySound(source: Any, loop: Boolean) {
+        this.audioComponent.requestToPlaySound(source, loop)
     }
 
-    
-    default void requestToPlaySound(Object source, boolean loop) {
-        getAudioComponent().requestToPlaySound(source, loop);
+    fun requestToPlayMusic(source: Any, loop: Boolean, onCompletionListener: ((Music) -> Unit)?) {
+        this.audioComponent.requestToPlayMusic(source, loop, onCompletionListener)
     }
 
-    
-    default void requestToPlayMusic(Object source, boolean loop, Function1<? super Music, Unit> onCompletionListener) {
-        getAudioComponent().requestToPlayMusic(source, loop, onCompletionListener);
+    fun stopSound(source: Any?) {
+        this.audioComponent.stopSoundRequests.add(source)
     }
 
-    
-    default void stopSound(Object source) {
-        getAudioComponent().getStopSoundRequests().add(source);
-    }
-
-    
-    default void stopMusic(Object source) {
-        getAudioComponent().getStopMusicRequests().add(source);
+    fun stopMusic(source: Any?) {
+        this.audioComponent.stopMusicRequests.add(source)
     }
 }
 

@@ -41,8 +41,8 @@ class SimpleGridWorldContainer(
         } else value
 
     private fun getMinsAndMaxes(bounds: GameRectangle): MinsAndMaxes {
-        val adjustedMinX = adjustCoordinateIfNeeded(bounds.x, true)
-        val adjustedMinY = adjustCoordinateIfNeeded(bounds.y, true)
+        val adjustedMinX = adjustCoordinateIfNeeded(bounds.getX(), true)
+        val adjustedMinY = adjustCoordinateIfNeeded(bounds.getY(), true)
         val adjustedMaxX = adjustCoordinateIfNeeded(bounds.getMaxX(), false)
         val adjustedMaxY = adjustCoordinateIfNeeded(bounds.getMaxY(), false)
 

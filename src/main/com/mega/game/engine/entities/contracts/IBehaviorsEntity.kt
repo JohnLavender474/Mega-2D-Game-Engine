@@ -1,92 +1,71 @@
-package com.mega.game.engine.entities.contracts;
+package com.mega.game.engine.entities.contracts
 
-import com.badlogic.gdx.utils.OrderedMap;
-import com.mega.game.engine.behaviors.BehaviorsComponent;
-import com.mega.game.engine.behaviors.IBehavior;
-import com.mega.game.engine.common.ClassInstanceUtils;
-import com.mega.game.engine.entities.IGameEntity;
-import kotlin.jvm.functions.Function2;
-import kotlin.reflect.KClass;
+import com.badlogic.gdx.utils.OrderedMap
+import com.mega.game.engine.behaviors.BehaviorsComponent
+import com.mega.game.engine.behaviors.IBehavior
+import com.mega.game.engine.entities.IGameEntity
+import java.util.stream.StreamSupport
 
-import java.util.stream.StreamSupport;
+interface IBehaviorsEntity : IGameEntity {
 
-
-public interface IBehaviorsEntity extends IGameEntity {
-
-    
-    default BehaviorsComponent getBehaviorsComponent() {
-        KClass<BehaviorsComponent> key = ClassInstanceUtils.convertToKClass(BehaviorsComponent.class);
-        return getComponent(key);
-    }
-
-    
-    default boolean isBehaviorActive(Object key) {
-        return getBehaviorsComponent().isBehaviorActive(key);
-    }
-
-    
-    default OrderedMap<Object, IBehavior> getBehaviors() {
-        return getBehaviorsComponent().getBehaviors();
-    }
-
-    
-    default IBehavior getBehavior(Object key) {
-        return getBehaviors().get(key);
-    }
-
-    
-    default boolean isAnyBehaviorActive(Object... keys) {
-        return isAnyBehaviorActive(java.util.Arrays.asList(keys));
-    }
-
-    
-    default boolean isAnyBehaviorActive(Iterable<Object> keys) {
-        return StreamSupport.stream(keys.spliterator(), false)
-                .anyMatch(this::isBehaviorActive);
-    }
-
-    
-    default boolean areAllBehaviorsActive(Object... keys) {
-        return areAllBehaviorsActive(java.util.Arrays.asList(keys));
-    }
-
-    
-    default boolean areAllBehaviorsActive(Iterable<Object> keys) {
-        return StreamSupport.stream(keys.spliterator(), false)
-                .allMatch(this::isBehaviorActive);
-    }
-
-    
-    default void resetBehavior(Object key) {
-        IBehavior behavior = getBehavior(key);
-        if (behavior != null) {
-            behavior.reset();
+    val behaviorsComponent: BehaviorsComponent
+        get() {
+            val key = BehaviorsComponent::class
+            return getComponent(key)!!
         }
+
+    val behaviors: OrderedMap<Any, IBehavior>
+        get() = this.behaviorsComponent.behaviors
+
+    fun isBehaviorActive(key: Any): Boolean {
+        return this.behaviorsComponent.isBehaviorActive(key)
     }
 
-    
-    default boolean isBehaviorAllowed(Object key) {
-        return getBehaviorsComponent().isBehaviorAllowed(key);
+    fun getBehavior(key: Any?): IBehavior? {
+        return this.behaviors.get<Any?>(key)
     }
 
-    
-    default void setBehaviorAllowed(Object key, boolean allowed) {
-        getBehaviorsComponent().setBehaviorAllowed(key, allowed);
+    fun isAnyBehaviorActive(vararg keys: Any): Boolean {
+        return isAnyBehaviorActive(listOf<Any>(*keys))
     }
 
-    
-    default void setBehaviorsAllowed(Function2<Object, IBehavior, Boolean> function) {
-        getBehaviorsComponent().setBehaviorsAllowed(function);
+    fun isAnyBehaviorActive(keys: Iterable<Any>): Boolean {
+        return StreamSupport.stream<Any>(keys.spliterator(), false)
+            .anyMatch { key: Any -> this.isBehaviorActive(key) }
     }
 
-    
-    default void setBehaviorsAllowed(Iterable<Object> keys, boolean allowed) {
-        getBehaviorsComponent().setBehaviorsAllowed(keys, allowed);
+    fun areAllBehaviorsActive(vararg keys: Any): Boolean {
+        return areAllBehaviorsActive(listOf<Any>(*keys))
     }
 
-    
-    default void setAllBehaviorsAllowed(boolean allowed) {
-        getBehaviorsComponent().setAllBehaviorsAllowed(allowed);
+    fun areAllBehaviorsActive(keys: Iterable<Any?>): Boolean {
+        return StreamSupport.stream<Any?>(keys.spliterator(), false)
+            .allMatch { key: Any? -> this.isBehaviorActive(key!!) }
+    }
+
+    fun resetBehavior(key: Any) {
+        val behavior = getBehavior(key)
+        behavior?.reset()
+    }
+
+    fun isBehaviorAllowed(key: Any): Boolean {
+        return this.behaviorsComponent.isBehaviorAllowed(key)
+    }
+
+    fun setBehaviorAllowed(key: Any, allowed: Boolean) {
+        this.behaviorsComponent.setBehaviorAllowed(key, allowed)
+    }
+
+    fun setBehaviorsAllowed(function: (Any, IBehavior) -> Boolean) {
+        this.behaviorsComponent.setBehaviorsAllowed(function)
+    }
+
+    fun setBehaviorsAllowed(keys: Iterable<Any>, allowed: Boolean) {
+        this.behaviorsComponent.setBehaviorsAllowed(keys, allowed)
+    }
+
+    fun setAllBehaviorsAllowed(allowed: Boolean) {
+        this.behaviorsComponent.setAllBehaviorsAllowed(allowed)
     }
 }
 

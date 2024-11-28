@@ -1,8 +1,6 @@
 package com.mega.game.engine.common.time
 
-
 class TimeMarkedRunnable(val time: Float, val runnable: () -> Unit) : Runnable, Comparable<TimeMarkedRunnable> {
-
     
     constructor(
         time: Float, runnable: Runnable

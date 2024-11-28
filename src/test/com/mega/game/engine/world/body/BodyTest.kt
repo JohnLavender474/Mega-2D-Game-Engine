@@ -20,7 +20,8 @@ class BodyTest :
             val physicsData = PhysicsData()
             val fixtures = gdxArrayOf<GamePair<Any, IFixture>>()
             val props = Properties()
-            val body = Body(bodyType, physicsData, fixtures, properties = props)
+            val body = Body(bodyType, physics = physicsData, fixtures = fixtures, properties = props)
+            val out = Vector2()
 
             it("should have the correct initial properties") {
                 body.type shouldBe bodyType
@@ -40,7 +41,7 @@ class BodyTest :
             }
 
             it("should check if it has a given fixtureBody type correctly") {
-                body.isBodyType(bodyType) shouldBe true
+                (body.type == bodyType) shouldBe true
             }
 
             it("should get user data correctly") {
@@ -60,8 +61,8 @@ class BodyTest :
             }
 
             it("should have proper equals and hashCode implementations") {
-                val body1 = Body(bodyType, physicsData, fixtures, props)
-                val body2 = Body(bodyType, physicsData, fixtures, props)
+                val body1 = Body(bodyType, physics = physicsData, fixtures = fixtures, properties = props)
+                val body2 = Body(bodyType, physics = physicsData, fixtures = fixtures, properties = props)
                 (body1 == body2) shouldBe false
                 body1.hashCode() shouldBe System.identityHashCode(body1)
                 body2.hashCode() shouldBe System.identityHashCode(body2)
@@ -69,6 +70,8 @@ class BodyTest :
             }
 
             it("should set fixtures relative to the body") {
+                body.width = 10f
+                body.height = 10f
                 body.setSize(10f)
                 body.setCenter(0f, 0f)
 
@@ -92,34 +95,34 @@ class BodyTest :
 
                 var shape = bottomFixture.getShape()
                 println("shape = $shape")
-                shape.getCenter() shouldBe Vector2(0f, -5f)
+                shape.getCenter(out) shouldBe Vector2(0f, -5f)
                 shape = topFixture.getShape()
-                shape.getCenter() shouldBe Vector2(0f, 5f)
+                shape.getCenter(out) shouldBe Vector2(0f, 5f)
                 shape = leftFixture.getShape()
-                shape.getCenter() shouldBe Vector2(-5f, 0f)
+                shape.getCenter(out) shouldBe Vector2(-5f, 0f)
                 shape = rightFixture.getShape()
-                shape.getCenter() shouldBe Vector2(5f, 0f)
+                shape.getCenter(out) shouldBe Vector2(5f, 0f)
 
                 body.direction = Direction.LEFT
 
-                bottomFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
-                topFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
-                leftFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
-                rightFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
+                bottomFixture.getShape().getCenter(out) shouldBe Vector2(5f, 0f)
+                topFixture.getShape().getCenter(out) shouldBe Vector2(-5f, 0f)
+                leftFixture.getShape().getCenter(out) shouldBe Vector2(0f, -5f)
+                rightFixture.getShape().getCenter(out) shouldBe Vector2(0f, 5f)
 
                 body.direction = Direction.DOWN
 
-                bottomFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
-                topFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
-                leftFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
-                rightFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
+                bottomFixture.getShape().getCenter(out) shouldBe Vector2(0f, 5f)
+                topFixture.getShape().getCenter(out) shouldBe Vector2(0f, -5f)
+                leftFixture.getShape().getCenter(out) shouldBe Vector2(5f, 0f)
+                rightFixture.getShape().getCenter(out) shouldBe Vector2(-5f, 0f)
 
                 body.direction = Direction.RIGHT
 
-                bottomFixture.getShape().getCenter() shouldBe Vector2(-5f, 0f)
-                topFixture.getShape().getCenter() shouldBe Vector2(5f, 0f)
-                leftFixture.getShape().getCenter() shouldBe Vector2(0f, 5f)
-                rightFixture.getShape().getCenter() shouldBe Vector2(0f, -5f)
+                bottomFixture.getShape().getCenter(out) shouldBe Vector2(-5f, 0f)
+                topFixture.getShape().getCenter(out) shouldBe Vector2(5f, 0f)
+                leftFixture.getShape().getCenter(out) shouldBe Vector2(0f, 5f)
+                rightFixture.getShape().getCenter(out) shouldBe Vector2(0f, -5f)
             }
         }
     })

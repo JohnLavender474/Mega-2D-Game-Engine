@@ -1,21 +1,12 @@
 package com.mega.game.engine.world.container
 
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.utils.Array
-import com.mega.game.engine.common.shapes.GameRectangle
-import com.mega.game.engine.common.shapes.IGameShape2D
-import com.mega.game.engine.world.body.Body
-import com.mega.game.engine.world.body.IFixture
-
-
+/*
 class QuadtreeWorldContainer : IWorldContainer {
 
     private val ppm: Int
     private val maxObjectsPerNode: Int
     private val maxDepth: Int
     private var root: QuadtreeNode
-
     
     constructor(
         ppm: Int,
@@ -229,3 +220,4 @@ class QuadtreeWorldContainer : IWorldContainer {
         }
     }
 }
+*/

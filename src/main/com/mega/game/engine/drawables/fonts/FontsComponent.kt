@@ -12,7 +12,6 @@ class FontsComponent(val fonts: OrderedMap<Any, BitmapFontHandle> = OrderedMap()
 
     internal val updatables = objectMapOf<Any, UpdateFunction<BitmapFontHandle>>()
 
-
     constructor(vararg fonts: GamePair<Any, BitmapFontHandle>) : this(OrderedMap<Any, BitmapFontHandle>().apply {
         fonts.forEach {
             put(
@@ -22,16 +21,13 @@ class FontsComponent(val fonts: OrderedMap<Any, BitmapFontHandle> = OrderedMap()
         }
     })
 
-
     fun putUpdateFunction(key: Any, function: UpdateFunction<BitmapFontHandle>) {
         updatables.put(key, function)
     }
 
-
     fun removeUpdateFunction(key: Any) {
         updatables.remove(key)
     }
-
 
     override fun update(delta: Float) {
         updatables.forEach { e ->
@@ -41,19 +37,15 @@ class FontsComponent(val fonts: OrderedMap<Any, BitmapFontHandle> = OrderedMap()
         }
     }
 
-
     fun add(key: Any, font: BitmapFontHandle) {
         fonts.put(key, font)
     }
-
 
     fun remove(key: Any) {
         fonts.remove(key)
     }
 
-
     fun get(key: Any): BitmapFontHandle? {
         return fonts[key]
     }
-
 }

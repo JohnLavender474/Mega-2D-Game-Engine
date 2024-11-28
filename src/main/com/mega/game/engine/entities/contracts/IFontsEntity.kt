@@ -1,44 +1,36 @@
-package com.mega.game.engine.entities.contracts;
+package com.mega.game.engine.entities.contracts
 
-import com.mega.game.engine.common.ClassInstanceUtils;
-import com.mega.game.engine.common.interfaces.UpdateFunction;
-import com.mega.game.engine.entities.IGameEntity;
-import com.mega.game.engine.drawables.fonts.BitmapFontHandle;
-import com.mega.game.engine.drawables.fonts.FontsComponent;
-import kotlin.reflect.KClass;
+import com.mega.game.engine.common.interfaces.UpdateFunction
+import com.mega.game.engine.drawables.fonts.BitmapFontHandle
+import com.mega.game.engine.drawables.fonts.FontsComponent
+import com.mega.game.engine.entities.IGameEntity
 
+interface IFontsEntity : IGameEntity {
 
-public interface IFontsEntity extends IGameEntity {
+    val fontsComponent: FontsComponent
+        get() {
+            val key = FontsComponent::class
+            return getComponent(key)!!
+        }
 
-
-    default FontsComponent getFontsComponent() {
-        KClass<FontsComponent> key = ClassInstanceUtils.convertToKClass(FontsComponent.class);
-        return getComponent(key);
+    fun getFont(key: Any): BitmapFontHandle {
+        return this.fontsComponent.fonts.get(key)
     }
 
-
-    default BitmapFontHandle getFont(Object key) {
-        return getFontsComponent().getFonts().get(key);
+    fun addFont(key: Any, font: BitmapFontHandle): BitmapFontHandle {
+        return this.fontsComponent.fonts.put(key, font)
     }
 
-
-    default BitmapFontHandle addFont(Object key, BitmapFontHandle font) {
-        return getFontsComponent().getFonts().put(key, font);
+    fun removeFont(key: Any): BitmapFontHandle {
+        return this.fontsComponent.fonts.remove(key)
     }
 
-
-    default BitmapFontHandle removeFont(Object key) {
-        return getFontsComponent().getFonts().remove(key);
+    fun putFontUpdateFunction(key: Any, function: UpdateFunction<BitmapFontHandle>) {
+        this.fontsComponent.putUpdateFunction(key, function)
     }
 
-
-    default void putFontUpdateFunction(Object key, UpdateFunction<BitmapFontHandle> function) {
-        getFontsComponent().putUpdateFunction(key, function);
-    }
-
-
-    default void removeFontUpdateFunction(Object key) {
-        getFontsComponent().removeUpdateFunction(key);
+    fun removeFontUpdateFunction(key: Any) {
+        this.fontsComponent.removeUpdateFunction(key)
     }
 }
 

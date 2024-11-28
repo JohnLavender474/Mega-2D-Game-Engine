@@ -3,7 +3,6 @@ package com.mega.game.engine.common
 import com.badlogic.gdx.ApplicationLogger
 import com.badlogic.gdx.utils.ObjectSet
 
-
 enum class GameLogLevel {
     OFF,
     LOG,
@@ -11,12 +10,10 @@ enum class GameLogLevel {
     ERROR
 }
 
-
 data class GameLogDef(
     var filterByTag: Boolean = false,
     val tagsToLog: ObjectSet<String> = ObjectSet()
 )
-
 
 object GameLogger : ApplicationLogger {
 
@@ -36,15 +33,12 @@ object GameLogger : ApplicationLogger {
     internal var formatter: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String =
         DEFAULT_LOG_FORMATTER
     internal var level = GameLogLevel.OFF
-
     
     fun setLogLevel(level: GameLogLevel) {
         this.level = level
     }
-
     
     fun getLogLevel() = level
-
     
     fun setLogFormatter(
         formatter: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String

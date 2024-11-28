@@ -10,7 +10,6 @@ import com.mega.game.engine.pathfinding.PathfinderResult
 import com.mega.game.engine.pathfinding.heuristics.IHeuristic
 import java.util.function.Predicate
 
-
 class WorldPathfinder(
     private val start: IntPair,
     private val target: IntPair,
@@ -24,8 +23,6 @@ class WorldPathfinder(
     private val maxDistance: Int = DEFAULT_MAX_DISTANCE,
     private val returnBestPathOnFailure: Boolean = DEFAULT_RETURN_BEST_PATH_ON_FAILURE
 ) : IPathfinder {
-
-    
 
     constructor(
         start: IntPair,
@@ -52,12 +49,10 @@ class WorldPathfinder(
         maxDistance,
         returnBestPathOnFailure
     )
-
     
     private fun outOfWorldBounds(coordinate: IntPair) =
         coordinate.x < 0 || coordinate.y < 0 || coordinate.x >= worldWidth || coordinate.y >= worldHeight
 
-    
     override fun call(): PathfinderResult {
         val pathfinder = Pathfinder(
             start,

@@ -115,7 +115,6 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
         return out
     }
 
-
     override fun setWithProps(props: Properties): IGameShape2D {
         localPoint1.x = props.getOrDefault("local_point_1_x", localPoint1.x, Float::class)
         localPoint1.y = props.getOrDefault("local_point_1_y", localPoint1.y, Float::class)

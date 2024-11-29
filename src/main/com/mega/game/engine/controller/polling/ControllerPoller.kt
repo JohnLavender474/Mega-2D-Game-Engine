@@ -9,19 +9,19 @@ import com.mega.game.engine.controller.buttons.ControllerButtons
 
 open class ControllerPoller(val controllerButtons: ControllerButtons) : IControllerPoller {
 
-    
+
     override var on = true
 
     private val statusMap = ObjectMap<Any, ButtonStatus>()
     private var initialized = false
 
-    
+
     override fun init() = controllerButtons.keys().forEach { statusMap.put(it, ButtonStatus.RELEASED) }
 
-    
+
     override fun getStatus(key: Any): ButtonStatus? = statusMap[key]
 
-    
+
     override fun run() {
         if (!initialized) {
             init()
@@ -38,6 +38,7 @@ open class ControllerPoller(val controllerButtons: ControllerButtons) : IControl
                     when (oldStatus) {
                         ButtonStatus.RELEASED,
                         ButtonStatus.JUST_RELEASED -> if (pressed) ButtonStatus.JUST_PRESSED else ButtonStatus.RELEASED
+
                         else -> if (pressed) ButtonStatus.PRESSED else ButtonStatus.JUST_RELEASED
                     }
                 } else if (oldStatus == ButtonStatus.JUST_RELEASED) ButtonStatus.RELEASED

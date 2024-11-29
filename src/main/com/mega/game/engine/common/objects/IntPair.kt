@@ -8,11 +8,11 @@ data class IntPair(var x: Int, var y: Int) {
         this.x = x
         this.y = y
     }
-    
+
     operator fun plus(value: Int) = IntPair(x + value, y + value)
 
     operator fun minus(value: Int) = IntPair(x - value, y - value)
-    
+
     operator fun times(value: Int) = IntPair(x * value, y * value)
 
     operator fun div(value: Int) = IntPair(x / value, y / value)

@@ -5,6 +5,6 @@ import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
 
 interface IMotion : Updatable, Resettable {
-    
+
     fun getMotionValue(out: Vector2): Vector2?
 }

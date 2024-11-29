@@ -40,22 +40,22 @@ class SpriteMatrix(
         }
     }
 
-    
+
     constructor(
         params: SpriteMatrixParams
     ) : this(
         params.model, params.priority, params.modelWidth, params.modelHeight, params.rows, params.columns
     )
 
-    
+
     fun translate(x: Float, y: Float) = forEach { _, _, sprite ->
         (sprite as GameSprite).translate(x, y)
     }
 
-    
+
     fun setPosition(startPosition: Vector2) = setPosition(startPosition.x, startPosition.y)
 
-    
+
     fun setPosition(startX: Float, startY: Float) {
         forEach { x, y, sprite ->
             sprite?.setPosition(startX + (x * modelWidth), startY + (y * modelHeight))

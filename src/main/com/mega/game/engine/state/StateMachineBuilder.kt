@@ -12,37 +12,37 @@ class StateMachineBuilder<T> {
     private var onChangeState: ((T, T) -> Unit)? = null
     private var triggerChangeWhenSameElement = false
 
-    
+
     fun state(name: String, element: T): StateMachineBuilder<T> {
         stateDefinitions.put(name, element)
         return this
     }
 
-    
+
     fun transition(fromState: String, toState: String, condition: () -> Boolean): StateMachineBuilder<T> {
         transitionDefinitions.add(Triple(fromState, toState, condition))
         return this
     }
 
-    
+
     fun initialState(name: String): StateMachineBuilder<T> {
         initialStateName = name
         return this
     }
 
-    
+
     fun setOnChangeState(onChangeState: ((T, T) -> Unit)? = null): Boolean {
         val wasAlreadySet = this.onChangeState != null
         this.onChangeState = onChangeState
         return wasAlreadySet
     }
 
-    
+
     fun setTriggerChangeWhenSameElement(trigger: Boolean) {
         triggerChangeWhenSameElement = trigger
     }
 
-    
+
     fun build(): StateMachine<T> {
         val states = mutableMapOf<String, IState<T>>()
         stateDefinitions.forEach { states[it.key] = DefaultStateImpl(it.value) }

@@ -5,7 +5,6 @@ import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 import java.util.function.Consumer
 
-
 class AudioSystem(
     private val soundRequestProcessor: (SoundRequest) -> Unit,
     private val musicRequestProcessor: (MusicRequest) -> Unit,
@@ -17,7 +16,6 @@ class AudioSystem(
     var stopMusicWhenOff: Boolean = true
 ) : GameSystem(AudioComponent::class) {
 
-    
     constructor(
         soundRequestProcessor: Consumer<SoundRequest>,
         musicRequestProcessor: Consumer<MusicRequest>,

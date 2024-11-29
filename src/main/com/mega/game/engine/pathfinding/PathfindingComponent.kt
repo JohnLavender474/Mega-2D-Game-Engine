@@ -3,7 +3,6 @@ package com.mega.game.engine.pathfinding
 import com.mega.game.engine.common.time.Timer
 import com.mega.game.engine.components.IGameComponent
 
-
 class PathfindingComponent(
     var params: PathfinderParams,
     var consumer: (PathfinderResult) -> Unit,

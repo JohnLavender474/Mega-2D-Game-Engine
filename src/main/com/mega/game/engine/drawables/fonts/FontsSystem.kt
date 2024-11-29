@@ -9,10 +9,10 @@ import java.util.function.Consumer
 class FontsSystem(protected val fontsCollector: (BitmapFontHandle) -> Unit) :
     GameSystem(FontsComponent::class) {
 
-    
+
     constructor(fontsCollector: Consumer<BitmapFontHandle>) : this(fontsCollector::accept)
 
-    
+
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
 

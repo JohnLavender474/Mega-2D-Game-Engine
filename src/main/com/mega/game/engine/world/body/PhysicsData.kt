@@ -18,7 +18,7 @@ class PhysicsData(
     var receiveFrictionX: Boolean = true,
     var receiveFrictionY: Boolean = true
 ) : Resettable, ICopyable<PhysicsData> {
-    
+
     override fun copy() =
         PhysicsData(
             Vector2(gravity),
@@ -33,7 +33,7 @@ class PhysicsData(
             applyFrictionY
         )
 
-    
+
     override fun reset() {
         velocity.setZero()
         frictionOnSelf.set(defaultFrictionOnSelf)

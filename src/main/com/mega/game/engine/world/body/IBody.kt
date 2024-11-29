@@ -7,7 +7,7 @@ import com.mega.game.engine.common.interfaces.IRectangle
 import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.shapes.GameRectangle
 
-interface IBody: IRectangle, IProcessable, IDirectional, Resettable {
+interface IBody : IRectangle, IProcessable, IDirectional, Resettable {
 
     var physics: PhysicsData
 

@@ -3,7 +3,7 @@ package com.mega.game.engine.common.interfaces
 import com.badlogic.gdx.math.Vector2
 
 interface ISizable {
-    
+
     fun getWidth(): Float
 
     fun getHeight(): Float

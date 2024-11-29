@@ -8,7 +8,7 @@ class Cullable(
     private val resetFunction: () -> Unit
 ) : ICullable {
 
-    
+
     constructor(
         shouldBeCulledFunction: Predicate<Float>,
         resetFunction: Runnable

@@ -8,7 +8,7 @@ class MultiCollectionIterator<T>(private val multiCollectionIterable: MultiColle
     private var outerIndex = 0
     private var currentInnerIterator: Iterator<T>? = null
 
-    
+
     override fun hasNext(): Boolean {
         val iterables = multiCollectionIterable.iterables
         if (outerIndex >= iterables.size) return false
@@ -28,7 +28,7 @@ class MultiCollectionIterator<T>(private val multiCollectionIterable: MultiColle
         return true
     }
 
-    
+
     override fun next(): T {
         if (!hasNext()) throw NoSuchElementException()
         return currentInnerIterator!!.next()
@@ -38,10 +38,10 @@ class MultiCollectionIterator<T>(private val multiCollectionIterable: MultiColle
 
 class MultiCollectionIterable<T>(internal val iterables: Array<Iterable<T>>) : Iterable<T> {
 
-    
+
     override fun iterator() = MultiCollectionIterator(this)
 
-    
+
     fun forEach(action: (outerIndex: Int, innerIndex: Int, value: T) -> Unit) {
         var outerIndex = 0
         iterables.forEach {

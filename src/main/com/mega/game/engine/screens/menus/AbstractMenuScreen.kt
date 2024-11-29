@@ -11,38 +11,38 @@ abstract class AbstractMenuScreen(
     protected var firstButtonKey: String? = null
 ) : BaseScreen() {
 
-    
+
     var currentButtonKey: String? = firstButtonKey
 
-    
+
     var selectionMade = false
         protected set
 
-    
+
     protected abstract fun getNavigationDirection(): Direction?
 
-    
+
     protected abstract fun selectionRequested(): Boolean
 
-    
+
     protected open fun onAnyMovement(direction: Direction) {}
 
-    
+
     protected open fun onAnySelection() {}
 
-    
+
     override fun show() {
         selectionMade = false
         currentButtonKey = firstButtonKey
     }
 
-    
+
     override fun reset() {
         selectionMade = false
         currentButtonKey = firstButtonKey
     }
 
-    
+
     override fun render(delta: Float) {
         if (selectionMade || pauseSupplier.invoke()) return
 

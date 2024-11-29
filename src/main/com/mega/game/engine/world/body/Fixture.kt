@@ -11,7 +11,7 @@ import com.mega.game.engine.common.shapes.IRotatableShape
 class Fixture(
     var body: Body,
     type: Any,
-    rawShape: IGameShape2D,
+    rawShape: IGameShape2D = GameRectangle(),
     active: Boolean = true,
     var attachedToBody: Boolean = true,
     var bodyAttachmentPosition: Position = Position.CENTER,

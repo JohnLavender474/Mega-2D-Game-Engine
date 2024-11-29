@@ -6,10 +6,10 @@ abstract class AbstractBehaviorImpl : IBehavior {
     private var runningNow = false
     private var forceQuit = false
 
-    
+
     final override fun isActive() = runningNow
 
-    
+
     final override fun reset() {
         if (runningNow) {
             end()
@@ -17,7 +17,7 @@ abstract class AbstractBehaviorImpl : IBehavior {
         }
     }
 
-    
+
     final override fun update(delta: Float) {
         val runningPrior = runningNow
         runningNow = if (forceQuit) false else evaluate(delta)

@@ -20,14 +20,14 @@ class Pendulum(
         const val DEFAULT_DISTURBANCE_THRESHOLD = 0.001f
         const val DEFAULT_RANDOM_FORCE = 0.001f
     }
-    
+
     var angle = defaultAngle
 
     private val endPoint = Vector2()
     private var angleVel = 0f
     private var angleAccel = 0f
     private var accumulator = 0f
-    
+
     fun getPointFromAnchor(distance: Float): Vector2 {
         val point = Vector2()
         point.x = anchor.x + sin(angle) * distance
@@ -38,7 +38,7 @@ class Pendulum(
     fun applyForce(force: Float) {
         angleVel += force
     }
-    
+
     fun getSwingDirection() = when {
         angleVel < 0 -> 1
         angleVel > 0 -> -1

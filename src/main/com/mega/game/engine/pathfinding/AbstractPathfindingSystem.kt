@@ -13,10 +13,10 @@ abstract class AbstractPathfindingSystem(private val factory: IPathfinderFactory
         const val TAG = "AbstractPathfindingSystem"
     }
 
-    
+
     protected abstract fun handleEntries(entries: OrderedMap<PathfindingComponent, IPathfinder>)
 
-    
+
     final override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
         val entries = OrderedMap<PathfindingComponent, IPathfinder>()

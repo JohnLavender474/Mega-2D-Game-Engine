@@ -59,12 +59,12 @@ class GameSprite(
         setSize(width, height)
     }
 
-    
+
     fun getCenter(): Vector2 {
         return Vector2(x + width / 2, y + height / 2)
     }
 
-    
+
     fun getPosition(): Vector2 {
         return Vector2(x, y)
     }
@@ -73,6 +73,6 @@ class GameSprite(
         if (!hidden && texture != null) super.draw(drawer)
     }
 
-    
+
     override fun compareTo(other: IComparableDrawable<Batch>) = priority.compareTo(other.priority)
 }

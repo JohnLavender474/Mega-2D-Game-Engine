@@ -32,7 +32,6 @@ class ImmutableMap<K, V>(private val map: ObjectMap<K, V>) : Map<K, V> {
         get() = map.size
 
 
-
     fun iterator(): ImmutableIterator<ObjectMap.Entry<K, V>> = ImmutableIterator(map.iterator())
 
     override fun containsValue(value: V) = map.values().contains(value)

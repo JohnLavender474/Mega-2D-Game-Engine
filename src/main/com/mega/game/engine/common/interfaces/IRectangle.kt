@@ -2,7 +2,7 @@ package com.mega.game.engine.common.interfaces
 
 import com.mega.game.engine.world.body.BodyType
 
-interface IRectangle: IPositional, ICenterable, ISizable {
+interface IRectangle : IPositional, ICenterable, ISizable {
 
     var type: BodyType
 

@@ -11,12 +11,12 @@ class StateMachine<T>(
 
     private var currentState: IState<T> = initialState
 
-    
+
     fun setState(state: IState<T>) {
         currentState = state
     }
 
-    
+
     fun next(): T {
         val nextState = currentState.getNextState()
         if (nextState != null && (triggerChangeWhenSameElement || currentState != nextState)) {
@@ -27,10 +27,10 @@ class StateMachine<T>(
         return currentState.element
     }
 
-    
+
     fun getCurrent() = currentState.element
 
-    
+
     override fun reset() {
         currentState = initialState
     }

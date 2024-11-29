@@ -12,3 +12,17 @@ class UpdatablesComponent(val updatables: OrderedMap<Any, Updatable> = OrderedMa
 
     fun contains(key: Any) = updatables.containsKey(key)
 }
+
+class UpdatablesComponentBuilder {
+
+    private val updatables = OrderedMap<Any, Updatable>()
+
+    fun put(key: Any, updatable: Updatable): UpdatablesComponentBuilder {
+        updatables.put(key, updatable)
+        return this
+    }
+
+    fun build(): UpdatablesComponent {
+        return UpdatablesComponent(updatables)
+    }
+}

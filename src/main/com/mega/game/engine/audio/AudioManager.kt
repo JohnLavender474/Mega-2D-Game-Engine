@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Sound
 
 object AudioManager : IAudioManager {
 
-    private const val TAG = "AudioManager"
     private const val MIN_VOLUME = 0f
     private const val MAX_VOLUME = 10f
     private const val DEFAULT_VOLUME = 5f
@@ -22,7 +21,6 @@ object AudioManager : IAudioManager {
         }
         get() = field / MAX_VOLUME
 
-    
     override fun playMusic(key: Any?, loop: Boolean) {
         if (key is Music) {
             key.volume = musicVolume
@@ -31,17 +29,14 @@ object AudioManager : IAudioManager {
         }
     }
 
-    
     override fun stopMusic(key: Any?) {
         if (key is Music) key.stop()
     }
 
-    
     override fun pauseMusic(key: Any?) {
         if (key is Music) key.pause()
     }
 
-    
     override fun playSound(key: Any?, loop: Boolean) {
         if (key is Sound) {
             if (loop) key.loop(soundVolume)
@@ -49,12 +44,10 @@ object AudioManager : IAudioManager {
         }
     }
 
-    
     override fun stopSound(key: Any?) {
         if (key is Sound) key.stop()
     }
 
-    
     override fun pauseSound(key: Any?) {
         if (key is Sound) key.pause()
     }

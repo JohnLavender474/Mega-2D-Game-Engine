@@ -33,13 +33,13 @@ object GameLogger : ApplicationLogger {
     internal var formatter: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String =
         DEFAULT_LOG_FORMATTER
     internal var level = GameLogLevel.OFF
-    
+
     fun setLogLevel(level: GameLogLevel) {
         this.level = level
     }
-    
+
     fun getLogLevel() = level
-    
+
     fun setLogFormatter(
         formatter: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String
     ) {

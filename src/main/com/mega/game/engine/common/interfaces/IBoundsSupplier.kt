@@ -5,6 +5,6 @@ import com.mega.game.engine.common.shapes.GameRectangle
 
 interface IBoundsSupplier {
 
-    
+
     fun getBounds(): GameRectangle
 }

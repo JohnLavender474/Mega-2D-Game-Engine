@@ -49,7 +49,7 @@ class WorldPathfinder(
         maxDistance,
         returnBestPathOnFailure
     )
-    
+
     private fun outOfWorldBounds(coordinate: IntPair) =
         coordinate.x < 0 || coordinate.y < 0 || coordinate.x >= worldWidth || coordinate.y >= worldHeight
 

@@ -16,7 +16,7 @@ class Animator(
         const val TAG = "Animator"
         const val DEFAULT_KEY = "default_key"
     }
-    
+
     val currentAnimation: IAnimation?
         get() = if (currentKey != null) animations[currentKey] else null
     var currentKey: String? = null
@@ -36,7 +36,7 @@ class Animator(
             it.getCurrentRegion()?.let { region -> sprite.setRegion(region) }
         }
     }
-    
+
     override fun reset() {
         currentKey = null
         updateScalar = 1f

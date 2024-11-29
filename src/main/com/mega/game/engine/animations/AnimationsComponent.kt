@@ -2,10 +2,12 @@ package com.mega.game.engine.animations
 
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.OrderedMap
+import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 import com.mega.game.engine.drawables.sprites.GameSprite
+import java.util.*
 
-class AnimationsComponent : IGameComponent {
+class AnimationsComponent() : IGameComponent {
 
     companion object {
         const val TAG = "AnimationsComponent"
@@ -14,6 +16,19 @@ class AnimationsComponent : IGameComponent {
 
     internal val sprites = ObjectMap<Any, GameSprite>()
     internal val animators = OrderedMap<Any, IAnimator>()
+
+    /**
+     * TODO: this constructor is here only to support compatibility with the old version of the engine. Any usages of
+     *   this constructor should be removed and replaced.
+     */
+    constructor(animators: Array<GamePair<() -> GameSprite, IAnimator>>): this() {
+        animators.forEach {
+            val sprite = it.first.invoke()
+            val animator = it.second
+            val key = UUID.randomUUID().toString()
+            putAnimator(key, sprite, animator)
+        }
+    }
 
     fun putAnimator(sprite: GameSprite, animator: IAnimator) = putAnimator(DEFAULT_KEY, sprite, animator)
 

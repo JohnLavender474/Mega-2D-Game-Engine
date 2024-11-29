@@ -10,33 +10,28 @@ import com.mega.game.engine.common.objects.*
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
-
 class GameEngine(
     var systems: Array<GameSystem> = Array(),
     var onQueueToSpawn: ((IGameEntity) -> Unit)? = null,
     var onQueueToDestroy: ((IGameEntity) -> Unit)? = null
 ) : Updatable, Resettable, Disposable {
 
-
     internal class EntitiesToSpawn {
 
         private val queue = Queue<GamePair<IGameEntity, Properties>>()
         private val set = ObjectSet<IGameEntity>()
 
-
-        internal fun add(entity: IGameEntity, spawnProps: Properties) = if (contains(entity)) false
-        else {
-            queue.addLast(entity pairTo spawnProps)
-            set.add(entity)
-            true
-        }
-
+        internal fun add(entity: IGameEntity, spawnProps: Properties) =
+            if (contains(entity)) false
+            else {
+                queue.addLast(entity pairTo spawnProps)
+                set.add(entity)
+                true
+            }
 
         internal fun contains(entity: IGameEntity) = set.contains(entity)
 
-
         internal fun isEmpty() = queue.isEmpty
-
 
         internal fun poll(): GamePair<IGameEntity, Properties> {
             val pair = queue.removeFirst()
@@ -44,13 +39,11 @@ class GameEngine(
             return pair
         }
 
-
         internal fun clear() {
             queue.clear()
             set.clear()
         }
     }
-
 
     var updating = false
         private set
@@ -61,10 +54,8 @@ class GameEngine(
     private var reset = false
     private var disposed = false
 
-
     fun contains(entity: IGameEntity, containedIfQueuedToSpawn: Boolean = false) =
         entities.contains(entity) || (containedIfQueuedToSpawn && entitiesToSpawn.contains(entity))
-
 
     fun spawn(entity: IGameEntity, spawnProps: Properties = Properties()) = if (entity.canSpawn(spawnProps)) {
         val queued = entitiesToSpawn.add(entity, spawnProps)
@@ -85,7 +76,6 @@ class GameEngine(
         entity.initialized = true
     }
 
-
     fun destroy(entity: IGameEntity): Boolean {
         val shouldBeQueued = entitiesToKill.add(entity)
         if (shouldBeQueued) onQueueToDestroy?.invoke(entity)
@@ -100,10 +90,8 @@ class GameEngine(
         entity.spawned = false
     }
 
-
     fun updateSystemMembershipsFor(entity: IGameEntity) =
         systems.forEach { system -> if (system.qualifies(entity)) system.add(entity) else system.remove(entity) }
-
 
     override fun update(delta: Float) {
         if (disposed) throw IllegalStateException("Cannot update game engine after it has been disposed")
@@ -121,7 +109,6 @@ class GameEngine(
         if (reset) reset()
     }
 
-
     override fun reset() {
         reset = if (updating) true
         else {
@@ -133,7 +120,6 @@ class GameEngine(
             false
         }
     }
-
 
     override fun dispose() {
         entities.filter { it.spawned }.forEach { destroyNow(it) }

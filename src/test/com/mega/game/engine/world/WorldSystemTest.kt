@@ -65,8 +65,8 @@ class WorldSystemTest : DescribeSpec({
         body.physics.gravity.set(-0.5f, -1f)
         worldSystem.update(fixedStep)
 
-        body.x shouldBe -0.5f * fixedStep
-        body.y shouldBe -1f * fixedStep
+        body.getX() shouldBe -0.5f * fixedStep
+        body.getY() shouldBe -1f * fixedStep
     }
 
     it("should process physics correctly - 2") {

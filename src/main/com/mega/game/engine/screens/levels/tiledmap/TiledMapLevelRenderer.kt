@@ -6,9 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile
 
-
 class TiledMapLevelRenderer(map: TiledMap, batch: Batch) : OrthogonalTiledMapRenderer(map, batch) {
-
 
     fun render(camera: OrthographicCamera) {
         setView(camera)

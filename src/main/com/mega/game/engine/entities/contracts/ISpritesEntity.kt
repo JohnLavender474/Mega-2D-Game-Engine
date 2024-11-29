@@ -1,6 +1,6 @@
 package com.mega.game.engine.entities.contracts
 
-import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.interfaces.UpdateFunction
 import com.mega.game.engine.drawables.sprites.GameSprite
 import com.mega.game.engine.drawables.sprites.SpritesComponent
@@ -13,10 +13,10 @@ interface ISpritesEntity : IGameEntity {
             val key = SpritesComponent::class
             return getComponent(key)!!
         }
-    val sprites: ObjectMap<String, GameSprite>
+    val sprites: OrderedMap<Any, GameSprite>
         get() = this.spritesComponent.sprites
-    val firstSprite: GameSprite
-        get() = this.sprites.iterator().next().value
+    val defaultSprite: GameSprite
+        get() = this.sprites[SpritesComponent.DEFAULT_KEY]
 
     fun putUpdateFunction(key: String, updateFunction: UpdateFunction<GameSprite>) {
         this.spritesComponent.putUpdateFunction(key, updateFunction)

@@ -103,8 +103,8 @@ class WorldSystem(
     override fun reset() {
         super.reset()
         accumulator = 0f
-        priorContactSet.forEach { contactPool.pool(it) }
-        currentContactSet.forEach { contactPool.pool(it) }
+        priorContactSet.forEach { contactPool.free(it) }
+        currentContactSet.forEach { contactPool.free(it) }
         priorContactSet.clear()
         currentContactSet.clear()
         worldContainerSupplier()?.clear()
@@ -138,7 +138,7 @@ class WorldSystem(
         priorContactSet.forEach {
             if (!currentContactSet.contains(it)) {
                 contactListener.endContact(it, fixedStep)
-                contactPool.pool(it)
+                contactPool.free(it)
             }
         }
 

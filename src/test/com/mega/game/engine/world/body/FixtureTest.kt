@@ -19,8 +19,8 @@ class FixtureTest :
             val outVec = Vector2()
 
             it("should have the correct initial properties") {
-                fixture.type shouldBe type
-                fixture.active shouldBe true
+                fixture.getType() shouldBe type
+                fixture.isActive() shouldBe true
                 fixture.attachedToBody shouldBe true
                 fixture.offsetFromBodyAttachment shouldBe offset
             }

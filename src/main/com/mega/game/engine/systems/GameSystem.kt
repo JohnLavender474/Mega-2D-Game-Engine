@@ -3,7 +3,6 @@ package com.mega.game.engine.systems
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.ObjectSet
-import com.mega.game.engine.GameEngine
 import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.interfaces.Updatable
 import com.mega.game.engine.common.objects.ImmutableCollection
@@ -11,7 +10,6 @@ import com.mega.game.engine.common.objects.MutableOrderedSet
 import com.mega.game.engine.components.IGameComponent
 import com.mega.game.engine.entities.IGameEntity
 import kotlin.reflect.KClass
-
 
 abstract class GameSystem(
     private val componentMask: ObjectSet<KClass<out IGameComponent>>,
@@ -32,7 +30,6 @@ abstract class GameSystem(
     private val entitiesToAdd = Array<IGameEntity>()
     private val entitiesToRemove = Array<IGameEntity>()
 
-
     protected val disposables = Array<Disposable>()
 
     var on = true
@@ -41,12 +38,9 @@ abstract class GameSystem(
 
     constructor(vararg componentMask: KClass<out IGameComponent>) : this(buildComponentMaskFromVarArgs(componentMask))
 
-
     internal abstract fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float)
 
-
     fun contains(e: IGameEntity) = entities.contains(e)
-
 
     fun remove(e: IGameEntity) = if (contains(e)) {
         if (updating) {
@@ -58,7 +52,6 @@ abstract class GameSystem(
         }
     } else 0
 
-
     fun add(e: IGameEntity): Int = if (qualifies(e)) {
         if (updating) {
             entitiesToAdd.add(e)
@@ -69,9 +62,7 @@ abstract class GameSystem(
         }
     } else 0
 
-
     fun qualifies(e: IGameEntity) = componentMask.all { e.hasComponent(it) }
-
 
     final override fun update(delta: Float) {
         updating = true
@@ -87,7 +78,6 @@ abstract class GameSystem(
 
         updating = false
     }
-
 
     override fun reset() {
         entities.clear()

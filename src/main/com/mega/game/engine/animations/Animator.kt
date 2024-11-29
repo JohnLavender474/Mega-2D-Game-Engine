@@ -1,11 +1,9 @@
 package com.mega.game.engine.animations
 
 import com.badlogic.gdx.utils.ObjectMap
-import com.mega.game.engine.animations.Animator.Companion.DEFAULT_KEY
 import com.mega.game.engine.common.extensions.objectMapOf
 import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.drawables.sprites.GameSprite
-
 
 class Animator(
     val keySupplier: () -> String?,
@@ -16,18 +14,14 @@ class Animator(
 
     companion object {
         const val TAG = "Animator"
-        const val DEFAULT_KEY = "Default"
+        const val DEFAULT_KEY = "default_key"
     }
-
     
     val currentAnimation: IAnimation?
         get() = if (currentKey != null) animations[currentKey] else null
-
-    
     var currentKey: String? = null
         private set
 
-    
     constructor(animation: IAnimation) : this({ DEFAULT_KEY }, objectMapOf(DEFAULT_KEY pairTo animation))
 
     override fun animate(sprite: GameSprite, delta: Float) {
@@ -42,7 +36,6 @@ class Animator(
             it.getCurrentRegion()?.let { region -> sprite.setRegion(region) }
         }
     }
-
     
     override fun reset() {
         currentKey = null

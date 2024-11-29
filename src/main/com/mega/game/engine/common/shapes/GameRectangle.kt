@@ -6,11 +6,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.FloatArray
 import com.mega.game.engine.common.enums.Position
-import com.mega.game.engine.common.extensions.gdxArrayOf
-import com.mega.game.engine.common.objects.GamePair
-import com.mega.game.engine.common.objects.Matrix
-import com.mega.game.engine.common.objects.Properties
-import com.mega.game.engine.common.objects.pairTo
+import com.mega.game.engine.common.objects.*
 import java.util.function.BiPredicate
 import kotlin.math.*
 
@@ -48,19 +44,14 @@ open class GameRectangle() : IGameShape2D, IRotatableShape {
 
     internal val rectangle = Rectangle()
 
-    private val reusableLinesArray = gdxArrayOf(
-        GameLine(),
-        GameLine(),
-        GameLine(),
-        GameLine()
-    )
-    private val reusablePointsArray = gdxArrayOf(
-        Vector2() pairTo Vector2(),
-        Vector2() pairTo Vector2(),
-        Vector2() pairTo Vector2(),
-        Vector2() pairTo Vector2(),
-    )
-    private val reusablePolygon = GamePolygon()
+    private val linesArray = Array<GameLine>()
+    private val linesPool = Pool<GameLine>(supplier = { GameLine() })
+
+    private val pointsArray = Array<GamePair<Vector2, Vector2>>()
+    private val pointsPool = Pool<GamePair<Vector2, Vector2>>(supplier = { GamePair(Vector2(), Vector2()) })
+
+    private val polygonPool = Pool<GamePolygon>(supplier = { GamePolygon() })
+
     private val out1 = Vector2()
     private val out2 = Vector2()
 
@@ -132,23 +123,32 @@ open class GameRectangle() : IGameShape2D, IRotatableShape {
     }
 
     override fun setRotation(rotation: Float, originX: Float, originY: Float) {
-        val line1 = reusableLinesArray[0]
-        val line2 = reusableLinesArray[1]
-        val line3 = reusableLinesArray[2]
-        val line4 = reusableLinesArray[3]
-        reusableLinesArray.clear()
-        getAsLines(reusableLinesArray, line1, line2, line3, line4)
+        val line1 = linesPool.fetch()
+        val line2 = linesPool.fetch()
+        val line3 = linesPool.fetch()
+        val line4 = linesPool.fetch()
 
-        for (i in 0 until reusableLinesArray.size) {
-            val line = reusableLinesArray[i]
+        linesArray.clear()
+        val array = getAsLines(linesArray, line1, line2, line3, line4)
+
+        pointsArray.forEach { pointsPool.free(it) }
+        pointsArray.clear()
+
+        for (i in 0 until array.size) {
+            val line = array[i]
             line.originX = originX
             line.originY = originY
             line.rotation = rotation
-            val pair = reusablePointsArray[i]
+
+            val pair = pointsPool.fetch()
             line.calculateWorldPoints(pair.first, pair.second)
+            pointsArray.add(pair)
         }
 
-        calculateBoundsFromLines(reusablePointsArray, this)
+        calculateBoundsFromLines(pointsArray, this)
+
+        pointsArray.forEach { pointsPool.free(it) }
+        pointsArray.clear()
     }
 
     fun setSize(sizeXY: Float): GameRectangle {
@@ -260,10 +260,12 @@ open class GameRectangle() : IGameShape2D, IRotatableShape {
                 Intersector.intersectSegmentRectangle(out1, out2, rectangle)
             }
 
-            is GamePolygon -> Intersector.overlapConvexPolygons(
-                toPolygon(reusablePolygon).libgdxPolygon,
-                other.libgdxPolygon
-            )
+            is GamePolygon -> {
+                val polygon = polygonPool.fetch()
+                val overlaps = Intersector.overlapConvexPolygons(toPolygon(polygon).libgdxPolygon, other.libgdxPolygon)
+                polygonPool.free(polygon)
+                overlaps
+            }
 
             else -> OVERLAP_EXTENSION?.invoke(this, other) == true
         }
@@ -271,8 +273,7 @@ open class GameRectangle() : IGameShape2D, IRotatableShape {
     override fun getBoundingRectangle(out: GameRectangle) = out.set(this)
 
     override fun setCenter(centerX: Float, centerY: Float): GameRectangle {
-        setCenterX(centerX)
-        setCenterY(centerY)
+        rectangle.setCenter(centerX, centerY)
         return this
     }
 
@@ -296,13 +297,9 @@ open class GameRectangle() : IGameShape2D, IRotatableShape {
         return this
     }
 
-    override fun getWidth(): Float {
-        TODO("Not yet implemented")
-    }
+    override fun getWidth() = rectangle.width
 
-    override fun getHeight(): Float {
-        TODO("Not yet implemented")
-    }
+    override fun getHeight() = rectangle.height
 
     fun positionOnPoint(point: Vector2, position: Position): GameRectangle {
         when (position) {

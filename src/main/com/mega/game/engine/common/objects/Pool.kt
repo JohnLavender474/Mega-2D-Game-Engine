@@ -3,10 +3,9 @@ package com.mega.game.engine.common.objects
 import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.interfaces.Initializable
 
-
 open class Pool<T>(
-    private var startAmount: Int = 10,
     var supplier: () -> T,
+    private var startAmount: Int = 10,
     var onSupplyNew: ((T) -> Unit)? = null,
     var onFetch: ((T) -> Unit)? = null,
     var onPool: ((T) -> Unit)? = null
@@ -19,12 +18,10 @@ open class Pool<T>(
     private var initialized = false
     private val queue = Array<T>()
 
-
     override fun init() {
-        (0 until startAmount).forEach { i -> pool(supplyNew()) }
+        (0 until startAmount).forEach { i -> free(supplyNew()) }
         initialized = true
     }
-
 
     fun fetch(): T {
         if (!initialized) init()
@@ -33,15 +30,12 @@ open class Pool<T>(
         return element
     }
 
-
-    fun pool(element: T) {
+    fun free(element: T) {
         queue.add(element)
         onPool?.invoke(element)
     }
 
-
     fun clear() = queue.clear()
-
 
     private fun supplyNew(): T {
         val element = supplier()

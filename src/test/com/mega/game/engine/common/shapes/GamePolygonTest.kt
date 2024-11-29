@@ -17,6 +17,7 @@ class GamePolygonTest : DescribeSpec({
 
         beforeEach {
             gamePolygon = GamePolygon(gdxArrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f))
+            outFloatArr.clear()
         }
 
         it("should contain the point") {
@@ -29,10 +30,10 @@ class GamePolygonTest : DescribeSpec({
 
         it("should get the bounding rectangle") {
             val boundingRectangle = gamePolygon.getBoundingRectangle(outRect)
-            boundingRectangle.x shouldBe 0f
-            boundingRectangle.y shouldBe 0f
-            boundingRectangle.width shouldBe 1f
-            boundingRectangle.height shouldBe 1f
+            boundingRectangle.getX() shouldBe 0f
+            boundingRectangle.getY() shouldBe 0f
+            boundingRectangle.getWidth() shouldBe 1f
+            boundingRectangle.getHeight() shouldBe 1f
         }
 
         it("should overlap with another polygon") {
@@ -70,7 +71,9 @@ class GamePolygonTest : DescribeSpec({
 
             outFloatArr.clear()
             gamePolygon.getLocalVertices(outFloatArr)
-            outFloatArr shouldBe vertices
+
+            outFloatArr.size shouldBe vertices.size
+            for (i in 0 until vertices.size) outFloatArr[i] shouldBe vertices[i]
         }
 
         it("should rotate the polygon") {

@@ -51,12 +51,13 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
             libgdxPolygon.setScale(libgdxPolygon.scaleX, value)
         }
 
-    private val tempRect = GameRectangle()
-    private val tempPolygon = GamePolygon()
+    private var tempPolygon: GamePolygon? = null
     private val tempFloatArr = Array<Float>()
 
     constructor(vertices: Array<Float>) : this() {
-        libgdxPolygon.vertices = vertices.toArray().toFloatArray()
+        val floatArray = FloatArray(vertices.size)
+        for (i in 0 until vertices.size) floatArray[i] = vertices[i]
+        libgdxPolygon.vertices = floatArray
     }
 
     constructor(polygon: GamePolygon) : this() {
@@ -141,10 +142,14 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
     override fun overlaps(other: IGameShape2D): Boolean {
         return when (other) {
             is GamePolygon -> Intersector.overlapConvexPolygons(libgdxPolygon, other.libgdxPolygon)
-            is GameRectangle -> Intersector.overlapConvexPolygons(
-                libgdxPolygon,
-                other.toPolygon(tempPolygon).libgdxPolygon
-            )
+            is GameRectangle -> {
+                if (tempPolygon == null) tempPolygon = GamePolygon()
+
+                Intersector.overlapConvexPolygons(
+                    libgdxPolygon,
+                    other.toPolygon(tempPolygon!!).libgdxPolygon
+                )
+            }
 
             is GameLine -> {
                 val arr = other.getTransformedVertices(tempFloatArr)
@@ -202,9 +207,9 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
         return this
     }
 
-    override fun getWidth() = getBoundingRectangle(tempRect).getWidth()
+    override fun getWidth() = libgdxPolygon.boundingRectangle.getWidth()
 
-    override fun getHeight() = getBoundingRectangle(tempRect).getHeight()
+    override fun getHeight() = libgdxPolygon.boundingRectangle.getHeight()
 
     override fun contains(p0: Vector2) = libgdxPolygon.contains(p0)
 

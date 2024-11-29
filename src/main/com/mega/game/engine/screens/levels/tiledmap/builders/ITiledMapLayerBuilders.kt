@@ -1,11 +1,8 @@
 package com.mega.game.engine.screens.levels.tiledmap.builders
 
-import com.badlogic.gdx.maps.MapLayer
 import com.badlogic.gdx.maps.MapLayers
-import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.objects.Properties
-
 
 abstract class TiledMapLayerBuilders {
 
@@ -13,10 +10,8 @@ abstract class TiledMapLayerBuilders {
         const val TAG = "TiledMapLayerBuilders"
     }
 
-    
     abstract val layerBuilders: OrderedMap<String, ITiledMapLayerBuilder>
 
-    
     open fun build(layers: MapLayers, returnProps: Properties) {
         val layersMap = layers.associateBy { it.name }
         layerBuilders.forEach {

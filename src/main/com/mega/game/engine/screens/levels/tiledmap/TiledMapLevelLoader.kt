@@ -5,7 +5,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.utils.ObjectMap
 
-
 data class TiledMapLoadResult(
     val map: TiledMap,
     val layers: ObjectMap<String, MapObjects>,
@@ -15,10 +14,8 @@ data class TiledMapLoadResult(
     val tileHeight: Int
 )
 
-
 object TiledMapLevelLoader {
 
-    
     fun load(tmxSrc: String): TiledMapLoadResult {
         val map = TmxMapLoader().load(tmxSrc) ?: throw IllegalStateException("Failed to load map: $tmxSrc")
 

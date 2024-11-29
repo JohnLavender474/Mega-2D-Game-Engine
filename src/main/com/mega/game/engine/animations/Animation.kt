@@ -17,18 +17,14 @@ class Animation : IAnimation {
 
     private var loop = true
 
-    
     constructor(region: TextureRegion) : this(region, true)
 
-    
     constructor(region: TextureRegion, loop: Boolean) : this(region, 1, 1, 1f, loop)
 
-    
     constructor(
         region: TextureRegion, rows: Int, columns: Int, frameDuration: Float, loop: Boolean = true
     ) : this(region, rows, columns, gdxFilledArrayOf(rows * columns, frameDuration), loop)
 
-    
     constructor(
         region: TextureRegion, rows: Int, columns: Int, frameDurations: Array<Float>, loop: Boolean = true
     ) {
@@ -39,11 +35,10 @@ class Animation : IAnimation {
         )
 
         this.frameDurations = frameDurations
-        this.animation = region.splitAndFlatten(rows, columns)
+        this.animation = region.splitAndFlatten(rows, columns, Array())
         this.loop = loop
     }
 
-    
     constructor(animation: Animation, reverse: Boolean = false) {
         this.animation = Array(animation.animation)
         this.frameDurations = Array(animation.frameDurations)
@@ -54,7 +49,6 @@ class Animation : IAnimation {
         }
     }
 
-    
     fun size() = animation.size
 
     override fun getCurrentRegion(): TextureRegion = animation[currentIndex]
@@ -80,7 +74,6 @@ class Animation : IAnimation {
         this.loop = loop
     }
 
-    
     override fun update(delta: Float) {
         elapsedTime += delta
 
@@ -108,14 +101,12 @@ class Animation : IAnimation {
         currentIndex = tempIndex
     }
 
-    
     override fun reset() {
         elapsedTime = 0f
     }
 
     override fun copy() = Animation(this)
 
-    
     override fun reversed() = Animation(this, true)
 
     override fun slice(start: Int, end: Int): IAnimation {

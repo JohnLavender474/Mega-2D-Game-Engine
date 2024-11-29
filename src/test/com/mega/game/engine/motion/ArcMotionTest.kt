@@ -15,6 +15,8 @@ class ArcMotionSpec : DescribeSpec({
         val arcFactor = 1f
         val delta = 1f // 1 second
 
+        val out = Vector2()
+
         beforeEach {
             startPosition = Vector2(0f, 0f)
             targetPosition = Vector2(10f, 10f)
@@ -27,7 +29,7 @@ class ArcMotionSpec : DescribeSpec({
             arcMotion.targetPosition shouldBe targetPosition.cpy()
             arcMotion.speed shouldBe speed
             arcMotion.arcFactor shouldBe arcFactor
-            arcMotion.getMotionValue() shouldBe startPosition.cpy()
+            arcMotion.getMotionValue(out) shouldBe startPosition.cpy()
         }
 
         describe("move over time") {
@@ -44,7 +46,7 @@ class ArcMotionSpec : DescribeSpec({
                 val t = (distanceCovered / totalDistance).coerceIn(0f, 1f)
                 val expectedPosition = ArcMotion.computeBezierPoint(t, arcFactor, startPosition, targetPosition)
 
-                arcMotion.getMotionValue() shouldBe expectedPosition
+                arcMotion.getMotionValue(out) shouldBe expectedPosition
             }
 
             it("2 - should update position correctly over time") {
@@ -60,16 +62,22 @@ class ArcMotionSpec : DescribeSpec({
                 val t = (distanceCovered / totalDistance).coerceIn(0f, 1f)
                 val expectedPosition = ArcMotion.computeBezierPoint(t, arcFactor, startPosition, targetPosition)
 
-                println("start=$startPosition, target=$targetPosition, expected=$expectedPosition, current=${arcMotion.getMotionValue()}")
+                println(
+                    "start=$startPosition, target=$targetPosition, expected=$expectedPosition, current=${
+                        arcMotion.getMotionValue(
+                            out
+                        )
+                    }"
+                )
 
-                arcMotion.getMotionValue() shouldBe expectedPosition
+                arcMotion.getMotionValue(out) shouldBe expectedPosition
             }
         }
 
         it("should move to the target position when distance is covered") {
             val arcMotion = ArcMotion(startPosition, targetPosition, speed, arcFactor)
             arcMotion.update(5f)
-            arcMotion.getMotionValue() shouldBe targetPosition
+            arcMotion.getMotionValue(out) shouldBe targetPosition
         }
 
         it("should reset to the start position") {
@@ -77,7 +85,7 @@ class ArcMotionSpec : DescribeSpec({
 
             arcMotion.update(delta)
             arcMotion.reset()
-            arcMotion.getMotionValue() shouldBe startPosition
+            arcMotion.getMotionValue(out) shouldBe startPosition
         }
 
         it("should handle edge cases correctly") {
@@ -85,12 +93,12 @@ class ArcMotionSpec : DescribeSpec({
 
             // Edge case: delta is zero
             arcMotion.update(0f)
-            arcMotion.getMotionValue() shouldBe startPosition
+            arcMotion.getMotionValue(out) shouldBe startPosition
 
             // Edge case: zero speed
             val arcMotionZeroSpeed = ArcMotion(startPosition, targetPosition, 0f, arcFactor)
             arcMotionZeroSpeed.update(delta)
-            arcMotionZeroSpeed.getMotionValue() shouldBe startPosition
+            arcMotionZeroSpeed.getMotionValue(out) shouldBe startPosition
         }
     }
 })

@@ -8,7 +8,6 @@ import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.components.IGameComponent
 
-
 class SpritesComponent(
     val sprites: OrderedMap<Any, GameSprite> = OrderedMap(),
     val updatables: ObjectMap<Any, UpdateFunction<GameSprite>> = ObjectMap()
@@ -52,4 +51,27 @@ class SpritesComponent(
     fun removeUpdateFunction(key: Any) {
         updatables.remove(key)
     }
+}
+
+class SpritesComponentBuilder {
+
+    private val sprites: OrderedMap<Any, GameSprite> = OrderedMap()
+    private val updatables: ObjectMap<Any, UpdateFunction<GameSprite>> = ObjectMap()
+
+    private var currentKey: Any = SpritesComponent.DEFAULT_KEY
+
+    fun sprite(sprite: GameSprite) = sprite(SpritesComponent.DEFAULT_KEY, sprite)
+
+    fun sprite(key: Any, sprite: GameSprite): SpritesComponentBuilder {
+        sprites.put(key, sprite)
+        currentKey = key
+        return this
+    }
+
+    fun updatable(updatable: UpdateFunction<GameSprite>) {
+        throw IllegalStateException("Must set sprite before setting updatable")
+        updatables.put(currentKey, updatable)
+    }
+
+    fun build() = SpritesComponent(sprites, updatables)
 }

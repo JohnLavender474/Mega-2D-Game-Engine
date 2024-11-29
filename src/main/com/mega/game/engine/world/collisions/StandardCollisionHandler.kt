@@ -26,7 +26,7 @@ object StandardCollisionHandler : ICollisionHandler {
         } else return false
 
         val bounds1 = dynamicBody.getBounds(gameRectOut).get(rectOut1)
-        val bounds2 = dynamicBody.getBounds(gameRectOut).get(rectOut2)
+        val bounds2 = staticBody.getBounds(gameRectOut).get(rectOut2)
         if (Intersector.intersectRectangles(bounds1, bounds2, overlap)) {
             if (overlap.width > overlap.height) {
                 if (dynamicBody.physics.receiveFrictionX)

@@ -33,10 +33,10 @@ class BodyTest :
             }
 
             it("should have the correct default values for optional properties") {
-                body.x shouldBe 0f
-                body.y shouldBe 0f
-                body.width shouldBe 0f
-                body.height shouldBe 0f
+                body.getX() shouldBe 0f
+                body.getY() shouldBe 0f
+                body.getWidth() shouldBe 0f
+                body.getHeight() shouldBe 0f
                 body.hashCode() shouldBe System.identityHashCode(body)
             }
 
@@ -70,8 +70,6 @@ class BodyTest :
             }
 
             it("should set fixtures relative to the body") {
-                body.width = 10f
-                body.height = 10f
                 body.setSize(10f)
                 body.setCenter(0f, 0f)
 

@@ -9,7 +9,7 @@ class AnimationsSystem : GameSystem(AnimationsComponent::class) {
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
 
-        entities.forEach { entity ->
+        for (entity in entities) {
             val component = entity.getComponent(AnimationsComponent::class)
             component?.animators?.forEach { e ->
                 val key = e.key

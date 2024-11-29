@@ -13,6 +13,9 @@ interface IAnimatedEntity : IGameEntity {
             return getComponent(key)!!
         }
 
+    fun putAnimator(sprite: GameSprite, animator: IAnimator) =
+        animationsComponent.putAnimator(sprite, animator)
+
     fun putAnimator(key: Any, sprite: GameSprite, animator: IAnimator) =
         animationsComponent.putAnimator(key, sprite, animator)
 }

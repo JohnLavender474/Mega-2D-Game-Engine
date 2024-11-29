@@ -10,16 +10,17 @@ interface ISizable {
 
     fun setSize(size: Float) = setSize(size, size)
 
-    fun setSize(width: Float, height: Float) {
+    fun setSize(width: Float, height: Float): ISizable {
         setWidth(width)
         setHeight(height)
+        return this
     }
 
     fun getSize(out: Vector2): Vector2 = out.set(getWidth(), getHeight())
 
-    fun setWidth(width: Float)
+    fun setWidth(width: Float): ISizable
 
-    fun setHeight(height: Float)
+    fun setHeight(height: Float): ISizable
 
     fun translateSize(width: Float, height: Float) = setSize(getWidth() + width, getHeight() + height)
 }

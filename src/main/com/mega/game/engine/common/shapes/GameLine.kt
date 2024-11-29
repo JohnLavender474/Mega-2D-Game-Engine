@@ -1,5 +1,6 @@
 package com.mega.game.engine.common.shapes
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
@@ -374,10 +375,6 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
         return this
     }
 
-    override fun getWidth() = getBoundingRectangle(reusableRect).getWidth()
-
-    override fun getHeight() = getBoundingRectangle(reusableRect).getHeight()
-
     fun setOrigin(origin: Vector2) = setOrigin(origin.x, origin.y)
 
     fun setOrigin(originX: Float, originY: Float): GameLine {
@@ -436,6 +433,11 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
         val maxX = reusableVec2.x
         val maxY = reusableVec2.y
         return out.set(minX, minY, maxX - minX, maxY - minY)
+    }
+
+    override fun draw(renderer: ShapeRenderer) {
+        calculateWorldPoints(reusableVec1, reusableVec2)
+        renderer.line(reusableVec1, reusableVec2)
     }
 
     override fun toString() = calculateWorldPoints(reusableVec1, reusableVec2).toString()

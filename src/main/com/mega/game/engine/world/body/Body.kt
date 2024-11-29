@@ -1,11 +1,13 @@
 package com.mega.game.engine.world.body
 
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.enums.Direction
 import com.mega.game.engine.common.extensions.exp
 import com.mega.game.engine.common.interfaces.IPropertizable
+import com.mega.game.engine.common.interfaces.IRectangle
 import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.objects.pairTo
@@ -39,41 +41,6 @@ class Body(
         val center = bounds.getCenter(tempVec1)
         out.setRotation(direction.rotation, center.x, center.y)
         return out
-    }
-
-    override fun setX(x: Float) {
-        bounds.setX(x)
-    }
-
-    override fun setY(y: Float) {
-        bounds.setY(y)
-    }
-
-    override fun setPosition(x: Float, y: Float) {
-        setX(x)
-        setY(y)
-    }
-
-    override fun getX() = bounds.getX()
-
-    override fun getY() = bounds.getY()
-
-    override fun setCenter(x: Float, y: Float) {
-        bounds.setCenter(x, y)
-    }
-
-    override fun getCenter(out: Vector2) = bounds.getCenter(out)
-
-    override fun getWidth() = bounds.getWidth()
-
-    override fun getHeight() = bounds.getHeight()
-
-    override fun setWidth(width: Float) {
-        bounds.setWidth(width)
-    }
-
-    override fun setHeight(height: Float) {
-        bounds.setHeight(height)
     }
 
     override fun addFixture(fixture: IFixture) = fixtures.add(fixture.getType() pairTo fixture)
@@ -117,4 +84,146 @@ class Body(
     override fun equals(other: Any?) = this === other
 
     override fun hashCode() = System.identityHashCode(this)
+
+    fun set(bounds: IRectangle): Body {
+        setWidth(bounds.getWidth())
+        setHeight(bounds.getHeight())
+        setX(bounds.getX())
+        setY(bounds.getY())
+        return this
+    }
+
+    fun set(bounds: Rectangle): Body {
+        setWidth(bounds.getWidth())
+        setHeight(bounds.getHeight())
+        setX(bounds.getX())
+        setY(bounds.getY())
+        return this
+    }
+
+    override fun setX(x: Float): Body {
+        bounds.setX(x)
+        return this
+    }
+
+    override fun setY(y: Float): Body {
+        bounds.setY(y)
+        return this
+    }
+
+    override fun setPosition(x: Float, y: Float): Body {
+        setX(x)
+        setY(y)
+        return this
+    }
+
+    override fun getX() = bounds.getX()
+
+    override fun getY() = bounds.getY()
+
+    override fun setCenter(x: Float, y: Float): Body {
+        bounds.setCenter(x, y)
+        return this
+    }
+
+    override fun getCenter(out: Vector2) = bounds.getCenter(out)
+
+    override fun getWidth() = bounds.getWidth()
+
+    override fun getHeight() = bounds.getHeight()
+
+    override fun setWidth(width: Float): Body {
+        bounds.setWidth(width)
+        return this
+    }
+
+    override fun setHeight(height: Float): Body {
+        bounds.setHeight(height)
+        return this
+    }
+
+    override fun set(
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float
+    ): Body {
+        super.set(x, y, width, height)
+        return this
+    }
+
+    override fun setPosition(position: Vector2): Body {
+        super.setPosition(position)
+        return this
+    }
+
+    override fun setCenter(center: Vector2): Body {
+        super.setCenter(center)
+        return this
+    }
+
+    override fun setTopLeftToPoint(topLeftPoint: Vector2): Body {
+        super.setTopLeftToPoint(topLeftPoint)
+        return this
+    }
+
+    override fun setTopCenterToPoint(topCenterPoint: Vector2): Body {
+        super.setTopCenterToPoint(topCenterPoint)
+        return this
+    }
+
+    override fun setTopRightToPoint(topRightPoint: Vector2): Body {
+        super.setTopRightToPoint(topRightPoint)
+        return this
+    }
+
+    override fun setCenterLeftToPoint(centerLeftPoint: Vector2): Body {
+        super.setCenterLeftToPoint(centerLeftPoint)
+        return this
+    }
+
+    override fun setCenterToPoint(centerPoint: Vector2): Body {
+        super.setCenterToPoint(centerPoint)
+        return this
+    }
+
+    override fun setCenterRightToPoint(centerRightPoint: Vector2): Body {
+        super.setCenterRightToPoint(centerRightPoint)
+        return this
+    }
+
+    override fun setBottomLeftToPoint(bottomLeftPoint: Vector2): Body {
+        super.setBottomLeftToPoint(bottomLeftPoint)
+        return this
+    }
+
+    override fun setBottomCenterToPoint(bottomCenterPoint: Vector2): Body {
+        super.setBottomCenterToPoint(bottomCenterPoint)
+        return this
+    }
+
+    override fun setBottomRightToPoint(bottomRightPoint: Vector2): Body {
+        super.setBottomRightToPoint(bottomRightPoint)
+        return this
+    }
+
+    override fun setMaxX(x: Float): Body {
+        super.setMaxX(x)
+        return this
+    }
+
+    override fun setMaxY(y: Float): Body {
+        super.setMaxY(y)
+        return this
+    }
+
+    override fun translate(x: Float, y: Float): Body {
+        super.translate(x, y)
+        return this
+    }
+
+    override fun translate(delta: Vector2): Body {
+        super.translate(delta)
+        return this
+    }
 }

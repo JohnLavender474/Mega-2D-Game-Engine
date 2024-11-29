@@ -1,5 +1,6 @@
 package com.mega.game.engine.common.shapes
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
@@ -35,13 +36,13 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
     constructor(circle: Circle) : this(circle.x, circle.y, circle.radius)
 
-    override fun getProps(props: Properties): Properties {
-        props.putAll(
+    override fun getProps(out: Properties): Properties {
+        out.putAll(
             "x" pairTo libgdxCircle.x,
             "y" pairTo libgdxCircle.y,
             "radius" pairTo libgdxCircle.radius,
         )
-        return props
+        return out
     }
 
     override fun setWithProps(props: Properties): IGameShape2D {
@@ -134,13 +135,11 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
         return this
     }
 
-    override fun getWidth() = getRadius()
-
-    override fun getHeight() = getRadius()
-
     override fun contains(point: Vector2) = libgdxCircle.contains(point)
 
     override fun contains(x: Float, y: Float) = libgdxCircle.contains(x, y)
+
+    override fun draw(renderer: ShapeRenderer) = renderer.circle(getX(), getY(), getRadius())
 
     override fun equals(other: Any?) = other is GameCircle && libgdxCircle == other.libgdxCircle
 

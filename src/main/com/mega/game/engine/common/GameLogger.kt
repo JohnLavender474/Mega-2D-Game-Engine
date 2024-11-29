@@ -19,12 +19,12 @@ object GameLogger : ApplicationLogger {
 
     val DEFAULT_LOG_FORMATTER: (level: GameLogLevel, tag: String, message: String, throwable: Throwable?) -> String =
         { level, tag, message, throwable ->
-            var message = "$level | $tag | $message"
+            var log = "$level | $tag | $message"
             if (throwable != null) {
-                message += " | ${throwable.message}"
-                throwable.stackTrace.forEach { line -> message += "\n\t$line" }
+                log += " | ${throwable.message}"
+                throwable.stackTrace.forEach { line -> log += "\n\t$line" }
             }
-            message
+            log
         }
 
     val tagsToLog = ObjectSet<String>()

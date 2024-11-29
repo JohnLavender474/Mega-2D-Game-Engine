@@ -1,5 +1,6 @@
 package com.mega.game.engine.common.shapes
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Vector2
@@ -207,10 +208,6 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
         return this
     }
 
-    override fun getWidth() = libgdxPolygon.boundingRectangle.getWidth()
-
-    override fun getHeight() = libgdxPolygon.boundingRectangle.getHeight()
-
     override fun contains(p0: Vector2) = libgdxPolygon.contains(p0)
 
     override fun contains(p0: Float, p1: Float) = libgdxPolygon.contains(p0, p1)
@@ -236,6 +233,8 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
     fun getVertex(vertexIndex: Int, pos: Vector2) = libgdxPolygon.getVertex(vertexIndex, pos)
 
     fun getCentroid(centroid: Vector2): Vector2 = libgdxPolygon.getCentroid(centroid)
+
+    override fun draw(renderer: ShapeRenderer) = renderer.polygon(libgdxPolygon.transformedVertices)
 
     override fun toString() = "GamePolygon(vertices=${getTransformedVertices(tempFloatArr)})"
 }

@@ -68,9 +68,9 @@ class SpritesComponentBuilder {
         return this
     }
 
-    fun updatable(updatable: UpdateFunction<GameSprite>) {
-        throw IllegalStateException("Must set sprite before setting updatable")
+    fun updatable(updatable: UpdateFunction<GameSprite>): SpritesComponentBuilder {
         updatables.put(currentKey, updatable)
+        return this
     }
 
     fun build() = SpritesComponent(sprites, updatables)

@@ -9,6 +9,7 @@ import com.mega.game.engine.common.shapes.GameRectangle
 
 interface IBody : IRectangle, IProcessable, IDirectional, Resettable {
 
+    var type: BodyType
     var physics: PhysicsData
 
     fun addFixture(fixture: IFixture)

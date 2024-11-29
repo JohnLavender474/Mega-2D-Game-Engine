@@ -19,7 +19,7 @@ open class Pool<T>(
     private val queue = Array<T>()
 
     override fun init() {
-        (0 until startAmount).forEach { i -> free(supplyNew()) }
+        (0 until startAmount).forEach { free(supplyNew()) }
         initialized = true
     }
 

@@ -8,6 +8,13 @@ import java.util.*
 
 class UpdatablesComponent(val updatables: OrderedMap<Any, Updatable> = OrderedMap()) : IGameComponent {
 
+    constructor(vararg updatables: Updatable) : this(OrderedMap<Any, Updatable>().apply {
+        updatables.forEach {
+            val key = UUID.randomUUID().toString()
+            put(key, it)
+        }
+    })
+
     fun add(updatable: Updatable): String {
         val key = UUID.randomUUID().toString()
         put(key, updatable)

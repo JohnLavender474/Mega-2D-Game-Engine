@@ -4,8 +4,9 @@ import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.interfaces.ICopyable
 import com.mega.game.engine.common.objects.Properties
+import com.mega.game.engine.drawables.shapes.IDrawableShape
 
-interface IGameShape2D : Shape2D, ICopyable<IGameShape2D> {
+interface IGameShape2D : Shape2D, IDrawableShape, ICopyable<IGameShape2D> {
 
     fun getProps(out: Properties): Properties
 
@@ -15,7 +16,23 @@ interface IGameShape2D : Shape2D, ICopyable<IGameShape2D> {
 
     fun getBoundingRectangle(out: GameRectangle): GameRectangle
 
-    fun setPosition(position: Vector2) = setPosition(position.x, position.y)
+    fun getMaxX(): Float
+
+    fun getMaxY(): Float
+    
+    fun setCenter(x: Float, y: Float): IGameShape2D
+
+    fun setCenter(center: Vector2) = setCenter(center.x, center.y)
+
+    fun getCenter(out: Vector2): Vector2
+
+    fun getX(): Float
+
+    fun getY(): Float
+
+    fun setX(x: Float): IGameShape2D
+
+    fun setY(y: Float): IGameShape2D
 
     fun setPosition(x: Float, y: Float): IGameShape2D {
         setX(x)
@@ -23,31 +40,9 @@ interface IGameShape2D : Shape2D, ICopyable<IGameShape2D> {
         return this
     }
 
-    fun setX(x: Float): IGameShape2D
+    fun setPosition(position: Vector2) = setPosition(position.x, position.y)
 
-    fun setY(y: Float): IGameShape2D
+    fun translate(x: Float, y: Float) = setPosition(getX() + x, getY() + y)
 
-    fun getX(): Float
-
-    fun getY(): Float
-
-    fun getPosition(out: Vector2): Vector2 = out.set(getX(), getY())
-
-    fun getCenter(out: Vector2): Vector2
-
-    fun setCenter(center: Vector2): IGameShape2D
-
-    fun setCenter(centerX: Float, centerY: Float): IGameShape2D
-
-    fun getMaxX(): Float
-
-    fun getMaxY(): Float
-
-    fun translate(translateX: Float, translateY: Float): IGameShape2D
-
-    fun translate(translation: Vector2) = translate(translation.x, translation.y)
-
-    fun getWidth(): Float
-
-    fun getHeight(): Float
+    fun translate(delta: Vector2) = translate(delta.x, delta.y)
 }

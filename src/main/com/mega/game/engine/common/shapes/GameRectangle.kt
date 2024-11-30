@@ -160,7 +160,63 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
         return this
     }
 
-    fun setSize(size: Vector2) = setSize(size.x, size.y)
+    override fun setTopLeftToPoint(topLeftPoint: Vector2): GameRectangle {
+        super.setTopLeftToPoint(topLeftPoint)
+        return this
+    }
+
+    override fun setTopCenterToPoint(topCenterPoint: Vector2): GameRectangle {
+        super.setTopCenterToPoint(topCenterPoint)
+        return this
+    }
+
+    override fun setTopRightToPoint(topRightPoint: Vector2): GameRectangle {
+        super.setTopRightToPoint(topRightPoint)
+        return this
+    }
+
+    override fun setCenterLeftToPoint(centerLeftPoint: Vector2): GameRectangle {
+        super.setCenterLeftToPoint(centerLeftPoint)
+        return this
+    }
+
+    override fun setCenterToPoint(centerPoint: Vector2): GameRectangle {
+        super.setCenterToPoint(centerPoint)
+        return this
+    }
+
+    override fun setCenterRightToPoint(centerRightPoint: Vector2): GameRectangle {
+        super.setCenterRightToPoint(centerRightPoint)
+        return this
+    }
+
+    override fun setBottomLeftToPoint(bottomLeftPoint: Vector2): GameRectangle {
+        super.setBottomLeftToPoint(bottomLeftPoint)
+        return this
+    }
+
+    override fun setBottomCenterToPoint(bottomCenterPoint: Vector2): GameRectangle {
+        super.setBottomCenterToPoint(bottomCenterPoint)
+        return this
+    }
+
+    override fun setBottomRightToPoint(bottomRightPoint: Vector2): GameRectangle {
+        super.setBottomRightToPoint(bottomRightPoint)
+        return this
+    }
+
+    override fun setSize(size: Vector2): GameRectangle {
+        super.setSize(size)
+        return this
+    }
+
+    override fun translateSize(
+        width: Float,
+        height: Float
+    ): GameRectangle {
+        super.translateSize(width, height)
+        return this
+    }
 
     override fun set(x: Float, y: Float, width: Float, height: Float): GameRectangle {
         rectangle.set(x, y, width, height)

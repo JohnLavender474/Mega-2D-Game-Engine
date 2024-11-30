@@ -1,13 +1,14 @@
 package com.mega.game.engine.common.shapes
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.objects.pairTo
-import java.util.function.BiPredicate
 
 open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
@@ -18,13 +19,13 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
         fun setOverlapExtension(overlapExtension: (GameCircle, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
         }
-
-        fun setOverlapExtension(overlapExtension: BiPredicate<GameCircle, IGameShape2D>) {
-            setOverlapExtension { circle, shape -> overlapExtension.test(circle, shape) }
-        }
     }
 
+    override var drawingColor: Color = Color.RED
+    override var drawingShapeType = ShapeType.Line
+
     internal val libgdxCircle: Circle = Circle(x, y, radius)
+
     private val tempRect = Rectangle()
     private val tempVec1 = Vector2()
     private val tempVec2 = Vector2()
@@ -114,8 +115,8 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
     override fun setCenter(center: Vector2) = setCenter(center.x, center.y)
 
-    override fun setCenter(centerX: Float, centerY: Float): IGameShape2D {
-        libgdxCircle.setPosition(centerX, centerY)
+    override fun setCenter(x: Float, y: Float): IGameShape2D {
+        libgdxCircle.setPosition(x, y)
         return this
     }
 
@@ -139,7 +140,12 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
     override fun contains(x: Float, y: Float) = libgdxCircle.contains(x, y)
 
-    override fun draw(renderer: ShapeRenderer) = renderer.circle(getX(), getY(), getRadius())
+    override fun draw(renderer: ShapeRenderer): GameCircle {
+        renderer.color = drawingColor
+        renderer.set(drawingShapeType)
+        renderer.circle(getX(), getY(), getRadius())
+        return this
+    }
 
     override fun equals(other: Any?) = other is GameCircle && libgdxCircle == other.libgdxCircle
 

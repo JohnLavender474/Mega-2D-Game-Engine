@@ -18,7 +18,18 @@ interface ISpritesEntity : IGameEntity {
     val defaultSprite: GameSprite
         get() = this.sprites[SpritesComponent.DEFAULT_KEY]
 
-    fun putUpdateFunction(key: String, updateFunction: UpdateFunction<GameSprite>) {
-        this.spritesComponent.putUpdateFunction(key, updateFunction)
-    }
+    fun putSprite(sprite: GameSprite) = spritesComponent.putSprite(sprite)
+
+    fun putSprite(key: Any, sprite: GameSprite): GameSprite? = spritesComponent.putSprite(key, sprite)
+
+    fun containsSprite(key: Any) = spritesComponent.containsSprite(key)
+
+    fun removeSprite(key: Any): GameSprite? = spritesComponent.removeSprite(key)
+
+    fun putUpdateFunction(function: UpdateFunction<GameSprite>) = spritesComponent.putUpdateFunction(function)
+
+    fun putUpdateFunction(key: String, updateFunction: UpdateFunction<GameSprite>) =
+        spritesComponent.putUpdateFunction(key, updateFunction)
+
+    fun removeUpdateFunction(key: Any) = spritesComponent.removeUpdateFunction(key)
 }

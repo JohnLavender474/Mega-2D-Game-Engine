@@ -21,22 +21,23 @@ class Fixture(
     var bodyAttachmentPosition: Position = Position.CENTER,
     var offsetFromBodyAttachment: Vector2 = Vector2(),
     override var properties: Properties = Properties(),
-    var debugColor: Color = Color.RED,
-    var debugShapeType: ShapeType = ShapeType.Line
+    override var drawingColor: Color = Color.RED,
+    override var drawingShapeType: ShapeType = ShapeType.Line
 ) : IFixture, ICopyable<Fixture>, IDrawableShape {
 
     companion object {
         const val TAG = "Fixture"
     }
 
-    private var rawShape: IGameShape2D = rawShape
+    var rawShape: IGameShape2D = rawShape
         set(value) {
             field = value
             adjustedShape = null
         }
+
+    private var adjustedShape: IGameShape2D? = null
     private var fixtureType = type
     private var isActive = active
-    private var adjustedShape: IGameShape2D? = null
 
     private val reusableShapeProps = Properties()
     private val reusableGameRect = GameRectangle()
@@ -60,7 +61,7 @@ class Fixture(
         val attachmentPos = body.getBounds(reusableGameRect).getPositionPoint(bodyAttachmentPosition, out1)
         copy.setCenter(attachmentPos).translate(offsetFromBodyAttachment)
 
-        if (copy is IRotatableShape) copy.setRotation(body.direction.rotation, attachmentPos.x, attachmentPos.y)
+        if (copy is IRotatableShape) copy.rotate(body.direction.rotation, attachmentPos.x, attachmentPos.y)
 
         return copy
     }
@@ -96,9 +97,10 @@ class Fixture(
         Properties(properties)
     )
 
-    override fun draw(renderer: ShapeRenderer) {
-        renderer.color = debugColor
-        renderer.set(debugShapeType)
+    override fun draw(renderer: ShapeRenderer): Fixture {
+        renderer.color = drawingColor
+        renderer.set(drawingShapeType)
         getShape().draw(renderer)
+        return this
     }
 }

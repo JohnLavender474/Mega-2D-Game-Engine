@@ -19,7 +19,7 @@ class AnimationsComponent() : IGameComponent {
     internal val sprites = ObjectMap<Any, GameSprite>()
     internal val animators = OrderedMap<Any, IAnimator>()
 
-    constructor(entity: ISpritesEntity, animator: IAnimator): this() {
+    constructor(entity: ISpritesEntity, animator: IAnimator) : this() {
         val sprite = entity.defaultSprite
         putAnimator(sprite, animator)
     }
@@ -28,7 +28,7 @@ class AnimationsComponent() : IGameComponent {
      * TODO: this constructor is here only to support compatibility with the old version of the engine. Any usages of
      *   this constructor should be removed and replaced.
      */
-    constructor(animators: Array<GamePair<() -> GameSprite, IAnimator>>): this() {
+    constructor(animators: Array<GamePair<() -> GameSprite, IAnimator>>) : this() {
         animators.forEach {
             val sprite = it.first.invoke()
             val animator = it.second
@@ -46,12 +46,23 @@ class AnimationsComponent() : IGameComponent {
 
     fun containsAnimator(key: Any) = animators.containsKey(key)
 
-    fun removeAnimator(key: Any) {
-        sprites.remove(key)
-        animators.remove(key)
+    fun removeAnimator(key: Any, out: GamePair<GameSprite, IAnimator>? = null): GamePair<GameSprite, IAnimator>? {
+        val sprite = sprites.remove(key)
+        val animator = animators.remove(key)
+        out?.set(sprite, animator)
+        return out
     }
 
-    fun getAnimator(key: Any) = animators[key]
+    fun getAnimator(key: Any) = animators[key]!!
+
+    fun getAnimatedSprite(key: Any) = sprites[key]!!
+
+    fun forEachAnimator(action: (Any, GameSprite, IAnimator) -> Unit) {
+        animators.forEach {
+            val sprite = getAnimatedSprite(it.key)
+            action.invoke(it.key, sprite, it.value)
+        }
+    }
 
     override fun reset() = animators.values().forEach { it.reset() }
 }

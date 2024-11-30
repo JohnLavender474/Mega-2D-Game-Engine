@@ -1,6 +1,8 @@
 package com.mega.game.engine.common.shapes
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
@@ -8,14 +10,14 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.interfaces.IRotatable
 import com.mega.game.engine.common.interfaces.IScalable
+import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.objects.pairTo
-import java.util.function.BiPredicate
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
-class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
+class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape, Resettable {
 
     companion object {
 
@@ -23,10 +25,6 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
 
         fun setOverlapExtension(overlapExtension: (GameLine, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
-        }
-
-        fun setOverlapExtension(overlapExtension: BiPredicate<GameLine, IGameShape2D>) {
-            OVERLAP_EXTENSION = overlapExtension::test
         }
     }
 
@@ -67,6 +65,9 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
             dirty = true
             calculateScaledLength = true
         }
+
+    override var drawingColor: Color = Color.RED
+    override var drawingShapeType = ShapeType.Line
 
     private var dirty = true
 
@@ -163,21 +164,24 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
         return this
     }
 
-    fun setOriginCenter() {
+    fun setOriginCenter(): GameLine {
         val center = getCenter(reusableVec1)
         originX = center.x
         originY = center.y
+        return this
     }
 
-    fun setToDirty() {
+    fun setToDirty(): GameLine {
         dirty = true
+        return this
     }
 
-    fun setToRecalculateLength() {
+    fun setToRecalculateLength(): GameLine {
         calculateLength = true
+        return this
     }
 
-    override fun setRotation(rotation: Float, originX: Float, originY: Float) {
+    override fun rotate(rotation: Float, originX: Float, originY: Float) {
         setLocalPoints(localPoint1, localPoint2)
         setPosition(position)
         this.rotation = rotation
@@ -195,8 +199,9 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
         return length
     }
 
-    fun setToRecalculateScaledLength() {
+    fun setToRecalculateScaledLength(): GameLine {
         calculateScaledLength = true
+        return this
     }
 
     fun getScaledLength(): Float {
@@ -237,7 +242,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
 
     fun getSecondLocalPoint(out: Vector2): Vector2 = out.set(localPoint2)
 
-    fun calculateWorldPoints(out1: Vector2, out2: Vector2) {
+    fun calculateWorldPoints(out1: Vector2, out2: Vector2): GameLine {
         if (dirty) {
             dirty = false
 
@@ -268,7 +273,8 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
 
         out1.set(worldPoint1)
         out2.set(worldPoint2)
-        return
+
+        return this
     }
 
     fun forEachLocalPoint(action: (Vector2) -> Unit): GameLine {
@@ -404,7 +410,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
                 Intersector.intersectSegments(reusableVec1, reusableVec2, reusableVec3, reusableVec4, null)
             }
 
-            is GamePolygon -> Intersector.intersectLinePolygon(worldPoint1, worldPoint2, other.libgdxPolygon)
+            is GamePolygon -> Intersector.intersectLinePolygon(reusableVec1, reusableVec2, other.libgdxPolygon)
             else -> OVERLAP_EXTENSION?.invoke(this, other) == true
         }
     }
@@ -435,10 +441,27 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape {
         return out.set(minX, minY, maxX - minX, maxY - minY)
     }
 
-    override fun draw(renderer: ShapeRenderer) {
+    override fun draw(renderer: ShapeRenderer): GameLine {
         calculateWorldPoints(reusableVec1, reusableVec2)
+        renderer.color = drawingColor
+        renderer.set(drawingShapeType)
         renderer.line(reusableVec1, reusableVec2)
+        return this
     }
 
-    override fun toString() = calculateWorldPoints(reusableVec1, reusableVec2).toString()
+    override fun toString(): String {
+        calculateWorldPoints(reusableVec1, reusableVec2)
+        return "GameLine[$reusableVec1, $reusableVec2]"
+    }
+
+    override fun reset() {
+        position.setZero()
+        localPoint1.setZero()
+        localPoint2.setZero()
+        originX = 0f
+        originY = 0f
+        scaleX = 1f
+        scaleY = 1f
+        rotation = 0f
+    }
 }

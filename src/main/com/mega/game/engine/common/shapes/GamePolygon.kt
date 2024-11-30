@@ -1,26 +1,25 @@
 package com.mega.game.engine.common.shapes
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.FloatArray
 import com.mega.game.engine.common.interfaces.IRotatable
+import com.mega.game.engine.common.interfaces.Resettable
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.objects.pairTo
-import java.util.function.BiPredicate
 
-open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
+open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape, Resettable {
 
     companion object {
         private var OVERLAP_EXTENSION: ((GamePolygon, IGameShape2D) -> Boolean)? = null
 
         fun setOverlapExtension(overlapExtension: (GamePolygon, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
-        }
-
-        fun setOverlapExtension(overlapExtension: BiPredicate<GamePolygon, IGameShape2D>) {
-            setOverlapExtension { polygon, shape -> overlapExtension.test(polygon, shape) }
         }
     }
 
@@ -52,13 +51,14 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
             libgdxPolygon.setScale(libgdxPolygon.scaleX, value)
         }
 
+    override var drawingColor: Color = Color.RED
+    override var drawingShapeType = ShapeType.Line
+
     private var tempPolygon: GamePolygon? = null
     private val tempFloatArr = Array<Float>()
 
-    constructor(vertices: Array<Float>) : this() {
-        val floatArray = FloatArray(vertices.size)
-        for (i in 0 until vertices.size) floatArray[i] = vertices[i]
-        libgdxPolygon.vertices = floatArray
+    constructor(vertices: kotlin.FloatArray) : this() {
+        setLocalVertices(vertices)
     }
 
     constructor(polygon: GamePolygon) : this() {
@@ -98,8 +98,7 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
     }
 
     override fun setWithProps(props: Properties): GamePolygon {
-        if (props.containsKey("local_vertices"))
-            setLocalVertices(props.get("local_vertices", FloatArray::class)!!)
+        if (props.containsKey("local_vertices")) setLocalVertices(props.get("local_vertices", FloatArray::class)!!)
         if (props.containsKey("x")) setX(props.get("x", Float::class)!!)
         if (props.containsKey("y")) setY(props.get("y", Float::class)!!)
         if (props.containsKey("scale_x")) scaleX = props.get("scale_x", Float::class)!!
@@ -120,8 +119,16 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
         return out
     }
 
-    fun setLocalVertices(vertices: FloatArray) {
+    fun clearLocalVertices() {
+        libgdxPolygon.vertices = kotlin.FloatArray(0)
+        setDirty()
+    }
+
+    fun setLocalVertices(vertices: FloatArray) = setLocalVertices(vertices.toArray())
+
+    fun setLocalVertices(vertices: kotlin.FloatArray) {
         libgdxPolygon.vertices = vertices
+        setDirty()
     }
 
     fun getVertexCount() = libgdxPolygon.vertexCount
@@ -145,36 +152,35 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
             is GamePolygon -> Intersector.overlapConvexPolygons(libgdxPolygon, other.libgdxPolygon)
             is GameRectangle -> {
                 if (tempPolygon == null) tempPolygon = GamePolygon()
-
-                Intersector.overlapConvexPolygons(
-                    libgdxPolygon,
-                    other.toPolygon(tempPolygon!!).libgdxPolygon
-                )
+                Intersector.overlapConvexPolygons(libgdxPolygon, other.toPolygon(tempPolygon!!).libgdxPolygon)
             }
 
             is GameLine -> {
                 val arr = other.getTransformedVertices(tempFloatArr)
-                Intersector.overlapConvexPolygons(libgdxPolygon, Polygon(arr.toArray().toFloatArray()))
+                if (tempPolygon == null) tempPolygon = GamePolygon()
+                tempPolygon!!.reset()
+                tempPolygon!!.setLocalVertices(arr.toArray().toFloatArray())
+                Intersector.overlapConvexPolygons(libgdxPolygon, tempPolygon!!.libgdxPolygon)
             }
 
             is GameCircle -> ShapeUtils.overlaps(other.libgdxCircle, libgdxPolygon)
-            else -> OVERLAP_EXTENSION?.invoke(this, other) ?: false
+            else -> OVERLAP_EXTENSION?.invoke(this, other) == true
         }
     }
 
     override fun getBoundingRectangle(out: GameRectangle) = out.set(libgdxPolygon.boundingRectangle)
 
-    override fun setPosition(x: Float, y: Float): IGameShape2D {
+    override fun setPosition(x: Float, y: Float): GamePolygon {
         libgdxPolygon.setPosition(x, y)
         return this
     }
 
-    override fun setX(x: Float): IGameShape2D {
+    override fun setX(x: Float): GamePolygon {
         libgdxPolygon.setPosition(x, libgdxPolygon.y)
         return this
     }
 
-    override fun setY(y: Float): IGameShape2D {
+    override fun setY(y: Float): GamePolygon {
         libgdxPolygon.setPosition(libgdxPolygon.x, y)
         return this
     }
@@ -187,7 +193,7 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
 
     override fun setCenter(center: Vector2) = setCenter(center.x, center.y)
 
-    override fun setCenter(centerX: Float, centerY: Float): IGameShape2D {
+    override fun setCenter(centerX: Float, centerY: Float): GamePolygon {
         val bounds = libgdxPolygon.boundingRectangle
         libgdxPolygon.setPosition(centerX - bounds.width / 2, centerY - bounds.height / 2)
         return this
@@ -214,7 +220,7 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
 
     override fun copy() = GamePolygon(this)
 
-    override fun setRotation(rotation: Float, originX: Float, originY: Float) {
+    override fun rotate(rotation: Float, originX: Float, originY: Float) {
         this.rotation = rotation
         this.originX = originX
         this.originY = originY
@@ -234,7 +240,22 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape {
 
     fun getCentroid(centroid: Vector2): Vector2 = libgdxPolygon.getCentroid(centroid)
 
-    override fun draw(renderer: ShapeRenderer) = renderer.polygon(libgdxPolygon.transformedVertices)
+    override fun draw(renderer: ShapeRenderer): GamePolygon {
+        renderer.color = drawingColor
+        renderer.set(drawingShapeType)
+        renderer.polygon(libgdxPolygon.transformedVertices)
+        return this
+    }
 
     override fun toString() = "GamePolygon(vertices=${getTransformedVertices(tempFloatArr)})"
+
+    override fun reset() {
+        originX = 0f
+        originY = 0f
+        scaleX = 1f
+        scaleY = 1f
+        rotation = 0f
+        setPosition(0f, 0f)
+        clearLocalVertices()
+    }
 }

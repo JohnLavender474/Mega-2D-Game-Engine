@@ -1,8 +1,15 @@
 package com.mega.game.engine.common.interfaces
 
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.math.collision.BoundingBox
+import com.badlogic.gdx.utils.Array
+import com.mega.game.engine.common.UtilMethods
 import com.mega.game.engine.common.enums.Position
 import com.mega.game.engine.common.shapes.GamePolygon
+import com.mega.game.engine.common.shapes.GameRectangle
+import com.mega.game.engine.common.utils.BoundingBoxUtils
 
 interface IRectangle : ISizable {
 
@@ -116,6 +123,7 @@ interface IRectangle : ISizable {
     fun getBottomRightPoint(out: Vector2): Vector2 = out.set(this.getX() + this.getWidth(), this.getY())
 
     fun toPolygon(out: GamePolygon): GamePolygon {
+        out.reset()
         out.setLocalVertices(floatArrayOf(0f, 0f, getWidth(), 0f, getWidth(), getHeight(), 0f, getHeight()))
         out.setPosition(getX(), getY())
         return out
@@ -148,4 +156,20 @@ interface IRectangle : ISizable {
     fun translate(x: Float, y: Float) = setPosition(getX() + x, getY() + y)
 
     fun translate(delta: Vector2) = translate(delta.x, delta.y)
+
+    fun getRandomPositionInBounds(out: Vector2): Vector2 {
+        val randX = UtilMethods.getRandom(getX(), getX() + getWidth())
+        val randY = UtilMethods.getRandom(getY(), getY() + getHeight())
+        return out.set(randX, randY)
+    }
+
+    fun toBoundingBox(out: BoundingBox): BoundingBox =
+        out.set(Vector3(getX(), getY(), 0f), Vector3(getX() + getWidth(), getY() + getHeight(), 0f))
+
+    fun isInCamera(camera: Camera, out: BoundingBox) = BoundingBoxUtils.isInCamera(toBoundingBox(out), camera)
+
+    fun toIntArray(out: Array<Int>) =
+        out.addAll(getX().toInt(), getY().toInt(), (getWidth() + 1).toInt(), (getHeight() + 1).toInt())
+
+    fun toGameRectangle(out: GameRectangle) = out.set(this)
 }

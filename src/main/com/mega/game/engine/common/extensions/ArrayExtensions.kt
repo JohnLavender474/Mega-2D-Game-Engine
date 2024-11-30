@@ -7,6 +7,11 @@ import com.badlogic.gdx.utils.Predicate
 import java.util.function.Consumer
 import java.util.function.Function
 
+fun Array<Float>.toGdxFloatArray(out: FloatArray): FloatArray {
+    forEach { out.add(it) }
+    return out
+}
+
 fun <T> gdxArrayOf(vararg elements: T): Array<T> {
     val array = Array<T>()
     elements.forEach { array.add(it) }

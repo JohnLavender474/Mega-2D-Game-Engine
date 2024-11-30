@@ -3,7 +3,6 @@ package com.mega.game.engine.common.shapes
 import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
-import com.mega.game.engine.common.extensions.gdxArrayOf
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -16,7 +15,7 @@ class GamePolygonTest : DescribeSpec({
         val outRect = GameRectangle()
 
         beforeEach {
-            gamePolygon = GamePolygon(gdxArrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f))
+            gamePolygon = GamePolygon(floatArrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f))
             outFloatArr.clear()
         }
 
@@ -37,12 +36,12 @@ class GamePolygonTest : DescribeSpec({
         }
 
         it("should overlap with another polygon") {
-            val otherPolygon = GamePolygon(gdxArrayOf(0.5f, 0.5f, 1.5f, 0.5f, 1.5f, 1.5f, 0.5f, 1.5f))
+            val otherPolygon = GamePolygon(floatArrayOf(0.5f, 0.5f, 1.5f, 0.5f, 1.5f, 1.5f, 0.5f, 1.5f))
             gamePolygon.overlaps(otherPolygon) shouldBe true
         }
 
         it("should not overlap with another polygon") {
-            val otherPolygon = GamePolygon(gdxArrayOf(2f, 2f, 3f, 2f, 3f, 3f, 2f, 3f))
+            val otherPolygon = GamePolygon(floatArrayOf(2f, 2f, 3f, 2f, 3f, 3f, 2f, 3f))
             gamePolygon.overlaps(otherPolygon) shouldBe false
         }
 

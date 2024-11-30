@@ -1,6 +1,8 @@
 package com.mega.game.engine.common.shapes
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
@@ -9,7 +11,6 @@ import com.badlogic.gdx.utils.FloatArray
 import com.mega.game.engine.common.enums.Position
 import com.mega.game.engine.common.interfaces.IRectangle
 import com.mega.game.engine.common.objects.*
-import java.util.function.BiPredicate
 import kotlin.math.*
 
 open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
@@ -20,10 +21,6 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
 
         fun setOverlapExtension(overlapExtension: (GameRectangle, IGameShape2D) -> Boolean) {
             OVERLAP_EXTENSION = overlapExtension
-        }
-
-        fun setOverlapExtension(overlapExtension: BiPredicate<GameRectangle, IGameShape2D>) {
-            setOverlapExtension { rect, shape -> overlapExtension.test(rect, shape) }
         }
 
         fun calculateBoundsFromLines(lines: Array<GamePair<Vector2, Vector2>>, out: GameRectangle): GameRectangle {
@@ -43,6 +40,9 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
             return out.set(minX, minY, abs(maxX - minX), abs(maxY - minY))
         }
     }
+
+    override var drawingColor: Color = Color.RED
+    override var drawingShapeType = ShapeType.Line
 
     internal val rectangle = Rectangle()
 
@@ -119,20 +119,29 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
         return out
     }
 
-    override fun setRotation(rotation: Float, originX: Float, originY: Float) {
+    override fun rotate(rotation: Float, originX: Float, originY: Float) {
         val line1 = linesPool.fetch()
+        line1.reset()
+
         val line2 = linesPool.fetch()
+        line2.reset()
+
         val line3 = linesPool.fetch()
+        line3.reset()
+
         val line4 = linesPool.fetch()
+        line4.reset()
 
         linesArray.clear()
-        val array = getAsLines(linesArray, line1, line2, line3, line4)
+        getAsLines(linesArray, line1, line2, line3, line4)
 
         pointsArray.forEach { pointsPool.free(it) }
         pointsArray.clear()
 
-        for (i in 0 until array.size) {
-            val line = array[i]
+        val lineIter = linesArray.iterator()
+        while (lineIter.hasNext()) {
+            val line = lineIter.next()
+
             line.originX = originX
             line.originY = originY
             line.rotation = rotation
@@ -140,6 +149,9 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
             val pair = pointsPool.fetch()
             line.calculateWorldPoints(pair.first, pair.second)
             pointsArray.add(pair)
+
+            linesPool.free(line)
+            lineIter.remove()
         }
 
         calculateBoundsFromLines(pointsArray, this)
@@ -210,10 +222,7 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
         return this
     }
 
-    override fun translateSize(
-        width: Float,
-        height: Float
-    ): GameRectangle {
+    override fun translateSize(width: Float, height: Float): GameRectangle {
         super.translateSize(width, height)
         return this
     }
@@ -386,7 +395,12 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
 
     override fun copy(): GameRectangle = GameRectangle(this)
 
-    override fun draw(renderer: ShapeRenderer) = renderer.rect(getX(), getY(), getWidth(), getHeight())
+    override fun draw(renderer: ShapeRenderer): GameRectangle {
+        renderer.color = drawingColor
+        renderer.set(drawingShapeType)
+        renderer.rect(getX(), getY(), getWidth(), getHeight())
+        return this
+    }
 
     fun getSplitDimensions(size: Float, out: GamePair<Int, Int>) = getSplitDimensions(size, size, out)
 
@@ -419,6 +433,8 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
     }
 
     fun splitByCellSize(size: Float, out: Matrix<GameRectangle>) = splitByCellSize(size, size, out)
+
+    fun splitByCellSize(size: Vector2, out: Matrix<GameRectangle>) = splitByCellSize(size.x, size.y, out)
 
     fun splitByCellSize(rectWidth: Float, rectHeight: Float, out: Matrix<GameRectangle>): Matrix<GameRectangle> {
         val rows = ceil(getHeight() / rectHeight).roundToInt()

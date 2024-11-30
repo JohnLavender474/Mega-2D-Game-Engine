@@ -1,5 +1,8 @@
 package com.mega.game.engine.world.body
 
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
@@ -13,6 +16,7 @@ import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.common.shapes.GameRectangle
+import com.mega.game.engine.drawables.shapes.IDrawableShape
 import kotlin.math.abs
 
 class Body(
@@ -28,19 +32,22 @@ class Body(
     var onReset: (() -> Unit)? = null,
     override var direction: Direction = Direction.UP,
     override var properties: Properties = Properties(),
-) : IBody, IPropertizable {
+    override var drawingColor: Color = Color.RED,
+    override var drawingShapeType: ShapeType = ShapeType.Line
+) : IBody, IPropertizable, IDrawableShape {
 
     companion object {
         const val TAG = "Body"
     }
 
     private val bounds = GameRectangle(x, y, width, height)
+    private val tempRect1 = GameRectangle()
     private val tempVec1 = Vector2()
 
     override fun getBounds(out: GameRectangle): GameRectangle {
         out.set(bounds)
         val center = bounds.getCenter(tempVec1)
-        out.setRotation(direction.rotation, center.x, center.y)
+        out.rotate(direction.rotation, center.x, center.y)
         return out
     }
 
@@ -51,9 +58,7 @@ class Body(
         return out
     }
 
-    override fun forEachFixture(action: (IFixture) -> Unit) = fixtures.forEach {
-        action.invoke(it.second)
-    }
+    override fun forEachFixture(action: (IFixture) -> Unit) = fixtures.forEach { action.invoke(it.second) }
 
     override fun preProcess() = preProcess.values().forEach { it.invoke() }
 
@@ -143,12 +148,7 @@ class Body(
         return this
     }
 
-    override fun set(
-        x: Float,
-        y: Float,
-        width: Float,
-        height: Float
-    ): Body {
+    override fun set(x: Float, y: Float, width: Float, height: Float): Body {
         super.set(x, y, width, height)
         return this
     }
@@ -238,19 +238,20 @@ class Body(
         return this
     }
 
-    override fun translateSize(
-        width: Float,
-        height: Float
-    ): Body {
+    override fun translateSize(width: Float, height: Float): Body {
         super.translateSize(width, height)
         return this
     }
 
-    override fun positionOnPoint(
-        point: Vector2,
-        position: Position
-    ): Body {
+    override fun positionOnPoint(point: Vector2, position: Position): Body {
         super.positionOnPoint(point, position)
+        return this
+    }
+
+    override fun draw(renderer: ShapeRenderer): Body {
+        renderer.color = drawingColor
+        renderer.set(drawingShapeType)
+        getBounds(tempRect1).draw(renderer)
         return this
     }
 }

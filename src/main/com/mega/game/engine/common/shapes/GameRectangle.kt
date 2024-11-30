@@ -65,7 +65,7 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
         set(rect)
     }
 
-    constructor(rect: GameRectangle) : this() {
+    constructor(rect: IRectangle) : this() {
         set(rect)
     }
 
@@ -260,9 +260,9 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
         return this
     }
 
-    override fun setMaxX(maxX: Float) = setX(maxX - getWidth())
+    override fun setMaxX(x: Float) = setX(x - getWidth())
 
-    override fun setMaxY(maxY: Float) = setY(maxY - getHeight())
+    override fun setMaxY(y: Float) = setY(y - getHeight())
 
     override fun getMaxX() = getX() + getWidth()
 
@@ -323,18 +323,8 @@ open class GameRectangle() : IGameShape2D, IRectangle, IRotatableShape {
 
     override fun getHeight() = rectangle.height
 
-    fun positionOnPoint(point: Vector2, position: Position): GameRectangle {
-        when (position) {
-            Position.TOP_LEFT -> setTopLeftToPoint(point)
-            Position.TOP_CENTER -> setTopCenterToPoint(point)
-            Position.TOP_RIGHT -> setTopRightToPoint(point)
-            Position.CENTER_LEFT -> setCenterLeftToPoint(point)
-            Position.CENTER -> setCenterToPoint(point)
-            Position.CENTER_RIGHT -> setCenterRightToPoint(point)
-            Position.BOTTOM_LEFT -> setBottomLeftToPoint(point)
-            Position.BOTTOM_CENTER -> setBottomCenterToPoint(point)
-            Position.BOTTOM_RIGHT -> setBottomRightToPoint(point)
-        }
+    override fun positionOnPoint(point: Vector2, position: Position): GameRectangle {
+        super.positionOnPoint(point, position)
         return this
     }
 

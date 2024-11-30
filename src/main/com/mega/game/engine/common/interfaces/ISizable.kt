@@ -10,6 +10,8 @@ interface ISizable {
 
     fun setSize(size: Float) = setSize(size, size)
 
+    fun setSize(size: Vector2) = setSize(size.x, size.y)
+
     fun setSize(width: Float, height: Float): ISizable {
         setWidth(width)
         setHeight(height)

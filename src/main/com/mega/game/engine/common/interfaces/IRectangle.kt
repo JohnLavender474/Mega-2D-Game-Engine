@@ -18,6 +18,21 @@ interface IRectangle : ISizable {
         Position.BOTTOM_RIGHT -> getBottomRightPoint(out)
     }
 
+    fun positionOnPoint(point: Vector2, position: Position): IRectangle {
+        when (position) {
+            Position.TOP_LEFT -> setTopLeftToPoint(point)
+            Position.TOP_CENTER -> setTopCenterToPoint(point)
+            Position.TOP_RIGHT -> setTopRightToPoint(point)
+            Position.CENTER_LEFT -> setCenterLeftToPoint(point)
+            Position.CENTER -> setCenterToPoint(point)
+            Position.CENTER_RIGHT -> setCenterRightToPoint(point)
+            Position.BOTTOM_LEFT -> setBottomLeftToPoint(point)
+            Position.BOTTOM_CENTER -> setBottomCenterToPoint(point)
+            Position.BOTTOM_RIGHT -> setBottomRightToPoint(point)
+        }
+        return this
+    }
+
     fun getPosition(out: Vector2): Vector2 = out.set(getX(), getY())
 
     fun setCenter(x: Float, y: Float): IRectangle {

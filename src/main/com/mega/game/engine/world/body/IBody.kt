@@ -1,13 +1,10 @@
 package com.mega.game.engine.world.body
 
 import com.badlogic.gdx.utils.Array
-import com.mega.game.engine.common.interfaces.IDirectional
-import com.mega.game.engine.common.interfaces.IProcessable
-import com.mega.game.engine.common.interfaces.IRectangle
-import com.mega.game.engine.common.interfaces.Resettable
+import com.mega.game.engine.common.interfaces.*
 import com.mega.game.engine.common.shapes.GameRectangle
 
-interface IBody : IRectangle, IProcessable, IDirectional, Resettable {
+interface IBody : IRectangle, IProcessable, IDirectional, IPropertizable, Resettable {
 
     var type: BodyType
     var physics: PhysicsData

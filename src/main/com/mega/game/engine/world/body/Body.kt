@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.enums.Direction
+import com.mega.game.engine.common.enums.Position
 import com.mega.game.engine.common.extensions.exp
 import com.mega.game.engine.common.interfaces.IPropertizable
 import com.mega.game.engine.common.interfaces.IRectangle
@@ -224,6 +225,32 @@ class Body(
 
     override fun translate(delta: Vector2): Body {
         super.translate(delta)
+        return this
+    }
+
+    override fun setSize(size: Float): Body {
+        super.setSize(size)
+        return this
+    }
+
+    override fun setSize(width: Float, height: Float): Body {
+        super.setSize(width, height)
+        return this
+    }
+
+    override fun translateSize(
+        width: Float,
+        height: Float
+    ): Body {
+        super.translateSize(width, height)
+        return this
+    }
+
+    override fun positionOnPoint(
+        point: Vector2,
+        position: Position
+    ): Body {
+        super.positionOnPoint(point, position)
         return this
     }
 }

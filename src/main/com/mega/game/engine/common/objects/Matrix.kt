@@ -5,8 +5,8 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
 import com.badlogic.gdx.utils.OrderedMap
 
-
 class MatrixIterator<T>(private val matrix: Matrix<T>) : MutableIterator<T> {
+
     var rowIndex = 0
         private set
     var columnIndex = -1
@@ -42,15 +42,13 @@ class MatrixIterator<T>(private val matrix: Matrix<T>) : MutableIterator<T> {
     }
 }
 
-
-open class Matrix<T>(var rows: Int, var columns: Int) : MutableCollection<T> {
+open class Matrix<T>(var rows: Int = 0, var columns: Int = 0) : MutableCollection<T> {
 
     override val size: Int
         get() = matrixMap.size
 
     internal val matrixMap = OrderedMap<IntPair, T>()
     internal val elementToIndexMap = ObjectMap<T, ObjectSet<IntPair>>()
-
 
     constructor(array: Array<Array<T>>) : this(array.size, array[0].size) {
         for (x in 0 until columns) {
@@ -61,11 +59,9 @@ open class Matrix<T>(var rows: Int, var columns: Int) : MutableCollection<T> {
         }
     }
 
-
     constructor(rows: Int, columns: Int, initializer: (Int, Int) -> T) : this(rows, columns) {
         for (x in 0 until columns) for (y in 0 until rows) set(x, y, initializer(x, y))
     }
-
 
     operator fun get(column: Int, row: Int): T? {
         // Indexes must be within bounds
@@ -74,7 +70,6 @@ open class Matrix<T>(var rows: Int, var columns: Int) : MutableCollection<T> {
 
         return matrixMap[column pairTo row]
     }
-
 
     operator fun set(column: Int, row: Int, element: T?): T? {
         // Indexes must be within bounds
@@ -109,16 +104,12 @@ open class Matrix<T>(var rows: Int, var columns: Int) : MutableCollection<T> {
         return oldValue
     }
 
-
     fun isRowOutOfBounds(rowIndex: Int) = rowIndex < 0 || rowIndex >= rows
-
 
     fun isColumnOutOfBounds(columnIndex: Int) = columnIndex < 0 || columnIndex >= columns
 
-
     fun isOutOfBounds(columnIndex: Int, rowIndex: Int) =
         isRowOutOfBounds(rowIndex) || isColumnOutOfBounds(columnIndex)
-
 
     fun getIndexes(element: T?) =
         if (element == null) {

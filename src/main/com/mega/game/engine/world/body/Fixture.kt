@@ -1,5 +1,8 @@
 package com.mega.game.engine.world.body
 
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Vector2
 import com.mega.game.engine.common.enums.Position
 import com.mega.game.engine.common.interfaces.ICopyable
@@ -7,6 +10,7 @@ import com.mega.game.engine.common.objects.Properties
 import com.mega.game.engine.common.shapes.GameRectangle
 import com.mega.game.engine.common.shapes.IGameShape2D
 import com.mega.game.engine.common.shapes.IRotatableShape
+import com.mega.game.engine.drawables.shapes.IDrawableShape
 
 class Fixture(
     var body: Body,
@@ -17,7 +21,9 @@ class Fixture(
     var bodyAttachmentPosition: Position = Position.CENTER,
     var offsetFromBodyAttachment: Vector2 = Vector2(),
     override var properties: Properties = Properties(),
-) : IFixture, ICopyable<Fixture> {
+    var debugColor: Color = Color.RED,
+    var debugShapeType: ShapeType = ShapeType.Line
+) : IFixture, ICopyable<Fixture>, IDrawableShape {
 
     companion object {
         const val TAG = "Fixture"
@@ -89,4 +95,10 @@ class Fixture(
         offsetFromBodyAttachment.cpy(),
         Properties(properties)
     )
+
+    override fun draw(renderer: ShapeRenderer) {
+        renderer.color = debugColor
+        renderer.set(debugShapeType)
+        getShape().draw(renderer)
+    }
 }

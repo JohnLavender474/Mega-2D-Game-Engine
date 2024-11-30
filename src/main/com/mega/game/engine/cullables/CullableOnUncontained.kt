@@ -2,7 +2,6 @@ package com.mega.game.engine.cullables
 
 import com.mega.game.engine.common.interfaces.IContainable
 
-
 class CullableOnUncontained<T>(
     val containerSupplier: () -> T,
     val containable: IContainable<T>,

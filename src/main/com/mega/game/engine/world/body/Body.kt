@@ -249,9 +249,10 @@ class Body(
     }
 
     override fun draw(renderer: ShapeRenderer): Body {
-        renderer.color = drawingColor
-        renderer.set(drawingShapeType)
-        getBounds(tempRect1).draw(renderer)
+        val bounds = getBounds(tempRect1)
+        bounds.drawingColor = drawingColor
+        bounds.drawingShapeType = drawingShapeType
+        bounds.draw(renderer)
         return this
     }
 }

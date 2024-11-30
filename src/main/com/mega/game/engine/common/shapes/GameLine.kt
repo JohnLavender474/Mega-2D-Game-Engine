@@ -296,10 +296,10 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape, Resettabl
         )
     }
 
-    fun intersectionPoint(line: GameLine): Vector2? {
+    fun intersectionPoint(line: GameLine, out: Vector2): Vector2? {
         calculateWorldPoints(reusableVec1, reusableVec2)
         line.calculateWorldPoints(reusableVec3, reusableVec4)
-        val intersection = Vector2()
+        val intersection = reusableVec1
         return if (Intersector.intersectLines(
                 reusableVec1,
                 reusableVec2,
@@ -307,7 +307,7 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape, Resettabl
                 reusableVec4,
                 intersection
             )
-        ) intersection else null
+        ) out.set(intersection) else null
     }
 
 
@@ -339,10 +339,11 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape, Resettabl
 
     override fun getCenter(out: Vector2): Vector2 {
         calculateWorldPoints(reusableVec1, reusableVec2)
-        return Vector2((reusableVec1.x + reusableVec2.x) / 2f, (reusableVec1.y + reusableVec2.y) / 2f)
+        return out.set((reusableVec1.x + reusableVec2.x) / 2f, (reusableVec1.y + reusableVec2.y) / 2f)
     }
 
-    fun getLocalCenter() = Vector2((localPoint1.x + localPoint2.x) / 2f, (localPoint1.y + localPoint2.y) / 2f)
+    fun getLocalCenter(out: Vector2): Vector2 =
+        out.set((localPoint1.x + localPoint2.x) / 2f, (localPoint1.y + localPoint2.y) / 2f)
 
     override fun setX(x: Float): GameLine {
         if (position.x != x) {
@@ -442,9 +443,9 @@ class GameLine : IGameShape2D, IScalable, IRotatable, IRotatableShape, Resettabl
     }
 
     override fun draw(renderer: ShapeRenderer): GameLine {
-        calculateWorldPoints(reusableVec1, reusableVec2)
         renderer.color = drawingColor
         renderer.set(drawingShapeType)
+        calculateWorldPoints(reusableVec1, reusableVec2)
         renderer.line(reusableVec1, reusableVec2)
         return this
     }

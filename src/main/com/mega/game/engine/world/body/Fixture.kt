@@ -98,9 +98,10 @@ class Fixture(
     )
 
     override fun draw(renderer: ShapeRenderer): Fixture {
-        renderer.color = drawingColor
-        renderer.set(drawingShapeType)
-        getShape().draw(renderer)
+        val shape = getShape()
+        shape.drawingColor = drawingColor
+        shape.drawingShapeType = drawingShapeType
+        shape.draw(renderer)
         return this
     }
 }

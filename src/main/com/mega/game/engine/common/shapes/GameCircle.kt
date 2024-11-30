@@ -46,7 +46,7 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
         return out
     }
 
-    override fun setWithProps(props: Properties): IGameShape2D {
+    override fun setWithProps(props: Properties): GameCircle {
         libgdxCircle.x = props.getOrDefault("x", libgdxCircle.x, Float::class)
         libgdxCircle.y = props.getOrDefault("y", libgdxCircle.y, Float::class)
         libgdxCircle.radius = props.getOrDefault("radius", libgdxCircle.radius, Float::class)
@@ -83,29 +83,19 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
     override fun getBoundingRectangle(out: GameRectangle) = libgdxCircle.getBoundingRectangle(out)
 
-    override fun setX(x: Float): IGameShape2D {
+    override fun setX(x: Float): GameCircle {
         libgdxCircle.x = x - getRadius()
         return this
     }
 
-    override fun setY(y: Float): IGameShape2D {
+    override fun setY(y: Float): GameCircle {
         libgdxCircle.y = y - getRadius()
         return this
     }
 
-    override fun getX() = libgdxCircle.x - getRadius()
+    override fun getX() = libgdxCircle.x
 
-    override fun getY() = libgdxCircle.y - getRadius()
-
-    fun setMaxX(maxX: Float): IGameShape2D {
-        libgdxCircle.x = maxX - getRadius()
-        return this
-    }
-
-    fun setMaxY(maxY: Float): IGameShape2D {
-        libgdxCircle.y = maxY - getRadius()
-        return this
-    }
+    override fun getY() = libgdxCircle.y
 
     override fun getMaxX() = libgdxCircle.x + getRadius()
 
@@ -115,22 +105,12 @@ open class GameCircle(x: Float, y: Float, radius: Float) : IGameShape2D {
 
     override fun setCenter(center: Vector2) = setCenter(center.x, center.y)
 
-    override fun setCenter(x: Float, y: Float): IGameShape2D {
+    override fun setCenter(x: Float, y: Float): GameCircle {
         libgdxCircle.setPosition(x, y)
         return this
     }
 
-    fun setCenterX(centerX: Float): IGameShape2D {
-        libgdxCircle.x = centerX
-        return this
-    }
-
-    fun setCenterY(centerY: Float): IGameShape2D {
-        libgdxCircle.y = centerY
-        return this
-    }
-
-    override fun translate(translateX: Float, translateY: Float): IGameShape2D {
+    override fun translate(translateX: Float, translateY: Float): GameCircle {
         libgdxCircle.x += translateX
         libgdxCircle.y += translateY
         return this

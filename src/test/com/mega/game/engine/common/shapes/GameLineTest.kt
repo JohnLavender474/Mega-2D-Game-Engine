@@ -111,7 +111,7 @@ class GameLineTest :
 
             it("should return correct local center") {
                 val line = GameLine(0f, 0f, 1f, 1f)
-                val localCenter = line.getLocalCenter()
+                val localCenter = line.getLocalCenter(out1)
                 localCenter shouldBe Vector2(0.5f, 0.5f)
             }
 

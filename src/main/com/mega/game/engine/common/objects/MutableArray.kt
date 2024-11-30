@@ -16,54 +16,37 @@ class MutableArray<T> : MutableCollection<T> {
 
     override val size = array.size
 
-
     fun sort() = array.sort()
-
 
     fun sort(comparator: Comparator<T>) = array.sort(comparator)
 
-
     fun reverse() = array.reverse()
-
 
     fun shuffle() = array.shuffle()
 
-
     fun truncate(newSize: Int) = array.truncate(newSize)
-
 
     fun random() = array.random()
 
-
     fun removeIndex(index: Int) = array.removeIndex(index)
-
 
     fun removeRange(start: Int, end: Int) = array.removeRange(start, end)
 
-
     fun removeValue(value: T, identity: Boolean) = array.removeValue(value, identity)
-
 
     fun pop() = array.pop()
 
-
     fun insert(index: Int, value: T) = array.insert(index, value)
-
 
     fun swap(first: Int, second: Int) = array.swap(first, second)
 
-
     fun set(index: Int, value: T) = array.set(index, value)
-
 
     fun get(index: Int): T = array.get(index)
 
-
     fun indexOf(value: T, identity: Boolean) = array.indexOf(value, identity)
 
-
     fun lastIndexOf(value: T, identity: Boolean) = array.lastIndexOf(value, identity)
-
 
     fun contains(value: T, identity: Boolean) = array.contains(value, identity)
 

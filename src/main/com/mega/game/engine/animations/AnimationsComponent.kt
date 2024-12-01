@@ -37,6 +37,11 @@ class AnimationsComponent() : IGameComponent {
         }
     }
 
+    constructor(animators: OrderedMap<Any, IAnimator>, sprites: OrderedMap<Any, GameSprite>) : this() {
+        this.animators.putAll(animators)
+        this.sprites.putAll(sprites)
+    }
+
     fun putAnimator(sprite: GameSprite, animator: IAnimator) = putAnimator(DEFAULT_KEY, sprite, animator)
 
     fun putAnimator(key: Any, sprite: GameSprite, animator: IAnimator) {

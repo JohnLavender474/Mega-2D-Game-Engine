@@ -18,6 +18,7 @@ object UtilMethods {
     private val gRect2 = GameRectangle()
     private val rect1 = Rectangle()
     private val rect2 = Rectangle()
+    private val rect3 = Rectangle()
 
     val random = Random(System.currentTimeMillis())
 
@@ -52,7 +53,7 @@ object UtilMethods {
     fun <T> mask(o1: T, o2: T, p1: (T) -> Boolean, p2: (T) -> Boolean) =
         p1(o1) && p2(o2) || p2(o1) && p1(o2)
 
-    fun getOverlapPushDirection(toBePushed: IGameShape2D, other: IGameShape2D, overlap: Rectangle = rect1): Direction? {
+    fun getOverlapPushDirection(toBePushed: IGameShape2D, other: IGameShape2D, overlap: Rectangle = rect3): Direction? {
         val toBePushedBounds = toBePushed.getBoundingRectangle(gRect1).get(rect1)
         val otherBounds = other.getBoundingRectangle(gRect2).get(rect2)
         return if (Intersector.intersectRectangles(toBePushedBounds, otherBounds, overlap)) {

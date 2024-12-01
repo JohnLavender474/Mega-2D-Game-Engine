@@ -120,7 +120,7 @@ open class GamePolygon() : IGameShape2D, IRotatable, IRotatableShape, Resettable
     }
 
     fun clearLocalVertices() {
-        libgdxPolygon.vertices = kotlin.FloatArray(0)
+        libgdxPolygon.vertices = kotlin.FloatArray(6)
         setDirty()
     }
 

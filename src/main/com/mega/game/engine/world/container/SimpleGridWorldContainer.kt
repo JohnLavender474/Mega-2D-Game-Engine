@@ -6,48 +6,10 @@ import com.mega.game.engine.common.objects.IntPair
 import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.common.shapes.GameRectangle
 import com.mega.game.engine.common.shapes.MinsAndMaxes
-import com.mega.game.engine.world.body.Body
+import com.mega.game.engine.world.body.IBody
 import com.mega.game.engine.world.body.IFixture
 
-/**
- * A simple grid-based world container that tracks bodies and fixtures in grid cells. The map is divided into cells,
- * where each cell is of size `width * ppm` and `height * ppm`. Objects (bodies and fixtures) are inserted into the
- * corresponding cell(s) based on their position and bounding shapes.
- *
- * The [bufferOffset] property is used to add fixtures, bodies, or other objects not only to the specified cells but
- * also surrounding cells. For example, if an object that occupies cell [1, 1] is added and the [bufferOffset] value is
- * 1, then the object will be added to the cells with values x += 1 and y += 1, i.e.
- *
- * - [0, 0]
- * - [0, 1]
- * - [0, 2]
- * - [1, 0]
- * - [1, 1]
- * - [1, 2]
- * - [2, 0]
- * - [2, 1]
- * - [2, 2]
- *
- * At the expense of being less optimized or accurate, in some cases it might be preferable to have a buffer area.
- * The default value for [bufferOffset] is 0.
- *
- * The [adjustForExactGridMatch] variable determines whether to adjust coordinates that are exact integer values.
- * This helps avoid issues caused by floating-point precision, where values near exact integers (e.g., 1.0f) might
- * unintentionally cause the block to occupy neighboring grid cells. If set to true, values that are exact integers
- * (like 1.0f or -1.0f) will be adjusted slightly.
- *
- * When [adjustForExactGridMatch] is true:
- * - Positive integer values (e.g., 1.0f) are decreased by [floatRoundingError] to avoid neighboring cell issues.
- * - Negative integer values (e.g., -1.0f) are increased by [floatRoundingError] to adjust appropriately.
- *
- * Be cautious: Due to floating-point precision, values very close to integers (e.g., 1.00000...0001f) might
- * incorrectly be adjusted.
- *
- * @param ppm the pixels per meter of the world representation, used as the width and height of each grid cell.
- * @param bufferOffset the offset that is used as a "buffer area" when adding bodies, fixtures, or other objects
- * @param adjustForExactGridMatch whether to adjust coordinates that are exact integer values
- * @param floatRoundingError the error to use when determining if a floating value is an integer
- */
+
 class SimpleGridWorldContainer(
     var ppm: Int,
     var bufferOffset: Int = 0,
@@ -55,13 +17,15 @@ class SimpleGridWorldContainer(
     var floatRoundingError: Float = MathUtils.FLOAT_ROUNDING_ERROR
 ) : IWorldContainer {
 
-    private val bodyMap = ObjectMap<IntPair, HashSet<Body>>()
+    private val bodyMap = ObjectMap<IntPair, HashSet<IBody>>()
     private val fixtureMap = ObjectMap<IntPair, HashSet<IFixture>>()
+
+    private val reusableGameRect = GameRectangle()
 
     private constructor(
         ppm: Int,
         bufferOffset: Int,
-        bodyMap: ObjectMap<IntPair, HashSet<Body>>,
+        bodyMap: ObjectMap<IntPair, HashSet<IBody>>,
         fixtureMap: ObjectMap<IntPair, HashSet<IFixture>>,
         adjustForExactGridMatch: Boolean,
         floatRoundingError: Float
@@ -77,8 +41,8 @@ class SimpleGridWorldContainer(
         } else value
 
     private fun getMinsAndMaxes(bounds: GameRectangle): MinsAndMaxes {
-        val adjustedMinX = adjustCoordinateIfNeeded(bounds.x, true)
-        val adjustedMinY = adjustCoordinateIfNeeded(bounds.y, true)
+        val adjustedMinX = adjustCoordinateIfNeeded(bounds.getX(), true)
+        val adjustedMinY = adjustCoordinateIfNeeded(bounds.getY(), true)
         val adjustedMaxX = adjustCoordinateIfNeeded(bounds.getMaxX(), false)
         val adjustedMaxY = adjustCoordinateIfNeeded(bounds.getMaxY(), false)
 
@@ -89,8 +53,8 @@ class SimpleGridWorldContainer(
         return MinsAndMaxes(minX, minY, maxX, maxY)
     }
 
-    override fun addBody(body: Body): Boolean {
-        val bounds = body.getBodyBounds()
+    override fun addBody(body: IBody): Boolean {
+        val bounds = body.getBounds(reusableGameRect)
         val (minX, minY, maxX, maxY) = getMinsAndMaxes(bounds)
         for (column in minX..maxX) for (row in minY..maxY) {
             val set = bodyMap[column pairTo row] ?: HashSet()
@@ -101,7 +65,7 @@ class SimpleGridWorldContainer(
     }
 
     override fun addFixture(fixture: IFixture): Boolean {
-        val bounds = fixture.getShape().getBoundingRectangle()
+        val bounds = fixture.getShape().getBoundingRectangle(reusableGameRect)
         val (minX, minY, maxX, maxY) = getMinsAndMaxes(bounds)
         for (column in minX..maxX) for (row in minY..maxY) {
             val set = fixtureMap[column pairTo row] ?: HashSet()
@@ -111,13 +75,13 @@ class SimpleGridWorldContainer(
         return true
     }
 
-    override fun getBodies(x: Int, y: Int): HashSet<Body> {
+    override fun getBodies(x: Int, y: Int): HashSet<IBody> {
         val set = bodyMap[x pairTo y]
         return set ?: HashSet()
     }
 
-    override fun getBodies(minX: Int, minY: Int, maxX: Int, maxY: Int): HashSet<Body> {
-        val set = HashSet<Body>()
+    override fun getBodies(minX: Int, minY: Int, maxX: Int, maxY: Int): HashSet<IBody> {
+        val set = HashSet<IBody>()
         for (column in minX..maxX) for (row in minY..maxY) bodyMap[column pairTo row]?.let { set.addAll(it) }
         return set
     }

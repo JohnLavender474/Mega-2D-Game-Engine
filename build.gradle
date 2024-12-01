@@ -22,7 +22,7 @@ plugins {
 }
 
 group = 'com.mega.2D.game.engine'
-version = '1.0.33'
+version = '1.37.physics-overhaul-1'
 
 repositories {
     google()

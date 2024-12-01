@@ -13,6 +13,8 @@ class PendulumTest :
             val anchor = Vector2(0f, 0f)
             val targetFPS = 60f
 
+            val out = Vector2()
+
             lateinit var pendulum: Pendulum
 
             beforeEach { pendulum = Pendulum(length, gravity, anchor, targetFPS) }
@@ -23,7 +25,7 @@ class PendulumTest :
                 val expectedX = -2.665f
                 val expectedY = 9.638f
 
-                val endpoint = pendulum.getMotionValue()
+                val endpoint = pendulum.getMotionValue(out)
 
                 endpoint.x.round(3) shouldBe expectedX
                 endpoint.y.round(3) shouldBe expectedY
@@ -34,7 +36,7 @@ class PendulumTest :
 
                 pendulum.reset()
 
-                val endpoint = pendulum.getMotionValue()
+                val endpoint = pendulum.getMotionValue(out)
                 val expectedX = 0f
                 val expectedY = 0f
 

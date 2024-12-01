@@ -2,8 +2,9 @@ package com.mega.game.engine.updatables
 
 import com.mega.game.engine.GameEngine
 import com.mega.game.engine.MockGameEntity
-import com.mega.game.engine.common.extensions.gdxArrayOf
+import com.mega.game.engine.common.extensions.orderedMapOf
 import com.mega.game.engine.common.interfaces.Updatable
+import com.mega.game.engine.common.objects.pairTo
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
@@ -12,13 +13,13 @@ import io.mockk.*
 
 class UpdatablesSystemTest : DescribeSpec({
 
-    lateinit var updatablesSystem: UpdatablesSystem
+    lateinit var system: UpdatablesSystem
     lateinit var engine: GameEngine
 
     beforeEach {
-        updatablesSystem = UpdatablesSystem()
+        system = UpdatablesSystem()
         engine = GameEngine()
-        engine.systems.add(updatablesSystem)
+        engine.systems.add(system)
     }
 
     describe("UpdatablesSystem") {
@@ -27,8 +28,8 @@ class UpdatablesSystemTest : DescribeSpec({
             val entity2 = MockGameEntity()
             val updatable1 = mockk<Updatable> { every { update(any()) } just Runs }
             val updatable2 = mockk<Updatable> { every { update(any()) } just Runs }
-            val updatablesComponent1 = UpdatablesComponent(gdxArrayOf(updatable1))
-            val updatablesComponent2 = UpdatablesComponent(gdxArrayOf(updatable2))
+            val updatablesComponent1 = UpdatablesComponent(orderedMapOf("1" pairTo updatable1))
+            val updatablesComponent2 = UpdatablesComponent(orderedMapOf("2" pairTo updatable2))
             entity1.addComponent(updatablesComponent1)
             entity2.addComponent(updatablesComponent2)
 
@@ -43,16 +44,16 @@ class UpdatablesSystemTest : DescribeSpec({
         }
 
         it("should not call the update method when the system is off") {
-            updatablesSystem.on = false
+            system.on = false
             val entity = MockGameEntity()
             val updatable = mockk<Updatable> { every { update(any()) } just Runs }
-            val updatablesComponent = UpdatablesComponent(gdxArrayOf(updatable))
+            val updatablesComponent = UpdatablesComponent(orderedMapOf("1" pairTo updatable))
             entity.addComponent(updatablesComponent)
 
             engine.spawn(entity)
 
             checkAll(Arb.int(0, 100)) { delta ->
-                updatablesSystem.update(delta.toFloat())
+                system.update(delta.toFloat())
                 verify(exactly = 0) { updatable.update(any()) }
             }
         }

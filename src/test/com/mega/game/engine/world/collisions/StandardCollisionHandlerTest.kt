@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldBe
 class StandardCollisionHandlerTest :
     DescribeSpec({
         describe("StandardCollisionHandler") {
+
             val dynamicBody = Body(BodyType.DYNAMIC)
             val staticBody = Body(BodyType.STATIC)
 
@@ -40,12 +41,12 @@ class StandardCollisionHandlerTest :
 
                 StandardCollisionHandler.handleCollision(dynamicBody, staticBody) shouldBe true
 
-                dynamicBody.x shouldBe 0f
-                dynamicBody.y shouldBe -3f
+                dynamicBody.getX() shouldBe 0f
+                dynamicBody.getY() shouldBe -3f
                 dynamicBody.physics.frictionOnSelf shouldBe Vector2(2f, 1f)
 
-                staticBody.x shouldBe 0f
-                staticBody.y shouldBe 2f
+                staticBody.getX() shouldBe 0f
+                staticBody.getY() shouldBe 2f
                 staticBody.physics.frictionOnSelf shouldBe Vector2(1f, 1f)
             }
 
@@ -55,12 +56,12 @@ class StandardCollisionHandlerTest :
 
                 StandardCollisionHandler.handleCollision(dynamicBody, staticBody) shouldBe true
 
-                dynamicBody.x shouldBe -2f
-                dynamicBody.y shouldBe 0f
+                dynamicBody.getX() shouldBe -2f
+                dynamicBody.getY() shouldBe 0f
                 dynamicBody.physics.frictionOnSelf shouldBe Vector2(1f, 2f)
 
-                staticBody.x shouldBe 3f
-                staticBody.y shouldBe 0f
+                staticBody.getX() shouldBe 3f
+                staticBody.getY() shouldBe 0f
                 staticBody.physics.frictionOnSelf shouldBe Vector2(1f, 1f)
             }
         }

@@ -2,9 +2,11 @@ package com.mega.game.engine.world.contacts
 
 import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.common.shapes.GameRectangle
+import com.mega.game.engine.world.WorldSystem
 import com.mega.game.engine.world.body.Body
 import com.mega.game.engine.world.body.BodyType
 import com.mega.game.engine.world.body.Fixture
+import com.mega.game.engine.world.body.IFixture
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -16,6 +18,8 @@ class ContactDescribeSpec :
             val fixture2 = Fixture(body, "type2", GameRectangle())
             val contact = Contact(fixture1, fixture2)
 
+            val out = GamePair<IFixture, IFixture>(WorldSystem.DummyFixture(), WorldSystem.DummyFixture())
+
             it("should have the correct initial properties") {
                 contact.fixture1 shouldBe fixture1
                 contact.fixture2 shouldBe fixture2
@@ -25,10 +29,10 @@ class ContactDescribeSpec :
                 val fixtureType1 = "type1"
                 val fixtureType2 = "type2"
 
-                var fixturesInOrder = contact.getFixturesInOrder(fixtureType1, fixtureType2)
+                var fixturesInOrder = contact.getFixturesInOrder(fixtureType1, fixtureType2, out)
                 fixturesInOrder shouldBe GamePair(fixture1, fixture2)
 
-                fixturesInOrder = contact.getFixturesInOrder(fixtureType2, fixtureType1)
+                fixturesInOrder = contact.getFixturesInOrder(fixtureType2, fixtureType1, out)
                 fixturesInOrder shouldBe GamePair(fixture2, fixture1)
             }
 

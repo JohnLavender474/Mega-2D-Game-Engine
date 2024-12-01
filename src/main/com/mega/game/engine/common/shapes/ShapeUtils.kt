@@ -6,49 +6,43 @@ import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 
-/**
- * Utility class for shapes.
- */
 object ShapeUtils {
 
-    /**
-     * Checks if the given [GameRectangle] overlaps the given [GameLine]. Any intersections are added
-     * to the provided [intersections] array.
-     *
-     * @param rectangle The rectangle to check
-     * @param line The line to check
-     * @param intersections The array to add any intersections to
-     * @return True if the given rectangle overlaps the given line, false otherwise
-     */
+    private val out1 = Vector2()
+    private val out2 = Vector2()
+    private val out3 = Vector2()
+    private val out4 = Vector2()
+
+    private val line1 = GameLine()
+    private val line2 = GameLine()
+    private val line3 = GameLine()
+    private val line4 = GameLine()
+    private val outLines = Array<GameLine>()
+
     fun intersectRectangleAndLine(
         rectangle: GameRectangle,
         line: GameLine,
         intersections: Array<Vector2>
     ): Boolean {
-        val (lineWorldPoint1, lineWorldPoint2) = line.getWorldPoints()
-        val lines = rectangle.getAsLines()
+        line.calculateWorldPoints(out1, out2)
+
+        outLines.clear()
+        val lines = rectangle.getAsLines(outLines, line1, line2, line3, line4)
+
         var intersects = false
         for (element in lines) {
             val intersection = Vector2()
-            val (_worldPoint1, _worldPoint2) = element.getWorldPoints()
-            if (Intersector.intersectSegments(
-                    _worldPoint1, _worldPoint2, lineWorldPoint1, lineWorldPoint2, intersection
-                )
-            ) {
+            element.calculateWorldPoints(out3, out4)
+            if (Intersector.intersectSegments(out1, out2, out3, out4, intersection)) {
                 intersects = true
                 intersections.add(intersection)
             }
         }
+
         return intersects
     }
 
-    /**
-     * Determines if a circle overlaps a polygon.
-     *
-     * @param circle The circle to check for overlap.
-     * @param polygon The polygon to check for overlap.
-     * @return True if the circle overlaps the polygon, false otherwise.
-     */
+
     fun overlaps(circle: Circle, polygon: Polygon): Boolean {
         val vertices = polygon.transformedVertices
         val center = Vector2(circle.x, circle.y)

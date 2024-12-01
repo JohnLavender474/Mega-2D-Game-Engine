@@ -4,15 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.controller.ControllerUtils
 
-/**
- * A basic implemention of [IControllerButton].
- *
- * @property keyboardCode the code to map this controller button abstraction to a keyboard key
- * @property controllerCode the code to map this controller button abstraction to a physical controller key;
- *                          default value is null
- * @property alternateActuators a map of lambdas where if any value returns true then [isPressed] will return true
- * @property enabled whether this controller button is enabled
- */
+
 class ControllerButton(
     var keyboardCode: Int,
     var controllerCode: Int? = null,

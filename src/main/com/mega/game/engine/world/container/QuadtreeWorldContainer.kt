@@ -1,42 +1,13 @@
 package com.mega.game.engine.world.container
 
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.utils.Array
-import com.mega.game.engine.common.shapes.GameRectangle
-import com.mega.game.engine.common.shapes.IGameShape2D
-import com.mega.game.engine.world.body.Body
-import com.mega.game.engine.world.body.IFixture
-
-/**
- * A quad-tree implementation of [IWorldContainer], which stores [Body] and [IFixture] objects
- * in a spatial data structure to optimize queries for objects in a particular area.
- *
- * This container divides the world into hierarchical regions called nodes. Each node can store a limited
- * number of objects before it subdivides into smaller nodes, allowing for efficient spatial queries.
- *
- * The `get` methods (such as [getBodies], [getFixtures], and [getObjects]) expect coordinates in terms
- * of grid cells, not world units. To convert world units to grid coordinates, divide the world coordinates
- * by `ppm` (pixels per meter).
- */
+/*
 class QuadtreeWorldContainer : IWorldContainer {
 
     private val ppm: Int
     private val maxObjectsPerNode: Int
     private val maxDepth: Int
     private var root: QuadtreeNode
-
-    /**
-     * Constructs a new quad tree world container.
-     *
-     * @param ppm the ppm
-     * @param x the x of the root node (typically 0)
-     * @param y the y of the root node (typically 0)
-     * @param width the width of the root node
-     * @param height the height of the root node
-     * @param maxObjectsPerNode the max objects per ndoe
-     * @param maxDepth the max depth
-     */
+    
     constructor(
         ppm: Int,
         x: Int,
@@ -65,7 +36,7 @@ class QuadtreeWorldContainer : IWorldContainer {
     }
 
     override fun addBody(body: Body): Boolean {
-        val bounds = body.getBodyBounds()
+        val bounds = body.getBounds()
         val scaledBounds = scaleToGrid(bounds)
         return root.insert(body, scaledBounds)
     }
@@ -174,7 +145,7 @@ class QuadtreeWorldContainer : IWorldContainer {
 
             if ((bodies.size + fixtures.size) > maxObjectsPerNode && level < maxDepth) {
                 if (subNodes == null) subdivide()
-                bodies.forEach { body -> insertIntoSubnodes(body, body.getBodyBounds()) }
+                bodies.forEach { body -> insertIntoSubnodes(body, body.getBounds()) }
                 fixtures.forEach { fixture -> insertIntoSubnodes(fixture, fixture.getShape()) }
                 bodies.clear()
                 fixtures.clear()
@@ -249,3 +220,4 @@ class QuadtreeWorldContainer : IWorldContainer {
         }
     }
 }
+*/

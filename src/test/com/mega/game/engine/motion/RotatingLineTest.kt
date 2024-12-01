@@ -7,6 +7,9 @@ import io.kotest.matchers.shouldBe
 class RotatingLineTest :
     DescribeSpec({
         describe("RotatingLine class") {
+
+            val out = Vector2()
+
             it("should calculate endpoint correctly") {
                 // Create a RotatingLine instance
                 val origin = Vector2(0f, 0f)
@@ -18,7 +21,7 @@ class RotatingLineTest :
                 val endpointY = 0f
 
                 // Get the actual endpoint position from the RotatingLine
-                val endpoint = rotatingLine.getEndPoint()
+                val endpoint = rotatingLine.getEndPoint(out)
 
                 // Compare the actual and expected endpoint positions
                 endpoint.x shouldBe radius

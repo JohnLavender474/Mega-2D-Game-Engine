@@ -12,6 +12,9 @@ class GameRectangleTest :
 
             lateinit var gameRectangle: GameRectangle
 
+            val outVec1 = Vector2()
+            val outGRect1 = GameRectangle()
+
             beforeEach { gameRectangle = GameRectangle(1f, 2f, 3f, 4f) }
 
             it("should contain the point") {
@@ -29,12 +32,12 @@ class GameRectangleTest :
                 gameRectangle.getMaxY() shouldBe 6f
             }
 
-            it("should get the center") { gameRectangle.getCenter() shouldBe Vector2(2.5f, 4f) }
+            it("should get the center") { gameRectangle.getCenter(outVec1) shouldBe Vector2(2.5f, 4f) }
 
             it("should set the center") {
                 gameRectangle.setCenter(5f, 6f)
-                gameRectangle.x shouldBe 3.5f
-                gameRectangle.y shouldBe 4f
+                gameRectangle.getX() shouldBe 3.5f
+                gameRectangle.getY() shouldBe 4f
             }
 
             it("should get the maximum X value") { gameRectangle.getMaxX() shouldBe 4f }
@@ -44,20 +47,20 @@ class GameRectangleTest :
             it("should position on a point") {
                 Position.values().forEach {
                     gameRectangle.positionOnPoint(Vector2(7f, 8f), it)
-                    gameRectangle.getPositionPoint(it) shouldBe Vector2(7f, 8f)
+                    gameRectangle.getPositionPoint(it, outVec1) shouldBe Vector2(7f, 8f)
                 }
             }
 
             it("should get position point") {
-                gameRectangle.getPositionPoint(Position.CENTER) shouldBe Vector2(2.5f, 4f)
+                gameRectangle.getPositionPoint(Position.CENTER, outVec1) shouldBe Vector2(2.5f, 4f)
             }
 
             it("should get the bounding rectangle") {
-                val boundingRectangle = gameRectangle.getBoundingRectangle()
-                boundingRectangle.x shouldBe 1f
-                boundingRectangle.y shouldBe 2f
-                boundingRectangle.width shouldBe 3f
-                boundingRectangle.height shouldBe 4f
+                val boundingRectangle = gameRectangle.getBoundingRectangle(outGRect1)
+                boundingRectangle.getX() shouldBe 1f
+                boundingRectangle.getY() shouldBe 2f
+                boundingRectangle.getWidth() shouldBe 3f
+                boundingRectangle.getHeight() shouldBe 4f
             }
 
             it("should overlap circle") {
@@ -82,73 +85,58 @@ class GameRectangleTest :
 
             describe("should rotate correctly") {
                 it("rotation test 1") {
-                    val actualRectangle =
-                        GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.LEFT)
+                    val actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
+                    actualRectangle.rotate(Direction.LEFT.rotation, 0f, 0f)
+
                     val expectedRectangle = GameRectangle(-6f, 1f, 4f, 3f)
                     actualRectangle shouldBe expectedRectangle
                 }
 
                 it("rotation test 2") {
-                    val actualRectangle =
-                        GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.DOWN)
+                    val actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
+                    actualRectangle.rotate(Direction.DOWN.rotation, 0f, 0f)
+
                     val expectedRectangle = GameRectangle(-4f, -6f, 3f, 4f)
                     actualRectangle shouldBe expectedRectangle
                 }
 
                 it("rotation test 3") {
-                    val actualRectangle =
-                        GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.RIGHT)
+                    val actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
+                    actualRectangle.rotate(Direction.RIGHT.rotation, 0f, 0f)
+
                     val expectedRectangle = GameRectangle(2f, -4f, 4f, 3f)
                     actualRectangle shouldBe expectedRectangle
                 }
 
                 it("rotation test 4") {
-                    val actualRectangle =
-                        GameRectangle(1f, 2f, 3f, 4f).getCardinallyRotatedShape(Direction.UP)
+                    val actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
+                    actualRectangle.rotate(Direction.UP.rotation, 0f, 0f)
+
                     val expectedRectangle = GameRectangle(1f, 2f, 3f, 4f)
                     actualRectangle shouldBe expectedRectangle
                 }
 
                 it("rotation test 5") {
                     var actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
-                    actualRectangle.originX = 1.5f
-                    actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT)
+                    actualRectangle.rotate(Direction.LEFT.rotation, 1.5f, 0f)
 
                     val expectedRectangle = GameRectangle(-4.5f, -0.5f, 4f, 3f)
-
                     actualRectangle shouldBe expectedRectangle
                 }
 
                 it("rotation test 6") {
                     var actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
-                    actualRectangle.originY = 3.5f
-                    actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT)
+                    actualRectangle.rotate(Direction.LEFT.rotation, 0f, 3.5f)
 
                     val expectedRectangle = GameRectangle(-2.5f, 4.5f, 4f, 3f)
-
                     actualRectangle shouldBe expectedRectangle
                 }
 
                 it("rotation test 7") {
                     var actualRectangle = GameRectangle(1f, 2f, 3f, 4f)
-                    actualRectangle.originX = -1.5f
-                    actualRectangle.originY = 3.5f
-                    actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT)
+                    actualRectangle.rotate(Direction.LEFT.rotation, -1.5f, 3.5f)
 
                     val expectedRectangle = GameRectangle(-4f, 6f, 4f, 3f)
-
-                    actualRectangle shouldBe expectedRectangle
-                }
-
-                it("rotation test around center 1") {
-                    var actualRectangle = GameRectangle(0f, 0f, 5f, 2f)
-                    val center = actualRectangle.getCenter()
-
-                    actualRectangle.setOriginCenter()
-                    actualRectangle = actualRectangle.getCardinallyRotatedShape(Direction.LEFT)
-
-                    val expectedRectangle = GameRectangle().setSize(2f, 5f).setCenter(center)
-
                     actualRectangle shouldBe expectedRectangle
                 }
             }

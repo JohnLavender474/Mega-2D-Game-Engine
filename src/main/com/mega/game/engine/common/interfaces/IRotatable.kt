@@ -1,6 +1,10 @@
 package com.mega.game.engine.common.interfaces
 
-/** An interface for objects that can be rotated. */
 interface IRotatable {
+
     var rotation: Float
+    var originX: Float
+    var originY: Float
+    var scaleX: Float
+    var scaleY: Float
 }

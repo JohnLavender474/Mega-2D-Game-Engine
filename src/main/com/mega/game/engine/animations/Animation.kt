@@ -5,14 +5,7 @@ import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.extensions.gdxFilledArrayOf
 import com.mega.game.engine.drawables.sprites.splitAndFlatten
 
-/**
- * An animation that can be used to animate a texture region. The animation is created by splitting
- * the specified texture region into rows and columns and then storing the split regions in an
- * array. The animation is then played by iterating through the array of split regions and
- * displaying each region for the specified duration.
- *
- * @see IAnimation
- */
+
 class Animation : IAnimation {
 
     internal val animation: Array<TextureRegion>
@@ -24,45 +17,14 @@ class Animation : IAnimation {
 
     private var loop = true
 
-    /**
-     * Creates an animation with the specified texture region. The rows and columns values are each
-     * set to 1 with this constructor. The animation will loop by default.
-     *
-     * @param region the texture region to animate
-     */
     constructor(region: TextureRegion) : this(region, true)
 
-    /**
-     * Creates an animation with the specified texture region. The rows and columns values are each
-     * set to 1 with this constructor.
-     *
-     * @param region the texture region to animate
-     * @param loop whether the animation should loop
-     */
     constructor(region: TextureRegion, loop: Boolean) : this(region, 1, 1, 1f, loop)
 
-    /**
-     * Creates an animation with the specified texture region, rows, columns, and duration. The
-     * animation will loop by default.
-     *
-     * @param region the texture region to animate
-     * @param rows the number of rows to split the texture region into
-     * @param columns the number of columns to split the texture region into
-     * @param frameDuration the duration to display each split region
-     */
     constructor(
         region: TextureRegion, rows: Int, columns: Int, frameDuration: Float, loop: Boolean = true
     ) : this(region, rows, columns, gdxFilledArrayOf(rows * columns, frameDuration), loop)
 
-    /**
-     * Creates an animation with the specified texture region, rows, columns, and duration. The
-     * animation will loop by default.
-     *
-     * @param region the texture region to animate
-     * @param rows the number of rows to split the texture region into
-     * @param columns the number of columns to split the texture region into
-     * @param frameDurations the durations to display each split region
-     */
     constructor(
         region: TextureRegion, rows: Int, columns: Int, frameDurations: Array<Float>, loop: Boolean = true
     ) {
@@ -73,17 +35,10 @@ class Animation : IAnimation {
         )
 
         this.frameDurations = frameDurations
-        this.animation = region.splitAndFlatten(rows, columns)
+        this.animation = region.splitAndFlatten(rows, columns, Array())
         this.loop = loop
     }
 
-    /**
-     * Creates a new animation from the provided animation. If [reverse] is true, then the animation
-     * will be reversed.
-     *
-     * @param animation the animation to copy
-     * @param reverse whether to reverse the animation
-     */
     constructor(animation: Animation, reverse: Boolean = false) {
         this.animation = Array(animation.animation)
         this.frameDurations = Array(animation.frameDurations)
@@ -94,11 +49,6 @@ class Animation : IAnimation {
         }
     }
 
-    /**
-     * Gets the number of regions in this animation.
-     *
-     * @return this number of regions in this animation
-     */
     fun size() = animation.size
 
     override fun getCurrentRegion(): TextureRegion = animation[currentIndex]
@@ -124,13 +74,6 @@ class Animation : IAnimation {
         this.loop = loop
     }
 
-    /**
-     * Updates the animation by iterating through the array of split regions and displaying each
-     * region for the specified duration. If the animation is not looping, then the animation will
-     * finish after the last split region is displayed.
-     *
-     * @param delta the time in seconds since the last update
-     */
     override fun update(delta: Float) {
         elapsedTime += delta
 
@@ -158,22 +101,12 @@ class Animation : IAnimation {
         currentIndex = tempIndex
     }
 
-    /**
-     * Resets the animation by setting the elapsed time to 0 and setting the finished flag to false.
-     * This will cause the animation to start from the beginning the next time it is updated. This
-     * method should be called when the animation is finished and needs to be restarted.
-     */
     override fun reset() {
         elapsedTime = 0f
     }
 
     override fun copy() = Animation(this)
 
-    /**
-     * Returns a copy of this animation reversed.
-     *
-     * @return a copy of this animation reversed
-     */
     override fun reversed() = Animation(this, true)
 
     override fun slice(start: Int, end: Int): IAnimation {

@@ -29,7 +29,7 @@ class SpriteSystemTest :
                 mockSprite2 = spyk(GameSprite())
                 mockSprite3 = spyk(GameSprite())
 
-                val map = OrderedMap<String, GameSprite>()
+                val map = OrderedMap<Any, GameSprite>()
                 map.put("1", mockSprite1)
                 map.put("2", mockSprite2)
                 map.put("3", mockSprite3)

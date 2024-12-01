@@ -2,12 +2,7 @@ package com.mega.game.engine.common.objects
 
 import com.badlogic.gdx.utils.ObjectMap
 
-/**
- * An immutable collection that wraps a map in an immutable view to prevent direct modifications.
- *
- * @param K the type of the map key
- * @param V the type of the map value
- */
+
 class ImmutableMap<K, V>(private val map: ObjectMap<K, V>) : Map<K, V> {
 
     class MapEntry<K, V>(override val key: K, override val value: V) : Map.Entry<K, V>
@@ -37,12 +32,6 @@ class ImmutableMap<K, V>(private val map: ObjectMap<K, V>) : Map<K, V> {
         get() = map.size
 
 
-    /**
-     * Returns an immutable iterator for the underlying map.
-     *
-     * @return an immutable iterator for the underlying map
-     * @see [ImmutableIterator]
-     */
     fun iterator(): ImmutableIterator<ObjectMap.Entry<K, V>> = ImmutableIterator(map.iterator())
 
     override fun containsValue(value: V) = map.values().contains(value)

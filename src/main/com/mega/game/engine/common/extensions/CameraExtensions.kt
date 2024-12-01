@@ -1,27 +1,15 @@
 package com.mega.game.engine.common.extensions
 
 import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.collision.BoundingBox
+import com.mega.game.engine.common.interfaces.IRectangle
 import com.mega.game.engine.common.shapes.GameRectangle
-import com.mega.game.engine.common.shapes.toBoundingBox
 
-/**
- * Checks if this [Camera] overlaps the given [Rectangle].
- *
- * @param bounds the [Rectangle] to check for overlap
- * @return true if this [Camera] overlaps the given [Rectangle], false otherwise
- */
-fun Camera.overlaps(bounds: Rectangle) = frustum.boundsInFrustum(bounds.toBoundingBox())
+fun Camera.overlaps(bounds: IRectangle, out: BoundingBox) = frustum.boundsInFrustum(bounds.toBoundingBox(out))
 
-/**
- * Converts this [Camera] to a [GameRectangle]. The size is set to the [Camera.viewportWidth] and [Camera.viewportHeight]
- * and the center is set to the [Camera.position].
- *
- * @return a [GameRectangle] representing this [Camera]
- */
-fun Camera.toGameRectangle(rectangle: GameRectangle = GameRectangle()): GameRectangle {
-    rectangle.setSize(viewportWidth, viewportHeight)
-    rectangle.setCenter(position.x, position.y)
-    return rectangle
+fun Camera.toGameRectangle(out: GameRectangle): GameRectangle {
+    out.setSize(viewportWidth, viewportHeight)
+    out.setCenter(position.x, position.y)
+    return out
 }
 

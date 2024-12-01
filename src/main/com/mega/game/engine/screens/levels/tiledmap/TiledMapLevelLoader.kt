@@ -5,16 +5,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.utils.ObjectMap
 
-/**
- * The result of loading a [TiledMap] using [TiledMapLevelLoader].
- *
- * @param map the [TiledMap]
- * @param layers the map of layer names to [MapObjects]
- * @param worldWidth the width of the world
- * @param worldHeight the height of the world
- * @param tileWidth the width of each tile (the `ppm` or `pixel-per-meter`)
- * @param tileHeight the height of each time (almost always the same as the [tileWidth])
- */
 data class TiledMapLoadResult(
     val map: TiledMap,
     val layers: ObjectMap<String, MapObjects>,
@@ -24,19 +14,8 @@ data class TiledMapLoadResult(
     val tileHeight: Int
 )
 
-/**
- * A [TiledMapLevelLoader] is used to load a [TiledMap] from a tmx file.
- *
- * @see TiledMap
- */
 object TiledMapLevelLoader {
 
-    /**
-     * Loads a [TiledMap] from a tmx file.
-     *
-     * @param tmxSrc the path to the tmx file
-     * @return the map of layer names to [MapObjects]
-     */
     fun load(tmxSrc: String): TiledMapLoadResult {
         val map = TmxMapLoader().load(tmxSrc) ?: throw IllegalStateException("Failed to load map: $tmxSrc")
 

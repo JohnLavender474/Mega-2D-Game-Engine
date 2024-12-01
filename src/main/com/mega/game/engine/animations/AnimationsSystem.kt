@@ -4,17 +4,21 @@ import com.mega.game.engine.common.objects.ImmutableCollection
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
-/** A system that can be used to animate sprites. */
 class AnimationsSystem : GameSystem(AnimationsComponent::class) {
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {
         if (!on) return
-        entities.forEach { entity ->
-            val animationsComponent = entity.getComponent(AnimationsComponent::class)
-            animationsComponent?.animators?.forEach { e ->
-                val spriteSupplier = e.first
-                val animator = e.second
-                animator.animate(spriteSupplier(), delta)
+
+        for (entity in entities) {
+            val component = entity.getComponent(AnimationsComponent::class)
+            component?.animators?.forEach { e ->
+                val key = e.key
+
+                val sprite = component.sprites[key]
+                if (sprite == null) return@forEach
+
+                val animator = e.value
+                animator.animate(sprite, delta)
             }
         }
     }

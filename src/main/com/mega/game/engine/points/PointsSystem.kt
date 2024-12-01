@@ -4,9 +4,7 @@ import com.mega.game.engine.common.objects.ImmutableCollection
 import com.mega.game.engine.entities.IGameEntity
 import com.mega.game.engine.systems.GameSystem
 
-/**
- * The points system. Processes all the points components by calling each listener in the component.
- */
+
 class PointsSystem : GameSystem(PointsComponent::class) {
 
     override fun process(on: Boolean, entities: ImmutableCollection<IGameEntity>, delta: Float) {

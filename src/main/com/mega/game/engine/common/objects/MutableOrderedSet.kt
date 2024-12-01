@@ -2,8 +2,9 @@ package com.mega.game.engine.common.objects
 
 import com.badlogic.gdx.utils.OrderedSet
 
-/** A mutable [OrderedSet] that implements [MutableCollection]. */
+
 class MutableOrderedSet<T> : OrderedSet<T>(), MutableCollection<T> {
+
     override val size: Int
         get() = super.size
 

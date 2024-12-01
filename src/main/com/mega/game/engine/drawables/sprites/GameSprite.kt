@@ -9,12 +9,6 @@ import com.mega.game.engine.drawables.sorting.DrawingPriority
 import com.mega.game.engine.drawables.sorting.DrawingSection
 import com.mega.game.engine.drawables.sorting.IComparableDrawable
 
-/**
- * A sprite that can be drawn. This class also extends the [Sprite].
- *
- * @param priority the priority of this sprite
- * @param hidden whether this sprite is hidden
- */
 class GameSprite(
     override val priority: DrawingPriority = DrawingPriority(DrawingSection.PLAYGROUND, 0),
     var hidden: Boolean = false
@@ -64,20 +58,10 @@ class GameSprite(
         setSize(width, height)
     }
 
-    /**
-     * Returns the center of this [GameSprite].
-     *
-     * @return the center of this [GameSprite]
-     */
     fun getCenter(): Vector2 {
         return Vector2(x + width / 2, y + height / 2)
     }
 
-    /**
-     * Gets the position of this [GameSprite].
-     *
-     * @return the position of this [GameSprite]
-     */
     fun getPosition(): Vector2 {
         return Vector2(x, y)
     }
@@ -86,12 +70,5 @@ class GameSprite(
         if (!hidden && texture != null) super.draw(drawer)
     }
 
-    /**
-     * Compares this [IComparableDrawable] to another [IComparableDrawable] by priority.
-     *
-     * @param other the other [IComparableDrawable] to compare to
-     * @return a negative integer, zero, or a positive integer as this [IComparableDrawable] is less
-     *   than, equal to, or greater than the specified [IComparableDrawable].
-     */
     override fun compareTo(other: IComparableDrawable<Batch>) = priority.compareTo(other.priority)
 }

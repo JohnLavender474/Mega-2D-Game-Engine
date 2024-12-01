@@ -1,52 +1,28 @@
 package com.mega.game.engine.common.interfaces
 
-/** An interface representing an object with a size, including width and height. */
+import com.badlogic.gdx.math.Vector2
+
 interface ISizable {
 
-    /**
-     * Gets the width of the object.
-     *
-     * @return The width of the object.
-     */
     fun getWidth(): Float
 
-    /**
-     * Gets the height of the object.
-     *
-     * @return The height of the object.
-     */
     fun getHeight(): Float
 
-    /**
-     * Sets the size of the object by specifying both width and height.
-     *
-     * @param width The new width of the object.
-     * @param height The new height of the object.
-     */
-    fun setSize(width: Float, height: Float) {
+    fun setSize(size: Float) = setSize(size, size)
+
+    fun setSize(size: Vector2) = setSize(size.x, size.y)
+
+    fun setSize(width: Float, height: Float): ISizable {
         setWidth(width)
         setHeight(height)
+        return this
     }
 
-    /**
-     * Sets the width of the object.
-     *
-     * @param width The new width of the object.
-     */
-    fun setWidth(width: Float)
+    fun getSize(out: Vector2): Vector2 = out.set(getWidth(), getHeight())
 
-    /**
-     * Sets the height of the object.
-     *
-     * @param height The new height of the object.
-     */
-    fun setHeight(height: Float)
+    fun setWidth(width: Float): ISizable
 
-    /**
-     * Translates the size of the object by adding the specified width and height values.
-     *
-     * @param width The width value to add to the current width.
-     * @param height The height value to add to the current height.
-     */
+    fun setHeight(height: Float): ISizable
+
     fun translateSize(width: Float, height: Float) = setSize(getWidth() + width, getHeight() + height)
 }

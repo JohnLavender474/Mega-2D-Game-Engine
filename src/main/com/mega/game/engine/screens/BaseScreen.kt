@@ -2,7 +2,6 @@ package com.mega.game.engine.screens
 
 import com.mega.game.engine.common.objects.Properties
 
-/** A [BaseScreen] is a basic abstract implementation of [IScreen] with no-op methods for each method. */
 abstract class BaseScreen(override val properties: Properties = Properties()) : IScreen {
 
     override fun show() {}

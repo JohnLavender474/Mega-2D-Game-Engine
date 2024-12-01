@@ -1,5 +1,6 @@
 package com.mega.game.engine.pathfinding
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.mega.game.engine.common.extensions.gdxArrayOf
 import com.mega.game.engine.common.objects.IntPair
@@ -7,26 +8,7 @@ import com.mega.game.engine.common.objects.pairTo
 import com.mega.game.engine.pathfinding.heuristics.IHeuristic
 import java.util.*
 
-/**
- * A pathfinder that finds a path from a start point to a target point.
- *
- * If a path is found, the [call] function returns a collection of [IntPair]s that represent the path from the start
- * point to the target point. Otherwise, it returns null.
- *
- * @param startCoordinate A function to get the start point in graph coordinates.
- * @param targetCoordinate A function to get the target point in graph coordinates.
- * @param filter A function to check if the given coordinate is allowed. If true, then the coordiante is allowed. If
- * false, then the coordinate is not allowed.
- * @param allowDiagonal A flag to allow diagonal movement.
- * @param heuristic The heuristic to use for calculating the cost between two coordinates.
- * @param maxIterations The maximum iterations to run before returning if the target is not reached within that amount
- * of iterations.
- * @param maxDistance The maximum distance that can be traveled before the pathfinder returns. If the distance between
- * the start and target exceeds this value, then the pathfinder returns. If within iterations the distance becomes
- * greater than this value, the pathfinder returns early.
- * @param returnBestPathOnFailure If the pathfinder quits early, then it will either return a null path or else the best
- * found path based on this value.
- */
+
 class Pathfinder(
     private val startCoordinate: IntPair,
     private val targetCoordinate: IntPair,
@@ -70,11 +52,15 @@ class Pathfinder(
             "Node{x=$x,y=$y,distance=$distance,discovered=$discovered,previous={${previous?.let { "${it.x},${it.y}" }}}"
     }
 
+    private val out1 = Vector2()
+    private val out2 = Vector2()
+
     override fun call(): PathfinderResult {
         val map = HashMap<IntPair, Node>()
 
         if (startCoordinate == targetCoordinate ||
-            (!returnBestPathOnFailure && startCoordinate.toVector2().dst(targetCoordinate.toVector2()) > maxDistance)
+            (!returnBestPathOnFailure && startCoordinate.toVector2(out1)
+                .dst(targetCoordinate.toVector2(out2)) > maxDistance)
         ) return PathfinderResult(null, true)
 
         val startNode = Node(startCoordinate)

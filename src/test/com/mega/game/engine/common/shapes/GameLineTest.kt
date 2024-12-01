@@ -3,13 +3,17 @@ package com.mega.game.engine.common.shapes
 import com.badlogic.gdx.math.Polyline
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
-import com.mega.game.engine.common.getRandom
+import com.mega.game.engine.common.UtilMethods
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
 class GameLineTest :
     DescribeSpec({
         describe("GameLine class") {
+
+            val out1 = Vector2()
+            val out2 = Vector2()
+
             it("should construct a line with specified points") {
                 val line = GameLine(0f, 0f, 3f, 4f)
                 line.getLength() shouldBe 5f
@@ -43,7 +47,7 @@ class GameLineTest :
             it("should calculate the center") {
                 val line = GameLine(1f, 1f, 4f, 4f)
                 val expectedCenter = Vector2(2.5f, 2.5f)
-                line.getCenter() shouldBe expectedCenter
+                line.getCenter(out1) shouldBe expectedCenter
             }
 
             it("should handle translation correctly") {
@@ -51,8 +55,8 @@ class GameLineTest :
                 val translationX = 2f
                 val translationY = 2f
                 val expectedCenter = Vector2(4.5f, 4.5f)
-                line.translation(translationX, translationY)
-                line.getCenter() shouldBe expectedCenter
+                line.translate(translationX, translationY)
+                line.getCenter(out1) shouldBe expectedCenter
             }
 
             it("should correctly check overlaps with another line") {
@@ -65,10 +69,9 @@ class GameLineTest :
             }
 
             it("should provide correct local and world points") {
-                for (i in 0 until 10) {
-
+                (0 until 10).forEach {
                     val random = Array<Float>()
-                    for (j in 0 until 9) random.add(getRandom(0, 359).toFloat())
+                    (0 until 9).forEach { random.add(UtilMethods.getRandom(0, 359).toFloat()) }
 
                     // control line
                     val controlLine = Polyline()
@@ -86,29 +89,29 @@ class GameLineTest :
                     // test local points
                     val controlLocalPoints = controlLine.vertices
                     println("Control local points: ${controlLocalPoints.contentToString()}")
-                    testLine.getFirstLocalPoint() shouldBe Vector2(controlLocalPoints[0], controlLocalPoints[1])
-                    testLine.getSecondLocalPoint() shouldBe Vector2(controlLocalPoints[2], controlLocalPoints[3])
+                    testLine.getFirstLocalPoint(out1) shouldBe Vector2(controlLocalPoints[0], controlLocalPoints[1])
+                    testLine.getSecondLocalPoint(out1) shouldBe Vector2(controlLocalPoints[2], controlLocalPoints[3])
 
                     // test world points
                     val controlWorldPoints = controlLine.transformedVertices
                     println("Control world points: ${controlWorldPoints.contentToString()}")
-                    val testWorldPoints = testLine.getWorldPoints()
+                    val testWorldPoints = testLine.calculateWorldPoints(out1, out2)
                     println("Test world points: $testWorldPoints")
-                    testWorldPoints.first shouldBe Vector2(controlWorldPoints[0], controlWorldPoints[1])
-                    testWorldPoints.second shouldBe Vector2(controlWorldPoints[2], controlWorldPoints[3])
+                    out1 shouldBe Vector2(controlWorldPoints[0], controlWorldPoints[1])
+                    out2 shouldBe Vector2(controlWorldPoints[2], controlWorldPoints[3])
                 }
             }
 
             it("should set the center correctly") {
                 val line = GameLine(0f, 0f, 1f, 1f)
                 line.setCenter(Vector2(0.5f, 0.5f))
-                val center = line.getCenter()
+                val center = line.getCenter(out1)
                 center shouldBe Vector2(0.5f, 0.5f)
             }
 
             it("should return correct local center") {
                 val line = GameLine(0f, 0f, 1f, 1f)
-                val localCenter = line.getLocalCenter()
+                val localCenter = line.getLocalCenter(out1)
                 localCenter shouldBe Vector2(0.5f, 0.5f)
             }
 
@@ -138,8 +141,8 @@ class GameLineTest :
 
             it("should translate correctly") {
                 val line = GameLine(0f, 0f, 1f, 1f)
-                line.translation(1f, 1f)
-                val center = line.getCenter()
+                line.translate(1f, 1f)
+                val center = line.getCenter(out1)
                 center shouldBe Vector2(1.5f, 1.5f)
             }
 

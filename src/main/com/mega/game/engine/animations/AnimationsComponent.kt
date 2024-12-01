@@ -1,47 +1,123 @@
 package com.mega.game.engine.animations
 
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.OrderedMap
 import com.mega.game.engine.common.objects.GamePair
 import com.mega.game.engine.components.IGameComponent
 import com.mega.game.engine.drawables.sprites.GameSprite
 import com.mega.game.engine.entities.contracts.ISpritesEntity
+import java.util.*
 
-/**
- * A component that can be used to animate a sprite. The component is created with a map of
- * animations that are used to animate the sprite.
- *
- * @param animators the animators that are used to animate the respective sprites
- */
-class AnimationsComponent(
-    val animators: Array<GamePair<() -> GameSprite, IAnimator>> = Array()
-) : IGameComponent {
+class AnimationsComponent() : IGameComponent {
 
     companion object {
         const val TAG = "AnimationsComponent"
+        const val DEFAULT_KEY = "default_key"
+    }
+
+    internal val sprites = ObjectMap<Any, GameSprite>()
+    internal val animators = OrderedMap<Any, IAnimator>()
+
+    constructor(entity: ISpritesEntity, animator: IAnimator) : this() {
+        val sprite = entity.defaultSprite
+        putAnimator(sprite, animator)
     }
 
     /**
-     * Convenience constructor if only one animator. Creates an animations component with the
-     * specified sprite supplier and animator.
-     *
-     * @param spriteSupplier the sprite supplier that is used to supply the sprite to animate
-     * @param animator the animator that is used to animate the sprite
-     * @see AnimationsComponent
+     * TODO: this constructor is here only to support compatibility with the old version of the engine. Any usages of
+     *   this constructor should be removed and replaced.
      */
-    constructor(
-        spriteSupplier: () -> GameSprite, animator: IAnimator
-    ) : this(Array<GamePair<() -> GameSprite, IAnimator>>().apply { add(GamePair(spriteSupplier, animator)) })
+    constructor(animators: Array<GamePair<() -> GameSprite, IAnimator>>) : this() {
+        animators.forEach {
+            val sprite = it.first.invoke()
+            val animator = it.second
+            val key = UUID.randomUUID().toString()
+            putAnimator(key, sprite, animator)
+        }
+    }
 
+    constructor(animators: OrderedMap<Any, IAnimator>, sprites: OrderedMap<Any, GameSprite>) : this() {
+        this.animators.putAll(animators)
+        this.sprites.putAll(sprites)
+    }
 
-    /**
-     * Convenience constructor if the entity is a [ISpritesEntity] where only the first sprite needs to
-     * be animated. The first sprite is [ISpritesEntity.getFirstSprite] which CANNOT BE NULL. This sprite
-     * is animated using the specified animator.
-     *
-     * @param entity the entity that contains the sprite to animate
-     * @param animator the animator that is used to animate the sprite
-     */
-    constructor(entity: ISpritesEntity, animator: IAnimator) : this({ entity.firstSprite!! }, animator)
+    fun putAnimator(sprite: GameSprite, animator: IAnimator) = putAnimator(DEFAULT_KEY, sprite, animator)
 
-    override fun reset() = animators.forEach { it.second.reset() }
+    fun putAnimator(key: Any, sprite: GameSprite, animator: IAnimator) {
+        sprites.put(key, sprite)
+        animators.put(key, animator)
+    }
+
+    fun containsAnimator(key: Any) = animators.containsKey(key)
+
+    fun removeAnimator(key: Any, out: GamePair<GameSprite, IAnimator>? = null): GamePair<GameSprite, IAnimator>? {
+        val sprite = sprites.remove(key)
+        val animator = animators.remove(key)
+        out?.set(sprite, animator)
+        return out
+    }
+
+    fun getAnimator(key: Any) = animators[key]!!
+
+    fun getAnimatedSprite(key: Any) = sprites[key]!!
+
+    fun forEachAnimator(action: (Any, GameSprite, IAnimator) -> Unit) {
+        animators.forEach {
+            val sprite = getAnimatedSprite(it.key)
+            action.invoke(it.key, sprite, it.value)
+        }
+    }
+
+    override fun reset() = animators.values().forEach { it.reset() }
+}
+
+class AnimationsComponentBuilder(var spritesEntity: ISpritesEntity? = null) {
+
+    private val component = AnimationsComponent()
+    private val sprites = component.sprites
+    private val animators = component.animators
+
+    private var currentKey: Any = AnimationsComponent.DEFAULT_KEY
+
+    fun key(key: Any, fetchSpriteFromEntity: Boolean = true): AnimationsComponentBuilder {
+        currentKey = key
+        if (fetchSpriteFromEntity) spritesEntity?.let {
+            val sprite = it.sprites[key]
+            sprite(sprite)
+        }
+        return this
+    }
+
+    fun sprite(sprite: GameSprite): AnimationsComponentBuilder {
+        sprites.put(currentKey, sprite)
+        return this
+    }
+
+    fun sprite(key: Any, sprite: GameSprite): AnimationsComponentBuilder {
+        key(key, false)
+        sprite(sprite)
+        return this
+    }
+
+    fun animator(animator: IAnimator): AnimationsComponentBuilder {
+        if (!sprites.containsKey(currentKey)) {
+            val sprite = spritesEntity?.let { it.sprites[currentKey] }
+            if (sprite == null) throw IllegalStateException(
+                "No sprite set or contained in sprites entity for key=$currentKey"
+            )
+            sprite(sprite)
+        }
+        animators.put(currentKey, animator)
+        return this
+    }
+
+    fun put(key: Any, sprite: GameSprite, animator: IAnimator): AnimationsComponentBuilder {
+        key(key, false)
+        sprite(sprite)
+        animator(animator)
+        return this
+    }
+
+    fun build() = component
 }
